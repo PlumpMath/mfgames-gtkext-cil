@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt", "MfGames.G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtkExtDemo", "GtkExtDemo\GtkExtDemo.csproj", "{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.LineTextEditor", "MfGames.GtkExt.LineTextEditor\MfGames.GtkExt.LineTextEditor.csproj", "{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -15,6 +17,10 @@ Global
 		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Debug|x86.Build.0 = Debug|x86
 		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Release|x86.ActiveCfg = Release|x86
 		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Release|x86.Build.0 = Release|x86
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Debug|x86.ActiveCfg = Debug|x86
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Debug|x86.Build.0 = Debug|x86
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Release|x86.ActiveCfg = Release|x86
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Release|x86.Build.0 = Release|x86
 		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Debug|x86.ActiveCfg = Debug|x86
 		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Debug|x86.Build.0 = Debug|x86
 		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Release|x86.ActiveCfg = Release|x86
