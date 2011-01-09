@@ -44,9 +44,7 @@ public class Demo
 #region GUI
 	private static Statusbar statusbar;
 	private UIManager uiManager;
-	private DemoEditor demoEditor = new DemoEditor();
 	private DemoComponents demoComponents = new DemoComponents();
-	private DemoAuditor demoAuditor = new DemoAuditor();
 	private Notebook notebook;
 
 	/// <summary>
@@ -87,10 +85,7 @@ public class Demo
 		notebook.BorderWidth = 5;
 		box.PackStart(notebook, true, true, 0);
 
-		notebook.AppendPage(demoEditor,
-				    new Label("Simple Text Editor"));
 		notebook.AppendPage(demoComponents, new Label("Components"));
-		notebook.AppendPage(demoAuditor, new Label("Auditor"));
 		
 		// Add the status bar
 		statusbar = new Statusbar();
@@ -112,9 +107,7 @@ public class Demo
 			"      <menuitem action='Quit'/>" +
 			"    </menu>" +
 			"    <menu action='ViewMenu'>" +
-			"	   <menuitem action='SimpleEditor'/>" +
 			"	   <menuitem action='Components'/>" +
-			"	   <menuitem action='Auditor'/>" +
 			"    </menu>" +
 			"  </menubar>" +
 			"</ui>";
@@ -130,15 +123,9 @@ public class Demo
 			// "View" Menu
 			new ActionEntry("ViewMenu", null, "_View",
 							null, null, null),
-			new ActionEntry("SimpleEditor", null, "_Simple Editor",
-							"<control>1", null,
-							new EventHandler(OnSwitchSimpleEditor)),
 			new ActionEntry("Components", null, "_Components",
-							"<control>2", null,
+							"<control>1", null,
 							new EventHandler(OnSwitchComponents)),
-			new ActionEntry("Auditor", null, "_Auditor",
-							"<control>3", null,
-							new EventHandler(OnSwitchAuditor)),
 		};
 		
 		// Build up the actions
