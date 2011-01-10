@@ -30,200 +30,203 @@ using Gtk;
 
 #endregion
 
-public class Demo : Window
+namespace GtkExtDemo
 {
-	/// <summary>
-	/// Constructs a demo object with the appropriate gui.
-	/// </summary>
-	public Demo()
-		: base("Moonfire Games' Gtk Demo")
+	public class Demo : Window
 	{
-		// Build the GUI
-		uiManager = new UIManager();
-		CreateGui();
-	}
-
-	#region GUI
-
-	private static Statusbar statusbar;
-	private readonly DemoComponents demoComponents = new DemoComponents();
-	private readonly UIManager uiManager;
-	private Notebook notebook;
-
-	/// <summary>
-	/// Contains the current page.
-	/// </summary>
-	public int CurrentPage
-	{
-		get { return notebook.Page; }
-		set { notebook.Page = value; }
-	}
-
-	/// <summary>
-	/// Contains the statusbar for the demo.
-	/// </summary>
-	public static Statusbar Statusbar
-	{
-		get { return statusbar; }
-	}
-
-	/// <summary>
-	/// Creates the GUI interface.
-	/// </summary>
-	private void CreateGui()
-	{
-		// Create a window
-		SetDefaultSize(1000, 800);
-		DeleteEvent += OnWindowDelete;
-
-		// Create the window frame
-		var box = new VBox();
-		Add(box);
-
-		// Add the menu
-		box.PackStart(CreateGuiMenu(), false, false, 0);
-
-		// Create a notebook
-		notebook = new Notebook();
-		notebook.BorderWidth = 5;
-		box.PackStart(notebook, true, true, 0);
-
-		notebook.AppendPage(demoComponents, new Label("Components"));
-
-		// Add the status bar
-		statusbar = new Statusbar();
-		statusbar.Push(0, "Welcome!");
-		statusbar.HasResizeGrip = true;
-		box.PackStart(statusbar, false, false, 0);
-
-		// Show everything as the final
-		ShowAll();
-	}
-
-	private Widget CreateGuiMenu()
-	{
-		// Defines the menu
-		string uiInfo = "<ui>" + "  <menubar name='MenuBar'>" +
-		                "    <menu action='FileMenu'>" +
-		                "      <menuitem action='Quit'/>" + "    </menu>" +
-		                "    <menu action='ViewMenu'>" +
-		                "	   <menuitem action='Components'/>" + "    </menu>" +
-		                "  </menubar>" + "</ui>";
-
-		// Set up the actions
-		var entries = new[]
-		              {
-		              	// "File" Menu
-		              	new ActionEntry(
-		              		"FileMenu", null, "_File", null, null, null),
-		              	new ActionEntry(
-		              		"Quit",
-		              		Stock.Quit,
-		              		"_Quit",
-		              		"<control>Q",
-		              		"Quit",
-		              		OnQuitAction), // "View" Menu
-		              	new ActionEntry(
-		              		"ViewMenu", null, "_View", null, null, null),
-		              	new ActionEntry(
-		              		"Components",
-		              		null,
-		              		"_Components",
-		              		"<control>1",
-		              		null,
-		              		OnSwitchComponents),
-		              };
-
-		// Build up the actions
-		var actions = new ActionGroup("group");
-		actions.Add(entries);
-
-		uiManager.InsertActionGroup(actions, 0);
-		AddAccelGroup(uiManager.AccelGroup);
-
-		// Set up the interfaces from XML
-		uiManager.AddUiFromString(uiInfo);
-		return uiManager.GetWidget("/MenuBar");
-	}
-
-	#endregion
-
-	#region Events
-
-	/// <summary>
-	/// Triggers the quit menu.
-	/// </summary>
-	private void OnQuitAction(
-		object sender,
-		EventArgs args)
-	{
-		Application.Quit();
-	}
-
-	/// <summary>
-	/// Called to switch to the auditor layer.
-	/// </summary>
-	private void OnSwitchAuditor(
-		object obj,
-		EventArgs args)
-	{
-		notebook.Page = 2;
-	}
-
-	/// <summary>
-	/// Called to switch to the components layer.
-	/// <summary>
-	private void OnSwitchComponents(
-		object obj,
-		EventArgs args)
-	{
-		notebook.Page = 1;
-	}
-
-	/// <summary>
-	/// Called to switch to the editor.
-	/// </summary>
-	private void OnSwitchSimpleEditor(
-		object obj,
-		EventArgs args)
-	{
-		notebook.Page = 0;
-	}
-
-	/// <summary>
-	/// Fired when the window is closed.
-	/// </summary>
-	private void OnWindowDelete(
-		object obj,
-		DeleteEventArgs args)
-	{
-		Application.Quit();
-	}
-
-	#endregion
-
-	/// <summary>
-	/// Main entry point into the system.
-	/// </summary>
-	public static void Main(string[] args)
-	{
-		// Set up Gtk
-		Application.Init();
-
-		// Create the demo
-		var demo = new Demo();
-
-		// Assign the page if we can
-		try
+		/// <summary>
+		/// Constructs a demo object with the appropriate gui.
+		/// </summary>
+		public Demo()
+			: base("Moonfire Games' Gtk Demo")
 		{
-			int page = Int32.Parse(args[0]);
-			demo.CurrentPage = page;
-		}
-		catch
-		{
+			// Build the GUI
+			uiManager = new UIManager();
+			CreateGui();
 		}
 
-		// Start everything running
-		Application.Run();
+		#region GUI
+
+		private static Statusbar statusbar;
+		private readonly DemoComponents demoComponents = new DemoComponents();
+		private readonly UIManager uiManager;
+		private Notebook notebook;
+
+		/// <summary>
+		/// Contains the current page.
+		/// </summary>
+		public int CurrentPage
+		{
+			get { return notebook.Page; }
+			set { notebook.Page = value; }
+		}
+
+		/// <summary>
+		/// Contains the statusbar for the demo.
+		/// </summary>
+		public static Statusbar Statusbar
+		{
+			get { return statusbar; }
+		}
+
+		/// <summary>
+		/// Creates the GUI interface.
+		/// </summary>
+		private void CreateGui()
+		{
+			// Create a window
+			SetDefaultSize(1000, 800);
+			DeleteEvent += OnWindowDelete;
+
+			// Create the window frame
+			var box = new VBox();
+			Add(box);
+
+			// Add the menu
+			box.PackStart(CreateGuiMenu(), false, false, 0);
+
+			// Create a notebook
+			notebook = new Notebook();
+			notebook.BorderWidth = 5;
+			box.PackStart(notebook, true, true, 0);
+
+			notebook.AppendPage(demoComponents, new Label("Components"));
+
+			// Add the status bar
+			statusbar = new Statusbar();
+			statusbar.Push(0, "Welcome!");
+			statusbar.HasResizeGrip = true;
+			box.PackStart(statusbar, false, false, 0);
+
+			// Show everything as the final
+			ShowAll();
+		}
+
+		private Widget CreateGuiMenu()
+		{
+			// Defines the menu
+			string uiInfo = "<ui>" + "  <menubar name='MenuBar'>" +
+			                "    <menu action='FileMenu'>" +
+			                "      <menuitem action='Quit'/>" + "    </menu>" +
+			                "    <menu action='ViewMenu'>" +
+			                "	   <menuitem action='Components'/>" + "    </menu>" +
+			                "  </menubar>" + "</ui>";
+
+			// Set up the actions
+			var entries = new[]
+			              {
+			              	// "File" Menu
+			              	new ActionEntry(
+			              		"FileMenu", null, "_File", null, null, null),
+			              	new ActionEntry(
+			              		"Quit",
+			              		Stock.Quit,
+			              		"_Quit",
+			              		"<control>Q",
+			              		"Quit",
+			              		OnQuitAction), // "View" Menu
+			              	new ActionEntry(
+			              		"ViewMenu", null, "_View", null, null, null),
+			              	new ActionEntry(
+			              		"Components",
+			              		null,
+			              		"_Components",
+			              		"<control>1",
+			              		null,
+			              		OnSwitchComponents),
+			              };
+
+			// Build up the actions
+			var actions = new ActionGroup("group");
+			actions.Add(entries);
+
+			uiManager.InsertActionGroup(actions, 0);
+			AddAccelGroup(uiManager.AccelGroup);
+
+			// Set up the interfaces from XML
+			uiManager.AddUiFromString(uiInfo);
+			return uiManager.GetWidget("/MenuBar");
+		}
+
+		#endregion
+
+		#region Events
+
+		/// <summary>
+		/// Triggers the quit menu.
+		/// </summary>
+		private void OnQuitAction(
+			object sender,
+			EventArgs args)
+		{
+			Application.Quit();
+		}
+
+		/// <summary>
+		/// Called to switch to the auditor layer.
+		/// </summary>
+		private void OnSwitchAuditor(
+			object obj,
+			EventArgs args)
+		{
+			notebook.Page = 2;
+		}
+
+		/// <summary>
+		/// Called to switch to the components layer.
+		/// <summary>
+		private void OnSwitchComponents(
+			object obj,
+			EventArgs args)
+		{
+			notebook.Page = 1;
+		}
+
+		/// <summary>
+		/// Called to switch to the editor.
+		/// </summary>
+		private void OnSwitchSimpleEditor(
+			object obj,
+			EventArgs args)
+		{
+			notebook.Page = 0;
+		}
+
+		/// <summary>
+		/// Fired when the window is closed.
+		/// </summary>
+		private void OnWindowDelete(
+			object obj,
+			DeleteEventArgs args)
+		{
+			Application.Quit();
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Main entry point into the system.
+		/// </summary>
+		public static void Main(string[] args)
+		{
+			// Set up Gtk
+			Application.Init();
+
+			// Create the demo
+			var demo = new Demo();
+
+			// Assign the page if we can
+			try
+			{
+				int page = Int32.Parse(args[0]);
+				demo.CurrentPage = page;
+			}
+			catch
+			{
+			}
+
+			// Start everything running
+			Application.Run();
+		}
 	}
 }

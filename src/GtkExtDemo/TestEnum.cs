@@ -28,11 +28,14 @@ using System.ComponentModel;
 
 #endregion
 
-public enum TestEnum
+namespace GtkExtDemo
 {
-	[Description("Short Name")]
-	ShortName,
+	public enum TestEnum
+	{
+		[Description("Short Name")]
+		ShortName,
 
-	[Description("Long Name Too")]
-	LongName,
+		[Description("Long Name Too")]
+		LongName,
+	}
 }

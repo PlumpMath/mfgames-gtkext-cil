@@ -32,58 +32,61 @@ using MfGames.GtkExt;
 
 #endregion
 
-public class DemoComponents : VBox
+namespace GtkExtDemo
 {
-	private readonly EnumComboBox testEnumCombo;
-
-	public DemoComponents()
+	public class DemoComponents : VBox
 	{
-		// Create the general frame
-		uint row = 1;
-		var table = new LabelWidgetTable(5, 2);
-		table.BorderWidth = 5;
+		private readonly EnumComboBox testEnumCombo;
 
-		// Just a text entry
-		var nameEntry = new Entry("Bob");
-		table.AttachExpanded(row++, "Name", nameEntry);
+		public DemoComponents()
+		{
+			// Create the general frame
+			uint row = 1;
+			var table = new LabelWidgetTable(5, 2);
+			table.BorderWidth = 5;
 
-		// An unexpanded enumeration combo box
-		var ecb = new EnumComboBox(typeof(ButtonsType));
-		ecb.ActiveEnum = ButtonsType.YesNo;
-		table.Attach(row++, "EnumComboBox", ecb);
+			// Just a text entry
+			var nameEntry = new Entry("Bob");
+			table.AttachExpanded(row++, "Name", nameEntry);
 
-		// An unexpanded described
-		testEnumCombo = new EnumComboBox(typeof(TestEnum));
-		testEnumCombo.Changed += OnTestEnumChanged;
-		table.Attach(row++, "Enum.ComboBox TestEnum", testEnumCombo);
+			// An unexpanded enumeration combo box
+			var ecb = new EnumComboBox(typeof(ButtonsType));
+			ecb.ActiveEnum = ButtonsType.YesNo;
+			table.Attach(row++, "EnumComboBox", ecb);
 
-		// Add the string entry
-		var sle = new StringListEntry();
-		sle.Values = new[] { "Line 1", "Line 2", "Line 3", };
-		sle.CompletionStore.AppendValues("List 4");
-		sle.CompletionStore.AppendValues("List 5");
-		sle.CompletionStore.AppendValues("List 6");
-		sle.CompletionStore.AppendValues("List 7");
-		table.AttachExpanded(row++, "StringListEntry", sle);
+			// An unexpanded described
+			testEnumCombo = new EnumComboBox(typeof(TestEnum));
+			testEnumCombo.Changed += OnTestEnumChanged;
+			table.Attach(row++, "Enum.ComboBox TestEnum", testEnumCombo);
 
-		// Return it
-		PackStart(table, false, false, 0);
-		PackStart(new Label(""), true, true, 0);
+			// Add the string entry
+			var sle = new StringListEntry();
+			sle.Values = new[] { "Line 1", "Line 2", "Line 3", };
+			sle.CompletionStore.AppendValues("List 4");
+			sle.CompletionStore.AppendValues("List 5");
+			sle.CompletionStore.AppendValues("List 6");
+			sle.CompletionStore.AppendValues("List 7");
+			table.AttachExpanded(row++, "StringListEntry", sle);
+
+			// Return it
+			PackStart(table, false, false, 0);
+			PackStart(new Label(""), true, true, 0);
+		}
+
+		#region Events
+
+		/// <summary>
+		/// Fired when the test enumeration changes.
+		/// </summary>
+		private void OnTestEnumChanged(
+			object obj,
+			EventArgs args)
+		{
+			Demo.Statusbar.Push(
+				0,
+				"TestEnum: " + testEnumCombo.ActiveEnum + " (" + testEnumCombo.Active + ")");
+		}
+
+		#endregion
 	}
-
-	#region Events
-
-	/// <summary>
-	/// Fired when the test enumeration changes.
-	/// </summary>
-	private void OnTestEnumChanged(
-		object obj,
-		EventArgs args)
-	{
-		Demo.Statusbar.Push(
-			0,
-			"TestEnum: " + testEnumCombo.ActiveEnum + " (" + testEnumCombo.Active + ")");
-	}
-
-	#endregion
 }
