@@ -41,7 +41,8 @@ namespace GtkExtDemo
 		public DemoLineTextEditor()
 		{
 			// Create a basic text editor inside a scrolling window.
-			var textEditor = new TextEditor();
+			ILineBuffer lineBuffer = new PatternLineBuffer(1024, 256);
+			var textEditor = new TextEditor(lineBuffer);
 
 			// Add the editor to the current tab.
 			PackStart(textEditor, true, true, 0);

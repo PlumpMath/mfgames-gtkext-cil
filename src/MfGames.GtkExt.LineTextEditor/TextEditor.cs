@@ -48,7 +48,19 @@ namespace MfGames.GtkExt.LineTextEditor
 	{
 		#region Constructors
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextEditor"/> class.
+		/// </summary>
 		public TextEditor()
+			: this(new MemoryLineBuffer())
+		{
+
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextEditor"/> class.
+		/// </summary>
+		public TextEditor(ILineBuffer lineBuffer)
 		{
 			// Set up the basic characterstics of the widget.
 			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
@@ -59,6 +71,9 @@ namespace MfGames.GtkExt.LineTextEditor
 			DoubleBuffered = true;
 			CanFocus = true;
 			WidgetFlags |= WidgetFlags.NoWindow;
+
+			// Save the line buffer.
+			this.lineBuffer = lineBuffer;
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -71,6 +86,12 @@ namespace MfGames.GtkExt.LineTextEditor
 		#region Debugging
 
 		private readonly DateTime createdTimestamp = DateTime.Now;
+
+		#endregion
+
+		#region Line Buffer
+
+		private ILineBuffer lineBuffer;
 
 		#endregion
 
@@ -96,14 +117,25 @@ namespace MfGames.GtkExt.LineTextEditor
 				cr.Rectangle(cairoArea);
 				cr.Fill();
 
-				Pango.Layout layout = new Pango.Layout(this.PangoContext);
-				layout.Width = Pango.Units.FromPixels(area.Width);
-				layout.Wrap = Pango.WrapMode.Word;
-				layout.Alignment = Pango.Alignment.Left;
-				layout.FontDescription = Pango.FontDescription.FromString("Ahafoni CLM Bold 100");
-				layout.SetMarkup("<span color=" + (char) 34 + "blue" + (char) 34 + ">" + "Hello World!" + "</span>");
+				// Figure out which lines we can draw on the screen.
+				int startLine = 0;
+				int endLine = 2;
 
-				GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), 5, 5, layout);
+				// Go through the lines and draw each one in the correct position.
+				int lineX = 0;
+
+				for (int line = startLine; line < endLine; line++)
+				{
+					// Draw the first line of the text.
+					Pango.Layout layout = new Pango.Layout(this.PangoContext);
+					layout.Width = Pango.Units.FromPixels(area.Width);
+					layout.Wrap = Pango.WrapMode.Word;
+					layout.Alignment = Pango.Alignment.Left;
+					layout.FontDescription = Pango.FontDescription.FromString("Courier New 12");
+					layout.SetMarkup(lineBuffer.GetLineText(0, 0, -1));
+
+					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), 0, 0, layout);
+				}
 			}
 
 			return true;
