@@ -1,7 +1,37 @@
+#region Copyright and License
+
+// Copyright (c) 2009-2011, Moonfire Games
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+#region Namespaces
+
 using System;
 using System.Text;
 
-namespace MfGames.GtkExt.LineTextEditor
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+#endregion
+
+namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
 	/// <summary>
 	/// Implements a line buffer that produces a pattern of text which is suitable
@@ -16,7 +46,9 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// </summary>
 		/// <param name="lines">The lines.</param>
 		/// <param name="width">The width.</param>
-		public PatternLineBuffer(int lines, int width)
+		public PatternLineBuffer(
+			int lines,
+			int width)
 		{
 			this.lines = lines;
 			this.width = width;
@@ -24,19 +56,10 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#endregion
 
-		#region Buffer Events
-
-		public event EventHandler LineBufferChanged;
-		public event EventHandler LineChanged;
-		public event EventHandler LineCountChanged;
-		public event EventHandler LineDeleted;
-		public event EventHandler LineInserted;
-
-		#endregion
-
 		#region Buffer Viewing
 
-		private static readonly string[] Words = new[] { "one", "two", "three", "four", };
+		private static readonly string[] Words = new[]
+		                                         { "one", "two", "three", "four", };
 
 		private readonly int lines;
 		private readonly int width;
@@ -54,7 +77,10 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// If set to true, the buffer is read-only and the editing commands
 		/// should throw an InvalidOperationException.
 		/// </summary>
-		public bool ReadOnly { get { return true; } }
+		public bool ReadOnly
+		{
+			get { return true; }
+		}
 
 		public int GetLineLength(int line)
 		{
@@ -74,7 +100,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		{
 			// Build up a string buffer with the line text. This will always
 			// be no more than the width of the line.
-			StringBuilder buffer = new StringBuilder();
+			var buffer = new StringBuilder();
 			int index = line % Words.Length;
 
 			while (buffer.Length < width)

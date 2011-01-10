@@ -27,28 +27,23 @@
 using System;
 using System.Collections.Generic;
 
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
 	public class MemoryLineBuffer : ILineBuffer
 	{
 		#region Constructors
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MemoryLineBuffer"/> class.
+		/// </summary>
 		public MemoryLineBuffer()
 		{
 			lines = new List<string>();
 		}
-
-		#endregion
-
-		#region Buffer Events
-
-		public event EventHandler LineBufferChanged;
-		public event EventHandler LineChanged;
-		public event EventHandler LineCountChanged;
-		public event EventHandler LineDeleted;
-		public event EventHandler LineInserted;
 
 		#endregion
 

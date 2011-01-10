@@ -44,6 +44,7 @@ namespace GtkExtDemo
 			// Build the GUI
 			uiManager = new UIManager();
 			CreateGui();
+			notebook.Page = 1;
 		}
 
 		#region GUI

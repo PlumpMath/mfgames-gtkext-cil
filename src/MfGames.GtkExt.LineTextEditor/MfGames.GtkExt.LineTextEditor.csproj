@@ -43,10 +43,18 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
+    <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
-    <Compile Include="PatternLineBuffer.cs" />
+    <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
+    <Compile Include="Interfaces\ILineMarkupBuffer.cs" />
+    <Compile Include="Margins\LineNumberMarginRenderer.cs" />
+    <Compile Include="Margins\MarginRenderer.cs" />
+    <Compile Include="Margins\MarginRendererCollection.cs" />
+    <Compile Include="Buffers\PatternLineBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MemoryLineBuffer.cs" />
+    <Compile Include="Buffers\MemoryLineBuffer.cs" />
+    <Compile Include="Themes\Theme.cs" />
     <Compile Include="TextEditor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

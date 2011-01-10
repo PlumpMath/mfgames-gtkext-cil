@@ -32,6 +32,11 @@ using Gdk;
 
 using Gtk;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Margins;
+using MfGames.GtkExt.LineTextEditor.Themes;
+
 using Color=Cairo.Color;
 using Rectangle=Gdk.Rectangle;
 using Window=Gdk.Window;
@@ -52,15 +57,14 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// Initializes a new instance of the <see cref="TextEditor"/> class.
 		/// </summary>
 		public TextEditor()
-			: this(new MemoryLineBuffer())
+			: this(new SimpleLineLayoutBuffer(new MemoryLineBuffer()))
 		{
-
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextEditor"/> class.
 		/// </summary>
-		public TextEditor(ILineBuffer lineBuffer)
+		public TextEditor(ILineLayoutBuffer lineLayoutBuffer)
 		{
 			// Set up the basic characterstics of the widget.
 			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
@@ -73,7 +77,11 @@ namespace MfGames.GtkExt.LineTextEditor
 			WidgetFlags |= WidgetFlags.NoWindow;
 
 			// Save the line buffer.
-			this.lineBuffer = lineBuffer;
+			this.lineLayoutBuffer = lineLayoutBuffer;
+
+			// Set up the rest of the screen elements.
+			margins = new MarginRendererCollection();
+			theme = new Theme();
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -91,7 +99,14 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Line Buffer
 
-		private ILineBuffer lineBuffer;
+		private readonly ILineLayoutBuffer lineLayoutBuffer;
+
+		#endregion
+
+		#region Screen Elements
+
+		private MarginRendererCollection margins;
+		private Theme theme;
 
 		#endregion
 
@@ -113,9 +128,14 @@ namespace MfGames.GtkExt.LineTextEditor
 			using (Context cr = CairoHelper.Create(e.Window))
 			{
 				// Paint the background color of the window.
-				cr.Color = new Color(1, 1, 1);
+				cr.Color = theme.BackgroundColor;
 				cr.Rectangle(cairoArea);
 				cr.Fill();
+
+				// Reset the layout and its properties.
+				lineLayoutBuffer.Reset();
+				lineLayoutBuffer.Context = PangoContext;
+				lineLayoutBuffer.Width = area.Width;
 
 				// Figure out which lines we can draw on the screen.
 				int startLine = 0;
@@ -126,15 +146,16 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				for (int line = startLine; line < endLine; line++)
 				{
-					// Draw the first line of the text.
-					Pango.Layout layout = new Pango.Layout(this.PangoContext);
-					layout.Width = Pango.Units.FromPixels(area.Width);
-					layout.Wrap = Pango.WrapMode.Word;
-					layout.Alignment = Pango.Alignment.Left;
-					layout.FontDescription = Pango.FontDescription.FromString("Courier New 12");
-					layout.SetMarkup(lineBuffer.GetLineText(0, 0, -1));
+					// Get the layout for the current line.
+					Pango.Layout layout = lineLayoutBuffer.GetLineLayout(line);
+					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), lineX, 0, layout);
 
-					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), 0, 0, layout);
+					// Get the extents for that line.
+					int width, height;
+					layout.GetPixelSize(out width, out height);
+
+					// Move down a line.
+					lineX += height;
 				}
 			}
 

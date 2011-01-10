@@ -27,6 +27,8 @@
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor;
+using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
@@ -42,7 +44,11 @@ namespace GtkExtDemo
 		{
 			// Create a basic text editor inside a scrolling window.
 			ILineBuffer lineBuffer = new PatternLineBuffer(1024, 256);
-			var textEditor = new TextEditor(lineBuffer);
+			ILineMarkupBuffer lineMarkupBuffer =
+				new UnformattedLineMarkupBuffer(lineBuffer);
+			ILineLayoutBuffer lineLayoutBuffer =
+				new SimpleLineLayoutBuffer(lineMarkupBuffer);
+			var textEditor = new TextEditor(lineLayoutBuffer);
 
 			// Add the editor to the current tab.
 			PackStart(textEditor, true, true, 0);

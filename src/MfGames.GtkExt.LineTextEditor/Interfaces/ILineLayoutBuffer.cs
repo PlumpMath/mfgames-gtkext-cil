@@ -24,53 +24,44 @@
 
 #region Namespaces
 
-using System;
+using Pango;
 
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
-	/// Represents a virtualized collection of lines for viewing and
-	/// editing.
+	/// Implements the functionality for handling Pango layout rendering for
+	/// the text editor.
 	/// </summary>
-	public interface ILineBuffer
+	public interface ILineLayoutBuffer : ILineMarkupBuffer
 	{
-		#region Buffer Viewing
-
-		int LineCount { get; }
+		#region Layout
 
 		/// <summary>
-		/// If set to true, the buffer is read-only and the editing commands
-		/// should throw an InvalidOperationException.
+		/// Sets the Pango context for the layout.
 		/// </summary>
-		bool ReadOnly { get; }
+		/// <value>The context.</value>
+		Context Context { set; }
 
-		int GetLineLength(int line);
-		string GetLineNumber(int line);
+		/// <summary>
+		/// Sets the pixel width of a layout in case the layout uses word
+		/// wrapping.
+		/// </summary>
+		/// <value>The width.</value>
+		int Width { set; }
 
-		string GetLineText(
-			int line,
-			int startIndex,
-			int endIndex);
+		/// <summary>
+		/// Gets the line layout for a given line.
+		/// </summary>
+		/// <param name="line">The line.</param>
+		/// <returns></returns>
+		Layout GetLineLayout(int line);
 
-		#endregion
-
-		#region Buffer Editing
-
-		void DeleteLines(
-			int startLine,
-			int endLine);
-
-		void InsertLines(
-			int afterLine,
-			int count);
-
-		void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text);
+		/// <summary>
+		/// Resets the layout operations.
+		/// </summary>
+		void Reset();
 
 		#endregion
 	}

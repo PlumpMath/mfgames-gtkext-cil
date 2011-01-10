@@ -24,53 +24,44 @@
 
 #region Namespaces
 
-using System;
+using Cairo;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Themes
 {
 	/// <summary>
-	/// Represents a virtualized collection of lines for viewing and
-	/// editing.
+	/// Contains the screen style used for rendering the various elements of the
+	/// text editor.
 	/// </summary>
-	public interface ILineBuffer
+	public class Theme
 	{
-		#region Buffer Viewing
-
-		int LineCount { get; }
+		#region Constructors
 
 		/// <summary>
-		/// If set to true, the buffer is read-only and the editing commands
-		/// should throw an InvalidOperationException.
+		/// Initializes a new instance of the <see cref="Theme"/> class.
 		/// </summary>
-		bool ReadOnly { get; }
-
-		int GetLineLength(int line);
-		string GetLineNumber(int line);
-
-		string GetLineText(
-			int line,
-			int startIndex,
-			int endIndex);
+		public Theme()
+		{
+			BackgroundColor = new Color(1, 1, 1);
+			LineNumberColor = new Color(0.5, 0.5, 0.5);
+		}
 
 		#endregion
 
-		#region Buffer Editing
+		#region Colors
 
-		void DeleteLines(
-			int startLine,
-			int endLine);
+		/// <summary>
+		/// Gets or sets the color of the background.
+		/// </summary>
+		/// <value>The color of the background.</value>
+		public Color BackgroundColor { get; set; }
 
-		void InsertLines(
-			int afterLine,
-			int count);
-
-		void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text);
+		/// <summary>
+		/// Gets or sets the color of the line number margin.
+		/// </summary>
+		/// <value>The color of the line number.</value>
+		public Color LineNumberColor { get; set; }
 
 		#endregion
 	}

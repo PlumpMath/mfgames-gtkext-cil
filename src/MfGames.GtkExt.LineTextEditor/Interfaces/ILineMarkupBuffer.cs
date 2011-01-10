@@ -22,55 +22,22 @@
 
 #endregion
 
-#region Namespaces
-
-using System;
-
-#endregion
-
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
-	/// Represents a virtualized collection of lines for viewing and
-	/// editing.
+	/// Extends the ILineBuffer to include markup, formatting, or highlighting
+	/// to the line. Markup is done using Pango formatting.
 	/// </summary>
-	public interface ILineBuffer
+	public interface ILineMarkupBuffer : ILineBuffer
 	{
-		#region Buffer Viewing
-
-		int LineCount { get; }
+		#region Markup
 
 		/// <summary>
-		/// If set to true, the buffer is read-only and the editing commands
-		/// should throw an InvalidOperationException.
+		/// Gets the Pango markup for a given line.
 		/// </summary>
-		bool ReadOnly { get; }
-
-		int GetLineLength(int line);
-		string GetLineNumber(int line);
-
-		string GetLineText(
-			int line,
-			int startIndex,
-			int endIndex);
-
-		#endregion
-
-		#region Buffer Editing
-
-		void DeleteLines(
-			int startLine,
-			int endLine);
-
-		void InsertLines(
-			int afterLine,
-			int count);
-
-		void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text);
+		/// <param name="line">The line.</param>
+		/// <returns></returns>
+		string GetLineMarkup(int line);
 
 		#endregion
 	}
