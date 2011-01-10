@@ -34,9 +34,14 @@
   <ItemGroup>
     <Compile Include="Demo.cs" />
     <Compile Include="DemoComponents.cs" />
+    <Compile Include="DemoLineTextEditor.cs" />
     <Compile Include="TestEnum.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor\MfGames.GtkExt.LineTextEditor.csproj">
+      <Project>{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}</Project>
+      <Name>MfGames.GtkExt.LineTextEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
       <Project>{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}</Project>
       <Name>MfGames.GtkExt</Name>

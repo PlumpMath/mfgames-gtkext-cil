@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Text;
 
 using Gtk;
 
@@ -48,7 +49,10 @@ namespace GtkExtDemo
 		#region GUI
 
 		private static Statusbar statusbar;
-		private readonly DemoComponents demoComponents = new DemoComponents();
+		private readonly DemoComponents demoComponents =
+			new DemoComponents();
+		private readonly DemoLineTextEditor demoLineTextEditor =
+			new DemoLineTextEditor();
 		private readonly UIManager uiManager;
 		private Notebook notebook;
 
@@ -91,6 +95,7 @@ namespace GtkExtDemo
 			box.PackStart(notebook, true, true, 0);
 
 			notebook.AppendPage(demoComponents, new Label("Components"));
+			notebook.AppendPage(demoLineTextEditor, new Label("Line Text Editor"));
 
 			// Add the status bar
 			statusbar = new Statusbar();
@@ -105,12 +110,19 @@ namespace GtkExtDemo
 		private Widget CreateGuiMenu()
 		{
 			// Defines the menu
-			string uiInfo = "<ui>" + "  <menubar name='MenuBar'>" +
-			                "    <menu action='FileMenu'>" +
-			                "      <menuitem action='Quit'/>" + "    </menu>" +
-			                "    <menu action='ViewMenu'>" +
-			                "	   <menuitem action='Components'/>" + "    </menu>" +
-			                "  </menubar>" + "</ui>";
+			StringBuilder uiInfo = new StringBuilder();
+
+			uiInfo.Append("<ui>");
+			uiInfo.Append("<menubar name='MenuBar'>");
+			uiInfo.Append("<menu action='FileMenu'>");
+			uiInfo.Append("<menuitem action='Quit'/>");
+			uiInfo.Append("</menu>");
+			uiInfo.Append("<menu action='ViewMenu'>");
+			uiInfo.Append("<menuitem action='Components'/>");
+			uiInfo.Append("<menuitem action='LineTextEditor'/>");
+			uiInfo.Append("</menu>");
+			uiInfo.Append("</menubar>");
+			uiInfo.Append("</ui>");
 
 			// Set up the actions
 			var entries = new[]
@@ -134,6 +146,13 @@ namespace GtkExtDemo
 			              		"<control>1",
 			              		null,
 			              		OnSwitchComponents),
+			              	new ActionEntry(
+			              		"LineTextEditor",
+			              		null,
+			              		"_Line Text Editor",
+			              		"<control>2",
+			              		null,
+			              		OnSwitchLineTextEditor),
 			              };
 
 			// Build up the actions
@@ -144,7 +163,7 @@ namespace GtkExtDemo
 			AddAccelGroup(uiManager.AccelGroup);
 
 			// Set up the interfaces from XML
-			uiManager.AddUiFromString(uiInfo);
+			uiManager.AddUiFromString(uiInfo.ToString());
 			return uiManager.GetWidget("/MenuBar");
 		}
 
@@ -155,21 +174,11 @@ namespace GtkExtDemo
 		/// <summary>
 		/// Triggers the quit menu.
 		/// </summary>
-		private void OnQuitAction(
+		private static void OnQuitAction(
 			object sender,
 			EventArgs args)
 		{
 			Application.Quit();
-		}
-
-		/// <summary>
-		/// Called to switch to the auditor layer.
-		/// </summary>
-		private void OnSwitchAuditor(
-			object obj,
-			EventArgs args)
-		{
-			notebook.Page = 2;
 		}
 
 		/// <summary>
@@ -179,23 +188,23 @@ namespace GtkExtDemo
 			object obj,
 			EventArgs args)
 		{
-			notebook.Page = 1;
+			notebook.Page = 0;
 		}
 
 		/// <summary>
 		/// Called to switch to the editor.
 		/// </summary>
-		private void OnSwitchSimpleEditor(
+		private void OnSwitchLineTextEditor(
 			object obj,
 			EventArgs args)
 		{
-			notebook.Page = 0;
+			notebook.Page = 1;
 		}
 
 		/// <summary>
 		/// Fired when the window is closed.
 		/// </summary>
-		private void OnWindowDelete(
+		private static void OnWindowDelete(
 			object obj,
 			DeleteEventArgs args)
 		{
