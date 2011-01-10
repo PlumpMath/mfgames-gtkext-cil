@@ -1,7 +1,36 @@
-using Gtk;
+#region Copyright and License
+
+// Copyright (c) 2009-2011, Moonfire Games
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+#region Namespaces
+
 using System;
 using System.ComponentModel;
 using System.Reflection;
+
+using Gtk;
+
+#endregion
 
 namespace MfGames.GtkExt
 {
@@ -10,10 +39,10 @@ namespace MfGames.GtkExt
 	/// that takes a single enumeration and allows for retrieval
 	/// of those types.
 	/// </summary>
-	public class EnumComboBox
-	: ComboBox
+	public class EnumComboBox : ComboBox
 	{
-#region Constructors
+		#region Constructors
+
 		/// <summary>
 		/// Constructs the combo box from the given type.
 		/// </summary>
@@ -21,12 +50,11 @@ namespace MfGames.GtkExt
 		{
 			// Create the model
 			this.type = type;
-			ListStore store = new ListStore(typeof(string),
-							typeof(string));
+			var store = new ListStore(typeof(string), typeof(string));
 			Model = (TreeModel) store;
-			
+
 			// Set up the rendering
-			CellRendererText crt = new CellRendererText(); 
+			var crt = new CellRendererText();
 			PackStart(crt, true);
 			SetAttributes(crt, "text", 1);
 
@@ -34,22 +62,23 @@ namespace MfGames.GtkExt
 			foreach (string value in Enum.GetNames(type))
 			{
 				// Create the enumeration
-				Enum e = (Enum) Enum.Parse(type, value);
+				var e = (Enum) Enum.Parse(type, value);
 
 				// See if we can find a fancier name
 				string name = GetDescription(e);
 
 				// Add this row
-				store.AppendValues(value,
-						   name);
+				store.AppendValues(value, name);
 			}
 
 			// Set the initial active to be the first one
 			Active = 0;
 		}
-#endregion
 
-#region Properties
+		#endregion
+
+		#region Properties
+
 		private Type type;
 
 		/// <summary>
@@ -61,16 +90,16 @@ namespace MfGames.GtkExt
 			get
 			{
 				// Pull out the current element
-				ListStore store = (ListStore) Model;
+				var store = (ListStore) Model;
 				TreeIter iter;
 
 				if (!GetActiveIter(out iter))
-					throw new Exception("Cannot handle "
-							    + "missing data");
+				{
+					throw new Exception("Cannot handle " + "missing data");
+				}
 
 				// Parse the results and return it
-				string value =
-				  store.GetValue(iter, 0).ToString();
+				string value = store.GetValue(iter, 0).ToString();
 				return (Enum) Enum.Parse(type, value);
 			}
 
@@ -81,10 +110,10 @@ namespace MfGames.GtkExt
 				string str = value.ToString();
 
 				// Go through it
-				ListStore store = (ListStore) Model;
+				var store = (ListStore) Model;
 				int index = 0;
 
-				foreach (object [] row in store)
+				foreach (object[] row in store)
 				{
 					// Check for match
 					if (str == row[0].ToString())
@@ -98,9 +127,11 @@ namespace MfGames.GtkExt
 				}
 			}
 		}
-#endregion
 
-#region Reflection
+		#endregion
+
+		#region Reflection
+
 		/// <summary>
 		/// Returns any fancy name, if it has any.
 		/// </summary>
@@ -109,9 +140,8 @@ namespace MfGames.GtkExt
 			// Try to get the Description attribute
 			FieldInfo info = GetFieldInfo(e);
 			Type t = typeof(DescriptionAttribute);
-			object[] attributes =
-			  info.GetCustomAttributes(t, true);
-			
+			object[] attributes = info.GetCustomAttributes(t, true);
+
 			foreach (DescriptionAttribute da in attributes)
 			{
 				return da.Description;
@@ -133,12 +163,15 @@ namespace MfGames.GtkExt
 			{
 				// Check the name
 				if (fi.Name == e.ToString())
+				{
 					return fi;
+				}
 			}
-			
+
 			// Cannot find it
 			throw new Exception("Cannot find type: " + e);
 		}
-#endregion
+
+		#endregion
 	}
 }

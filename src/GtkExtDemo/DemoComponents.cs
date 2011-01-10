@@ -1,25 +1,54 @@
-using Gtk;
-using MfGames.GtkExt;
+#region Copyright and License
+
+// Copyright (c) 2009-2011, Moonfire Games
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+#region Namespaces
+
 using System;
 
-public class DemoComponents
-: VBox
+using Gtk;
+
+using MfGames.GtkExt;
+
+#endregion
+
+public class DemoComponents : VBox
 {
-	private EnumComboBox testEnumCombo;
+	private readonly EnumComboBox testEnumCombo;
 
 	public DemoComponents()
 	{
 		// Create the general frame
 		uint row = 1;
-		LabelWidgetTable table = new LabelWidgetTable(5, 2);
+		var table = new LabelWidgetTable(5, 2);
 		table.BorderWidth = 5;
 
 		// Just a text entry
-		Entry nameEntry = new Entry("Bob");
+		var nameEntry = new Entry("Bob");
 		table.AttachExpanded(row++, "Name", nameEntry);
 
 		// An unexpanded enumeration combo box
-		EnumComboBox ecb = new EnumComboBox(typeof(ButtonsType));
+		var ecb = new EnumComboBox(typeof(ButtonsType));
 		ecb.ActiveEnum = ButtonsType.YesNo;
 		table.Attach(row++, "EnumComboBox", ecb);
 
@@ -29,12 +58,8 @@ public class DemoComponents
 		table.Attach(row++, "Enum.ComboBox TestEnum", testEnumCombo);
 
 		// Add the string entry
-		StringListEntry sle = new StringListEntry();
-		sle.Values = new string [] {
-			"Line 1",
-			"Line 2",
-			"Line 3",
-		};
+		var sle = new StringListEntry();
+		sle.Values = new[] { "Line 1", "Line 2", "Line 3", };
 		sle.CompletionStore.AppendValues("List 4");
 		sle.CompletionStore.AppendValues("List 5");
 		sle.CompletionStore.AppendValues("List 6");
@@ -46,18 +71,19 @@ public class DemoComponents
 		PackStart(new Label(""), true, true, 0);
 	}
 
-#region Events
+	#region Events
+
 	/// <summary>
 	/// Fired when the test enumeration changes.
 	/// </summary>
-	private void OnTestEnumChanged(object obj, EventArgs args)
+	private void OnTestEnumChanged(
+		object obj,
+		EventArgs args)
 	{
-		Demo.Statusbar.Push(0,
-			       "TestEnum: "
-			       + testEnumCombo.ActiveEnum
-			       + " ("
-			       + testEnumCombo.Active
-			       + ")");
+		Demo.Statusbar.Push(
+			0,
+			"TestEnum: " + testEnumCombo.ActiveEnum + " (" + testEnumCombo.Active + ")");
 	}
-#endregion
+
+	#endregion
 }

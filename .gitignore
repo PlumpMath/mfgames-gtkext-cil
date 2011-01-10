@@ -1,5 +1,8 @@
-*.pidb
-*.user
 *.userprefs
+*.user
+*.pidb
+*.suo
 
 bin
+obj
+test-results
