@@ -233,7 +233,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the wrap mode from this selector or the parent.
 		/// </summary>
 		/// <returns></returns>
-		public WrapMode GetWrapMode()
+		public WrapMode GetWrap()
 		{
 			// If we have a value, then use that directly.
 			if (WrapMode.HasValue)
@@ -244,11 +244,22 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			// If we have a parent, then cascade up into it.
 			if (parent != null)
 			{
-				return parent.GetWrapMode();
+				return parent.GetWrap();
 			}
 
 			// Otherwise, return a sane default.
 			return Pango.WrapMode.Word;
+		}
+
+		/// <summary>
+		/// Sets the selector's style properties into the layout.
+		/// </summary>
+		/// <param name="layout">The layout.</param>
+		public void SetLayout(Layout layout)
+		{
+			layout.Wrap = GetWrap();
+			layout.Alignment = GetAlignment();
+			layout.FontDescription = GetFontDescription();
 		}
 
 		#endregion

@@ -74,12 +74,26 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			{
 				foreach (MarginRenderer marginRenderer in this)
 				{
-					marginRenderer.Width = 0;
+					marginRenderer.Reset();
 				}
 			}
 			finally
 			{
 				supressEvents = false;
+			}
+		}
+
+		/// <summary>
+		/// Resizes the margins to fit the new line buffer.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		public void Resize(TextEditor textEditor)
+		{
+			Reset();
+
+			foreach (MarginRenderer marginRenderer in this)
+			{
+				marginRenderer.Resize(textEditor);
 			}
 		}
 
@@ -150,6 +164,40 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			item.WidthChanged -= OnWidthChanged;
 			RecalculateWidth();
 			return base.Remove(item);
+		}
+
+		#endregion
+
+		#region Drawing
+
+		/// <summary>
+		/// Draws the margins at the given position.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="cairoContext">The cairo context.</param>
+		/// <param name="line">The line.</param>
+		/// <param name="x">The x.</param>
+		/// <param name="y">The y.</param>
+		/// <param name="height">The height.</param>
+		public void Draw(
+			TextEditor textEditor,
+			Cairo.Context cairoContext,
+			int line,
+			int x,
+			int y,
+			int height)
+		{
+			// Go through the margins and draw each one so they don't overlap.
+			int dx = x;
+
+			foreach (MarginRenderer marginRenderer in this)
+			{
+				if (marginRenderer.Visible)
+				{
+					marginRenderer.Draw(textEditor, cairoContext, line, dx, y, height);
+					dx += marginRenderer.Width;
+				}
+			}
 		}
 
 		#endregion

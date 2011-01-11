@@ -26,6 +26,10 @@
 
 using System;
 
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using Pango;
+
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Margins
@@ -76,8 +80,14 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			get { return width; }
 			set
 			{
+				bool fireEvent = width != value;
+
 				width = value;
-				FireWidthChanged();
+
+				if (fireEvent)
+				{
+					FireWidthChanged();
+				}
 			}
 		}
 
@@ -93,9 +103,47 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		}
 
 		/// <summary>
+		/// Resets this margin to the default width and setting.
+		/// </summary>
+		public virtual void Reset()
+		{
+			Width = 0;
+		}
+
+		/// <summary>
+		/// Resizes the specified margin based on the context.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		public virtual void Resize(TextEditor textEditor)
+		{
+			// The default implementation is to do nothing.
+		}
+
+		/// <summary>
 		/// Occurs when the width or visiblity of the margin changes.
 		/// </summary>
 		public event EventHandler WidthChanged;
+
+		#endregion
+
+		#region Drawing
+
+		/// <summary>
+		/// Draws the margin at the given position.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="cairoContext">The cairo context.</param>
+		/// <param name="line">The line.</param>
+		/// <param name="x">The x.</param>
+		/// <param name="y">The y.</param>
+		/// <param name="height">The height.</param>
+		public abstract void Draw(
+			TextEditor textEditor,
+			Cairo.Context cairoContext,
+			int line,
+			int x,
+			int y,
+			int height);
 
 		#endregion
 	}

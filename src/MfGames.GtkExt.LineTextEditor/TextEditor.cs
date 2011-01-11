@@ -76,12 +76,13 @@ namespace MfGames.GtkExt.LineTextEditor
 			CanFocus = true;
 			WidgetFlags |= WidgetFlags.NoWindow;
 
-			// Save the line buffer.
-			this.lineLayoutBuffer = lineLayoutBuffer;
-
 			// Set up the rest of the screen elements.
 			margins = new MarginRendererCollection();
+			margins.Add(new LineNumberMarginRenderer());
 			theme = new Theme();
+
+			// Save the line buffer which configures a number of other elements.
+			LineLayoutBuffer = lineLayoutBuffer;
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -99,14 +100,45 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Line Buffer
 
-		private readonly ILineLayoutBuffer lineLayoutBuffer;
+		private ILineLayoutBuffer lineLayoutBuffer;
+
+		/// <summary>
+		/// Gets or sets the line layout buffer.
+		/// </summary>
+		/// <value>The line layout buffer.</value>
+		public ILineLayoutBuffer LineLayoutBuffer
+		{
+			get { return lineLayoutBuffer; }
+			set
+			{
+				// Set the new buffer.
+				lineLayoutBuffer = value;
+
+				// Configure the new layout buffer.
+				if (lineLayoutBuffer != null)
+				{
+					// Reset the margins and force them to resize themselves.
+					margins.Resize(this);
+				}
+			}
+		}
 
 		#endregion
 
 		#region Screen Elements
 
-		private MarginRendererCollection margins;
+		private readonly MarginRendererCollection margins;
 		private Theme theme;
+
+		/// <summary>
+		/// Gets or sets the theme.
+		/// </summary>
+		/// <value>The theme.</value>
+		public Theme Theme
+		{
+			get { return theme; }
+			set { theme = value ?? new Theme(); }
+		}
 
 		#endregion
 
@@ -125,17 +157,17 @@ namespace MfGames.GtkExt.LineTextEditor
 			Rectangle area = e.Region.Clipbox;
 			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
 
-			using (Context cr = CairoHelper.Create(e.Window))
+			using (Context cairoContext = CairoHelper.Create(e.Window))
 			{
 				// Paint the background color of the window.
-				cr.Color = theme.Selectors[Theme.BodyStyle].GetBackgroundColor();
-				cr.Rectangle(cairoArea);
-				cr.Fill();
+				cairoContext.Color = theme.Selectors[Theme.BodyStyle].GetBackgroundColor();
+				cairoContext.Rectangle(cairoArea);
+				cairoContext.Fill();
 
 				// Reset the layout and its properties.
 				lineLayoutBuffer.Reset();
 				lineLayoutBuffer.Context = PangoContext;
-				lineLayoutBuffer.Width = area.Width;
+				lineLayoutBuffer.Width = area.Width - margins.Width;
 
 				// Figure out which lines we can draw on the screen.
 				int startLine = 0;
@@ -148,11 +180,15 @@ namespace MfGames.GtkExt.LineTextEditor
 				{
 					// Get the layout for the current line.
 					Pango.Layout layout = lineLayoutBuffer.GetLineLayout(line);
-					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), 0, lineY, layout);
+					theme.Selectors[Theme.TextStyle].SetLayout(layout);
+					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), margins.Width, lineY, layout);
 
 					// Get the extents for that line.
 					int width, height;
 					layout.GetPixelSize(out width, out height);
+
+					// Render out the margin renderers.
+					margins.Draw(this, cairoContext, line, 0, lineY, height);
 
 					// Move down a line.
 					lineY += height;

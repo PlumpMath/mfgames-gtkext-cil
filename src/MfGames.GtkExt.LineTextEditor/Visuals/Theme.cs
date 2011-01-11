@@ -26,6 +26,10 @@
 
 using C5;
 
+using Pango;
+
+using Color=Cairo.Color;
+
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Visuals
@@ -61,6 +65,8 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			var bodyStyle = new SelectorStyle(baseStyle);
 			var marginStyle = new SelectorStyle(baseStyle);
 			var lineNumberStyle = new SelectorStyle(marginStyle);
+			lineNumberStyle.Alignment = Alignment.Right;
+			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			var textStyle = new SelectorStyle(baseStyle);
 
 			selectors[BaseStyle] = baseStyle;
