@@ -2,6 +2,7 @@
 *.user
 *.pidb
 *.suo
+*.pdb
 
 bin
 obj

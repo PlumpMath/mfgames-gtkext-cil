@@ -33,6 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="C5, Version=1.1.1.0, Culture=neutral, PublicKeyToken=06a1b38866503b69, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\C5.dll</HintPath>
+    </Reference>
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
@@ -54,6 +58,7 @@
     <Compile Include="Buffers\PatternLineBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Buffers\MemoryLineBuffer.cs" />
+    <Compile Include="Visuals\SelectorStyle.cs" />
     <Compile Include="Visuals\Theme.cs" />
     <Compile Include="TextEditor.cs" />
   </ItemGroup>

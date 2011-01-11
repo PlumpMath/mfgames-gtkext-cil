@@ -24,11 +24,11 @@
 
 #region Namespaces
 
-using Cairo;
+using C5;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Themes
+namespace MfGames.GtkExt.LineTextEditor.Visuals
 {
 	/// <summary>
 	/// Contains the screen style used for rendering the various elements of the
@@ -36,6 +36,16 @@ namespace MfGames.GtkExt.LineTextEditor.Themes
 	/// </summary>
 	public class Theme
 	{
+		#region Constants
+
+		public const string BaseStyle = "Base";
+		public const string BodyStyle = "Body";
+		public const string LineNumberStyle = "LineNumber";
+		public const string MarginStyle = "Margin";
+		public const string TextStyle = "Text";
+
+		#endregion
+
 		#region Constructors
 
 		/// <summary>
@@ -43,25 +53,37 @@ namespace MfGames.GtkExt.LineTextEditor.Themes
 		/// </summary>
 		public Theme()
 		{
-			BackgroundColor = new Color(1, 1, 1);
-			LineNumberColor = new Color(0.5, 0.5, 0.5);
+			// Create the initial styles along with the styles used internally
+			// by the text editor.
+			selectors = new HashDictionary<string, SelectorStyle>();
+
+			var baseStyle = new SelectorStyle();
+			var bodyStyle = new SelectorStyle(baseStyle);
+			var marginStyle = new SelectorStyle(baseStyle);
+			var lineNumberStyle = new SelectorStyle(marginStyle);
+			var textStyle = new SelectorStyle(baseStyle);
+
+			selectors[BaseStyle] = baseStyle;
+			selectors[BodyStyle] = bodyStyle;
+			selectors[MarginStyle] = marginStyle;
+			selectors[LineNumberStyle] = lineNumberStyle;
+			selectors[TextStyle] = textStyle;
 		}
 
 		#endregion
 
-		#region Colors
+		#region Selectors
+
+		private readonly HashDictionary<string, SelectorStyle> selectors;
 
 		/// <summary>
-		/// Gets or sets the color of the background.
+		/// Gets the selector styles.
 		/// </summary>
-		/// <value>The color of the background.</value>
-		public Color BackgroundColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the color of the line number margin.
-		/// </summary>
-		/// <value>The color of the line number.</value>
-		public Color LineNumberColor { get; set; }
+		/// <value>The selectors.</value>
+		public HashDictionary<string, SelectorStyle> Selectors
+		{
+			get { return selectors; }
+		}
 
 		#endregion
 	}

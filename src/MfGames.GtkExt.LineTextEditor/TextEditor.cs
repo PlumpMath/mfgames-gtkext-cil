@@ -35,7 +35,7 @@ using Gtk;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
-using MfGames.GtkExt.LineTextEditor.Themes;
+using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Color=Cairo.Color;
 using Rectangle=Gdk.Rectangle;
@@ -128,7 +128,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			using (Context cr = CairoHelper.Create(e.Window))
 			{
 				// Paint the background color of the window.
-				cr.Color = theme.BackgroundColor;
+				cr.Color = theme.Selectors[Theme.BodyStyle].GetBackgroundColor();
 				cr.Rectangle(cairoArea);
 				cr.Fill();
 
@@ -142,20 +142,20 @@ namespace MfGames.GtkExt.LineTextEditor
 				int endLine = 2;
 
 				// Go through the lines and draw each one in the correct position.
-				int lineX = 0;
+				int lineY = 0;
 
-				for (int line = startLine; line < endLine; line++)
+				for (int line = startLine; line <= endLine; line++)
 				{
 					// Get the layout for the current line.
 					Pango.Layout layout = lineLayoutBuffer.GetLineLayout(line);
-					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), lineX, 0, layout);
+					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), 0, lineY, layout);
 
 					// Get the extents for that line.
 					int width, height;
 					layout.GetPixelSize(out width, out height);
 
 					// Move down a line.
-					lineX += height;
+					lineY += height;
 				}
 			}
 
