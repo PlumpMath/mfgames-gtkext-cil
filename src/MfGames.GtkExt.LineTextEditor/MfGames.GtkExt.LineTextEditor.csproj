@@ -54,7 +54,7 @@
     <Compile Include="Buffers\PatternLineBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Buffers\MemoryLineBuffer.cs" />
-    <Compile Include="Themes\Theme.cs" />
+    <Compile Include="Visuals\Theme.cs" />
     <Compile Include="TextEditor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
