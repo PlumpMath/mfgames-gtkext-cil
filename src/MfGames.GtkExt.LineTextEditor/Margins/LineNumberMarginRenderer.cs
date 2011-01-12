@@ -36,7 +36,8 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 			// Create a layout object and set its values.
 			Layout layout = new Layout(textEditor.PangoContext);
-			textEditor.Theme.Selectors[Theme.LineNumberStyle].SetLayout(layout);
+			SelectorStyle style = textEditor.Theme.Selectors[Theme.LineNumberStyle];
+			style.SetLayout(layout);
 
 			// Get the width of the first line.
 			int width = 0;
@@ -70,6 +71,12 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 				}
 			}
 
+			// Add in the padding, borders, and margins.
+			width += (int) Math.Ceiling(
+				style.GetMargins().Width +
+				style.GetPadding().Width +
+				style.GetBorders().Width);
+
 			// Set the new width in the margin.
 			Width = width;
 		}
@@ -98,12 +105,43 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		{
 			// Get the style for the line number.
 			SelectorStyle style = textEditor.Theme.Selectors[Theme.LineNumberStyle];
+			var margins = style.GetMargins();
+			var padding = style.GetPadding();
+			var borders = style.GetBorders();
+			double marginLeftX = margins.Left + borders.Left.LineWidth;
+			double paddingLeftX = marginLeftX + padding.Left;
+			double marginRightX = margins.Right + borders.Right.LineWidth;
+			double paddingRightX = marginRightX + padding.Right;
 
 			// Draw the background color.
-			var cairoArea = new Cairo.Rectangle(x, y, Width, height);
+			var cairoArea = new Cairo.Rectangle(
+				x + marginLeftX, 
+				y, Width - marginLeftX - marginRightX, 
+				height);
 			cairoContext.Color = style.GetBackgroundColor();
 			cairoContext.Rectangle(cairoArea);
 			cairoContext.Fill();
+
+			// Draw the border lines.
+			if (borders.Left.LineWidth > 0)
+			{
+				cairoContext.LineWidth = borders.Left.LineWidth;
+				cairoContext.Color = borders.Left.Color;
+
+				cairoContext.MoveTo(x + margins.Left, y);
+				cairoContext.LineTo(x + margins.Left, y + height);
+				cairoContext.Stroke();
+			}
+
+			if (borders.Right.LineWidth > 0)
+			{
+				cairoContext.LineWidth = borders.Right.LineWidth;
+				cairoContext.Color = borders.Right.Color;
+
+				cairoContext.MoveTo(x + Width - margins.Right, y);
+				cairoContext.LineTo(x + Width - margins.Right, y + height);
+				cairoContext.Stroke();
+			}
 
 			// Create a layout of the line number.
 			string lineNumber = textEditor.LineLayoutBuffer.GetLineNumber(line);
@@ -126,7 +164,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 			textEditor.GdkWindow.DrawLayout(
 				textEditor.Style.TextGC(StateType.Normal),
-				x + Width - layoutWidth,
+				(int) (x + Width - layoutWidth + paddingLeftX - paddingRightX),
 				y,
 				layout);
 		}

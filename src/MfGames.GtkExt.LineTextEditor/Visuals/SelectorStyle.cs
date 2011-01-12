@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System.Diagnostics;
+
 using C5;
 
 using Pango;
@@ -50,6 +52,9 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		public SelectorStyle()
 		{
 			children = new LinkedList<SelectorStyle>();
+			margins = new OptionalSpacing();
+			padding = new OptionalSpacing();
+			borders = new OptionalBorders();
 		}
 
 		/// <summary>
@@ -75,6 +80,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// <value>The children.</value>
 		public LinkedList<SelectorStyle> Children
 		{
+			[DebuggerStepThrough]
 			get { return children; }
 		}
 
@@ -86,6 +92,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// <value>The parent.</value>
 		public SelectorStyle Parent
 		{
+			[DebuggerStepThrough]
 			get { return parent; }
 			set
 			{
@@ -161,6 +168,159 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 			// Otherwise, return a sane default.
 			return new Color(0, 0, 0);
+		}
+
+		#endregion
+
+		#region Spacing and Borders
+
+		private OptionalSpacing margins;
+		private OptionalSpacing padding;
+		private OptionalBorders borders;
+
+		/// <summary>
+		/// Gets or sets the borders.
+		/// </summary>
+		/// <value>The borders.</value>
+		public OptionalBorders Borders
+		{
+			[DebuggerStepThrough]
+			get { return borders; }
+			[DebuggerStepThrough]
+			set { borders = value ?? new OptionalBorders(); }
+		}
+
+		/// <summary>
+		/// Gets or sets the margins.
+		/// </summary>
+		/// <value>The margins.</value>
+		public OptionalSpacing Margins
+		{
+			[DebuggerStepThrough]
+			get { return margins; }
+			set { margins = value ?? new OptionalSpacing(); }
+		}
+
+		/// <summary>
+		/// Gets or sets the padding.
+		/// </summary>
+		/// <value>The padding.</value>
+		public OptionalSpacing Padding
+		{
+			[DebuggerStepThrough]
+			get { return padding; }
+			set { padding = value ?? new OptionalSpacing(); }
+		}
+
+		/// <summary>
+		/// Gets the completed margins by processing the parents.
+		/// </summary>
+		/// <returns></returns>
+		public Spacing GetMargins()
+		{
+			// If we have all four margins, then return them.
+			if (margins.Complete)
+			{
+				return margins.ToSpacing();
+			}
+
+			// If the current is empty, then just get the parent.
+			if (margins.Empty)
+			{
+				return parent != null ? parent.GetMargins() : new Spacing();
+			}
+
+			// If we don't have a parent, then we set the rest of the values
+			// to zero and return it.
+			if (parent == null)
+			{
+				return margins.ToSpacing();
+			}
+
+			// If we have a parent, then we need to merge all the values
+			// together.
+			Spacing parentMargins = parent.GetMargins();
+
+			return
+				new Spacing(
+					margins.Top.HasValue ? margins.Top.Value : parentMargins.Top,
+					margins.Right.HasValue ? margins.Right.Value : parentMargins.Right,
+					margins.Bottom.HasValue ? margins.Bottom.Value : parentMargins.Bottom,
+					margins.Left.HasValue ? margins.Left.Value : parentMargins.Left);
+		}
+
+		/// <summary>
+		/// Gets the completed borders by processing the parents.
+		/// </summary>
+		/// <returns></returns>
+		public Borders GetBorders()
+		{
+			// If we have all four borders, then return them.
+			if (borders.Complete)
+			{
+				return borders.ToBorders();
+			}
+
+			// If the current is empty, then just get the parent.
+			if (borders.Empty)
+			{
+				return parent != null ? parent.GetBorders() : new Borders();
+			}
+
+			// If we don't have a parent, then we set the rest of the values
+			// to zero and return it.
+			if (parent == null)
+			{
+				return borders.ToBorders();
+			}
+
+			// If we have a parent, then we need to merge all the values
+			// together.
+			Borders parentBorders = parent.GetBorders();
+
+			return
+				new Borders(
+					borders.Top ?? parentBorders.Top,
+					borders.Right ?? parentBorders.Right,
+					borders.Bottom ?? parentBorders.Bottom,
+					borders.Left ?? parentBorders.Left);
+		}
+
+		/// <summary>
+		/// Gets the completed paddings by processing the parents.
+		/// </summary>
+		/// <returns></returns>
+		public Spacing GetPadding()
+		{
+			// If we have all four padding, then return them.
+			if (padding.Complete)
+			{
+				return padding.ToSpacing();
+			}
+
+			// If the current is empty, then just get the parent.
+			if (padding.Empty)
+			{
+				return parent != null ? parent.GetPadding() : new Spacing();
+			}
+
+			// If we don't have a parent, then we set the rest of the values
+			// to zero and return it.
+			if (parent == null)
+			{
+				return padding.ToSpacing();
+			}
+
+			// If we have a parent, then we need to merge all the values
+			// together.
+			Spacing parentPadding = parent.GetPadding();
+
+			return
+				new Spacing(
+					padding.Top.HasValue ? padding.Top.Value : parentPadding.Top,
+					padding.Right.HasValue ? padding.Right.Value : parentPadding.Right,
+					padding.Bottom.HasValue ? padding.Bottom.Value : parentPadding.Bottom,
+					padding.Left.HasValue ? padding.Left.Value : parentPadding.Left);
 		}
 
 		#endregion

@@ -37,7 +37,7 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
-using Color=Cairo.Color;
+using Layout=Pango.Layout;
 using Rectangle=Gdk.Rectangle;
 using Window=Gdk.Window;
 using WindowType=Gdk.WindowType;
@@ -144,7 +144,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Rendering Events
 
-		protected override bool OnExposeEvent(Gdk.EventExpose e)
+		protected override bool OnExposeEvent(EventExpose e)
 		{
 			Console.WriteLine(
 				"{0} expose {1},{2} {3}x{4}",
@@ -171,7 +171,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				// Figure out which lines we can draw on the screen.
 				int startLine = 0;
-				int endLine = 2;
+				int endLine = 10;
 
 				// Go through the lines and draw each one in the correct position.
 				int lineY = 0;
@@ -179,9 +179,10 @@ namespace MfGames.GtkExt.LineTextEditor
 				for (int line = startLine; line <= endLine; line++)
 				{
 					// Get the layout for the current line.
-					Pango.Layout layout = lineLayoutBuffer.GetLineLayout(line);
+					Layout layout = lineLayoutBuffer.GetLineLayout(line);
 					theme.Selectors[Theme.TextStyle].SetLayout(layout);
-					GdkWindow.DrawLayout(Style.TextGC(StateType.Normal), margins.Width, lineY, layout);
+					GdkWindow.DrawLayout(
+						Style.TextGC(StateType.Normal), margins.Width, lineY, layout);
 
 					// Get the extents for that line.
 					int width, height;
@@ -202,15 +203,6 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Window Events
 
-		protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-		{
-			base.OnSizeAllocated(allocation);
-
-			if (this.GdkWindow != null)
-				this.GdkWindow.MoveResize(allocation);
-
-			QueueDraw();
-		}
 		/// <summary>
 		/// Called when the window is realized (shown).
 		/// </summary>
@@ -230,14 +222,24 @@ namespace MfGames.GtkExt.LineTextEditor
 			attributes.Mask = Events | EventMask.ExposureMask;
 
 			const WindowAttributesType mask =
-				WindowAttributesType.X | 
-				WindowAttributesType.Y |
-				WindowAttributesType.Colormap |
-				WindowAttributesType.Visual;
+				WindowAttributesType.X | WindowAttributesType.Y |
+				WindowAttributesType.Colormap | WindowAttributesType.Visual;
 			GdkWindow = new Window(ParentWindow, attributes, mask);
 			GdkWindow.UserData = Raw;
 			Style = Style.Attach(GdkWindow);
 			WidgetFlags &= ~WidgetFlags.NoWindow;
+		}
+
+		protected override void OnSizeAllocated(Rectangle allocation)
+		{
+			base.OnSizeAllocated(allocation);
+
+			if (GdkWindow != null)
+			{
+				GdkWindow.MoveResize(allocation);
+			}
+
+			QueueDraw();
 		}
 
 		/// <summary>
