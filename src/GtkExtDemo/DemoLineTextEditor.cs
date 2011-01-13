@@ -52,6 +52,7 @@ namespace GtkExtDemo
 
 			// Wrap the text editor in a scrollbar.
 			ScrolledWindow scrolledWindow = new ScrolledWindow();
+			scrolledWindow.VscrollbarPolicy = PolicyType.Always;
 			scrolledWindow.Add(textEditor);
 
 			// Add the editor to the current tab.

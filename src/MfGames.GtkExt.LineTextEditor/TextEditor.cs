@@ -144,6 +144,20 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Rendering Events
 
+		/// <summary>
+		/// Gets the width of the area that can be used for rendering text.
+		/// </summary>
+		/// <value>The width of the text.</value>
+		private int TextWidth
+		{
+			get { return Allocation.Width - margins.Width; }
+		}
+
+		/// <summary>
+		/// Called when the widget is exposed or drawn.
+		/// </summary>
+		/// <param name="e">The e.</param>
+		/// <returns></returns>
 		protected override bool OnExposeEvent(EventExpose e)
 		{
 			Console.WriteLine(
@@ -166,37 +180,117 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				// Reset the layout and its properties.
 				lineLayoutBuffer.Reset();
-				lineLayoutBuffer.Context = PangoContext;
 				lineLayoutBuffer.Width = area.Width - margins.Width;
 
-				// Figure out which lines we can draw on the screen.
-				int startLine = 0;
-				int endLine = 30;
+				// Figure out the viewport area we'll be drawing.
+				int offsetY = 0;
+
+				if (verticalAdjustment != null)
+				{
+					offsetY += (int) verticalAdjustment.Value;
+				}
+
+				var viewArea = new Cairo.Rectangle(
+					area.X,
+					area.Y + offsetY,
+					area.Width,
+					area.Height);
+
+				// Determine the line range visible in the given area.
+				int startLine, endLine;
+				lineLayoutBuffer.GetLineLayoutRange(this, viewArea, out startLine, out endLine);
+
+				// Determine where the first line actually starts.
+				int startLineY = 0;
+				
+				if (startLine > 0)
+				{
+					startLineY = lineLayoutBuffer.GetTextLayoutHeight(this, 0, startLine - 1);
+				}
 
 				// Go through the lines and draw each one in the correct position.
-				int lineY = 0;
+				int currentY = startLineY - offsetY;
 
 				for (int line = startLine; line <= endLine; line++)
 				{
 					// Get the layout for the current line.
-					Layout layout = lineLayoutBuffer.GetLineLayout(line);
-					theme.Selectors[Theme.TextStyle].SetLayout(layout);
+					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
 					GdkWindow.DrawLayout(
-						Style.TextGC(StateType.Normal), margins.Width, lineY, layout);
+						Style.TextGC(StateType.Normal), margins.Width, currentY, layout);
 
 					// Get the extents for that line.
 					int width, height;
 					layout.GetPixelSize(out width, out height);
 
 					// Render out the margin renderers.
-					margins.Draw(this, cairoContext, line, 0, lineY, height);
+					margins.Draw(this, cairoContext, line, 0, currentY, height);
 
 					// Move down a line.
-					lineY += height;
+					currentY += height;
 				}
 			}
 
 			return true;
+		}
+
+		#endregion
+
+		#region Scrollbars
+
+		private Adjustment verticalAdjustment;
+
+		/// <summary>
+		/// Called when the vertical adjustment is changed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnVerticalAdjustment(object sender, EventArgs args)
+		{
+			// Redraw the entire window.
+			QueueDraw();
+		}
+
+		protected override void OnSetScrollAdjustments(Adjustment hadj, Adjustment vadj)
+		{
+			// Determine if we need to remove ourselves from the previous adjustment
+			// events.
+			if (verticalAdjustment != null)
+			{
+				verticalAdjustment.ValueChanged -= OnVerticalAdjustment;
+			}
+			
+			// And set the bounds based on our size.
+			verticalAdjustment = vadj;
+
+			SetAdjustments();
+
+			// Add the events, if we have an adjustment.
+			if (verticalAdjustment != null)
+			{
+				verticalAdjustment.ValueChanged += OnVerticalAdjustment;
+			}
+		}
+
+		/// <summary>
+		/// Used to set the adjustments on the scrollbars for the text editor
+		/// </summary>
+		private void SetAdjustments()
+		{
+			// We have to have a size and an adjustment.
+			if (verticalAdjustment == null)
+			{
+				return;
+			}
+
+			// Set the line buffer's width and then request the height for all
+			// the lines in the buffer.
+			lineLayoutBuffer.Width = TextWidth;
+			int height = lineLayoutBuffer.GetTextLayoutHeight(this, 0, -1);
+
+			// Set the adjustments based on those values.
+			verticalAdjustment.Upper = height;
+			verticalAdjustment.StepIncrement = lineLayoutBuffer.GetTextLayoutLineHeight(this);
+			verticalAdjustment.PageSize = (int) (Allocation.Height / 2.0);
 		}
 
 		#endregion
@@ -230,15 +324,25 @@ namespace MfGames.GtkExt.LineTextEditor
 			WidgetFlags &= ~WidgetFlags.NoWindow;
 		}
 
+		/// <summary>
+		/// Called when the widget is resized.
+		/// </summary>
+		/// <param name="allocation">The allocation.</param>
 		protected override void OnSizeAllocated(Rectangle allocation)
 		{
+			// Call the base implementation.
 			base.OnSizeAllocated(allocation);
 
+			// If we have a GdkWindow, move it.
 			if (GdkWindow != null)
 			{
 				GdkWindow.MoveResize(allocation);
 			}
 
+			// Change the adjustments (scrollbars).
+			SetAdjustments();
+
+			// Force the entire widget to draw.
 			QueueDraw();
 		}
 

@@ -26,6 +26,8 @@
 
 using Pango;
 
+using Rectangle=Cairo.Rectangle;
+
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
@@ -39,12 +41,6 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		#region Layout
 
 		/// <summary>
-		/// Sets the Pango context for the layout.
-		/// </summary>
-		/// <value>The context.</value>
-		Context Context { set; }
-
-		/// <summary>
 		/// Sets the pixel width of a layout in case the layout uses word
 		/// wrapping.
 		/// </summary>
@@ -54,14 +50,47 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
-		Layout GetLineLayout(int line);
+		Layout GetLineLayout(TextEditor textEditor, int line);
+
+		/// <summary>
+		/// Gets the pixel height of the lines in the buffer. If endLine is -1
+		/// it means the last line in the buffer.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="startLine">The start line.</param>
+		/// <param name="endLine">The end line.</param>
+		/// <returns></returns>
+		int GetTextLayoutHeight(
+			TextEditor textEditor,
+			int startLine,
+			int endLine);
+
+		/// <summary>
+		/// Gets the height of a single line of "normal" text.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <returns></returns>
+		int GetTextLayoutLineHeight(TextEditor textEditor);
 
 		/// <summary>
 		/// Resets the layout operations.
 		/// </summary>
 		void Reset();
+
+		/// <summary>
+		/// Gets the lines that are visible in the given view area.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="viewArea">The view area.</param>
+		/// <param name="startLine">The start line.</param>
+		/// <param name="endLine">The end line.</param>
+		void GetLineLayoutRange(TextEditor textEditor,
+								Rectangle viewArea,
+								out int startLine,
+								out int endLine);
 
 		#endregion
 	}
