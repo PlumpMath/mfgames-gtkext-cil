@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -41,7 +39,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	/// Implements a basic line layout buffer that performs no caching or
 	/// additional formatting beyond a simple font.
 	/// </summary>
-	public class SimpleLineLayoutBuffer : ILineLayoutBuffer
+	public class SimpleLineLayoutBuffer : LineMarkupBufferProxy, ILineLayoutBuffer
 	{
 		#region Constructors
 
@@ -59,14 +57,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="lineMarkupBuffer">The line markup buffer.</param>
 		public SimpleLineLayoutBuffer(ILineMarkupBuffer lineMarkupBuffer)
+			: base(lineMarkupBuffer)
 		{
-			// Save the inner buffer.
-			if (lineMarkupBuffer == null)
-			{
-				throw new ArgumentNullException("lineMarkupBuffer");
-			}
-
-			buffer = lineMarkupBuffer;
 		}
 
 		#endregion
@@ -108,89 +100,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			layout.Wrap = WrapMode.Word;
 			layout.Alignment = Alignment.Left;
 			//layout.FontDescription = FontDescription.FromString("Courier New 12");
-		}
-
-		#endregion
-
-		#region Inner Buffer
-
-		private readonly ILineMarkupBuffer buffer;
-
-		#endregion
-
-		#region Buffer Viewing
-
-		public int LineCount
-		{
-			get { return buffer.LineCount; }
-		}
-
-		/// <summary>
-		/// If set to true, the buffer is read-only and the editing commands
-		/// should throw an InvalidOperationException.
-		/// </summary>
-		public bool ReadOnly
-		{
-			get { return buffer.ReadOnly; }
-		}
-
-		public int GetLineLength(int line)
-		{
-			return buffer.GetLineLength(line);
-		}
-
-		public string GetLineNumber(int line)
-		{
-			return buffer.GetLineNumber(line);
-		}
-
-		public string GetLineText(
-			int line,
-			int startIndex,
-			int endIndex)
-		{
-			return buffer.GetLineText(line, startIndex, endIndex);
-		}
-
-		#endregion
-
-		#region Buffer Editing
-
-		public void DeleteLines(
-			int startLine,
-			int endLine)
-		{
-			buffer.DeleteLines(startLine, endLine);
-		}
-
-		public void InsertLines(
-			int afterLine,
-			int count)
-		{
-			buffer.InsertLines(afterLine, count);
-		}
-
-		public void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text)
-		{
-			buffer.SetLineText(line, startIndex, endIndex, text);
-		}
-
-		#endregion
-
-		#region Markup
-
-		/// <summary>
-		/// Gets the Pango markup for a given line.
-		/// </summary>
-		/// <param name="line">The line.</param>
-		/// <returns></returns>
-		public string GetLineMarkup(int line)
-		{
-			return buffer.GetLineMarkup(line);
 		}
 
 		#endregion
@@ -237,12 +146,78 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Resets the layout operations.
+		/// Gets the height of a single line layout.
 		/// </summary>
-		public void Reset()
+		/// <param name="line">The line.</param>
+		/// <param name="textEditor">The text editor.</param>
+		/// <returns></returns>
+		private int GetLineLayoutHeight(
+			TextEditor textEditor,
+			int line)
 		{
 			layout = null;
-			lastLine = -1;
+			Context = textEditor.PangoContext;
+			Layout lineLayout = GetLineLayout(textEditor, line);
+
+			// Get the extents for the line while rendered.
+			int lineWidth, lineHeight;
+			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
+			return lineHeight;
+		}
+
+		/// <summary>
+		/// Gets the lines that are visible in the given view area.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="viewArea">The view area.</param>
+		/// <param name="startLine">The start line.</param>
+		/// <param name="endLine">The end line.</param>
+		public void GetLineLayoutRange(
+			TextEditor textEditor,
+			Rectangle viewArea,
+			out int startLine,
+			out int endLine)
+		{
+			// Reset the start line to negative to indicate we don't have a
+			// visible line yet.
+			startLine = -1;
+
+			// Go through all the lines until we find one that is in the range.
+			int currentY = 0;
+
+			for (int line = 0; line < LineCount; line++)
+			{
+				// Get the height for this line.
+				int height = GetLineLayoutHeight(textEditor, line);
+
+				// If we don't have a starting line, then check to see if this
+				// line is visible.
+				if (startLine < 0)
+				{
+					if (currentY + height >= viewArea.Y)
+					{
+						startLine = line;
+					}
+				}
+
+				// Set the end line equal to the current line so it moves forward
+				// until we break out.
+				endLine = line;
+
+				// Add the height to the current Y offset. If it exceeds the
+				// viewport, then we are done.
+				currentY += height;
+
+				if (currentY > viewArea.Y + viewArea.Height)
+				{
+					// We are done, so return the values.
+					return;
+				}
+			}
+
+			// If we got this far, nothing is visible.
+			startLine = endLine = 0;
+			return;
 		}
 
 		/// <summary>
@@ -287,25 +262,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Gets the height of a single line layout.
-		/// </summary>
-		/// <param name="line">The line.</param>
-		/// <param name="textEditor">The text editor.</param>
-		/// <returns></returns>
-		private int GetLineLayoutHeight(TextEditor textEditor,
-		                                int line)
-		{
-			layout = null;
-			Context = textEditor.PangoContext;
-			Layout lineLayout = GetLineLayout(textEditor, line);
-
-			// Get the extents for the line while rendered.
-			int lineWidth, lineHeight;
-			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
-			return lineHeight;
-		}
-
-		/// <summary>
 		/// Gets the height of a single line of "normal" text.
 		/// </summary>
 		/// <param name="textEditor">The text editor.</param>
@@ -327,58 +283,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Gets the lines that are visible in the given view area.
+		/// Resets the layout operations.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <param name="viewArea">The view area.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
-		public void GetLineLayoutRange(
-			TextEditor textEditor,
-			Rectangle viewArea,
-			out int startLine,
-			out int endLine)
+		public void Reset()
 		{
-			// Reset the start line to negative to indicate we don't have a
-			// visible line yet.
-			startLine = -1;
-
-			// Go through all the lines until we find one that is in the range.
-			int currentY = 0;
-			
-			for (int line = 0; line < LineCount; line++)
-			{
-				// Get the height for this line.
-				int height = GetLineLayoutHeight(textEditor, line);
-
-				// If we don't have a starting line, then check to see if this
-				// line is visible.
-				if (startLine < 0)
-				{
-					if (currentY + height >= viewArea.Y)
-					{
-						startLine = line;
-					}
-				}
-
-				// Set the end line equal to the current line so it moves forward
-				// until we break out.
-				endLine = line;
-
-				// Add the height to the current Y offset. If it exceeds the
-				// viewport, then we are done.
-				currentY += height;
-
-				if (currentY > viewArea.Y + viewArea.Height)
-				{
-					// We are done, so return the values.
-					return;
-				}
-			}
-
-			// If we got this far, nothing is visible.
-			startLine = endLine = 0;
-			return;
+			layout = null;
+			lastLine = -1;
 		}
 
 		#endregion

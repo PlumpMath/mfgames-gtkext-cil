@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -33,19 +31,34 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
 	/// <summary>
-	/// Creates a line markup that does no formatting on a inner line object.
+	/// Implements a proxy for a ILineMarkupBuffer that calls the underlying
+	/// buffer for all the methods in ILineMarkupBuffer classes.
 	/// </summary>
-	public class UnformattedLineMarkupBuffer : LineBufferProxy, ILineMarkupBuffer
+	public class LineMarkupBufferProxy : LineBufferProxy, ILineMarkupBuffer
 	{
 		#region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="UnformattedLineMarkupBuffer"/> class.
-		/// </summary>
-		/// <param name="lineBuffer">The line buffer.</param>
-		public UnformattedLineMarkupBuffer(ILineBuffer lineBuffer)
-			: base(lineBuffer)
+		public LineMarkupBufferProxy(ILineMarkupBuffer buffer)
+			: base(buffer)
 		{
+		}
+
+		#endregion
+
+		#region Buffer
+
+		/// <summary>
+		/// Gets the line markup buffer.
+		/// </summary>
+		/// <value>The line markup buffer.</value>
+		protected ILineMarkupBuffer LineMarkupBuffer
+		{
+			get
+			{
+				// This works since we passed in a ILineMarkupBuffer into
+				// the class and ILineMarkupBuffer extends ILineBuffer.
+				return (ILineMarkupBuffer) LineBuffer;
+			}
 		}
 
 		#endregion
@@ -57,14 +70,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
-		public string GetLineMarkup(int line)
+		public virtual string GetLineMarkup(int line)
 		{
-			string text = GetLineText(line, 0, -1);
-
-			return text
-				.Replace("&", "&amp;")
-				.Replace("<", "&lt;")
-				.Replace(">", "&gt;");
+			return LineMarkupBuffer.GetLineMarkup(line);
 		}
 
 		#endregion
