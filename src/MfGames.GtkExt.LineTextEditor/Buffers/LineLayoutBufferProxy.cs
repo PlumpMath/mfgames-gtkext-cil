@@ -102,7 +102,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public void GetLineLayoutRange(
+		public virtual void GetLineLayoutRange(
 			TextEditor textEditor,
 			Rectangle viewArea,
 			out int startLine,
@@ -120,7 +120,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		/// <returns></returns>
-		public int GetTextLayoutHeight(
+		public virtual int GetTextLayoutHeight(
 			TextEditor textEditor,
 			int startLine,
 			int endLine)
@@ -133,7 +133,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="textEditor">The text editor.</param>
 		/// <returns></returns>
-		public int GetTextLayoutLineHeight(TextEditor textEditor)
+		public virtual int GetTextLayoutLineHeight(TextEditor textEditor)
 		{
 			return LineLayoutBuffer.GetTextLayoutLineHeight(textEditor);
 		}
@@ -141,7 +141,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Resets the layout operations.
 		/// </summary>
-		public void Reset()
+		public virtual void Reset()
 		{
 			LineLayoutBuffer.Reset();
 		}
