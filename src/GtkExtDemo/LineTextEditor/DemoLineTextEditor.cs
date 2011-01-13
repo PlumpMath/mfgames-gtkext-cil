@@ -32,7 +32,7 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace GtkExtDemo
+namespace GtkExtDemo.LineTextEditor
 {
 	/// <summary>
 	/// Contains the basic control for showing off the features of the line
@@ -43,7 +43,7 @@ namespace GtkExtDemo
 		public DemoLineTextEditor()
 		{
 			// Create a basic text editor inside a scrolling window.
-			ILineBuffer lineBuffer = new PatternLineBuffer(1024, 256);
+			ILineBuffer lineBuffer = new PatternLineBuffer(1024, 256, 4);
 			ILineMarkupBuffer lineMarkupBuffer =
 				new UnformattedLineMarkupBuffer(lineBuffer);
 			ILineLayoutBuffer lineLayoutBuffer =

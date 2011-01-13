@@ -29,6 +29,8 @@ using System.Text;
 
 using Gtk;
 
+using GtkExtDemo.LineTextEditor;
+
 #endregion
 
 namespace GtkExtDemo

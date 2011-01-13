@@ -55,7 +55,6 @@
     <Compile Include="Margins\LineNumberMarginRenderer.cs" />
     <Compile Include="Margins\MarginRenderer.cs" />
     <Compile Include="Margins\MarginRendererCollection.cs" />
-    <Compile Include="Buffers\PatternLineBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Buffers\MemoryLineBuffer.cs" />
     <Compile Include="Visuals\Border.cs" />

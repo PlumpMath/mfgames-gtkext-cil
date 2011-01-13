@@ -31,7 +31,7 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace GtkExtDemo.LineTextEditor
 {
 	/// <summary>
 	/// Implements a line buffer that produces a pattern of text which is suitable
@@ -46,12 +46,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="lines">The lines.</param>
 		/// <param name="width">The width.</param>
+		/// <param name="divisor">The divisor which is used to create different lengths of lines.</param>
 		public PatternLineBuffer(
 			int lines,
-			int width)
+			int width,
+			int divisor)
 		{
 			this.lines = lines;
 			this.width = width;
+			this.divisor = divisor;
 		}
 
 		#endregion
@@ -63,6 +66,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		private readonly int lines;
 		private readonly int width;
+		private readonly int divisor;
 
 		/// <summary>
 		/// Gets the line count.
@@ -102,19 +106,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// be no more than the width of the line.
 			var buffer = new StringBuilder();
 			int index = line % Words.Length;
+			int lineWidth = width / (1 + line % divisor);
 
-			while (buffer.Length < width)
+			while (buffer.Length < lineWidth)
 			{
 				// Get the next word we'll be adding to the line.
 				string nextWord = Words[index];
 				index = (index + 1) % Words.Length;
-
-				// Check to see if the selected word would bring us beyond the
-				// limit.
-				if (buffer.Length + nextWord.Length > width)
-				{
-					break;
-				}
 
 				// Append the word to the string along with a space.
 				buffer.Append(nextWord);
