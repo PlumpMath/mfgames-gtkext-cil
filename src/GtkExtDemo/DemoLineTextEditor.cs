@@ -50,8 +50,12 @@ namespace GtkExtDemo
 				new SimpleLineLayoutBuffer(lineMarkupBuffer);
 			var textEditor = new TextEditor(lineLayoutBuffer);
 
+			// Wrap the text editor in a scrollbar.
+			ScrolledWindow scrolledWindow = new ScrolledWindow();
+			scrolledWindow.Add(textEditor);
+
 			// Add the editor to the current tab.
-			PackStart(textEditor, true, true, 0);
+			PackStart(scrolledWindow, true, true, 0);
 		}
 	}
 }

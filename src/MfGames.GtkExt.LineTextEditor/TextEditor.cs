@@ -171,7 +171,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				// Figure out which lines we can draw on the screen.
 				int startLine = 0;
-				int endLine = 10;
+				int endLine = 30;
 
 				// Go through the lines and draw each one in the correct position.
 				int lineY = 0;

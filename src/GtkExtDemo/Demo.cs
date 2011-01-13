@@ -44,7 +44,6 @@ namespace GtkExtDemo
 			// Build the GUI
 			uiManager = new UIManager();
 			CreateGui();
-			notebook.Page = 1;
 		}
 
 		#region GUI
@@ -225,14 +224,11 @@ namespace GtkExtDemo
 			// Create the demo
 			var demo = new Demo();
 
-			// Assign the page if we can
-			try
+			// Assign the page if the user requested it.
+			if (args.Length > 0)
 			{
 				int page = Int32.Parse(args[0]);
 				demo.CurrentPage = page;
-			}
-			catch
-			{
 			}
 
 			// Start everything running
