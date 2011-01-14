@@ -179,7 +179,6 @@ namespace MfGames.GtkExt.LineTextEditor
 				cairoContext.Fill();
 
 				// Reset the layout and its properties.
-				lineLayoutBuffer.Reset();
 				lineLayoutBuffer.Width = area.Width - margins.Width;
 
 				// Figure out the viewport area we'll be drawing.
@@ -205,7 +204,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				
 				if (startLine > 0)
 				{
-					startLineY = lineLayoutBuffer.GetTextLayoutHeight(this, 0, startLine - 1);
+					startLineY = lineLayoutBuffer.GetLineLayoutHeight(this, 0, startLine - 1);
 				}
 
 				// Go through the lines and draw each one in the correct position.
@@ -282,10 +281,16 @@ namespace MfGames.GtkExt.LineTextEditor
 				return;
 			}
 
+			// If the text width is negative, then we can't format.
+			if (TextWidth < 0)
+			{
+				return;
+			}
+
 			// Set the line buffer's width and then request the height for all
 			// the lines in the buffer.
 			lineLayoutBuffer.Width = TextWidth;
-			int height = lineLayoutBuffer.GetTextLayoutHeight(this, 0, -1);
+			int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, -1);
 
 			// Set the adjustments based on those values.
 			verticalAdjustment.Upper = height;

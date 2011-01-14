@@ -45,7 +45,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// wrapping.
 		/// </summary>
 		/// <value>The width.</value>
-		int Width { set; }
+		int Width { get; set; }
 
 		/// <summary>
 		/// Gets the line layout for a given line.
@@ -63,7 +63,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		/// <returns></returns>
-		int GetTextLayoutHeight(
+		int GetLineLayoutHeight(
 			TextEditor textEditor,
 			int startLine,
 			int endLine);
@@ -74,11 +74,6 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <param name="textEditor">The text editor.</param>
 		/// <returns></returns>
 		int GetTextLayoutLineHeight(TextEditor textEditor);
-
-		/// <summary>
-		/// Resets the layout operations.
-		/// </summary>
-		void Reset();
 
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.

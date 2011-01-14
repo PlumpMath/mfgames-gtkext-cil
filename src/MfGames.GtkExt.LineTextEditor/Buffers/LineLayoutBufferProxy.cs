@@ -61,6 +61,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <value>The line layout buffer.</value>
 		protected ILineLayoutBuffer LineLayoutBuffer
 		{
+			//[DebuggerStepThrough]
 			get
 			{
 				// This works because ILineLayoutBuffer extends ILineMarkupBuffer.
@@ -79,6 +80,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <value>The width.</value>
 		public virtual int Width
 		{
+			get { return LineLayoutBuffer.Width; }
 			set { LineLayoutBuffer.Width = value; }
 		}
 
@@ -120,12 +122,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		/// <returns></returns>
-		public virtual int GetTextLayoutHeight(
+		public virtual int GetLineLayoutHeight(
 			TextEditor textEditor,
 			int startLine,
 			int endLine)
 		{
-			return LineLayoutBuffer.GetTextLayoutHeight(textEditor, startLine, endLine);
+			return LineLayoutBuffer.GetLineLayoutHeight(textEditor, startLine, endLine);
 		}
 
 		/// <summary>
@@ -136,14 +138,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		public virtual int GetTextLayoutLineHeight(TextEditor textEditor)
 		{
 			return LineLayoutBuffer.GetTextLayoutLineHeight(textEditor);
-		}
-
-		/// <summary>
-		/// Resets the layout operations.
-		/// </summary>
-		public virtual void Reset()
-		{
-			LineLayoutBuffer.Reset();
 		}
 
 		#endregion

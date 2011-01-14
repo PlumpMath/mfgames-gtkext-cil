@@ -47,6 +47,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />

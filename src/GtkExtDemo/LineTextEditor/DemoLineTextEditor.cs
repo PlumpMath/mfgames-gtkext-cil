@@ -42,13 +42,16 @@ namespace GtkExtDemo.LineTextEditor
 	{
 		public DemoLineTextEditor()
 		{
-			// Create a basic text editor inside a scrolling window.
+			// Create a basic text editor with a pattern line buffer wrapped
+			// in the various formatting and caching buffers.
 			ILineBuffer lineBuffer = new PatternLineBuffer(1024, 256, 4);
 			ILineMarkupBuffer lineMarkupBuffer =
 				new UnformattedLineMarkupBuffer(lineBuffer);
 			ILineLayoutBuffer lineLayoutBuffer =
 				new SimpleLineLayoutBuffer(lineMarkupBuffer);
-			var textEditor = new TextEditor(lineLayoutBuffer);
+			ILineLayoutBuffer cachedLayoutBuffer =
+				new CachedLineLayoutBuffer(lineLayoutBuffer);
+			var textEditor = new TextEditor(cachedLayoutBuffer);
 
 			// Wrap the text editor in a scrollbar.
 			ScrolledWindow scrolledWindow = new ScrolledWindow();

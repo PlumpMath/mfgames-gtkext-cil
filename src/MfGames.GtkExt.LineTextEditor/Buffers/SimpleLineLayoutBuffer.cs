@@ -78,7 +78,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			set
 			{
 				context = value;
-				Reset();
+				layout = null;
 			}
 		}
 
@@ -228,7 +228,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		/// <returns></returns>
-		public int GetTextLayoutHeight(
+		public int GetLineLayoutHeight(
 			TextEditor textEditor,
 			int startLine,
 			int endLine)
@@ -280,15 +280,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			int height, width;
 			layout.GetPixelSize(out width, out height);
 			return height;
-		}
-
-		/// <summary>
-		/// Resets the layout operations.
-		/// </summary>
-		public void Reset()
-		{
-			layout = null;
-			lastLine = -1;
 		}
 
 		#endregion
