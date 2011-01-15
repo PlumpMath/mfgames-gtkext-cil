@@ -116,7 +116,8 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			// Draw the background color.
 			var cairoArea = new Cairo.Rectangle(
 				x + marginLeftX, 
-				y, Width - marginLeftX - marginRightX, 
+				y,
+				Width - marginLeftX - marginRightX, 
 				height);
 			cairoContext.Color = style.GetBackgroundColor();
 			cairoContext.Rectangle(cairoArea);
@@ -164,7 +165,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 			textEditor.GdkWindow.DrawLayout(
 				textEditor.Style.TextGC(StateType.Normal),
-				(int) (x + Width - layoutWidth + paddingLeftX - paddingRightX),
+				(int) (x + Width - layoutWidth - paddingRightX),
 				y,
 				layout);
 		}

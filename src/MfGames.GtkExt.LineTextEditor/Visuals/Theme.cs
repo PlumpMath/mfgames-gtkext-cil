@@ -69,7 +69,8 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			lineNumberStyle.Borders.Right = new Border(1, new Color(0.5, 0.5, 0.5));
 			lineNumberStyle.Padding.Right = 2;
-			lineNumberStyle.Margins.Right = 10;
+			lineNumberStyle.Padding.Left = 4;
+			lineNumberStyle.Margins.Right = 8;
 			var textStyle = new SelectorStyle(baseStyle);
 
 			selectors[BaseStyle] = baseStyle;
