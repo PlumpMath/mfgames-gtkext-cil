@@ -212,14 +212,24 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				for (int line = startLine; line <= endLine; line++)
 				{
-					// Get the layout for the current line.
-					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
-					GdkWindow.DrawLayout(
-						Style.TextGC(StateType.Normal), margins.Width, currentY, layout);
+					// Get the layout and style for the current line.
+					var layout = lineLayoutBuffer.GetLineLayout(this, line);
+					var style = Theme.Selectors[Theme.TextStyle];
+					var styleMargins = style.GetMargins();
+					var stylePadding = style.GetPadding();
 
 					// Get the extents for that line.
-					int width, height;
-					layout.GetPixelSize(out width, out height);
+					int layoutWidth, layoutHeight;
+					layout.GetPixelSize(out layoutWidth, out layoutHeight);
+
+					int height = (int) (layoutHeight + styleMargins.Height + stylePadding.Height);
+
+					// Draw out the line.
+					GdkWindow.DrawLayout(
+						Style.TextGC(StateType.Normal),
+						margins.Width, 
+						currentY, 
+						layout);
 
 					// Render out the margin renderers.
 					margins.Draw(this, cairoContext, line, 0, currentY, height);
