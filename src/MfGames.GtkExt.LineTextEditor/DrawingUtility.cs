@@ -73,9 +73,16 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Draw the background color.
 			var cairoArea = new Rectangle(
 				region.X + marginLeftX, region.Y, region.Width - marginLeftX - marginRightX, region.Height);
-			renderContext.CairoContext.Color = style.GetBackgroundColor();
-			renderContext.CairoContext.Rectangle(cairoArea);
-			renderContext.CairoContext.Fill();
+
+			// Paint the background color of the window.
+			var backgroundColor = style.GetBackgroundColor();
+
+			if (backgroundColor.HasValue)
+			{
+				renderContext.CairoContext.Color = backgroundColor.Value;
+				renderContext.CairoContext.Rectangle(cairoArea);
+				renderContext.CairoContext.Fill();
+			}
 
 			// Draw the border lines.
 			if (borders.Left.LineWidth > 0)

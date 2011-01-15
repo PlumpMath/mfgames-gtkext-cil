@@ -136,7 +136,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the background color from this selector or the parent.
 		/// </summary>
 		/// <returns></returns>
-		public Color GetBackgroundColor()
+		public Color? GetBackgroundColor()
 		{
 			// If we have a value, then use that directly.
 			if (BackgroundColor.HasValue)
@@ -150,8 +150,8 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 				return parent.GetBackgroundColor();
 			}
 
-			// Otherwise, return a sane default.
-			return new Color(1, 1, 1);
+			// Otherwise, return nothing to indicate no background.
+			return null;
 		}
 
 		/// <summary>
