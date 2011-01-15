@@ -45,6 +45,22 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			lines = new List<string>();
 		}
 
+		/// <summary>
+		/// Copies the given buffer into a memory buffer.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		public MemoryLineBuffer(ILineBuffer buffer)
+		{
+			int lineCount = buffer.LineCount;
+
+			lines = new List<string>(lineCount);
+
+			for (int line = 0; line < lineCount; line++)
+			{
+				lines.Add(buffer.GetLineText(line, 0, -1));
+			}
+		}
+
 		#endregion
 
 		#region Buffer Viewing

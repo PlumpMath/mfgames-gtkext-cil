@@ -42,15 +42,20 @@ namespace GtkExtDemo.LineTextEditor
 	{
 		public DemoLineTextEditor()
 		{
-			// Create a basic text editor with a pattern line buffer wrapped
-			// in the various formatting and caching buffers.
-			ILineBuffer lineBuffer = new PatternLineBuffer(1024, 256, 4);
+			// Create a memory line buffer with random text so the user can
+			// edit the buffer.
+			ILineBuffer patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
+			ILineBuffer lineBuffer = new MemoryLineBuffer(patternLineBuffer);
+
+			// Create an unformatted markup buffer and simple layout with a cache.
 			ILineMarkupBuffer lineMarkupBuffer =
 				new UnformattedLineMarkupBuffer(lineBuffer);
 			ILineLayoutBuffer lineLayoutBuffer =
 				new SimpleLineLayoutBuffer(lineMarkupBuffer);
 			ILineLayoutBuffer cachedLayoutBuffer =
 				new CachedLineLayoutBuffer(lineLayoutBuffer);
+
+			// Create the text editor with the resulting buffer.
 			var textEditor = new TextEditor(cachedLayoutBuffer);
 
 			// Wrap the text editor in a scrollbar.
