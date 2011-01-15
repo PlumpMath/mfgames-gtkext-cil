@@ -409,7 +409,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			}
 
 			// Otherwise, return a sane default.
-			return FontDescription.FromString("Sans 12");
+			return FontCache.GetFontDescription("Sans 12");
 		}
 
 		/// <summary>
