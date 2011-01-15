@@ -42,26 +42,26 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 	/// parent elements are checked. This allows for simple changes at higher
 	/// levels to cascade down to child elements.
 	/// </summary>
-	public class SelectorStyle
+	public class BlockStyle
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SelectorStyle"/> class.
+		/// Initializes a new instance of the <see cref="BlockStyle"/> class.
 		/// </summary>
-		public SelectorStyle()
+		public BlockStyle()
 		{
-			children = new LinkedList<SelectorStyle>();
+			children = new LinkedList<BlockStyle>();
 			margins = new OptionalSpacing();
 			padding = new OptionalSpacing();
 			borders = new OptionalBorders();
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SelectorStyle"/> class.
+		/// Initializes a new instance of the <see cref="BlockStyle"/> class.
 		/// </summary>
 		/// <param name="parent">The parent.</param>
-		public SelectorStyle(SelectorStyle parent)
+		public BlockStyle(BlockStyle parent)
 			: this()
 		{
 			Parent = parent;
@@ -71,14 +71,14 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 		#region Cascading
 
-		private readonly LinkedList<SelectorStyle> children;
-		private SelectorStyle parent;
+		private readonly LinkedList<BlockStyle> children;
+		private BlockStyle parent;
 
 		/// <summary>
 		/// Gets the children styles associated with this one.
 		/// </summary>
 		/// <value>The children.</value>
-		public LinkedList<SelectorStyle> Children
+		public LinkedList<BlockStyle> Children
 		{
 			[DebuggerStepThrough]
 			get { return children; }
@@ -90,7 +90,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// into this one. Setting to null will remove any cascading.
 		/// </summary>
 		/// <value>The parent.</value>
-		public SelectorStyle Parent
+		public BlockStyle Parent
 		{
 			[DebuggerStepThrough]
 			get { return parent; }
@@ -109,6 +109,12 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 				}
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the style usage.
+		/// </summary>
+		/// <value>The style usage.</value>
+		public StyleUsage StyleUsage { get; set; }
 
 		#endregion
 
@@ -174,9 +180,9 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 		#region Spacing and Borders
 
+		private OptionalBorders borders;
 		private OptionalSpacing margins;
 		private OptionalSpacing padding;
-		private OptionalBorders borders;
 
 		/// <summary>
 		/// Gets or sets the borders.
@@ -210,6 +216,42 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			[DebuggerStepThrough]
 			get { return padding; }
 			set { padding = value ?? new OptionalSpacing(); }
+		}
+
+		/// <summary>
+		/// Gets the completed borders by processing the parents.
+		/// </summary>
+		/// <returns></returns>
+		public Borders GetBorders()
+		{
+			// If we have all four borders, then return them.
+			if (borders.Complete)
+			{
+				return borders.ToBorders();
+			}
+
+			// If the current is empty, then just get the parent.
+			if (borders.Empty)
+			{
+				return parent != null ? parent.GetBorders() : new Borders();
+			}
+
+			// If we don't have a parent, then we set the rest of the values
+			// to zero and return it.
+			if (parent == null)
+			{
+				return borders.ToBorders();
+			}
+
+			// If we have a parent, then we need to merge all the values
+			// together.
+			Borders parentBorders = parent.GetBorders();
+
+			return new Borders(
+				borders.Top ?? parentBorders.Top,
+				borders.Right ?? parentBorders.Right,
+				borders.Bottom ?? parentBorders.Bottom,
+				borders.Left ?? parentBorders.Left);
 		}
 
 		/// <summary>
@@ -247,43 +289,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 					margins.Right.HasValue ? margins.Right.Value : parentMargins.Right,
 					margins.Bottom.HasValue ? margins.Bottom.Value : parentMargins.Bottom,
 					margins.Left.HasValue ? margins.Left.Value : parentMargins.Left);
-		}
-
-		/// <summary>
-		/// Gets the completed borders by processing the parents.
-		/// </summary>
-		/// <returns></returns>
-		public Borders GetBorders()
-		{
-			// If we have all four borders, then return them.
-			if (borders.Complete)
-			{
-				return borders.ToBorders();
-			}
-
-			// If the current is empty, then just get the parent.
-			if (borders.Empty)
-			{
-				return parent != null ? parent.GetBorders() : new Borders();
-			}
-
-			// If we don't have a parent, then we set the rest of the values
-			// to zero and return it.
-			if (parent == null)
-			{
-				return borders.ToBorders();
-			}
-
-			// If we have a parent, then we need to merge all the values
-			// together.
-			Borders parentBorders = parent.GetBorders();
-
-			return
-				new Borders(
-					borders.Top ?? parentBorders.Top,
-					borders.Right ?? parentBorders.Right,
-					borders.Bottom ?? parentBorders.Bottom,
-					borders.Left ?? parentBorders.Left);
 		}
 
 		/// <summary>

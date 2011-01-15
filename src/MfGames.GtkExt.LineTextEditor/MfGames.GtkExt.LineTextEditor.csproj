@@ -65,8 +65,9 @@
     <Compile Include="Visuals\Borders.cs" />
     <Compile Include="Visuals\OptionalBorders.cs" />
     <Compile Include="Visuals\OptionalSpacing.cs" />
-    <Compile Include="Visuals\SelectorStyle.cs" />
+    <Compile Include="Visuals\BlockStyle.cs" />
     <Compile Include="Visuals\Spacing.cs" />
+    <Compile Include="Visuals\StyleUsage.cs" />
     <Compile Include="Visuals\Theme.cs" />
     <Compile Include="TextEditor.cs" />
   </ItemGroup>

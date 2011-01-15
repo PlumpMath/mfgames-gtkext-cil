@@ -59,12 +59,12 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		{
 			// Create the initial styles along with the styles used internally
 			// by the text editor.
-			selectors = new HashDictionary<string, SelectorStyle>();
+			blockStyles = new HashDictionary<string, BlockStyle>();
 
-			var baseStyle = new SelectorStyle();
-			var bodyStyle = new SelectorStyle(baseStyle);
-			var marginStyle = new SelectorStyle(baseStyle);
-			var lineNumberStyle = new SelectorStyle(marginStyle);
+			var baseStyle = new BlockStyle();
+			var bodyStyle = new BlockStyle(baseStyle);
+			var marginStyle = new BlockStyle(baseStyle);
+			var lineNumberStyle = new BlockStyle(marginStyle);
 			lineNumberStyle.Alignment = Alignment.Right;
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			lineNumberStyle.Borders.Right = new Border(1, new Color(0.5, 0.5, 0.5));
@@ -72,30 +72,30 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			lineNumberStyle.Padding.Left = 4;
 			lineNumberStyle.Margins.Right = 8;
 
-			var textStyle = new SelectorStyle(baseStyle);
+			var textStyle = new BlockStyle(baseStyle);
 			textStyle.Margins.Top = 8;
 			textStyle.Margins.Bottom = 8;
 
-			selectors[BaseStyle] = baseStyle;
-			selectors[BodyStyle] = bodyStyle;
-			selectors[MarginStyle] = marginStyle;
-			selectors[LineNumberStyle] = lineNumberStyle;
-			selectors[TextStyle] = textStyle;
+			blockStyles[BaseStyle] = baseStyle;
+			blockStyles[BodyStyle] = bodyStyle;
+			blockStyles[MarginStyle] = marginStyle;
+			blockStyles[LineNumberStyle] = lineNumberStyle;
+			blockStyles[TextStyle] = textStyle;
 		}
 
 		#endregion
 
-		#region Selectors
+		#region Styles
 
-		private readonly HashDictionary<string, SelectorStyle> selectors;
+		private readonly HashDictionary<string, BlockStyle> blockStyles;
 
 		/// <summary>
 		/// Gets the selector styles.
 		/// </summary>
 		/// <value>The selectors.</value>
-		public HashDictionary<string, SelectorStyle> Selectors
+		public HashDictionary<string, BlockStyle> BlockStyles
 		{
-			get { return selectors; }
+			get { return blockStyles; }
 		}
 
 		#endregion

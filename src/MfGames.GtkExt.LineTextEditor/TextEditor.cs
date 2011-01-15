@@ -174,7 +174,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			using (Context cairoContext = CairoHelper.Create(e.Window))
 			{
 				// Paint the background color of the window.
-				cairoContext.Color = theme.Selectors[Theme.BodyStyle].GetBackgroundColor();
+				cairoContext.Color = theme.BlockStyles[Theme.BodyStyle].GetBackgroundColor();
 				cairoContext.Rectangle(cairoArea);
 				cairoContext.Fill();
 
@@ -190,18 +190,16 @@ namespace MfGames.GtkExt.LineTextEditor
 				}
 
 				var viewArea = new Cairo.Rectangle(
-					area.X,
-					area.Y + offsetY,
-					area.Width,
-					area.Height);
+					area.X, area.Y + offsetY, area.Width, area.Height);
 
 				// Determine the line range visible in the given area.
 				int startLine, endLine;
-				lineLayoutBuffer.GetLineLayoutRange(this, viewArea, out startLine, out endLine);
+				lineLayoutBuffer.GetLineLayoutRange(
+					this, viewArea, out startLine, out endLine);
 
 				// Determine where the first line actually starts.
 				int startLineY = 0;
-				
+
 				if (startLine > 0)
 				{
 					startLineY = lineLayoutBuffer.GetLineLayoutHeight(this, 0, startLine - 1);
@@ -213,23 +211,21 @@ namespace MfGames.GtkExt.LineTextEditor
 				for (int line = startLine; line <= endLine; line++)
 				{
 					// Get the layout and style for the current line.
-					var layout = lineLayoutBuffer.GetLineLayout(this, line);
-					var style = Theme.Selectors[Theme.TextStyle];
-					var styleMargins = style.GetMargins();
-					var stylePadding = style.GetPadding();
+					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
+					BlockStyle style = Theme.BlockStyles[Theme.TextStyle];
+					Spacing styleMargins = style.GetMargins();
+					Spacing stylePadding = style.GetPadding();
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
 					layout.GetPixelSize(out layoutWidth, out layoutHeight);
 
-					int height = (int) (layoutHeight + styleMargins.Height + stylePadding.Height);
+					var height =
+						(int) (layoutHeight + styleMargins.Height + stylePadding.Height);
 
 					// Draw out the line.
 					GdkWindow.DrawLayout(
-						Style.TextGC(StateType.Normal),
-						margins.Width, 
-						currentY, 
-						layout);
+						Style.TextGC(StateType.Normal), margins.Width, currentY, layout);
 
 					// Render out the margin renderers.
 					margins.Draw(this, cairoContext, line, 0, currentY, height);
@@ -249,22 +245,13 @@ namespace MfGames.GtkExt.LineTextEditor
 		private Adjustment verticalAdjustment;
 
 		/// <summary>
-		/// Called when the vertical adjustment is changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnVerticalAdjustment(object sender, EventArgs args)
-		{
-			// Redraw the entire window.
-			QueueDraw();
-		}
-
-		/// <summary>
 		/// Called when the scroll adjustements are requested.
 		/// </summary>
 		/// <param name="hadj">The hadj.</param>
 		/// <param name="vadj">The vadj.</param>
-		protected override void OnSetScrollAdjustments(Adjustment hadj, Adjustment vadj)
+		protected override void OnSetScrollAdjustments(
+			Adjustment hadj,
+			Adjustment vadj)
 		{
 			// Determine if we need to remove ourselves from the previous adjustment
 			// events.
@@ -272,7 +259,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			{
 				verticalAdjustment.ValueChanged -= OnVerticalAdjustment;
 			}
-			
+
 			// And set the bounds based on our size.
 			verticalAdjustment = vadj;
 
@@ -283,6 +270,19 @@ namespace MfGames.GtkExt.LineTextEditor
 			{
 				verticalAdjustment.ValueChanged += OnVerticalAdjustment;
 			}
+		}
+
+		/// <summary>
+		/// Called when the vertical adjustment is changed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnVerticalAdjustment(
+			object sender,
+			EventArgs args)
+		{
+			// Redraw the entire window.
+			QueueDraw();
 		}
 
 		/// <summary>

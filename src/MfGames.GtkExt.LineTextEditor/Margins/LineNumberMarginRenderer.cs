@@ -36,7 +36,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 			// Create a layout object and set its values.
 			Layout layout = new Layout(textEditor.PangoContext);
-			SelectorStyle style = textEditor.Theme.Selectors[Theme.LineNumberStyle];
+			BlockStyle style = textEditor.Theme.BlockStyles[Theme.LineNumberStyle];
 			style.SetLayout(layout);
 
 			// Get the width of the first line.
@@ -104,7 +104,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			int height)
 		{
 			// Get the style for the line number.
-			SelectorStyle style = textEditor.Theme.Selectors[Theme.LineNumberStyle];
+			BlockStyle style = textEditor.Theme.BlockStyles[Theme.LineNumberStyle];
 			var margins = style.GetMargins();
 			var padding = style.GetPadding();
 			var borders = style.GetBorders();

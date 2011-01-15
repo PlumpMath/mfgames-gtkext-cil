@@ -139,7 +139,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			lastLine = line;
 
 			// Set the style to the default line.
-			textEditor.Theme.Selectors[Theme.TextStyle].SetLayout(layout);
+			textEditor.Theme.BlockStyles[Theme.TextStyle].SetLayout(layout);
 
 			// Return the resulting layout.
 			return layout;
@@ -274,7 +274,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			lastLine = -1;
 
 			// Set the style to the default line.
-			textEditor.Theme.Selectors[Theme.TextStyle].SetLayout(layout);
+			textEditor.Theme.BlockStyles[Theme.TextStyle].SetLayout(layout);
 
 			// Get the height of the default line.
 			int height, width;
