@@ -28,16 +28,16 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 	/// Represents a position within the text buffer using the line as a primary
 	/// and the character within the line's text.
 	/// </summary>
-	public struct TextPosition
+	public struct BufferPosition
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextPosition"/> struct.
+		/// Initializes a new instance of the <see cref="BufferPosition"/> struct.
 		/// </summary>
 		/// <param name="line">The line.</param>
 		/// <param name="character">The character.</param>
-		public TextPosition(
+		public BufferPosition(
 			int line,
 			int character)
 			: this()
