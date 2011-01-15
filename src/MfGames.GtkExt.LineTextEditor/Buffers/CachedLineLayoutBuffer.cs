@@ -72,7 +72,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			: base(buffer)
 		{
 			// Set the cache window properties.
-			this.maximumLoadedWindows = maximumLoadedWindows;
 			this.windowSize = windowSize;
 
 			// Create the collection of windows.
@@ -105,12 +104,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// and not freeing the memory until the class is freed.
 		/// </summary>
 		private readonly ArrayList<CachedLine[]> allocatedLines;
-
-		/// <summary>
-		/// Contains the number of windows that have the full line data allocated
-		/// and populated.
-		/// </summary>
-		private readonly int maximumLoadedWindows;
 
 		/// <summary>
 		/// Contains all the windows in this cache.
@@ -183,6 +176,16 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			if (window.Lines != null)
 			{
+				// Clear out the lines to make sure the garbage collection can
+				// release them as needed.
+				foreach (CachedLine line in window.Lines)
+				{
+					line.Height = 0;
+					line.Style = null;
+					line.Layout = null;
+				}
+
+				// Move the lines list back into the allocation list.
 				allocatedLines.Add(window.Lines);
 				window.Lines = null;
 			}
@@ -277,6 +280,28 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				// Set the new width in the underlying buffer.
 				base.Width = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets the line layout for a given line.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="line">The line.</param>
+		/// <returns></returns>
+		public override Layout GetLineLayout(
+			TextEditor textEditor,
+			int line)
+		{
+			// Make sure we have all the windows allocated.
+			AllocateWindows();
+
+			// Go through the windows and find the starting one.
+			int windowIndex = GetWindowIndex(line);
+			CachedWindow window = windows[windowIndex];
+
+			// Get the layout from the window.
+			Layout layout = window.GetLineLayout(textEditor, line);
+			return layout;
 		}
 
 		/// <summary>
@@ -415,6 +440,28 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				textEditor, endWindowOffset);
 		}
 
+		/// <summary>
+		/// Gets the line style for a given line.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="line">The line number.</param>
+		/// <returns></returns>
+		public override BlockStyle GetLineStyle(
+			TextEditor textEditor,
+			int line)
+		{
+			// Make sure we have all the windows allocated.
+			AllocateWindows();
+
+			// Go through the windows and find the starting one.
+			int windowIndex = GetWindowIndex(line);
+			CachedWindow window = windows[windowIndex];
+
+			// Get the layout from the window.
+			BlockStyle style = window.GetLineStyle(textEditor, line);
+			return style;
+		}
+
 		#endregion
 
 		#region Nested type: CachedLine
@@ -485,19 +532,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				CachedLineLayoutBuffer buffer,
 				int windowIndex)
 			{
-				Buffer = buffer;
+				ParentBuffer = buffer;
 				WindowIndex = windowIndex;
 			}
 
 			#endregion
 
 			#region Properties
-
-			/// <summary>
-			/// Gets or sets the buffer.
-			/// </summary>
-			/// <value>The buffer.</value>
-			internal CachedLineLayoutBuffer Buffer { get; private set; }
 
 			/// <summary>
 			/// Gets or sets the height of the entire cache window.
@@ -518,12 +559,18 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			internal CachedLine[] Lines { get; set; }
 
 			/// <summary>
+			/// Gets or sets the buffer.
+			/// </summary>
+			/// <value>The buffer.</value>
+			internal CachedLineLayoutBuffer ParentBuffer { get; private set; }
+
+			/// <summary>
 			/// Gets the end line inside the window.
 			/// </summary>
 			/// <value>The end line.</value>
 			internal int WindowEndLine
 			{
-				get { return WindowStartLine + Buffer.windowSize - 1; }
+				get { return WindowStartLine + ParentBuffer.windowSize - 1; }
 			}
 
 			/// <summary>
@@ -538,7 +585,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			/// <value>The start line.</value>
 			internal int WindowStartLine
 			{
-				get { return WindowIndex * Buffer.windowSize; }
+				get { return WindowIndex * ParentBuffer.windowSize; }
 			}
 
 			#endregion
@@ -546,9 +593,41 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			#region Caching
 
 			/// <summary>
+			/// Gets the line layout for a given line.
+			/// </summary>
+			/// <param name="textEditor">The text editor.</param>
+			/// <param name="line">The line index which may not be in the window.</param>
+			/// <returns></returns>
+			public Layout GetLineLayout(
+				TextEditor textEditor,
+				int line)
+			{
+				// Make sure we are asking for lines in the range of the cache
+				// window. If we ask for something outside of that, return 0.
+				if (line > WindowEndLine)
+				{
+					return null;
+				}
+
+				if (line < WindowStartLine)
+				{
+					return null;
+				}
+
+				// We have to have this window populated.
+				Populate(textEditor);
+
+				// Get the line index inside the window.
+				int windowLineIndex = line - WindowStartLine;
+
+				return Lines[windowLineIndex].Layout;
+			}
+
+			/// <summary>
 			/// Gets the line layout containing the Y coordinate relative to the
 			/// cache window.
 			/// </summary>
+			/// <param name="textEditor">The text editor.</param>
 			/// <param name="y">The window-relative Y pixels.</param>
 			/// <returns></returns>
 			public int GetLineLayoutContaining(
@@ -593,7 +672,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				}
 
 				// Use the text editor to populate the height.
-				Height = Buffer.LineLayoutBuffer.GetLineLayoutHeight(
+				Height = ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
 					textEditor, WindowStartLine, WindowEndLine);
 				return Height.Value;
 			}
@@ -655,6 +734,37 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 
 			/// <summary>
+			/// Gets the line style for a given line.
+			/// </summary>
+			/// <param name="textEditor">The text editor.</param>
+			/// <param name="line">The line index which may not be in the window.</param>
+			/// <returns></returns>
+			public BlockStyle GetLineStyle(
+				TextEditor textEditor,
+				int line)
+			{
+				// Make sure we are asking for lines in the range of the cache
+				// window. If we ask for something outside of that, return 0.
+				if (line > WindowEndLine)
+				{
+					return null;
+				}
+
+				if (line < WindowStartLine)
+				{
+					return null;
+				}
+
+				// We have to have this window populated.
+				Populate(textEditor);
+
+				// Get the line index inside the window.
+				int windowLineIndex = line - WindowStartLine;
+
+				return Lines[windowLineIndex].Style;
+			}
+
+			/// <summary>
 			/// Populates the individual lines within a cache window.
 			/// </summary>
 			/// <param name="textEditor">The text editor.</param>
@@ -667,33 +777,39 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				}
 
 				// Get an array of lines from the list.
-				if (Buffer.allocatedLines.Count <= 0)
+				if (ParentBuffer.allocatedLines.Count <= 0)
 				{
 					// We don't have any allocated lines, so free the last.
-					Buffer.ClearLeastRecentlyUsedWindow();
+					ParentBuffer.ClearLeastRecentlyUsedWindow();
 				}
 
-				Lines = Buffer.allocatedLines.Pop();
+				Lines = ParentBuffer.allocatedLines.Pop();
 				LastAccessed = DateTime.UtcNow;
 
 				// Go through all the lines in the window and populate them.
 				int height = 0;
 
-				for (int lineIndex = 0; lineIndex < Buffer.windowSize; lineIndex++)
+				for (int lineIndex = 0; lineIndex < ParentBuffer.windowSize; lineIndex++)
 				{
 					// Make sure we aren't going past the top line.
 					int line = WindowStartLine + lineIndex;
 
-					if (line > Buffer.LineCount)
+					if (line > ParentBuffer.LineCount)
 					{
 						// Just reset the line.
 						Lines[lineIndex].Height = 0;
+						Lines[lineIndex].Style = null;
+						Lines[lineIndex].Layout = null;
 						continue;
 					}
 
 					// Get the height of this line.
 					Lines[lineIndex].Height =
-						Buffer.LineLayoutBuffer.GetLineLayoutHeight(textEditor, line, line);
+						ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(textEditor, line, line);
+					Lines[lineIndex].Style =
+						ParentBuffer.LineLayoutBuffer.GetLineStyle(textEditor, line);
+					Lines[lineIndex].Layout =
+						ParentBuffer.LineLayoutBuffer.GetLineLayout(textEditor, line);
 					height += Lines[lineIndex].Height;
 				}
 
