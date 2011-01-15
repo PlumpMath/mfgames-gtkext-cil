@@ -53,6 +53,7 @@
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
+    <Compile Include="Editing\TextPosition.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
     <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
     <Compile Include="Interfaces\ILineMarkupBuffer.cs" />
