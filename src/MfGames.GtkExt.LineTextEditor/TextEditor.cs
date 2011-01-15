@@ -26,8 +26,6 @@
 
 using System;
 
-using Cairo;
-
 using Gdk;
 
 using Gtk;
@@ -37,6 +35,10 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
+using Pango;
+
+using CairoHelper=Gdk.CairoHelper;
+using Context=Cairo.Context;
 using Layout=Pango.Layout;
 using Rectangle=Gdk.Rectangle;
 using Window=Gdk.Window;
@@ -121,6 +123,27 @@ namespace MfGames.GtkExt.LineTextEditor
 					margins.Resize(this);
 				}
 			}
+		}
+
+		#endregion
+
+		#region Layout
+
+		/// <summary>
+		/// Sets the layout using the given block style.
+		/// </summary>
+		/// <param name="layout">The layout.</param>
+		/// <param name="style">The style.</param>
+		public void SetLayout(Layout layout, BlockStyle style)
+		{
+			// Set the style elements.
+			layout.Wrap = style.GetWrap();
+			layout.Alignment = style.GetAlignment();
+			layout.FontDescription = style.GetFontDescription();
+
+			// Check to see if we are doing line wrapping and set the width,
+			// minus the padding, margins, and borders.
+			layout.Width = Units.FromPixels(TextWidth - style.Width);
 		}
 
 		#endregion
@@ -212,7 +235,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				{
 					// Get the layout and style for the current line.
 					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
-					BlockStyle style = Theme.BlockStyles[Theme.TextStyle];
+					BlockStyle style = lineLayoutBuffer.GetLineStyle(this, line);
 					Spacing styleMargins = style.GetMargins();
 					Spacing stylePadding = style.GetPadding();
 
@@ -361,6 +384,10 @@ namespace MfGames.GtkExt.LineTextEditor
 			{
 				GdkWindow.MoveResize(allocation);
 			}
+
+			// We need to reset the buffer so it can recalculate all the widths
+			// and clear any caches.
+			LineLayoutBuffer.Reset();
 
 			// Change the adjustments (scrollbars).
 			SetAdjustments();

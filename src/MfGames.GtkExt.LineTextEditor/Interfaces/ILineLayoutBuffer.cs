@@ -53,7 +53,9 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <param name="textEditor">The text editor.</param>
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
-		Layout GetLineLayout(TextEditor textEditor, int line);
+		Layout GetLineLayout(
+			TextEditor textEditor,
+			int line);
 
 		/// <summary>
 		/// Gets the pixel height of the lines in the buffer. If endLine is -1
@@ -69,6 +71,19 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 			int endLine);
 
 		/// <summary>
+		/// Gets the lines that are visible in the given view area.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="viewArea">The view area.</param>
+		/// <param name="startLine">The start line.</param>
+		/// <param name="endLine">The end line.</param>
+		void GetLineLayoutRange(
+			TextEditor textEditor,
+			Rectangle viewArea,
+			out int startLine,
+			out int endLine);
+
+		/// <summary>
 		/// Gets the height of a single line of "normal" text.
 		/// </summary>
 		/// <param name="textEditor">The text editor.</param>
@@ -76,16 +91,10 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		int GetTextLayoutLineHeight(TextEditor textEditor);
 
 		/// <summary>
-		/// Gets the lines that are visible in the given view area.
+		/// Indicates that the underlying text editor has changed in some manner
+		/// and any cache or size calculations are invalidated.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <param name="viewArea">The view area.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
-		void GetLineLayoutRange(TextEditor textEditor,
-								Rectangle viewArea,
-								out int startLine,
-								out int endLine);
+		void Reset();
 
 		#endregion
 	}

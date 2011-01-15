@@ -63,50 +63,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		#endregion
 
-		#region Style
-
-		private Context context;
-		private Layout layout;
-
-		/// <summary>
-		/// Gets or sets the context for the layout.
-		/// </summary>
-		/// <value>The context.</value>
-		public Context Context
-		{
-			get { return context; }
-			set
-			{
-				context = value;
-				layout = null;
-			}
-		}
-
-		/// <summary>
-		/// Ensures the layout exists by creating it if needed.
-		/// </summary>
-		private void EnsureLayoutExists()
-		{
-			// If the layout already exists, then we don't need to re-recreate.
-			if (layout != null)
-			{
-				return;
-			}
-
-			// Create a new layout from the given properties.
-			layout = new Layout(Context);
-			int textWidth = Units.FromPixels(Width);
-			layout.Width = textWidth;
-			layout.Wrap = WrapMode.Word;
-			layout.Alignment = Alignment.Left;
-			//layout.FontDescription = FontDescription.FromString("Courier New 12");
-		}
-
-		#endregion
-
 		#region Layout
-
-		private int lastLine = -1;
 
 		/// <summary>
 		/// Sets the pixel width of a layout in case the layout uses word
@@ -125,23 +82,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			TextEditor textEditor,
 			int line)
 		{
-			// Check to see if the last line was the one requested.
-			if (line == lastLine && layout != null)
-			{
-				return layout;
-			}
+			var layout = new Layout(textEditor.PangoContext);
 
-			// Make sure the layout exists and is properly setup.
-			EnsureLayoutExists();
-
-			// Set the markup for the layout.
+			textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]);
 			layout.SetMarkup(GetLineMarkup(line));
-			lastLine = line;
 
-			// Set the style to the default line.
-			textEditor.Theme.BlockStyles[Theme.TextStyle].SetLayout(layout);
-
-			// Return the resulting layout.
 			return layout;
 		}
 
@@ -155,14 +100,60 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			TextEditor textEditor,
 			int line)
 		{
-			layout = null;
-			Context = textEditor.PangoContext;
-			Layout lineLayout = GetLineLayout(textEditor, line);
-
 			// Get the extents for the line while rendered.
+			Layout lineLayout = GetLineLayout(textEditor, line);
 			int lineWidth, lineHeight;
+
 			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
+
+			// Get the style to include the style's height.
+			BlockStyle style = GetLineStyle(textEditor, line);
+
+			lineHeight += style.Height;
+
+			// Return the resulting height.
 			return lineHeight;
+		}
+
+		/// <summary>
+		/// Gets the pixel height of the lines in the buffer. If endLine is -1
+		/// it means the last line in the buffer.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="startLine">The start line.</param>
+		/// <param name="endLine">The end line.</param>
+		/// <returns></returns>
+		public int GetLineLayoutHeight(
+			TextEditor textEditor,
+			int startLine,
+			int endLine)
+		{
+			// If we have no lines, we have no height.
+			if (LineCount == 0)
+			{
+				return 0;
+			}
+
+			// Normalize the last line, if we have one.
+			if (endLine == -1)
+			{
+				endLine = LineCount - 1;
+			}
+
+			// Get a total of all the heights.
+			int height = 0;
+
+			for (int line = startLine; line <= endLine; line++)
+			{
+				// Get the height for this line.
+				int lineHeight = GetLineLayoutHeight(textEditor, line);
+
+				// Add the height to the total.
+				height += lineHeight;
+			}
+
+			// Return the resulting height.
+			return height;
 		}
 
 		/// <summary>
@@ -221,65 +212,35 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Gets the pixel height of the lines in the buffer. If endLine is -1
-		/// it means the last line in the buffer.
-		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
-		/// <returns></returns>
-		public int GetLineLayoutHeight(
-			TextEditor textEditor,
-			int startLine,
-			int endLine)
-		{
-			// If we have no lines, we have no height.
-			if (LineCount == 0)
-			{
-				return 0;
-			}
-
-			// Normalize the last line, if we have one.
-			if (endLine == -1)
-			{
-				endLine = LineCount - 1;
-			}
-
-			// Get a total of all the heights.
-			int height = 0;
-
-			for (int line = startLine; line <= endLine; line++)
-			{
-				// Get the height for this line.
-				int lineHeight = GetLineLayoutHeight(textEditor, line);
-
-				// Add the height to the total.
-				height += lineHeight;
-			}
-
-			// Return the resulting height.
-			return height;
-		}
-
-		/// <summary>
 		/// Gets the height of a single line of "normal" text.
 		/// </summary>
 		/// <param name="textEditor">The text editor.</param>
 		/// <returns></returns>
 		public int GetTextLayoutLineHeight(TextEditor textEditor)
 		{
-			// Set the markup for the layout.
-			EnsureLayoutExists();
-			layout.SetText("W");
-			lastLine = -1;
+			// Get a layout for the default text style.
+			var layout = new Layout(textEditor.PangoContext);
 
-			// Set the style to the default line.
-			textEditor.Theme.BlockStyles[Theme.TextStyle].SetLayout(layout);
+			textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]);
+
+			// Set the layout to a simple string.
+			layout.SetText("W");
 
 			// Get the height of the default line.
 			int height, width;
+
 			layout.GetPixelSize(out width, out height);
+
 			return height;
+		}
+
+		/// <summary>
+		/// Indicates that the underlying text editor has changed in some manner
+		/// and any cache or size calculations are invalidated.
+		/// </summary>
+		public void Reset()
+		{
+			// The simple layout buffer has no calculations.
 		}
 
 		#endregion

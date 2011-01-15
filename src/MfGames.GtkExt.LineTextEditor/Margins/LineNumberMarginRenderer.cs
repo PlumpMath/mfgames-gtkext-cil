@@ -37,7 +37,8 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			// Create a layout object and set its values.
 			Layout layout = new Layout(textEditor.PangoContext);
 			BlockStyle style = textEditor.Theme.BlockStyles[Theme.LineNumberStyle];
-			style.SetLayout(layout);
+			
+			textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]);
 
 			// Get the width of the first line.
 			int width = 0;
@@ -155,7 +156,8 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 			// Create a layout object and set its values.
 			Layout layout = new Layout(textEditor.PangoContext);
-			style.SetLayout(layout);
+
+			textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]); 
 			layout.SetText(lineNumber);
 
 			// Render out the line number. Since this is right-aligned, we need

@@ -197,6 +197,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		}
 
 		/// <summary>
+		/// Gets the height of the various elements in the style.
+		/// </summary>
+		/// <value>The height.</value>
+		public int Height
+		{
+			get { return (int) (GetMargins().Height + GetPadding().Height); }
+		}
+
+		/// <summary>
 		/// Gets or sets the margins.
 		/// </summary>
 		/// <value>The margins.</value>
@@ -216,6 +225,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			[DebuggerStepThrough]
 			get { return padding; }
 			set { padding = value ?? new OptionalSpacing(); }
+		}
+
+		/// <summary>
+		/// Gets the width of the various elements in the style.
+		/// </summary>
+		/// <value>The width.</value>
+		public int Width
+		{
+			get { return (int) (GetMargins().Width + GetPadding().Width); }
 		}
 
 		/// <summary>
@@ -414,17 +432,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 			// Otherwise, return a sane default.
 			return Pango.WrapMode.Word;
-		}
-
-		/// <summary>
-		/// Sets the selector's style properties into the layout.
-		/// </summary>
-		/// <param name="layout">The layout.</param>
-		public void SetLayout(Layout layout)
-		{
-			layout.Wrap = GetWrap();
-			layout.Alignment = GetAlignment();
-			layout.FontDescription = GetFontDescription();
 		}
 
 		#endregion
