@@ -24,9 +24,8 @@
 
 #region Namespaces
 
-using System;
-
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
 
@@ -61,10 +60,20 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			string text = GetLineText(line, 0, -1);
 
-			return text
-				.Replace("&", "&amp;")
-				.Replace("<", "&lt;")
-				.Replace(">", "&gt;");
+			return text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+		}
+
+		/// <summary>
+		/// Gets the line style for a given line.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="line">The line number.</param>
+		/// <returns></returns>
+		public BlockStyle GetLineStyle(
+			TextEditor textEditor,
+			int line)
+		{
+			return textEditor.Theme.BlockStyles[Theme.TextStyle];
 		}
 
 		#endregion

@@ -22,6 +22,12 @@
 
 #endregion
 
+#region Namespaces
+
+using MfGames.GtkExt.LineTextEditor.Visuals;
+
+#endregion
+
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
@@ -38,6 +44,16 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
 		string GetLineMarkup(int line);
+
+		/// <summary>
+		/// Gets the line style for a given line.
+		/// </summary>
+		/// <param name="textEditor">The text editor.</param>
+		/// <param name="line">The line number.</param>
+		/// <returns></returns>
+		BlockStyle GetLineStyle(
+			TextEditor textEditor,
+			int line);
 
 		#endregion
 	}
