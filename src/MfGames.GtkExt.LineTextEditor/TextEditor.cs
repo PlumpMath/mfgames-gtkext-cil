@@ -259,6 +259,11 @@ namespace MfGames.GtkExt.LineTextEditor
 			QueueDraw();
 		}
 
+		/// <summary>
+		/// Called when the scroll adjustements are requested.
+		/// </summary>
+		/// <param name="hadj">The hadj.</param>
+		/// <param name="vadj">The vadj.</param>
 		protected override void OnSetScrollAdjustments(Adjustment hadj, Adjustment vadj)
 		{
 			// Determine if we need to remove ourselves from the previous adjustment
@@ -303,9 +308,12 @@ namespace MfGames.GtkExt.LineTextEditor
 			int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, -1);
 
 			// Set the adjustments based on those values.
-			verticalAdjustment.Upper = height;
-			verticalAdjustment.StepIncrement = lineLayoutBuffer.GetTextLayoutLineHeight(this);
-			verticalAdjustment.PageSize = (int) (Allocation.Height / 2.0);
+			verticalAdjustment.SetBounds(
+				0.0,
+				height,
+				lineLayoutBuffer.GetTextLayoutLineHeight(this),
+				(int) (Allocation.Height / 2.0),
+				Allocation.Height);
 		}
 
 		#endregion
