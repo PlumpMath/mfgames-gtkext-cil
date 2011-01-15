@@ -24,51 +24,40 @@
 
 #region Namespaces
 
-using C5;
+using Cairo;
 
-using Pango;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.LineTextEditor.Visuals
 {
 	/// <summary>
-	/// Implements a basic font change for Pango fonts.
+	/// Implements a basic render context used for rendering various elements
+	/// of the text editor.
 	/// </summary>
-	internal static class FontCache
+	public class RenderContext : IRenderContext
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes the <see cref="FontCache"/> class.
+		/// Initializes a new instance of the <see cref="RenderContext"/> class.
 		/// </summary>
-		static FontCache()
+		/// <param name="cairoContext">The cairo context.</param>
+		public RenderContext(Context cairoContext)
 		{
-			fonts = new HashDictionary<string, FontDescription>();
+			CairoContext = cairoContext;
 		}
 
 		#endregion
 
-		#region Caching
-
-		private static readonly HashDictionary<string, FontDescription> fonts;
+		#region Render Context
 
 		/// <summary>
-		/// Loads and caches a font description from the given name.
+		/// Gets the Cairo context for rendering.
 		/// </summary>
-		/// <param name="fontName">Name of the font.</param>
-		/// <returns></returns>
-		public static FontDescription GetFontDescription(string fontName)
-		{
-			// Check to see if the cache already has it.
-			if (!fonts.Contains(fontName))
-			{
-				fonts[fontName] = FontDescription.FromString(fontName);
-			}
-
-			// Return the cached font.
-			return fonts[fontName];
-		}
+		/// <value>The cairo context.</value>
+		public Context CairoContext { get; set; }
 
 		#endregion
 	}

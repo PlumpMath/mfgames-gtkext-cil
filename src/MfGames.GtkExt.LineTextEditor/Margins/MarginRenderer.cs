@@ -26,9 +26,9 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using Cairo;
 
-using Pango;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
@@ -131,18 +131,16 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		/// <summary>
 		/// Draws the margin at the given position.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <param name="cairoContext">The cairo context.</param>
-		/// <param name="line">The line.</param>
-		/// <param name="x">The x.</param>
-		/// <param name="y">The y.</param>
-		/// <param name="height">The height.</param>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="renderContext">The render context.</param>
+		/// <param name="lineIndex">The line index being rendered.</param>
+		/// <param name="point">The point of the specific line number.</param>
+		/// <param name="height">The height of the rendered line.</param>
 		public abstract void Draw(
-			TextEditor textEditor,
-			Cairo.Context cairoContext,
-			int line,
-			int x,
-			int y,
+			IDisplayContext displayContext,
+			IRenderContext renderContext,
+			int lineIndex,
+			PointD point,
 			int height);
 
 		#endregion

@@ -26,6 +26,8 @@
 
 using System;
 
+using Cairo;
+
 using Gdk;
 
 using Gtk;
@@ -41,6 +43,7 @@ using CairoHelper=Gdk.CairoHelper;
 using Context=Cairo.Context;
 using Layout=Pango.Layout;
 using Rectangle=Gdk.Rectangle;
+using Style=Gtk.Style;
 using Window=Gdk.Window;
 using WindowType=Gdk.WindowType;
 
@@ -51,7 +54,7 @@ namespace MfGames.GtkExt.LineTextEditor
 	/// <summary>
 	/// The primary editor control for the virtualized line text editor.
 	/// </summary>
-	public class TextEditor : Widget
+	public class TextEditor : Widget, IDisplayContext
 	{
 		#region Constructors
 
@@ -134,7 +137,9 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// </summary>
 		/// <param name="layout">The layout.</param>
 		/// <param name="style">The style.</param>
-		public void SetLayout(Layout layout, BlockStyle style)
+		public void SetLayout(
+			Layout layout,
+			BlockStyle style)
 		{
 			// Set the style elements.
 			layout.Wrap = style.GetWrap();
@@ -148,10 +153,19 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#endregion
 
-		#region Screen Elements
+		#region Display
 
 		private readonly MarginRendererCollection margins;
 		private Theme theme;
+
+		/// <summary>
+		/// Gets the GTK style associated with this context.
+		/// </summary>
+		/// <value>The GTK style.</value>
+		public Style GtkStyle
+		{
+			get { return Style; }
+		}
 
 		/// <summary>
 		/// Gets or sets the theme.
@@ -196,6 +210,9 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			using (Context cairoContext = CairoHelper.Create(e.Window))
 			{
+				// Create a render context.
+				var renderContext = new RenderContext(cairoContext);
+
 				// Paint the background color of the window.
 				cairoContext.Color = theme.BlockStyles[Theme.BodyStyle].GetBackgroundColor();
 				cairoContext.Rectangle(cairoArea);
@@ -251,7 +268,7 @@ namespace MfGames.GtkExt.LineTextEditor
 						Style.TextGC(StateType.Normal), margins.Width, currentY, layout);
 
 					// Render out the margin renderers.
-					margins.Draw(this, cairoContext, line, 0, currentY, height);
+					margins.Draw(this, renderContext, line, new PointD(0, currentY), height);
 
 					// Move down a line.
 					currentY += height;

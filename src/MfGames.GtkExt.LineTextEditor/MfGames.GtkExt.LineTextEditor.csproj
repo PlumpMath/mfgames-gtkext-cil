@@ -53,11 +53,14 @@
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
+    <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\BufferPosition.cs" />
     <Compile Include="FontCache.cs" />
+    <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
     <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
     <Compile Include="Interfaces\ILineMarkupBuffer.cs" />
+    <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Margins\LineNumberMarginRenderer.cs" />
     <Compile Include="Margins\MarginRenderer.cs" />
     <Compile Include="Margins\MarginRendererCollection.cs" />
@@ -68,6 +71,7 @@
     <Compile Include="Visuals\OptionalBorders.cs" />
     <Compile Include="Visuals\OptionalSpacing.cs" />
     <Compile Include="Visuals\BlockStyle.cs" />
+    <Compile Include="Visuals\RenderContext.cs" />
     <Compile Include="Visuals\Spacing.cs" />
     <Compile Include="Visuals\StyleUsage.cs" />
     <Compile Include="Visuals\Theme.cs" />

@@ -26,8 +26,11 @@
 
 using System;
 
+using Cairo;
+
 using Gtk;
 
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Context=Cairo.Context;
@@ -120,86 +123,45 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		/// <summary>
 		/// Draws the margin at the given position.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <param name="cairoContext">The cairo context.</param>
-		/// <param name="line">The line.</param>
-		/// <param name="x">The x.</param>
-		/// <param name="y">The y.</param>
-		/// <param name="height">The height.</param>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="renderContext">The render context.</param>
+		/// <param name="lineIndex">The line index being rendered.</param>
+		/// <param name="point">The point of the specific line number.</param>
+		/// <param name="height">The height of the rendered line.</param>
 		public override void Draw(
-			TextEditor textEditor,
-			Context cairoContext,
-			int line,
-			int x,
-			int y,
+			IDisplayContext displayContext,
+			IRenderContext renderContext,
+			int lineIndex,
+			PointD point,
 			int height)
 		{
-			// Get the style for the line number.
-			BlockStyle style = textEditor.Theme.BlockStyles[Theme.LineNumberStyle];
-			Spacing margins = style.GetMargins();
-			Spacing padding = style.GetPadding();
-			Borders borders = style.GetBorders();
-			double marginLeftX = margins.Left + borders.Left.LineWidth;
-			double paddingLeftX = marginLeftX + padding.Left;
-			double marginRightX = margins.Right + borders.Right.LineWidth;
-			double paddingRightX = marginRightX + padding.Right;
+			// Create a layout object if we don't have one.
+			BlockStyle style = displayContext.Theme.BlockStyles[Theme.LineNumberStyle];
 
-			// Draw the background color.
-			var cairoArea = new Rectangle(
-				x + marginLeftX, y, Width - marginLeftX - marginRightX, height);
-			cairoContext.Color = style.GetBackgroundColor();
-			cairoContext.Rectangle(cairoArea);
-			cairoContext.Fill();
-
-			// Draw the border lines.
-			if (borders.Left.LineWidth > 0)
+			if (layout == null)
 			{
-				cairoContext.LineWidth = borders.Left.LineWidth;
-				cairoContext.Color = borders.Left.Color;
-
-				cairoContext.MoveTo(x + margins.Left, y);
-				cairoContext.LineTo(x + margins.Left, y + height);
-				cairoContext.Stroke();
+				layout = new Layout(displayContext.PangoContext);
+				displayContext.SetLayout(layout, style);
 			}
 
-			if (borders.Right.LineWidth > 0)
-			{
-				cairoContext.LineWidth = borders.Right.LineWidth;
-				cairoContext.Color = borders.Right.Color;
-
-				cairoContext.MoveTo(x + Width - margins.Right, y);
-				cairoContext.LineTo(x + Width - margins.Right, y + height);
-				cairoContext.Stroke();
-			}
-
-			// Create a layout of the line number.
-			string lineNumber = textEditor.LineLayoutBuffer.GetLineNumber(line);
+			// Figure out the line number.
+			string lineNumber = displayContext.LineLayoutBuffer.GetLineNumber(lineIndex);
 
 			if (string.IsNullOrEmpty(lineNumber))
 			{
-				// No line, we don't draw any text.
-				return;
-			}
-
-			// Create a layout object and set its values.
-			if (layout == null)
-			{
-				layout = new Layout(textEditor.PangoContext);
-				textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]);
+				lineNumber = String.Empty;
 			}
 
 			layout.SetText(lineNumber);
 
-			// Render out the line number. Since this is right-aligned, we need
-			// to get the text and start it to the right.
-			int layoutWidth, layoutHeight;
-			layout.GetPixelSize(out layoutWidth, out layoutHeight);
-
-			textEditor.GdkWindow.DrawLayout(
-				textEditor.Style.TextGC(StateType.Normal),
-				(int) (x + Width - layoutWidth - paddingRightX),
-				y,
-				layout);
+			// Use the common drawing routine to handle the borders and padding.
+			DrawingUtility.DrawLayout(
+				displayContext,
+				renderContext,
+				new Rectangle(point.X, point.Y, Width, height),
+				layout,
+				style
+				);
 		}
 
 		/// <summary>

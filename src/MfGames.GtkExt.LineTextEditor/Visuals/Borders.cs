@@ -42,6 +42,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// </summary>
 		public Borders()
 		{
+			Top = Right = Bottom = Left = new Border();
 		}
 
 		/// <summary>

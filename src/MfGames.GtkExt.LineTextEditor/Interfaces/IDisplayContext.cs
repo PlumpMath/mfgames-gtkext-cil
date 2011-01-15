@@ -24,52 +24,59 @@
 
 #region Namespaces
 
-using C5;
+using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
+using Style=Gtk.Style;
+using Window=Gdk.Window;
+
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
-	/// Implements a basic font change for Pango fonts.
+	/// Contains information about the display and its appearance.
 	/// </summary>
-	internal static class FontCache
+	public interface IDisplayContext
 	{
-		#region Constructors
+		/// <summary>
+		/// Gets the GDK window associated with this context.
+		/// </summary>
+		/// <value>The GDK window.</value>
+		Window GdkWindow { get; }
 
 		/// <summary>
-		/// Initializes the <see cref="FontCache"/> class.
+		/// Gets the GTK style associated with this context.
 		/// </summary>
-		static FontCache()
-		{
-			fonts = new HashDictionary<string, FontDescription>();
-		}
-
-		#endregion
-
-		#region Caching
-
-		private static readonly HashDictionary<string, FontDescription> fonts;
+		/// <value>The GTK style.</value>
+		Style GtkStyle { get; }
 
 		/// <summary>
-		/// Loads and caches a font description from the given name.
+		/// Gets the line layout buffer.
 		/// </summary>
-		/// <param name="fontName">Name of the font.</param>
-		/// <returns></returns>
-		public static FontDescription GetFontDescription(string fontName)
-		{
-			// Check to see if the cache already has it.
-			if (!fonts.Contains(fontName))
-			{
-				fonts[fontName] = FontDescription.FromString(fontName);
-			}
+		/// <value>The line layout buffer.</value>
+		ILineLayoutBuffer LineLayoutBuffer { get; }
 
-			// Return the cached font.
-			return fonts[fontName];
-		}
+		/// <summary>
+		/// Gets the Pango context associated with this display.
+		/// </summary>
+		/// <value>The pango context.</value>
+		Context PangoContext { get; }
 
-		#endregion
+		/// <summary>
+		/// Gets the theme collection for this display.
+		/// </summary>
+		/// <value>The theme.</value>
+		Theme Theme { get; }
+
+		/// <summary>
+		/// Sets the layout according to the given layout and style.
+		/// </summary>
+		/// <param name="layout">The layout.</param>
+		/// <param name="style">The style.</param>
+		void SetLayout(
+			Layout layout,
+			BlockStyle style);
 	}
 }

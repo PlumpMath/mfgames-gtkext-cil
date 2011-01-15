@@ -24,52 +24,22 @@
 
 #region Namespaces
 
-using C5;
-
-using Pango;
+using Cairo;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
-	/// Implements a basic font change for Pango fonts.
+	/// Contains information a rendering context including the elements needed
+	/// to draw out elements.
 	/// </summary>
-	internal static class FontCache
+	public interface IRenderContext
 	{
-		#region Constructors
-
 		/// <summary>
-		/// Initializes the <see cref="FontCache"/> class.
+		/// Gets the Cairo context for rendering.
 		/// </summary>
-		static FontCache()
-		{
-			fonts = new HashDictionary<string, FontDescription>();
-		}
-
-		#endregion
-
-		#region Caching
-
-		private static readonly HashDictionary<string, FontDescription> fonts;
-
-		/// <summary>
-		/// Loads and caches a font description from the given name.
-		/// </summary>
-		/// <param name="fontName">Name of the font.</param>
-		/// <returns></returns>
-		public static FontDescription GetFontDescription(string fontName)
-		{
-			// Check to see if the cache already has it.
-			if (!fonts.Contains(fontName))
-			{
-				fonts[fontName] = FontDescription.FromString(fontName);
-			}
-
-			// Return the cached font.
-			return fonts[fontName];
-		}
-
-		#endregion
+		/// <value>The cairo context.</value>
+		Context CairoContext { get; }
 	}
 }
