@@ -79,14 +79,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the line style for a given line.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="line">The line number.</param>
 		/// <returns></returns>
 		public virtual BlockStyle GetLineStyle(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			int line)
 		{
-			return LineMarkupBuffer.GetLineStyle(textEditor, line);
+			return LineMarkupBuffer.GetLineStyle(displayContext, line);
 		}
 
 		#endregion

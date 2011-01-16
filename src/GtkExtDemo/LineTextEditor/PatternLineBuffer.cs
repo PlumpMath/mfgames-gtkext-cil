@@ -64,9 +64,10 @@ namespace GtkExtDemo.LineTextEditor
 		private static readonly string[] Words = new[]
 		                                         { "one", "two", "three", "four", };
 
+		private readonly int divisor;
+
 		private readonly int lines;
 		private readonly int width;
-		private readonly int divisor;
 
 		/// <summary>
 		/// Gets the line count.

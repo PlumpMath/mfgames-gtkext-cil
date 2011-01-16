@@ -75,16 +75,17 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
 		public Layout GetLineLayout(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			int line)
 		{
-			var layout = new Layout(textEditor.PangoContext);
+			var layout = new Layout(displayContext.PangoContext);
 
-			textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]);
+			displayContext.SetLayout(
+				layout, displayContext.Theme.BlockStyles[Theme.TextStyle]);
 			layout.SetMarkup(GetLineMarkup(line));
 
 			return layout;
@@ -94,20 +95,20 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the height of a single line layout.
 		/// </summary>
 		/// <param name="line">The line.</param>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <returns></returns>
 		private int GetLineLayoutHeight(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			int line)
 		{
 			// Get the extents for the line while rendered.
-			Layout lineLayout = GetLineLayout(textEditor, line);
+			Layout lineLayout = GetLineLayout(displayContext, line);
 			int lineWidth, lineHeight;
 
 			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
 
 			// Get the style to include the style's height.
-			BlockStyle style = GetLineStyle(textEditor, line);
+			BlockStyle style = GetLineStyle(displayContext, line);
 
 			lineHeight += style.Height;
 
@@ -119,12 +120,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the pixel height of the lines in the buffer. If endLine is -1
 		/// it means the last line in the buffer.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		/// <returns></returns>
 		public int GetLineLayoutHeight(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			int startLine,
 			int endLine)
 		{
@@ -146,13 +147,37 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			for (int line = startLine; line <= endLine; line++)
 			{
 				// Get the height for this line.
-				int lineHeight = GetLineLayoutHeight(textEditor, line);
+				int lineHeight = GetLineLayoutHeight(displayContext, line);
 
 				// Add the height to the total.
 				height += lineHeight;
 			}
 
 			// Return the resulting height.
+			return height;
+		}
+
+		/// <summary>
+		/// Gets the height of a single line of "normal" text.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns></returns>
+		public int GetLineLayoutHeight(IDisplayContext displayContext)
+		{
+			// Get a layout for the default text style.
+			var layout = new Layout(displayContext.PangoContext);
+
+			displayContext.SetLayout(
+				layout, displayContext.Theme.BlockStyles[Theme.TextStyle]);
+
+			// Set the layout to a simple string.
+			layout.SetText("W");
+
+			// Get the height of the default line.
+			int height, width;
+
+			layout.GetPixelSize(out width, out height);
+
 			return height;
 		}
 
@@ -209,29 +234,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// If we got this far, nothing is visible.
 			startLine = endLine = 0;
 			return;
-		}
-
-		/// <summary>
-		/// Gets the height of a single line of "normal" text.
-		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <returns></returns>
-		public int GetTextLayoutLineHeight(TextEditor textEditor)
-		{
-			// Get a layout for the default text style.
-			var layout = new Layout(textEditor.PangoContext);
-
-			textEditor.SetLayout(layout, textEditor.Theme.BlockStyles[Theme.TextStyle]);
-
-			// Set the layout to a simple string.
-			layout.SetText("W");
-
-			// Get the height of the default line.
-			int height, width;
-
-			layout.GetPixelSize(out width, out height);
-
-			return height;
 		}
 
 		/// <summary>

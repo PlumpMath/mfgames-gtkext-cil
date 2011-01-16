@@ -26,52 +26,53 @@
 
 using Cairo;
 
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Visuals
+namespace MfGames.GtkExt.LineTextEditor.Editing
 {
 	/// <summary>
-	/// Represents a single edge of a border.
+	/// Represents the elements needed for displaying and rendering the caret.
 	/// </summary>
-	public class Border
+	public class Caret
 	{
-		#region Constructors
+		#region Position
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Border"/> class.
+		/// Gets or sets the buffer position of the caret.
 		/// </summary>
-		public Border()
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Border"/> class.
-		/// </summary>
-		/// <param name="lineWidth">Width of the line.</param>
-		/// <param name="color">The color.</param>
-		public Border(
-			double lineWidth,
-			Color color)
-		{
-			LineWidth = lineWidth;
-			Color = color;
-		}
+		/// <value>The buffer position.</value>
+		public BufferPosition BufferPosition { get; set; }
 
 		#endregion
 
-		#region Borders
+		#region Rendering
 
 		/// <summary>
-		/// Gets or sets the color of the border.
+		/// Draws the caret using the given context objects.
 		/// </summary>
-		/// <value>The color.</value>
-		public Color Color { get; set; }
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="renderContext">The render context.</param>
+		public void Draw(
+			IDisplayContext displayContext,
+			IRenderContext renderContext)
+		{
+			// Get the coordinates and the height of the caret.
+			PointD point = BufferPosition.ToScreenCoordinates(displayContext);
+			int height =
+				displayContext.LineLayoutBuffer.GetLineLayoutHeight(displayContext);
 
-		/// <summary>
-		/// Gets or sets the width of the border.
-		/// </summary>
-		/// <value>The width.</value>
-		public double LineWidth { get; set; }
+			// Draw the caret on the screen.
+			Context context = renderContext.CairoContext;
+
+			context.LineWidth = 2;
+			context.Color = new Color(0, 0, 1);
+
+			context.MoveTo(point);
+			context.LineTo(point.X, point.Y + height);
+			context.Stroke();
+		}
 
 		#endregion
 	}

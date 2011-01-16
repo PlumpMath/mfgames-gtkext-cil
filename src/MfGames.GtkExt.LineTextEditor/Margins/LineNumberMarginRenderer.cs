@@ -28,13 +28,11 @@ using System;
 
 using Cairo;
 
-using Gtk;
-
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
-using Context=Cairo.Context;
-using Layout=Pango.Layout;
+using Pango;
+
 using Rectangle=Cairo.Rectangle;
 
 #endregion
@@ -160,8 +158,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 				renderContext,
 				new Rectangle(point.X, point.Y, Width, height),
 				layout,
-				style
-				);
+				style);
 		}
 
 		/// <summary>

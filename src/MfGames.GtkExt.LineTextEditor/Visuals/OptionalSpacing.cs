@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Visuals
@@ -59,7 +57,11 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// <value><c>true</c> if empty; otherwise, <c>false</c>.</value>
 		public bool Empty
 		{
-			get { return !Right.HasValue && !Left.HasValue && !Top.HasValue && !Bottom.HasValue; }
+			get
+			{
+				return !Right.HasValue && !Left.HasValue && !Top.HasValue &&
+				       !Bottom.HasValue;
+			}
 		}
 
 		/// <summary>

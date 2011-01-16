@@ -38,24 +38,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		public Border Bottom { get; set; }
 
 		/// <summary>
-		/// Gets or sets the left border.
-		/// </summary>
-		/// <value>The left.</value>
-		public Border Left { get; set; }
-
-		/// <summary>
-		/// Gets or sets the right border.
-		/// </summary>
-		/// <value>The right.</value>
-		public Border Right { get; set; }
-
-		/// <summary>
-		/// Gets or sets the top border.
-		/// </summary>
-		/// <value>The top.</value>
-		public Border Top { get; set; }
-
-		/// <summary>
 		/// Gets a value indicating whether all four directions have values.
 		/// </summary>
 		/// <value><c>true</c> if complete; otherwise, <c>false</c>.</value>
@@ -72,6 +54,24 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		{
 			get { return Right == null && Left == null && Top == null && Bottom == null; }
 		}
+
+		/// <summary>
+		/// Gets or sets the left border.
+		/// </summary>
+		/// <value>The left.</value>
+		public Border Left { get; set; }
+
+		/// <summary>
+		/// Gets or sets the right border.
+		/// </summary>
+		/// <value>The right.</value>
+		public Border Right { get; set; }
+
+		/// <summary>
+		/// Gets or sets the top border.
+		/// </summary>
+		/// <value>The top.</value>
+		public Border Top { get; set; }
 
 		#endregion
 

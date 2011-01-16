@@ -62,12 +62,12 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			blockStyles = new HashDictionary<string, BlockStyle>();
 
 			var baseStyle = new BlockStyle();
-			
+
 			var bodyStyle = new BlockStyle(baseStyle);
 			bodyStyle.BackgroundColor = new Color(1, 1, 1);
 
 			var marginStyle = new BlockStyle(baseStyle);
-			
+
 			var lineNumberStyle = new BlockStyle(marginStyle);
 			lineNumberStyle.Alignment = Alignment.Right;
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);

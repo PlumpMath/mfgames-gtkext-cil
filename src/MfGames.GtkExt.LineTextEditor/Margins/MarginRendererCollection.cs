@@ -202,11 +202,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 				// Draw out the individual margin.
 				marginRenderer.Draw(
-					displayContext,
-					renderContext,
-					lineIndex,
-					new PointD(dx, point.Y),
-					height);
+					displayContext, renderContext, lineIndex, new PointD(dx, point.Y), height);
 
 				// Add to the x coordinate so we don't overlap the renders.
 				dx += marginRenderer.Width;

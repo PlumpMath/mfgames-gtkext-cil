@@ -59,7 +59,7 @@ namespace GtkExtDemo.LineTextEditor
 			var textEditor = new TextEditor(cachedLayoutBuffer);
 
 			// Wrap the text editor in a scrollbar.
-			ScrolledWindow scrolledWindow = new ScrolledWindow();
+			var scrolledWindow = new ScrolledWindow();
 			scrolledWindow.VscrollbarPolicy = PolicyType.Always;
 			scrolledWindow.Add(textEditor);
 

@@ -33,6 +33,7 @@ using Gdk;
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
 using MfGames.GtkExt.LineTextEditor.Visuals;
@@ -40,6 +41,7 @@ using MfGames.GtkExt.LineTextEditor.Visuals;
 using Pango;
 
 using CairoHelper=Gdk.CairoHelper;
+using Color=Cairo.Color;
 using Context=Cairo.Context;
 using Layout=Pango.Layout;
 using Rectangle=Gdk.Rectangle;
@@ -179,6 +181,21 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#endregion
 
+		#region Editing
+
+		private readonly Caret caret = new Caret();
+
+		/// <summary>
+		/// Gets the caret used to indicate where the user is editing.
+		/// </summary>
+		/// <value>The caret.</value>
+		public Caret Caret
+		{
+			get { return caret; }
+		}
+
+		#endregion
+
 		#region Rendering Events
 
 		/// <summary>
@@ -214,7 +231,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				var renderContext = new RenderContext(cairoContext);
 
 				// Paint the background color of the window.
-				var backgroundColor = theme.BlockStyles[Theme.BodyStyle].GetBackgroundColor();
+				Color? backgroundColor =
+					theme.BlockStyles[Theme.BodyStyle].GetBackgroundColor();
 
 				if (backgroundColor.HasValue)
 				{
@@ -278,6 +296,9 @@ namespace MfGames.GtkExt.LineTextEditor
 					// Move down a line.
 					currentY += height;
 				}
+
+				// Draw the caret on the screen.
+				caret.Draw(this, renderContext);
 			}
 
 			return true;
@@ -356,7 +377,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			verticalAdjustment.SetBounds(
 				0.0,
 				height,
-				lineLayoutBuffer.GetTextLayoutLineHeight(this),
+				lineLayoutBuffer.GetLineLayoutHeight(this),
 				(int) (Allocation.Height / 2.0),
 				Allocation.Height);
 		}

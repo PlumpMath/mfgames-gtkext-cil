@@ -22,6 +22,14 @@
 
 #endregion
 
+#region Namespaces
+
+using Cairo;
+
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+#endregion
+
 namespace MfGames.GtkExt.LineTextEditor.Editing
 {
 	/// <summary>
@@ -61,6 +69,26 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// </summary>
 		/// <value>The line.</value>
 		public int Line { get; set; }
+
+		#endregion
+
+		#region Coordinates
+
+		/// <summary>
+		/// Converts the given line and character coordinates into pixel coordinates
+		/// on the display.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns></returns>
+		public PointD ToScreenCoordinates(IDisplayContext displayContext)
+		{
+			// Figure out the top of the current line.
+			int y = displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+				displayContext, 0, Line);
+
+			// Return the results.
+			return new PointD(100, 100);
+		}
 
 		#endregion
 	}

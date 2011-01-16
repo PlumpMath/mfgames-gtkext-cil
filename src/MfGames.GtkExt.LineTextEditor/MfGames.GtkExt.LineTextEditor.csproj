@@ -55,6 +55,7 @@
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
     <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\BufferPosition.cs" />
+    <Compile Include="Editing\Caret.cs" />
     <Compile Include="FontCache.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />

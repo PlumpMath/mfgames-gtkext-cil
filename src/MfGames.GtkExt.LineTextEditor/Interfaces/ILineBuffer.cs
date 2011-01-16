@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces

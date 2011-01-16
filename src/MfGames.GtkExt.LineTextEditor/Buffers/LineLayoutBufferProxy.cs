@@ -98,30 +98,41 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
 		public virtual Layout GetLineLayout(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			int line)
 		{
-			return LineLayoutBuffer.GetLineLayout(textEditor, line);
+			return LineLayoutBuffer.GetLineLayout(displayContext, line);
 		}
 
 		/// <summary>
 		/// Gets the pixel height of the lines in the buffer. If endLine is -1
 		/// it means the last line in the buffer.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		/// <returns></returns>
 		public virtual int GetLineLayoutHeight(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			int startLine,
 			int endLine)
 		{
-			return LineLayoutBuffer.GetLineLayoutHeight(textEditor, startLine, endLine);
+			return LineLayoutBuffer.GetLineLayoutHeight(
+				displayContext, startLine, endLine);
+		}
+
+		/// <summary>
+		/// Gets the height of a single line of "normal" text.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns></returns>
+		public virtual int GetLineLayoutHeight(IDisplayContext displayContext)
+		{
+			return LineLayoutBuffer.GetLineLayoutHeight(displayContext);
 		}
 
 		/// <summary>
@@ -139,16 +150,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			LineLayoutBuffer.GetLineLayoutRange(
 				textEditor, viewArea, out startLine, out endLine);
-		}
-
-		/// <summary>
-		/// Gets the height of a single line of "normal" text.
-		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		/// <returns></returns>
-		public virtual int GetTextLayoutLineHeight(TextEditor textEditor)
-		{
-			return LineLayoutBuffer.GetTextLayoutLineHeight(textEditor);
 		}
 
 		#endregion

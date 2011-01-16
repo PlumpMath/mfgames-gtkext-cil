@@ -24,14 +24,14 @@
 
 #region Namespaces
 
-using Cairo;
-
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
+using Color=Cairo.Color;
 using Layout=Pango.Layout;
+using Rectangle=Cairo.Rectangle;
 
 #endregion
 
@@ -72,10 +72,13 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			// Draw the background color.
 			var cairoArea = new Rectangle(
-				region.X + marginLeftX, region.Y, region.Width - marginLeftX - marginRightX, region.Height);
+				region.X + marginLeftX,
+				region.Y,
+				region.Width - marginLeftX - marginRightX,
+				region.Height);
 
 			// Paint the background color of the window.
-			var backgroundColor = style.GetBackgroundColor();
+			Color? backgroundColor = style.GetBackgroundColor();
 
 			if (backgroundColor.HasValue)
 			{
@@ -91,7 +94,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				renderContext.CairoContext.Color = borders.Left.Color;
 
 				renderContext.CairoContext.MoveTo(region.X + margins.Left, region.Y);
-				renderContext.CairoContext.LineTo(region.X + margins.Left, region.Y + region.Height);
+				renderContext.CairoContext.LineTo(
+					region.X + margins.Left, region.Y + region.Height);
 				renderContext.CairoContext.Stroke();
 			}
 
@@ -100,8 +104,10 @@ namespace MfGames.GtkExt.LineTextEditor
 				renderContext.CairoContext.LineWidth = borders.Right.LineWidth;
 				renderContext.CairoContext.Color = borders.Right.Color;
 
-				renderContext.CairoContext.MoveTo(region.X + region.Width - margins.Right, region.Y);
-				renderContext.CairoContext.LineTo(region.X + region.Width - margins.Right, region.Y + region.Height);
+				renderContext.CairoContext.MoveTo(
+					region.X + region.Width - margins.Right, region.Y);
+				renderContext.CairoContext.LineTo(
+					region.X + region.Width - margins.Right, region.Y + region.Height);
 				renderContext.CairoContext.Stroke();
 			}
 

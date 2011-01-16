@@ -51,10 +51,11 @@ namespace GtkExtDemo
 		#region GUI
 
 		private static Statusbar statusbar;
-		private readonly DemoComponents demoComponents =
-			new DemoComponents();
+		private readonly DemoComponents demoComponents = new DemoComponents();
+
 		private readonly DemoLineTextEditor demoLineTextEditor =
 			new DemoLineTextEditor();
+
 		private readonly UIManager uiManager;
 		private Notebook notebook;
 
@@ -112,7 +113,7 @@ namespace GtkExtDemo
 		private Widget CreateGuiMenu()
 		{
 			// Defines the menu
-			StringBuilder uiInfo = new StringBuilder();
+			var uiInfo = new StringBuilder();
 
 			uiInfo.Append("<ui>");
 			uiInfo.Append("<menubar name='MenuBar'>");
