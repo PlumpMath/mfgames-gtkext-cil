@@ -24,6 +24,7 @@
 
 #region Namespaces
 
+using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
@@ -69,6 +70,24 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <value>The theme.</value>
 		Theme Theme { get; }
+
+		/// <summary>
+		/// Gets the caret used to indicate where the user is editing.
+		/// </summary>
+		/// <value>The caret.</value>
+		Caret Caret { get; }
+
+		/// <summary>
+		/// Gets the width of the area that can be used for rendering text.
+		/// </summary>
+		/// <value>The width of the text.</value>
+		int TextWidth { get; }
+
+		/// <summary>
+		/// Gets the text X coordinate.
+		/// </summary>
+		/// <value>The text X.</value>
+		int TextX { get; }
 
 		/// <summary>
 		/// Sets the layout according to the given layout and style.

@@ -43,6 +43,7 @@ using Pango;
 using CairoHelper=Gdk.CairoHelper;
 using Color=Cairo.Color;
 using Context=Cairo.Context;
+using Key=Gdk.Key;
 using Layout=Pango.Layout;
 using Rectangle=Gdk.Rectangle;
 using Style=Gtk.Style;
@@ -90,6 +91,12 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			// Save the line buffer which configures a number of other elements.
 			LineLayoutBuffer = lineLayoutBuffer;
+
+			// Set up the caret.
+			caret = new Caret();
+
+			// Set up the text editor controller.
+			controller = new TextEditorController(this);
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -183,7 +190,8 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Editing
 
-		private readonly Caret caret = new Caret();
+		private readonly Caret caret;
+		private readonly TextEditorController controller;
 
 		/// <summary>
 		/// Gets the caret used to indicate where the user is editing.
@@ -194,6 +202,31 @@ namespace MfGames.GtkExt.LineTextEditor
 			get { return caret; }
 		}
 
+		/// <summary>
+		/// Called when a key is pressed.
+		/// </summary>
+		/// <param name="eventKey">The event key.</param>
+		/// <returns></returns>
+		protected override bool OnKeyPressEvent(EventKey eventKey)
+		{
+			// Decompose the key into its components.
+			ModifierType modifier;
+			Key key;
+			GdkUtility.DecomposeKeys(eventKey, out key, out modifier);
+
+			// Get the unicode character for this key.
+			uint unicodeChar = Keyval.ToUnicode(eventKey.KeyValue);
+
+			// Pass it on to the controller.
+			Console.WriteLine("Key " + key + ", modifier " + modifier);
+			return controller.HandleKeypress(key, unicodeChar, modifier);
+		}
+
+		protected override bool OnKeyReleaseEvent(EventKey evnt)
+		{
+			return base.OnKeyReleaseEvent(evnt);
+		}
+
 		#endregion
 
 		#region Rendering Events
@@ -202,9 +235,18 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// Gets the width of the area that can be used for rendering text.
 		/// </summary>
 		/// <value>The width of the text.</value>
-		private int TextWidth
+		public int TextWidth
 		{
 			get { return Allocation.Width - margins.Width; }
+		}
+
+		/// <summary>
+		/// Gets the text X coordinate.
+		/// </summary>
+		/// <value>The text X.</value>
+		public int TextX
+		{
+			get { return margins.Width; }
 		}
 
 		/// <summary>
@@ -214,14 +256,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <returns></returns>
 		protected override bool OnExposeEvent(EventExpose e)
 		{
-			Console.WriteLine(
-				"{0} expose {1},{2} {3}x{4}",
-				(long) (DateTime.Now - createdTimestamp).TotalMilliseconds,
-				e.Area.X,
-				e.Area.Y,
-				e.Area.Width,
-				e.Area.Height);
-
+			// Figure out the area we are rendering into.
 			Rectangle area = e.Region.Clipbox;
 			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
 
@@ -229,6 +264,8 @@ namespace MfGames.GtkExt.LineTextEditor
 			{
 				// Create a render context.
 				var renderContext = new RenderContext(cairoContext);
+				renderContext.RenderRegion = cairoArea;
+				renderContext.VerticalAdjustment = verticalAdjustment.Value;
 
 				// Paint the background color of the window.
 				Color? backgroundColor =
@@ -297,8 +334,11 @@ namespace MfGames.GtkExt.LineTextEditor
 					currentY += height;
 				}
 
-				// Draw the caret on the screen.
-				caret.Draw(this, renderContext);
+				// Draw the caret on the screen, but only if we have focus.
+				if (IsFocus)
+				{
+					caret.Draw(this, renderContext);
+				}
 			}
 
 			return true;

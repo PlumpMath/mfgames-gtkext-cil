@@ -41,5 +41,17 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <value>The cairo context.</value>
 		Context CairoContext { get; }
+
+		/// <summary>
+		/// Gets or sets the render region that can be drawn into.
+		/// </summary>
+		/// <value>The render region.</value>
+		Rectangle RenderRegion { get; set; }
+
+		/// <summary>
+		/// Gets or sets the vertical adjustment or offset into the viewing area.
+		/// </summary>
+		/// <value>The vertical adjustment.</value>
+		double VerticalAdjustment { get; set; }
 	}
 }

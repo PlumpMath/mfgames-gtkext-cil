@@ -47,6 +47,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\CaretMoveActions.cs" />
     <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
+    <Compile Include="Editing\TextEditorController.cs" />
     <Compile Include="FontCache.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
@@ -77,6 +79,12 @@
     <Compile Include="Visuals\StyleUsage.cs" />
     <Compile Include="Visuals\Theme.cs" />
     <Compile Include="TextEditor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
+      <Project>{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}</Project>
+      <Name>MfGames.GtkExt</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

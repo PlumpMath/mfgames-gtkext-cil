@@ -206,6 +206,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		}
 
 		/// <summary>
+		/// Gets the left spacing.
+		/// </summary>
+		/// <value>The left.</value>
+		public int Left
+		{
+			get { return (int) (GetMargins().Left + GetPadding().Left); }
+		}
+
+		/// <summary>
 		/// Gets or sets the margins.
 		/// </summary>
 		/// <value>The margins.</value>
@@ -225,6 +234,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			[DebuggerStepThrough]
 			get { return padding; }
 			set { padding = value ?? new OptionalSpacing(); }
+		}
+
+		/// <summary>
+		/// Gets the right spacing.
+		/// </summary>
+		/// <value>The left.</value>
+		public int Right
+		{
+			get { return (int) (GetMargins().Right + GetPadding().Right); }
 		}
 
 		/// <summary>

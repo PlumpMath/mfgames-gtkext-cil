@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System.Diagnostics;
+
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -37,13 +39,32 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 	/// </summary>
 	public class Caret
 	{
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Caret"/> class.
+		/// </summary>
+		public Caret()
+		{
+			bufferPosition = new BufferPosition();
+		}
+
+		#endregion
+
 		#region Position
+
+		private BufferPosition bufferPosition;
 
 		/// <summary>
 		/// Gets or sets the buffer position of the caret.
 		/// </summary>
 		/// <value>The buffer position.</value>
-		public BufferPosition BufferPosition { get; set; }
+		public BufferPosition BufferPosition
+		{
+			[DebuggerStepThrough]
+			get { return bufferPosition; }
+			set { bufferPosition = value ?? new BufferPosition(); }
+		}
 
 		#endregion
 
@@ -58,19 +79,36 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			IDisplayContext displayContext,
 			IRenderContext renderContext)
 		{
-			// Get the coordinates and the height of the caret.
-			PointD point = BufferPosition.ToScreenCoordinates(displayContext);
-			int height =
-				displayContext.LineLayoutBuffer.GetLineLayoutHeight(displayContext);
+			// Get the coordinates on the screen and the height of the current line.
+			int lineHeight;
+			PointD point = BufferPosition.ToScreenCoordinates(displayContext, out lineHeight);
+			double x = point.X;
+			double y = point.Y;
+
+			// Translate the buffer coordinates into the screen visible coordinates.
+			y -= renderContext.VerticalAdjustment;
+
+			// If the caret would not be visible in the render area, then don't
+			// perform any drawing.
+			if (y > renderContext.RenderRegion.Y + renderContext.RenderRegion.Height ||
+				y + lineHeight < renderContext.RenderRegion.Y)
+			{
+				// Don't show anything because it would be off-screen.
+				return;
+			}
+
+			// Shift the contents to compenstate for the margins.
+			x += displayContext.TextX;
+			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, BufferPosition.Line).Left;
 
 			// Draw the caret on the screen.
 			Context context = renderContext.CairoContext;
 
-			context.LineWidth = 2;
-			context.Color = new Color(0, 0, 1);
+			context.LineWidth = 1;
+			context.Color = new Color(0, 0, 0, 1);
 
-			context.MoveTo(point);
-			context.LineTo(point.X, point.Y + height);
+			context.MoveTo(x, y);
+			context.LineTo(x, y + lineHeight);
 			context.Stroke();
 		}
 
