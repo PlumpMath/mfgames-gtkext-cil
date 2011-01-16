@@ -54,11 +54,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the Pango markup for a given line.
 		/// </summary>
-		/// <param name="line">The line.</param>
+		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public string GetLineMarkup(int line)
+		public string GetLineMarkup(int lineIndex)
 		{
-			string text = GetLineText(line, 0, -1);
+			string text = GetLineText(lineIndex, 0, -1);
 
 			return text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 		}
@@ -67,11 +67,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the line style for a given line.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line number.</param>
+		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
 		public BlockStyle GetLineStyle(
 			IDisplayContext displayContext,
-			int line)
+			int lineIndex)
 		{
 			return displayContext.Theme.BlockStyles[Theme.TextStyle];
 		}

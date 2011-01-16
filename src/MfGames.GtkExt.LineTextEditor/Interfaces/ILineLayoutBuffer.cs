@@ -50,25 +50,25 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line.</param>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="lineIndex">The line index in the buffer or -1 for the last line.</param>
 		/// <returns></returns>
 		Layout GetLineLayout(
 			IDisplayContext displayContext,
-			int line);
+			int lineIndex);
 
 		/// <summary>
 		/// Gets the pixel height of the lines in the buffer. If endLine is -1
 		/// it means the last line in the buffer.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
+		/// <param name="startLineIndex">The start line.</param>
+		/// <param name="endLineIndex">The end line index in the buffer or -1 for the last line.</param>
 		/// <returns></returns>
 		int GetLineLayoutHeight(
 			IDisplayContext displayContext,
-			int startLine,
-			int endLine);
+			int startLineIndex,
+			int endLineIndex);
 
 		/// <summary>
 		/// Gets the height of a single line of "normal" text.
@@ -80,15 +80,15 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
+		/// <param name="startLineIndex">Start index of the line.</param>
+		/// <param name="endLineIndex">End index of the line.</param>
 		void GetLineLayoutRange(
-			TextEditor textEditor,
+			IDisplayContext displayContext,
 			Rectangle viewArea,
-			out int startLine,
-			out int endLine);
+			out int startLineIndex,
+			out int endLineIndex);
 
 		/// <summary>
 		/// Indicates that the underlying text editor has changed in some manner

@@ -76,17 +76,17 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line.</param>
+		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
 		public Layout GetLineLayout(
 			IDisplayContext displayContext,
-			int line)
+			int lineIndex)
 		{
 			var layout = new Layout(displayContext.PangoContext);
 
 			displayContext.SetLayout(
 				layout, displayContext.Theme.BlockStyles[Theme.TextStyle]);
-			layout.SetMarkup(GetLineMarkup(line));
+			layout.SetMarkup(GetLineMarkup(lineIndex));
 
 			return layout;
 		}
@@ -121,13 +121,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// it means the last line in the buffer.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
+		/// <param name="startLineIndex">The start line.</param>
+		/// <param name="endLineIndex">The end line.</param>
 		/// <returns></returns>
 		public int GetLineLayoutHeight(
 			IDisplayContext displayContext,
-			int startLine,
-			int endLine)
+			int startLineIndex,
+			int endLineIndex)
 		{
 			// If we have no lines, we have no height.
 			if (LineCount == 0)
@@ -136,15 +136,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 
 			// Normalize the last line, if we have one.
-			if (endLine == -1)
+			if (endLineIndex == -1)
 			{
-				endLine = LineCount - 1;
+				endLineIndex = LineCount - 1;
 			}
 
 			// Get a total of all the heights.
 			int height = 0;
 
-			for (int line = startLine; line <= endLine; line++)
+			for (int line = startLineIndex; line <= endLineIndex; line++)
 			{
 				// Get the height for this line.
 				int lineHeight = GetLineLayoutHeight(displayContext, line);
@@ -184,15 +184,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public void GetLineLayoutRange(
-			TextEditor textEditor,
-			Rectangle viewArea,
-			out int startLine,
-			out int endLine)
+		public void GetLineLayoutRange(IDisplayContext displayContext,
+		                               Rectangle viewArea,
+		                               out int startLine,
+		                               out int endLine)
 		{
 			// Reset the start line to negative to indicate we don't have a
 			// visible line yet.
@@ -204,7 +203,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			for (int line = 0; line < LineCount; line++)
 			{
 				// Get the height for this line.
-				int height = GetLineLayoutHeight(textEditor, line);
+				int height = GetLineLayoutHeight(displayContext, line);
 
 				// If we don't have a starting line, then check to see if this
 				// line is visible.

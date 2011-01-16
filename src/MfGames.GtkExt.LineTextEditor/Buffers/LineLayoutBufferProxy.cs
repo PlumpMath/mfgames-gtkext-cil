@@ -99,13 +99,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line.</param>
+		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
 		public virtual Layout GetLineLayout(
 			IDisplayContext displayContext,
-			int line)
+			int lineIndex)
 		{
-			return LineLayoutBuffer.GetLineLayout(displayContext, line);
+			return LineLayoutBuffer.GetLineLayout(displayContext, lineIndex);
 		}
 
 		/// <summary>
@@ -113,16 +113,16 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// it means the last line in the buffer.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
+		/// <param name="startLineIndex">The start line.</param>
+		/// <param name="endLineIndex">The end line.</param>
 		/// <returns></returns>
 		public virtual int GetLineLayoutHeight(
 			IDisplayContext displayContext,
-			int startLine,
-			int endLine)
+			int startLineIndex,
+			int endLineIndex)
 		{
 			return LineLayoutBuffer.GetLineLayoutHeight(
-				displayContext, startLine, endLine);
+				displayContext, startLineIndex, endLineIndex);
 		}
 
 		/// <summary>
@@ -138,18 +138,17 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public virtual void GetLineLayoutRange(
-			TextEditor textEditor,
-			Rectangle viewArea,
-			out int startLine,
-			out int endLine)
+		public virtual void GetLineLayoutRange(IDisplayContext displayContext,
+		                                       Rectangle viewArea,
+		                                       out int startLine,
+		                                       out int endLine)
 		{
 			LineLayoutBuffer.GetLineLayoutRange(
-				textEditor, viewArea, out startLine, out endLine);
+				displayContext, viewArea, out startLine, out endLine);
 		}
 
 		#endregion

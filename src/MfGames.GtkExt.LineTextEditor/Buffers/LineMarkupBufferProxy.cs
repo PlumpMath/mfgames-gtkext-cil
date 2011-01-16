@@ -69,24 +69,24 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the Pango markup for a given line.
 		/// </summary>
-		/// <param name="line">The line.</param>
+		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public virtual string GetLineMarkup(int line)
+		public virtual string GetLineMarkup(int lineIndex)
 		{
-			return LineMarkupBuffer.GetLineMarkup(line);
+			return LineMarkupBuffer.GetLineMarkup(lineIndex);
 		}
 
 		/// <summary>
 		/// Gets the line style for a given line.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line number.</param>
+		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
 		public virtual BlockStyle GetLineStyle(
 			IDisplayContext displayContext,
-			int line)
+			int lineIndex)
 		{
-			return LineMarkupBuffer.GetLineStyle(displayContext, line);
+			return LineMarkupBuffer.GetLineStyle(displayContext, lineIndex);
 		}
 
 		#endregion

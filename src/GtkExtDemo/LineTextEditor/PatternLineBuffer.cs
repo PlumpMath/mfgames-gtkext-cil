@@ -24,7 +24,6 @@
 
 #region Namespaces
 
-using System;
 using System.Text;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -87,27 +86,27 @@ namespace GtkExtDemo.LineTextEditor
 			get { return true; }
 		}
 
-		public int GetLineLength(int line)
+		public int GetLineLength(int lineIndex)
 		{
-			return GetLineText(line, 0, -1).Length;
+			return GetLineText(lineIndex, 0, -1).Length;
 		}
 
-		public string GetLineNumber(int line)
+		public string GetLineNumber(int lineIndex)
 		{
 			// Line numebers are given as 1-based instead of 0-based.
-			return (line + 1).ToString("N0");
+			return (lineIndex + 1).ToString("N0");
 		}
 
 		public string GetLineText(
-			int line,
+			int lineIndex,
 			int startIndex,
 			int endIndex)
 		{
 			// Build up a string buffer with the line text. This will always
 			// be no more than the width of the line.
 			var buffer = new StringBuilder();
-			int index = line % Words.Length;
-			int lineWidth = width / (1 + line % divisor);
+			int index = lineIndex % Words.Length;
+			int lineWidth = width / (1 + lineIndex % divisor);
 
 			while (buffer.Length < lineWidth)
 			{
@@ -122,33 +121,6 @@ namespace GtkExtDemo.LineTextEditor
 
 			// Trim off the trailing space and return it.
 			return buffer.ToString().Trim();
-		}
-
-		#endregion
-
-		#region Buffer Editing
-
-		public void DeleteLines(
-			int startLine,
-			int endLine)
-		{
-			throw new InvalidOperationException();
-		}
-
-		public void InsertLines(
-			int afterLine,
-			int count)
-		{
-			throw new InvalidOperationException();
-		}
-
-		public void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text)
-		{
-			throw new InvalidOperationException();
 		}
 
 		#endregion

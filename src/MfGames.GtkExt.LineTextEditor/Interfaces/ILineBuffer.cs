@@ -44,31 +44,32 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		bool ReadOnly { get; }
 
-		int GetLineLength(int line);
-		string GetLineNumber(int line);
+		/// <summary>
+		/// Gets the length of the line.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer or -1 for the last line.</param>
+		/// <returns>The length of the line.</returns>
+		int GetLineLength(int lineIndex);
 
+		/// <summary>
+		/// Gets the formatted line number for a given line.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer.</param>
+		/// <returns>A formatted line number or null.</returns>
+		string GetLineNumber(int lineIndex);
+
+		/// <summary>
+		/// Gets the text of a given line in the buffer. If endIndex is -1, it
+		/// indicates the end of the line.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer or -1 for the last line.</param>
+		/// <param name="startIndex">The start index.</param>
+		/// <param name="endIndex">The end index or -1 for the last character in the line.</param>
+		/// <returns></returns>
 		string GetLineText(
-			int line,
+			int lineIndex,
 			int startIndex,
 			int endIndex);
-
-		#endregion
-
-		#region Buffer Editing
-
-		void DeleteLines(
-			int startLine,
-			int endLine);
-
-		void InsertLines(
-			int afterLine,
-			int count);
-
-		void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text);
 
 		#endregion
 	}

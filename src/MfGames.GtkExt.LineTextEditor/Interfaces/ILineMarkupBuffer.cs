@@ -41,19 +41,19 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <summary>
 		/// Gets the Pango markup for a given line.
 		/// </summary>
-		/// <param name="line">The line.</param>
+		/// <param name="lineIndex">The line index in the buffer or -1 for the last line.</param>
 		/// <returns></returns>
-		string GetLineMarkup(int line);
+		string GetLineMarkup(int lineIndex);
 
 		/// <summary>
 		/// Gets the line style for a given line.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line number.</param>
+		/// <param name="displayContext">The display context for styles.</param>
+		/// <param name="lineIndex">The line index in the buffer or -1 for the last line.</param>
 		/// <returns></returns>
 		BlockStyle GetLineStyle(
 			IDisplayContext displayContext,
-			int line);
+			int lineIndex);
 
 		#endregion
 	}

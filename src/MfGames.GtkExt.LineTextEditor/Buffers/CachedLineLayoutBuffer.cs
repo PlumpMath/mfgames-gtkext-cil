@@ -292,21 +292,21 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line.</param>
+		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
 		public override Layout GetLineLayout(
 			IDisplayContext displayContext,
-			int line)
+			int lineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
 
 			// Go through the windows and find the starting one.
-			int windowIndex = GetWindowIndex(line);
+			int windowIndex = GetWindowIndex(lineIndex);
 			CachedWindow window = windows[windowIndex];
 
 			// Get the layout from the window.
-			Layout layout = window.GetLineLayout(displayContext, line);
+			Layout layout = window.GetLineLayout(displayContext, lineIndex);
 			return layout;
 		}
 
@@ -314,26 +314,26 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Uses the cache to retrieve the heights of the individual lines.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
+		/// <param name="startLineIndex">The start line.</param>
+		/// <param name="endLineIndex">The end line.</param>
 		/// <returns></returns>
 		public override int GetLineLayoutHeight(
 			IDisplayContext displayContext,
-			int startLine,
-			int endLine)
+			int startLineIndex,
+			int endLineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
 
 			// If we got a negative line, then set it to the end.
-			if (endLine == -1)
+			if (endLineIndex == -1)
 			{
-				endLine = LineCount - 1;
+				endLineIndex = LineCount - 1;
 			}
 
 			// Go through the windows and find the starting one.
-			int startingWindowIndex = GetWindowIndex(startLine);
-			int endingWindowIndex = GetWindowIndex(endLine);
+			int startingWindowIndex = GetWindowIndex(startLineIndex);
+			int endingWindowIndex = GetWindowIndex(endLineIndex);
 
 			CachedWindow startingWindow = windows[startingWindowIndex];
 			CachedWindow endingWindow = windows[endingWindowIndex];
@@ -346,13 +346,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Get the height of the lines inside the starting window.
 			int height = startingWindow.GetLineLayoutHeight(
-				displayContext, startLine, endLine);
+				displayContext, startLineIndex, endLineIndex);
 
 			// If the end window is different, get those line heights also.
 			if (startingWindowIndex != endingWindowIndex)
 			{
 				height += endingWindow.GetLineLayoutHeight(
-					displayContext, startLine, endLine);
+					displayContext, startLineIndex, endLineIndex);
 			}
 
 			// Retrieve all the cache windows between the two ranges.
@@ -386,15 +386,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public override void GetLineLayoutRange(
-			TextEditor textEditor,
-			Rectangle viewArea,
-			out int startLine,
-			out int endLine)
+		public override void GetLineLayoutRange(IDisplayContext displayContext,
+		                                        Rectangle viewArea,
+		                                        out int startLine,
+		                                        out int endLine)
 		{
 			// Go through and find the windows that have the starting and ending
 			// area.
@@ -408,7 +406,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			foreach (CachedWindow window in windows)
 			{
 				// Get the window height.
-				int windowHeight = window.GetLineLayoutHeight(textEditor);
+				int windowHeight = window.GetLineLayoutHeight(displayContext);
 
 				// Check for starting line.
 				if (viewArea.Y >= height && viewArea.Y <= height + windowHeight)
@@ -448,7 +446,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Determine what the start line is inside the starting cache.
 			var startWindowOffset = (int) (viewArea.Y - startWindowHeight);
 			startLine = windows[startWindowIndex].GetLineLayoutContaining(
-				textEditor, startWindowOffset);
+				displayContext, startWindowOffset);
 
 			// Get the ending line from the ending cache.
 			if (endWindowIndex == -1)
@@ -459,28 +457,27 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			var endWindowOffset = (int) (viewArea.Y + viewArea.Height - endWindowHeight);
 			endLine = windows[endWindowIndex].GetLineLayoutContaining(
-				textEditor, endWindowOffset);
+				displayContext, endWindowOffset);
 		}
 
 		/// <summary>
 		/// Gets the line style for a given line.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
-		/// <param name="line">The line number.</param>
+		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
 		public override BlockStyle GetLineStyle(
 			IDisplayContext displayContext,
-			int line)
+			int lineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
 
 			// Go through the windows and find the starting one.
-			int windowIndex = GetWindowIndex(line);
+			int windowIndex = GetWindowIndex(lineIndex);
 			CachedWindow window = windows[windowIndex];
 
 			// Get the layout from the window.
-			BlockStyle style = window.GetLineStyle(displayContext, line);
+			BlockStyle style = window.GetLineStyle(displayContext, lineIndex);
 			return style;
 		}
 
@@ -617,7 +614,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			/// <summary>
 			/// Gets the line layout for a given line.
 			/// </summary>
-			/// <param name="displayContext">The text editor.</param>
 			/// <param name="line">The line index which may not be in the window.</param>
 			/// <returns></returns>
 			public Layout GetLineLayout(
@@ -649,15 +645,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			/// Gets the line layout containing the Y coordinate relative to the
 			/// cache window.
 			/// </summary>
-			/// <param name="textEditor">The text editor.</param>
+			/// <param name="displayContext">The text editor.</param>
 			/// <param name="y">The window-relative Y pixels.</param>
 			/// <returns></returns>
 			public int GetLineLayoutContaining(
-				TextEditor textEditor,
+				IDisplayContext displayContext,
 				int y)
 			{
 				// We need to have this window populated.
-				Populate(textEditor);
+				Populate(displayContext);
 
 				// Go through the lines in the cache and find the line.
 				int height = 0;

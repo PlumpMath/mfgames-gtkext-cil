@@ -123,49 +123,5 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		#endregion
-
-		#region Buffer Editing
-
-		/// <summary>
-		/// Deletes the lines.
-		/// </summary>
-		/// <param name="startLine">The start line.</param>
-		/// <param name="endLine">The end line.</param>
-		public virtual void DeleteLines(
-			int startLine,
-			int endLine)
-		{
-			buffer.DeleteLines(startLine, endLine);
-		}
-
-		/// <summary>
-		/// Inserts the lines.
-		/// </summary>
-		/// <param name="afterLine">The after line.</param>
-		/// <param name="count">The count.</param>
-		public virtual void InsertLines(
-			int afterLine,
-			int count)
-		{
-			buffer.InsertLines(afterLine, count);
-		}
-
-		/// <summary>
-		/// Sets the line text.
-		/// </summary>
-		/// <param name="line">The line.</param>
-		/// <param name="startIndex">The start index.</param>
-		/// <param name="endIndex">The end index.</param>
-		/// <param name="text">The text.</param>
-		public virtual void SetLineText(
-			int line,
-			int startIndex,
-			int endIndex,
-			string text)
-		{
-			buffer.SetLineText(line, startIndex, endIndex, text);
-		}
-
-		#endregion
 	}
 }
