@@ -27,10 +27,11 @@
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
-using Rectangle=Cairo.Rectangle;
+using Rectangle=Pango.Rectangle;
 
 #endregion
 
@@ -60,7 +61,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			int line,
 			int character)
 		{
-			Line = line;
+			LineIndex = line;
 			Character = character;
 		}
 
@@ -79,7 +80,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// Gets or sets the line.
 		/// </summary>
 		/// <value>The line.</value>
-		public int Line { get; set; }
+		public int LineIndex { get; set; }
 
 		#endregion
 
@@ -92,17 +93,20 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineHeight">Will contains the height of the current line.</param>
 		/// <returns></returns>
-		public PointD ToScreenCoordinates(IDisplayContext displayContext, out int lineHeight)
+		public PointD ToScreenCoordinates(
+			IDisplayContext displayContext,
+			out int lineHeight)
 		{
 			// Pull out some of the common things we'll be using in this method.
 			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
-			Layout layout = buffer.GetLineLayout(displayContext, Line);
+			Layout layout = buffer.GetLineLayout(displayContext, LineIndex);
+			BlockStyle style = buffer.GetLineStyle(displayContext, LineIndex);
 
 			// Figure out the top of the current line in relation to the entire
 			// buffer and view.
-			int y;
+			double y;
 
-			if (Line == 0)
+			if (LineIndex == 0)
 			{
 				y = 0;
 			}
@@ -111,8 +115,11 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				// We use GetLineLayoutHeight because it also takes into account
 				// the line spacing and borders which we would have to calculate
 				// otherwise.
-				y = buffer.GetLineLayoutHeight(displayContext, 0, Line - 1);
+				y = buffer.GetLineLayoutHeight(displayContext, 0, LineIndex - 1);
 			}
+
+			// Add the style offset for the top-padding.
+			y += style.Top;
 
 			// We need to figure out the relative position. If the position equals
 			// the length of the string, we want to put the caret at the end of the
@@ -121,7 +128,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			bool trailing = false;
 			int character = Character;
 
-			if (character == buffer.GetLineLength(Line))
+			if (character == buffer.GetLineLength(LineIndex))
 			{
 				// Shift back one character to calculate the position and put
 				// the cursor at the end of the character.
@@ -137,13 +144,13 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			layout.IndexToLineX(character, trailing, out wrappedLineIndex, out layoutX);
 
 			// Get the relative offset into the wrapped lines.
-			Pango.Rectangle layoutPoint = layout.IndexToPos(Character);
+			Rectangle layoutPoint = layout.IndexToPos(Character);
 
 			y += Units.ToPixels(layoutPoint.Y);
 
 			// Get the height of the wrapped line.
-			Pango.Rectangle ink = Pango.Rectangle.Zero;
-			Pango.Rectangle logical = Pango.Rectangle.Zero;
+			Rectangle ink = Rectangle.Zero;
+			Rectangle logical = Rectangle.Zero;
 
 			layout.Lines[wrappedLineIndex].GetPixelExtents(ref ink, ref logical);
 			lineHeight = logical.Height;

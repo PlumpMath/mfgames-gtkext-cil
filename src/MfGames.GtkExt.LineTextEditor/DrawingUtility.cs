@@ -31,6 +31,7 @@ using Gtk;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
+using Alignment=Pango.Alignment;
 using Color=Cairo.Color;
 using Context=Cairo.Context;
 using Layout=Pango.Layout;
@@ -73,6 +74,10 @@ namespace MfGames.GtkExt.LineTextEditor
 			double marginRightX = margins.Right + borders.Right.LineWidth;
 			double paddingRightX = marginRightX + padding.Right;
 
+			// Pull out the coordinates since spacing will change them.
+			double x = region.X;
+			double y = region.Y;
+
 			// Draw the background color.
 			Context cairoContext = renderContext.CairoContext;
 			Color? backgroundColor = style.GetBackgroundColor();
@@ -112,15 +117,25 @@ namespace MfGames.GtkExt.LineTextEditor
 				cairoContext.Stroke();
 			}
 
-			// Render out the line number. Since this is right-aligned, we need
-			// to get the text and start it to the right.
+			// Figure out the extents of the layout.
 			int layoutWidth, layoutHeight;
 			layout.GetPixelSize(out layoutWidth, out layoutHeight);
 
+			// Figure out if we are right or left justified which changes the X.
+			if (style.GetAlignment() == Alignment.Right)
+			{
+				x += region.Width - layoutWidth - paddingRightX;
+			}
+
+			// Shift down based on the top-spacing.
+			y += style.Top;
+
+			// Render out the line number. Since this is right-aligned, we need
+			// to get the text and start it to the right.
 			displayContext.GdkWindow.DrawLayout(
 				displayContext.GtkStyle.TextGC(StateType.Normal),
-				(int) (region.X + region.Width - layoutWidth - paddingRightX),
-				(int) region.Y,
+				(int) x,
+				(int) y,
 				layout);
 		}
 

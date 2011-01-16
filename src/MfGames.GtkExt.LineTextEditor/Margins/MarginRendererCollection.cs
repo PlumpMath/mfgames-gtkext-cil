@@ -187,7 +187,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			IRenderContext renderContext,
 			int lineIndex,
 			PointD point,
-			int height)
+			double height)
 		{
 			// Go through the margins and draw each one so they don't overlap.
 			double dx = point.X;

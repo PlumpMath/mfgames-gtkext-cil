@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -110,7 +112,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Get the style to include the style's height.
 			BlockStyle style = GetLineStyle(displayContext, line);
 
-			lineHeight += style.Height;
+			lineHeight += (int) Math.Ceiling(style.Height);
 
 			// Return the resulting height.
 			return lineHeight;

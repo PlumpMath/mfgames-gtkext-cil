@@ -48,11 +48,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			if (position.Character == 0)
 			{
-				if (position.Line > 0)
+				if (position.LineIndex > 0)
 				{
-					position.Line--;
+					position.LineIndex--;
 					position.Character =
-						displayContext.LineLayoutBuffer.GetLineLength(position.Line);
+						displayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
 				}
 			}
 			else
@@ -74,11 +74,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			BufferPosition position = displayContext.Caret.BufferPosition;
 			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
 
-			if (position.Character == buffer.GetLineLength(position.Line))
+			if (position.Character == buffer.GetLineLength(position.LineIndex))
 			{
-				if (position.Line < buffer.LineCount - 1)
+				if (position.LineIndex < buffer.LineCount - 1)
 				{
-					position.Line++;
+					position.LineIndex++;
 					position.Character = 0;
 				}
 			}

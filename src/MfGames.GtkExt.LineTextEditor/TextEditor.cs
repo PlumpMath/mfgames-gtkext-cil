@@ -157,7 +157,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			// Check to see if we are doing line wrapping and set the width,
 			// minus the padding, margins, and borders.
-			layout.Width = Units.FromPixels(TextWidth - style.Width);
+			layout.Width = Units.FromPixels((int) Math.Ceiling(TextWidth - style.Width));
 		}
 
 		#endregion
@@ -306,26 +306,28 @@ namespace MfGames.GtkExt.LineTextEditor
 				}
 
 				// Go through the lines and draw each one in the correct position.
-				int currentY = startLineY - offsetY;
+				double currentY = startLineY - offsetY;
 
 				for (int line = startLine; line <= endLine; line++)
 				{
-					// Get the layout and style for the current line.
+					// Pull out the layout and style since we'll use it.
 					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
 					BlockStyle style = lineLayoutBuffer.GetLineStyle(this, line);
-					Spacing styleMargins = style.GetMargins();
-					Spacing stylePadding = style.GetPadding();
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
 					layout.GetPixelSize(out layoutWidth, out layoutHeight);
 
-					var height =
-						(int) (layoutHeight + styleMargins.Height + stylePadding.Height);
+					// Figure out the height of the line including padding.
+					double height = layoutHeight + style.Height;
 
-					// Draw out the line.
-					GdkWindow.DrawLayout(
-						Style.TextGC(StateType.Normal), margins.Width, currentY, layout);
+					// Draw the current line along with wrapping and padding.
+					DrawingUtility.DrawLayout(
+						this,
+						renderContext,
+						new Cairo.Rectangle(TextX, currentY, TextWidth, height), 
+						layout,
+						style);
 
 					// Render out the margin renderers.
 					margins.Draw(this, renderContext, line, new PointD(0, currentY), height);

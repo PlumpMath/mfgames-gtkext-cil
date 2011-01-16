@@ -99,7 +99,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;
-			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, BufferPosition.Line).Left;
+			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, BufferPosition.LineIndex).Left;
 
 			// Draw the caret on the screen.
 			Context context = renderContext.CairoContext;

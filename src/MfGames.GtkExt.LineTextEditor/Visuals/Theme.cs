@@ -73,13 +73,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			lineNumberStyle.ForegroundColor = new Color(0.5, 0.5, 0.5);
 			lineNumberStyle.Borders.Right = new Border(1, new Color(0.5, 0.5, 0.5));
-			lineNumberStyle.Padding.Right = 2;
+			lineNumberStyle.Padding.Right = 4;
 			lineNumberStyle.Padding.Left = 4;
 			lineNumberStyle.Margins.Right = 8;
+			lineNumberStyle.Margins.Top = 4;
+			lineNumberStyle.Margins.Bottom = 4;
 
 			var textStyle = new BlockStyle(baseStyle);
-			textStyle.Margins.Top = 8;
-			textStyle.Margins.Bottom = 8;
+			textStyle.Margins.Top = 4;
+			textStyle.Margins.Bottom = 4;
 
 			blockStyles[BaseStyle] = baseStyle;
 			blockStyles[BodyStyle] = bodyStyle;

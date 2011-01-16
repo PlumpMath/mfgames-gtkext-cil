@@ -200,18 +200,18 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the height of the various elements in the style.
 		/// </summary>
 		/// <value>The height.</value>
-		public int Height
+		public double Height
 		{
-			get { return (int) (GetMargins().Height + GetPadding().Height); }
+			get { return GetMargins().Height + GetPadding().Height; }
 		}
 
 		/// <summary>
 		/// Gets the left spacing.
 		/// </summary>
 		/// <value>The left.</value>
-		public int Left
+		public double Left
 		{
-			get { return (int) (GetMargins().Left + GetPadding().Left); }
+			get { return GetMargins().Left + GetPadding().Left; }
 		}
 
 		/// <summary>
@@ -240,18 +240,27 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the right spacing.
 		/// </summary>
 		/// <value>The left.</value>
-		public int Right
+		public double Right
 		{
-			get { return (int) (GetMargins().Right + GetPadding().Right); }
+			get { return GetMargins().Right + GetPadding().Right; }
+		}
+
+		/// <summary>
+		/// Gets the top spacing.
+		/// </summary>
+		/// <value>The top.</value>
+		public double Top
+		{
+			get { return GetMargins().Top + GetPadding().Top; }
 		}
 
 		/// <summary>
 		/// Gets the width of the various elements in the style.
 		/// </summary>
 		/// <value>The width.</value>
-		public int Width
+		public double Width
 		{
-			get { return (int) (GetMargins().Width + GetPadding().Width); }
+			get { return GetMargins().Width + GetPadding().Width; }
 		}
 
 		/// <summary>
