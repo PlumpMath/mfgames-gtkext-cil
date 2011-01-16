@@ -150,7 +150,9 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 				lineNumber = String.Empty;
 			}
 
-			layout.SetText(lineNumber);
+			// Wrap the text in a markup that includes the foreground color.
+			string markup = DrawingUtility.WrapColorMarkup(lineNumber, style.GetForegroundColor());
+			layout.SetMarkup(markup);
 
 			// Use the common drawing routine to handle the borders and padding.
 			DrawingUtility.DrawLayout(

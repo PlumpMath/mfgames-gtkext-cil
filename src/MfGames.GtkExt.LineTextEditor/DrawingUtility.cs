@@ -24,12 +24,15 @@
 
 #region Namespaces
 
+using System;
+
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Color=Cairo.Color;
+using Context=Cairo.Context;
 using Layout=Pango.Layout;
 using Rectangle=Cairo.Rectangle;
 
@@ -71,44 +74,42 @@ namespace MfGames.GtkExt.LineTextEditor
 			double paddingRightX = marginRightX + padding.Right;
 
 			// Draw the background color.
+			Context cairoContext = renderContext.CairoContext;
+			Color? backgroundColor = style.GetBackgroundColor();
+
 			var cairoArea = new Rectangle(
 				region.X + marginLeftX,
 				region.Y,
 				region.Width - marginLeftX - marginRightX,
 				region.Height);
 
-			// Paint the background color of the window.
-			Color? backgroundColor = style.GetBackgroundColor();
-
 			if (backgroundColor.HasValue)
 			{
-				renderContext.CairoContext.Color = backgroundColor.Value;
-				renderContext.CairoContext.Rectangle(cairoArea);
-				renderContext.CairoContext.Fill();
+				cairoContext.Color = backgroundColor.Value;
+				cairoContext.Rectangle(cairoArea);
+				cairoContext.Fill();
 			}
 
 			// Draw the border lines.
 			if (borders.Left.LineWidth > 0)
 			{
-				renderContext.CairoContext.LineWidth = borders.Left.LineWidth;
-				renderContext.CairoContext.Color = borders.Left.Color;
+				cairoContext.LineWidth = borders.Left.LineWidth;
+				cairoContext.Color = borders.Left.Color;
 
-				renderContext.CairoContext.MoveTo(region.X + margins.Left, region.Y);
-				renderContext.CairoContext.LineTo(
-					region.X + margins.Left, region.Y + region.Height);
-				renderContext.CairoContext.Stroke();
+				cairoContext.MoveTo(region.X + margins.Left, region.Y);
+				cairoContext.LineTo(region.X + margins.Left, region.Y + region.Height);
+				cairoContext.Stroke();
 			}
 
 			if (borders.Right.LineWidth > 0)
 			{
-				renderContext.CairoContext.LineWidth = borders.Right.LineWidth;
-				renderContext.CairoContext.Color = borders.Right.Color;
+				cairoContext.LineWidth = borders.Right.LineWidth;
+				cairoContext.Color = borders.Right.Color;
 
-				renderContext.CairoContext.MoveTo(
-					region.X + region.Width - margins.Right, region.Y);
-				renderContext.CairoContext.LineTo(
+				cairoContext.MoveTo(region.X + region.Width - margins.Right, region.Y);
+				cairoContext.LineTo(
 					region.X + region.Width - margins.Right, region.Y + region.Height);
-				renderContext.CairoContext.Stroke();
+				cairoContext.Stroke();
 			}
 
 			// Render out the line number. Since this is right-aligned, we need
@@ -121,6 +122,19 @@ namespace MfGames.GtkExt.LineTextEditor
 				(int) (region.X + region.Width - layoutWidth - paddingRightX),
 				(int) region.Y,
 				layout);
+		}
+
+		/// <summary>
+		/// Wraps the given text in a color span tag.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="color">The color.</param>
+		/// <returns></returns>
+		public static string WrapColorMarkup(
+			string text,
+			Color color)
+		{
+			return String.Format("<span color=\"#{1}\">{0}</span>", text, color.ToRgbHexString());
 		}
 	}
 }
