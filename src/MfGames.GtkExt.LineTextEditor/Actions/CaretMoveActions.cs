@@ -24,8 +24,12 @@
 
 #region Namespaces
 
+using System;
+
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using Pango;
 
 #endregion
 
@@ -38,6 +42,67 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	public static class CaretMoveActions
 	{
 		/// <summary>
+		/// Moves the caret down one line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public static void Down(IDisplayContext displayContext)
+		{
+			// Get the position of the text. This uses the wrapped line index
+			// because we do relative movements to the screen.
+			BufferPosition position = displayContext.Caret.BufferPosition;
+			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			Layout layout = buffer.GetLineLayout(displayContext, position.LineIndex);
+
+			int wrappedLineIndex, x;
+			layout.IndexToLineX(
+				position.CharacterIndex, true, out wrappedLineIndex, out x);
+
+			// We'll need to redraw things.
+			try
+			{
+				// Check to see if we are the last wrapped line of the last line.
+				if (position.LineIndex == buffer.LineCount &&
+				    wrappedLineIndex == layout.LineCount - 1)
+				{
+					// We can't do anything, so just move to the end of the line.
+					position.CharacterIndex = buffer.GetLineLength(position.LineIndex);
+					return;
+				}
+
+				// If we are the last line in the layout, we need to move down
+				// a line and get the new layout.
+				if (wrappedLineIndex == layout.LineCount - 1)
+				{
+					// We are the last line in the layout but we aren't the last
+					// line in the buffer.
+					position.LineIndex++;
+					layout = buffer.GetLineLayout(displayContext, position.LineIndex);
+					wrappedLineIndex = 0;
+				}
+				else
+				{
+					// We can move down inside the layout.
+					wrappedLineIndex++;
+				}
+
+				// Figure out the character position from the given wrapped line.
+				LayoutLine wrappedLine = layout.Lines[wrappedLineIndex];
+				int characterIndex, trailing;
+
+				wrappedLine.XToIndex(x, out characterIndex, out trailing);
+
+				// Set the position in the new string but shift back slight to prevent
+				// it from sliding to the side.
+				position.CharacterIndex = Math.Max(0, characterIndex - 1);
+			}
+			finally
+			{
+				// Cause the text editor to redraw itself.
+				((TextEditor) displayContext).QueueDraw();
+			}
+		}
+
+		/// <summary>
 		/// Moves the caret left one character.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
@@ -46,45 +111,18 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Move the character position.
 			BufferPosition position = displayContext.Caret.BufferPosition;
 
-			if (position.Character == 0)
+			if (position.CharacterIndex == 0)
 			{
 				if (position.LineIndex > 0)
 				{
 					position.LineIndex--;
-					position.Character =
+					position.CharacterIndex =
 						displayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
 				}
 			}
 			else
 			{
-				position.Character--;
-			}
-
-			// Cause the text editor to redraw itself.
-			((TextEditor) displayContext).QueueDraw();
-		}
-
-		/// <summary>
-		/// Moves the caret right one character.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		public static void Right(IDisplayContext displayContext)
-		{
-			// Move the character position.
-			BufferPosition position = displayContext.Caret.BufferPosition;
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
-
-			if (position.Character == buffer.GetLineLength(position.LineIndex))
-			{
-				if (position.LineIndex < buffer.LineCount - 1)
-				{
-					position.LineIndex++;
-					position.Character = 0;
-				}
-			}
-			else
-			{
-				position.Character++;
+				position.CharacterIndex--;
 			}
 
 			// Cause the text editor to redraw itself.
@@ -105,10 +143,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Figure out the boundaries.
 			int leftBoundary, rightBoundary;
 			displayContext.WordSplitter.FindWordBoundaries(
-				text, 
-				position.Character,
-				out leftBoundary, 
-				out rightBoundary);
+				text, position.CharacterIndex, out leftBoundary, out rightBoundary);
 
 			// If there is no left boundary, we move up a line.
 			if (leftBoundary == -1)
@@ -117,13 +152,40 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				if (position.LineIndex > 0)
 				{
 					position.LineIndex--;
-					position.Character =
+					position.CharacterIndex =
 						displayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
 				}
 			}
 			else
 			{
-				position.Character = leftBoundary;
+				position.CharacterIndex = leftBoundary;
+			}
+
+			// Cause the text editor to redraw itself.
+			((TextEditor) displayContext).QueueDraw();
+		}
+
+		/// <summary>
+		/// Moves the caret right one character.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public static void Right(IDisplayContext displayContext)
+		{
+			// Move the character position.
+			BufferPosition position = displayContext.Caret.BufferPosition;
+			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+
+			if (position.CharacterIndex == buffer.GetLineLength(position.LineIndex))
+			{
+				if (position.LineIndex < buffer.LineCount - 1)
+				{
+					position.LineIndex++;
+					position.CharacterIndex = 0;
+				}
+			}
+			else
+			{
+				position.CharacterIndex++;
 			}
 
 			// Cause the text editor to redraw itself.
@@ -144,10 +206,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Figure out the boundaries.
 			int leftBoundary, rightBoundary;
 			displayContext.WordSplitter.FindWordBoundaries(
-				text,
-				position.Character,
-				out leftBoundary,
-				out rightBoundary);
+				text, position.CharacterIndex, out leftBoundary, out rightBoundary);
 
 			// If there is no right boundary, we move down a line.
 			if (rightBoundary == -1)
@@ -156,16 +215,76 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				if (position.LineIndex <= displayContext.LineLayoutBuffer.LineCount)
 				{
 					position.LineIndex++;
-					position.Character = 0;
+					position.CharacterIndex = 0;
 				}
 			}
 			else
 			{
-				position.Character = rightBoundary;
+				position.CharacterIndex = rightBoundary;
 			}
 
 			// Cause the text editor to redraw itself.
 			((TextEditor) displayContext).QueueDraw();
+		}
+
+		/// <summary>
+		/// Moves the caret up one line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public static void Up(IDisplayContext displayContext)
+		{
+			// Get the position of the text. This uses the wrapped line index
+			// because we do relative movements to the screen.
+			BufferPosition position = displayContext.Caret.BufferPosition;
+			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			Layout layout = buffer.GetLineLayout(displayContext, position.LineIndex);
+
+			int wrappedLineIndex, x;
+			layout.IndexToLineX(
+				position.CharacterIndex, true, out wrappedLineIndex, out x);
+
+			// We need to redraw things, so add a finally.
+			try
+			{
+				// Check to see if we are the first wrapped line of the first line.
+				if (position.LineIndex == 0 && wrappedLineIndex == 0)
+				{
+					// We can't do anything, so just move to the end of the line.
+					position.CharacterIndex = 0;
+					return;
+				}
+
+				// If we are the first line in the layout, we need to move up
+				// a line and get the new layout.
+				if (wrappedLineIndex == 0)
+				{
+					// We are the first line in the layout but we aren't the first
+					// line in the buffer.
+					position.LineIndex--;
+					layout = buffer.GetLineLayout(displayContext, position.LineIndex);
+					wrappedLineIndex = layout.LineCount - 1;
+				}
+				else
+				{
+					// We can move up inside the layout.
+					wrappedLineIndex--;
+				}
+
+				// Figure out the character position from the given wrapped line.
+				LayoutLine wrappedLine = layout.Lines[wrappedLineIndex];
+				int characterIndex, trailing;
+
+				wrappedLine.XToIndex(x, out characterIndex, out trailing);
+
+				// Set the position in the new string but shift back slight to prevent
+				// it from sliding to the side.
+				position.CharacterIndex = Math.Max(0, characterIndex - 1);
+			}
+			finally
+			{
+				// Cause the text editor to redraw itself.
+				((TextEditor) displayContext).QueueDraw();
+			}
 		}
 	}
 }

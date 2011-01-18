@@ -62,7 +62,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			int character)
 		{
 			LineIndex = line;
-			Character = character;
+			CharacterIndex = character;
 		}
 
 		#endregion
@@ -74,7 +74,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// is always to the left of the character, not trailing it.
 		/// </summary>
 		/// <value>The character.</value>
-		public int Character { get; set; }
+		public int CharacterIndex { get; set; }
 
 		/// <summary>
 		/// Gets or sets the line.
@@ -126,7 +126,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			// character. Otherwise, we put it on the front of the character to
 			// indicate insert point.
 			bool trailing = false;
-			int character = Character;
+			int character = CharacterIndex;
 
 			if (character == buffer.GetLineLength(LineIndex))
 			{
@@ -144,7 +144,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			layout.IndexToLineX(character, trailing, out wrappedLineIndex, out layoutX);
 
 			// Get the relative offset into the wrapped lines.
-			Rectangle layoutPoint = layout.IndexToPos(Character);
+			Rectangle layoutPoint = layout.IndexToPos(CharacterIndex);
 
 			y += Units.ToPixels(layoutPoint.Y);
 

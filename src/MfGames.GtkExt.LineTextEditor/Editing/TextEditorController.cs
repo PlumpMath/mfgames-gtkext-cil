@@ -109,6 +109,21 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				GdkUtility.GetNormalizedKeyCode(Key.KP_Right, wordModifier), action);
 			keyBindings.Add(
 				GdkUtility.GetNormalizedKeyCode(Key.Right, wordModifier), action);
+
+			/*
+			 * Down
+			 */
+			action = CaretMoveActions.Down;
+			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Down), action);
+			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Down), action);
+
+			/*
+			 * Up
+			 */
+
+			action = CaretMoveActions.Up;
+			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Up), action);
+			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Up), action);
 		}
 
 		#endregion
