@@ -91,12 +91,6 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Left), action);
 			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Left), action);
 
-			/*
-			action = SelectionActions.MoveLeft;
-			keyBindings.Add(GetKeyCode(Gdk.Key.KP_Left, Gdk.ModifierType.ShiftMask), action);
-			keyBindings.Add(GetKeyCode(Gdk.Key.Left, Gdk.ModifierType.ShiftMask), action);
-			*/
-
 			action = CaretMoveActions.LeftWord;
 			keyBindings.Add(
 				GdkUtility.GetNormalizedKeyCode(Key.KP_Left, wordModifier), action);
@@ -104,17 +98,17 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				GdkUtility.GetNormalizedKeyCode(Key.Left, wordModifier), action);
 
 			/*
-			action = SelectionActions.MovePreviousWord;
-			keyBindings.Add(GetKeyCode(Gdk.Key.KP_Left, Gdk.ModifierType.ShiftMask | wordModifier), action);
-			keyBindings.Add(GetKeyCode(Gdk.Key.Left, Gdk.ModifierType.ShiftMask | wordModifier), action);
-			 */
-
-			/*
 			 * Right
 			 */
 			action = CaretMoveActions.Right;
 			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Right), action);
 			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Right), action);
+
+			action = CaretMoveActions.RightWord;
+			keyBindings.Add(
+				GdkUtility.GetNormalizedKeyCode(Key.KP_Right, wordModifier), action);
+			keyBindings.Add(
+				GdkUtility.GetNormalizedKeyCode(Key.Right, wordModifier), action);
 		}
 
 		#endregion

@@ -42,6 +42,12 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 	public interface IDisplayContext
 	{
 		/// <summary>
+		/// Gets the caret used to indicate where the user is editing.
+		/// </summary>
+		/// <value>The caret.</value>
+		Caret Caret { get; }
+
+		/// <summary>
 		/// Gets the GDK window associated with this context.
 		/// </summary>
 		/// <value>The GDK window.</value>
@@ -66,18 +72,6 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		Context PangoContext { get; }
 
 		/// <summary>
-		/// Gets the theme collection for this display.
-		/// </summary>
-		/// <value>The theme.</value>
-		Theme Theme { get; }
-
-		/// <summary>
-		/// Gets the caret used to indicate where the user is editing.
-		/// </summary>
-		/// <value>The caret.</value>
-		Caret Caret { get; }
-
-		/// <summary>
 		/// Gets the width of the area that can be used for rendering text.
 		/// </summary>
 		/// <value>The width of the text.</value>
@@ -88,6 +82,18 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <value>The text X.</value>
 		int TextX { get; }
+
+		/// <summary>
+		/// Gets the theme collection for this display.
+		/// </summary>
+		/// <value>The theme.</value>
+		Theme Theme { get; }
+
+		/// <summary>
+		/// Gets or sets the word splitter.
+		/// </summary>
+		/// <value>The word splitter.</value>
+		IWordSplitter WordSplitter { get; set; }
 
 		/// <summary>
 		/// Sets the layout according to the given layout and style.

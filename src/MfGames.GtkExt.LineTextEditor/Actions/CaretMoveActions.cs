@@ -97,6 +97,75 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		/// <param name="displayContext">The display context.</param>
 		public static void LeftWord(IDisplayContext displayContext)
 		{
+			// Get the text and line for the position in question.
+			BufferPosition position = displayContext.Caret.BufferPosition;
+			string text = displayContext.LineLayoutBuffer.GetLineText(
+				position.LineIndex, 0, -1);
+
+			// Figure out the boundaries.
+			int leftBoundary, rightBoundary;
+			displayContext.WordSplitter.FindWordBoundaries(
+				text, 
+				position.Character,
+				out leftBoundary, 
+				out rightBoundary);
+
+			// If there is no left boundary, we move up a line.
+			if (leftBoundary == -1)
+			{
+				// Check to see if we are at the top of the line or not.
+				if (position.LineIndex > 0)
+				{
+					position.LineIndex--;
+					position.Character =
+						displayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
+				}
+			}
+			else
+			{
+				position.Character = leftBoundary;
+			}
+
+			// Cause the text editor to redraw itself.
+			((TextEditor) displayContext).QueueDraw();
+		}
+
+		/// <summary>
+		/// Moves the caret right one word.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public static void RightWord(IDisplayContext displayContext)
+		{
+			// Get the text and line for the position in question.
+			BufferPosition position = displayContext.Caret.BufferPosition;
+			string text = displayContext.LineLayoutBuffer.GetLineText(
+				position.LineIndex, 0, -1);
+
+			// Figure out the boundaries.
+			int leftBoundary, rightBoundary;
+			displayContext.WordSplitter.FindWordBoundaries(
+				text,
+				position.Character,
+				out leftBoundary,
+				out rightBoundary);
+
+			// If there is no right boundary, we move down a line.
+			if (rightBoundary == -1)
+			{
+				// Check to see if we are at the top of the line or not.
+				if (position.LineIndex <= displayContext.LineLayoutBuffer.LineCount)
+				{
+					position.LineIndex++;
+					position.Character = 0;
+				}
+			}
+			else
+			{
+				position.Character = rightBoundary;
+			}
+
+			// Cause the text editor to redraw itself.
+			((TextEditor) displayContext).QueueDraw();
 		}
 	}
 }

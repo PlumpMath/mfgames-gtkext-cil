@@ -52,6 +52,7 @@
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />
+    <Compile Include="Buffers\OffsetWordSplitter.cs" />
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
     <Compile Include="DrawingUtility.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
     <Compile Include="Interfaces\ILineMarkupBuffer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
+    <Compile Include="Interfaces\IWordSplitter.cs" />
     <Compile Include="Margins\LineNumberMarginRenderer.cs" />
     <Compile Include="Margins\MarginRenderer.cs" />
     <Compile Include="Margins\MarginRendererCollection.cs" />

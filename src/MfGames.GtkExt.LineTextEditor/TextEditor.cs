@@ -97,6 +97,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			// Set up the text editor controller.
 			controller = new TextEditorController(this);
+			wordSplitter = new OffsetWordSplitter();
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -166,6 +167,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		private readonly MarginRendererCollection margins;
 		private Theme theme;
+		private IWordSplitter wordSplitter;
 
 		/// <summary>
 		/// Gets the GTK style associated with this context.
@@ -184,6 +186,16 @@ namespace MfGames.GtkExt.LineTextEditor
 		{
 			get { return theme; }
 			set { theme = value ?? new Theme(); }
+		}
+
+		/// <summary>
+		/// Gets or sets the word splitter.
+		/// </summary>
+		/// <value>The word splitter.</value>
+		public IWordSplitter WordSplitter
+		{
+			get { return wordSplitter; }
+			set { wordSplitter = value ?? new OffsetWordSplitter(); }
 		}
 
 		#endregion
