@@ -86,8 +86,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			var layout = new Layout(displayContext.PangoContext);
 
-			displayContext.SetLayout(
-				layout, displayContext.Theme.BlockStyles[Theme.TextStyle]);
+			displayContext.SetLayout(layout, displayContext.Theme.TextBlockStyle);
 			layout.SetMarkup(GetLineMarkup(lineIndex));
 
 			return layout;
@@ -169,8 +168,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Get a layout for the default text style.
 			var layout = new Layout(displayContext.PangoContext);
 
-			displayContext.SetLayout(
-				layout, displayContext.Theme.BlockStyles[Theme.TextStyle]);
+			displayContext.SetLayout(layout, displayContext.Theme.TextBlockStyle);
 
 			// Set the layout to a simple string.
 			layout.SetText("W");

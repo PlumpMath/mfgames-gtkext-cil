@@ -69,27 +69,25 @@ namespace MfGames.GtkExt.LineTextEditor
 			Spacing margins = style.GetMargins();
 			Spacing padding = style.GetPadding();
 			Borders borders = style.GetBorders();
+	
 			double marginLeftX = margins.Left + borders.Left.LineWidth;
-			double paddingLeftX = marginLeftX + padding.Left;
 			double marginRightX = margins.Right + borders.Right.LineWidth;
-			double paddingRightX = marginRightX + padding.Right;
 
-			// Pull out the coordinates since spacing will change them.
-			double x = region.X;
-			double y = region.Y;
+			double paddingLeftX = marginLeftX + padding.Left;
+			double paddingRightX = marginRightX + padding.Right;
 
 			// Draw the background color.
 			Context cairoContext = renderContext.CairoContext;
 			Color? backgroundColor = style.GetBackgroundColor();
 
-			var cairoArea = new Rectangle(
-				region.X + marginLeftX,
-				region.Y,
-				region.Width - marginLeftX - marginRightX,
-				region.Height);
-
 			if (backgroundColor.HasValue)
 			{
+				var cairoArea = new Rectangle(
+					region.X + marginLeftX,
+					region.Y,
+					region.Width - marginLeftX - marginRightX,
+					region.Height);
+
 				cairoContext.Color = backgroundColor.Value;
 				cairoContext.Rectangle(cairoArea);
 				cairoContext.Fill();
@@ -101,8 +99,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				cairoContext.LineWidth = borders.Left.LineWidth;
 				cairoContext.Color = borders.Left.Color;
 
-				cairoContext.MoveTo(region.X + margins.Left, region.Y);
-				cairoContext.LineTo(region.X + margins.Left, region.Y + region.Height);
+				cairoContext.MoveTo(region.X + marginLeftX, region.Y);
+				cairoContext.LineTo(region.X + marginLeftX, region.Y + region.Height);
 				cairoContext.Stroke();
 			}
 
@@ -111,7 +109,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				cairoContext.LineWidth = borders.Right.LineWidth;
 				cairoContext.Color = borders.Right.Color;
 
-				cairoContext.MoveTo(region.X + region.Width - margins.Right, region.Y);
+				cairoContext.MoveTo(
+					region.X + region.Width - margins.Right, region.Y);
 				cairoContext.LineTo(
 					region.X + region.Width - margins.Right, region.Y + region.Height);
 				cairoContext.Stroke();
@@ -121,21 +120,25 @@ namespace MfGames.GtkExt.LineTextEditor
 			int layoutWidth, layoutHeight;
 			layout.GetPixelSize(out layoutWidth, out layoutHeight);
 
+			// Add the padding to the x coordinate since the only thing left is
+			// to render the text.
+			double textX = region.X + paddingLeftX;
+
 			// Figure out if we are right or left justified which changes the X.
 			if (style.GetAlignment() == Alignment.Right)
 			{
-				x += region.Width - layoutWidth - paddingRightX;
+				textX += region.Width;
 			}
 
 			// Shift down based on the top-spacing.
-			y += style.Top;
+			double textY = region.Y + style.Top;
 
 			// Render out the line number. Since this is right-aligned, we need
 			// to get the text and start it to the right.
 			displayContext.GdkWindow.DrawLayout(
 				displayContext.GtkStyle.TextGC(StateType.Normal),
-				(int) x,
-				(int) y,
+				(int) textX,
+				(int) textY,
 				layout);
 		}
 

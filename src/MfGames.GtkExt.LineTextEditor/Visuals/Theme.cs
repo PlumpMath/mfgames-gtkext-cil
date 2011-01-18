@@ -43,7 +43,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		#region Constants
 
 		public const string BaseStyle = "Base";
-		public const string BodyStyle = "Body";
 		public const string LineNumberStyle = "LineNumber";
 		public const string MarginStyle = "Margin";
 		public const string TextStyle = "Text";
@@ -63,9 +62,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 			var baseStyle = new BlockStyle();
 
-			var bodyStyle = new BlockStyle(baseStyle);
-			bodyStyle.BackgroundColor = new Color(1, 1, 1);
-
 			var marginStyle = new BlockStyle(baseStyle);
 
 			var lineNumberStyle = new BlockStyle(marginStyle);
@@ -84,11 +80,23 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			textStyle.Margins.Bottom = 4;
 
 			blockStyles[BaseStyle] = baseStyle;
-			blockStyles[BodyStyle] = bodyStyle;
 			blockStyles[MarginStyle] = marginStyle;
 			blockStyles[LineNumberStyle] = lineNumberStyle;
 			blockStyles[TextStyle] = textStyle;
+
+			// Colors
+			BackgroundColor = new Color(1, 1, 1);
 		}
+
+		#endregion
+
+		#region Colors
+
+		/// <summary>
+		/// Gets or sets the color of the background.
+		/// </summary>
+		/// <value>The color of the background.</value>
+		public Color BackgroundColor { get; set; }
 
 		#endregion
 
@@ -103,6 +111,24 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		public HashDictionary<string, BlockStyle> BlockStyles
 		{
 			get { return blockStyles; }
+		}
+
+		/// <summary>
+		/// Gets the line number block style.
+		/// </summary>
+		/// <value>The line number block style.</value>
+		public BlockStyle LineNumberBlockStyle
+		{
+			get { return blockStyles[LineNumberStyle]; }
+		}
+
+		/// <summary>
+		/// Gets the text block style.
+		/// </summary>
+		/// <value>The text block style.</value>
+		public BlockStyle TextBlockStyle
+		{
+			get { return blockStyles[TextStyle]; }
 		}
 
 		#endregion

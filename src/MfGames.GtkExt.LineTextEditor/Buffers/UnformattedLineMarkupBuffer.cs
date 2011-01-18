@@ -73,7 +73,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			IDisplayContext displayContext,
 			int lineIndex)
 		{
-			return displayContext.Theme.BlockStyles[Theme.TextStyle];
+			return displayContext.Theme.TextBlockStyle;
 		}
 
 		#endregion

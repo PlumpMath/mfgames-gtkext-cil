@@ -268,15 +268,9 @@ namespace MfGames.GtkExt.LineTextEditor
 				renderContext.VerticalAdjustment = verticalAdjustment.Value;
 
 				// Paint the background color of the window.
-				Color? backgroundColor =
-					theme.BlockStyles[Theme.BodyStyle].GetBackgroundColor();
-
-				if (backgroundColor.HasValue)
-				{
-					cairoContext.Color = backgroundColor.Value;
-					cairoContext.Rectangle(cairoArea);
-					cairoContext.Fill();
-				}
+				cairoContext.Color = theme.BackgroundColor;
+				cairoContext.Rectangle(cairoArea);
+				cairoContext.Fill();
 
 				// Reset the layout and its properties.
 				lineLayoutBuffer.Width = area.Width - margins.Width;
@@ -325,7 +319,7 @@ namespace MfGames.GtkExt.LineTextEditor
 					DrawingUtility.DrawLayout(
 						this,
 						renderContext,
-						new Cairo.Rectangle(TextX, currentY, TextWidth, height), 
+						new Cairo.Rectangle(TextX, currentY, TextWidth, height),
 						layout,
 						style);
 
