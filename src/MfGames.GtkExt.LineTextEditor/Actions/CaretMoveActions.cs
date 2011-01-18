@@ -49,7 +49,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			// Get the position of the text. This uses the wrapped line index
 			// because we do relative movements to the screen.
-			BufferPosition position = displayContext.Caret.BufferPosition;
+			BufferPosition position = displayContext.Caret.Position;
 			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
 			Layout layout = buffer.GetLineLayout(displayContext, position.LineIndex);
 
@@ -109,7 +109,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		public static void Left(IDisplayContext displayContext)
 		{
 			// Move the character position.
-			BufferPosition position = displayContext.Caret.BufferPosition;
+			BufferPosition position = displayContext.Caret.Position;
 
 			if (position.CharacterIndex == 0)
 			{
@@ -136,7 +136,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		public static void LeftWord(IDisplayContext displayContext)
 		{
 			// Get the text and line for the position in question.
-			BufferPosition position = displayContext.Caret.BufferPosition;
+			BufferPosition position = displayContext.Caret.Position;
 			string text = displayContext.LineLayoutBuffer.GetLineText(
 				position.LineIndex, 0, -1);
 
@@ -172,7 +172,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		public static void Right(IDisplayContext displayContext)
 		{
 			// Move the character position.
-			BufferPosition position = displayContext.Caret.BufferPosition;
+			BufferPosition position = displayContext.Caret.Position;
 			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
 
 			if (position.CharacterIndex == buffer.GetLineLength(position.LineIndex))
@@ -199,7 +199,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		public static void RightWord(IDisplayContext displayContext)
 		{
 			// Get the text and line for the position in question.
-			BufferPosition position = displayContext.Caret.BufferPosition;
+			BufferPosition position = displayContext.Caret.Position;
 			string text = displayContext.LineLayoutBuffer.GetLineText(
 				position.LineIndex, 0, -1);
 
@@ -235,7 +235,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			// Get the position of the text. This uses the wrapped line index
 			// because we do relative movements to the screen.
-			BufferPosition position = displayContext.Caret.BufferPosition;
+			BufferPosition position = displayContext.Caret.Position;
 			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
 			Layout layout = buffer.GetLineLayout(displayContext, position.LineIndex);
 

@@ -47,24 +47,24 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// </summary>
 		public Caret()
 		{
-			bufferPosition = new BufferPosition();
+			position = new BufferPosition();
 		}
 
 		#endregion
 
 		#region Position
 
-		private BufferPosition bufferPosition;
+		private BufferPosition position;
 
 		/// <summary>
 		/// Gets or sets the buffer position of the caret.
 		/// </summary>
 		/// <value>The buffer position.</value>
-		public BufferPosition BufferPosition
+		public BufferPosition Position
 		{
 			[DebuggerStepThrough]
-			get { return bufferPosition; }
-			set { bufferPosition = value ?? new BufferPosition(); }
+			get { return position; }
+			set { position = value ?? new BufferPosition(); }
 		}
 
 		#endregion
@@ -82,7 +82,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		{
 			// Get the coordinates on the screen and the height of the current line.
 			int lineHeight;
-			PointD point = BufferPosition.ToScreenCoordinates(displayContext, out lineHeight);
+			PointD point = Position.ToScreenCoordinates(displayContext, out lineHeight);
 			double x = point.X;
 			double y = point.Y;
 
@@ -100,7 +100,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;
-			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, BufferPosition.LineIndex).Left;
+			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, Position.LineIndex).Left;
 
 			// Turn off antialiasing for a sharper, thin line.
 			Context context = renderContext.CairoContext;
