@@ -26,6 +26,8 @@
 
 using System;
 
+using Cairo;
+
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -69,51 +71,64 @@ namespace MfGames.GtkExt.LineTextEditor
 			Spacing margins = style.GetMargins();
 			Spacing padding = style.GetPadding();
 			Borders borders = style.GetBorders();
-	
+
 			double marginLeftX = margins.Left + borders.Left.LineWidth;
 			double marginRightX = margins.Right + borders.Right.LineWidth;
 
 			double paddingLeftX = marginLeftX + padding.Left;
 			double paddingRightX = marginRightX + padding.Right;
 
-			// Draw the background color.
+			// Get the context and save settings because we use anti-aliasing
+			// to get a sharper line.
 			Context cairoContext = renderContext.CairoContext;
-			Color? backgroundColor = style.GetBackgroundColor();
+			var oldAntialias = cairoContext.Antialias;
 
-			if (backgroundColor.HasValue)
+			try
 			{
-				var cairoArea = new Rectangle(
-					region.X + marginLeftX,
-					region.Y,
-					region.Width - marginLeftX - marginRightX,
-					region.Height);
+				// Draw the background color.
+				Color? backgroundColor = style.GetBackgroundColor();
 
-				cairoContext.Color = backgroundColor.Value;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
+				if (backgroundColor.HasValue)
+				{
+					var cairoArea = new Rectangle(
+						region.X + marginLeftX,
+						region.Y,
+						region.Width - marginLeftX - marginRightX,
+						region.Height);
+
+					cairoContext.Color = backgroundColor.Value;
+					cairoContext.Rectangle(cairoArea);
+					cairoContext.Fill();
+				}
+
+				// Draw the border lines.
+				cairoContext.Antialias = Antialias.None;
+
+				if (borders.Left.LineWidth > 0)
+				{
+					cairoContext.LineWidth = borders.Left.LineWidth;
+					cairoContext.Color = borders.Left.Color;
+
+					cairoContext.MoveTo(region.X + marginLeftX, region.Y);
+					cairoContext.LineTo(region.X + marginLeftX, region.Y + region.Height);
+					cairoContext.Stroke();
+				}
+
+				if (borders.Right.LineWidth > 0)
+				{
+					cairoContext.LineWidth = borders.Right.LineWidth;
+					cairoContext.Color = borders.Right.Color;
+
+					cairoContext.MoveTo(region.X + region.Width - margins.Right, region.Y);
+					cairoContext.LineTo(
+						region.X + region.Width - margins.Right, region.Y + region.Height);
+					cairoContext.Stroke();
+				}
 			}
-
-			// Draw the border lines.
-			if (borders.Left.LineWidth > 0)
+			finally
 			{
-				cairoContext.LineWidth = borders.Left.LineWidth;
-				cairoContext.Color = borders.Left.Color;
-
-				cairoContext.MoveTo(region.X + marginLeftX, region.Y);
-				cairoContext.LineTo(region.X + marginLeftX, region.Y + region.Height);
-				cairoContext.Stroke();
-			}
-
-			if (borders.Right.LineWidth > 0)
-			{
-				cairoContext.LineWidth = borders.Right.LineWidth;
-				cairoContext.Color = borders.Right.Color;
-
-				cairoContext.MoveTo(
-					region.X + region.Width - margins.Right, region.Y);
-				cairoContext.LineTo(
-					region.X + region.Width - margins.Right, region.Y + region.Height);
-				cairoContext.Stroke();
+				// Restore the context.
+				cairoContext.Antialias = oldAntialias;
 			}
 
 			// Figure out the extents of the layout.

@@ -24,6 +24,7 @@
 
 #region Namespaces
 
+using System;
 using System.Diagnostics;
 
 using Cairo;
@@ -101,15 +102,27 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			x += displayContext.TextX;
 			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, BufferPosition.LineIndex).Left;
 
-			// Draw the caret on the screen.
+			// Turn off antialiasing for a sharper, thin line.
 			Context context = renderContext.CairoContext;
 
-			context.LineWidth = 1;
-			context.Color = new Color(0, 0, 0, 1);
+			var oldAntialias = context.Antialias;
+			context.Antialias = Antialias.None;
 
-			context.MoveTo(x, y);
-			context.LineTo(x, y + lineHeight);
-			context.Stroke();
+			// Draw the caret on the screen.
+			try
+			{
+				context.LineWidth = 1;
+				context.Color = new Color(0, 0, 0, 1);
+
+				context.MoveTo(x, y);
+				context.LineTo(x, y + lineHeight);
+				context.Stroke();
+			}
+			finally
+			{
+				// Restore the context.
+				context.Antialias = oldAntialias;
+			}
 		}
 
 		#endregion
