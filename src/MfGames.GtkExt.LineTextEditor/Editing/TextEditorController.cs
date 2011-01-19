@@ -25,13 +25,18 @@
 #region Namespaces
 
 using System;
+using System.Reflection;
 
 using C5;
 
 using Gdk;
 
+using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
+using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using MfGames.Extensions.System;
 
 #endregion
 
@@ -62,6 +67,8 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			this.textEditor = textEditor;
 
 			// Bind the initial keybindings.
+			keyBindings = new HashDictionary<int, ActionEntry>();
+
 			BindActions();
 		}
 
@@ -69,8 +76,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 		#region Setup
 
-		private readonly HashDictionary<int, Action<IDisplayContext>> keyBindings =
-			new HashDictionary<int, Action<IDisplayContext>>();
+		private readonly HashDictionary<int, ActionEntry> keyBindings;
 
 		private readonly IDisplayContext textEditor;
 
@@ -79,51 +85,75 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// </summary>
 		private void BindActions()
 		{
-			// Create the action object which is used for the various bindings.
-			Action<IDisplayContext> action;
+			BindActions(GetType().Assembly);
+		}
 
-			const ModifierType wordModifier = ModifierType.ControlMask;
+		/// <summary>
+		/// Binds the actions from the various classes inside the assembly.
+		/// </summary>
+		/// <param name="assembly">The assembly.</param>
+		public void BindActions(Assembly assembly)
+		{
+			// Make sure we have sane data.
+			if (assembly == null)
+			{
+				throw new ArgumentNullException("assembly");
+			}
 
-			/*
-			 * Left
-			 */
-			action = CaretMoveActions.Left;
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Left), action);
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Left), action);
+			// Go through the types in the assembly.
+			foreach (Type type in assembly.GetTypes())
+			{
+				// Check to see if the type contains our attribute.
+				bool isFixture = type.HasCustomAttribute<ActionFixtureAttribute>();
 
-			action = CaretMoveActions.LeftWord;
-			keyBindings.Add(
-				GdkUtility.GetNormalizedKeyCode(Key.KP_Left, wordModifier), action);
-			keyBindings.Add(
-				GdkUtility.GetNormalizedKeyCode(Key.Left, wordModifier), action);
+				if (!isFixture)
+				{
+					continue;
+				}
 
-			/*
-			 * Right
-			 */
-			action = CaretMoveActions.Right;
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Right), action);
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Right), action);
+				// Go through all the methods inside the type and make sure they
+				// have the action attribute.
+				foreach (MethodInfo method in type.GetMethods())
+				{
+					// Check to see if this method has the action attribute.
+					bool isAction = method.HasCustomAttribute<ActionAttribute>();
 
-			action = CaretMoveActions.RightWord;
-			keyBindings.Add(
-				GdkUtility.GetNormalizedKeyCode(Key.KP_Right, wordModifier), action);
-			keyBindings.Add(
-				GdkUtility.GetNormalizedKeyCode(Key.Right, wordModifier), action);
+					if (!isAction)
+					{
+						continue;
+					}
 
-			/*
-			 * Down
-			 */
-			action = CaretMoveActions.Down;
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Down), action);
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Down), action);
+					// Create an action entry for this element.
+					Action<IActionContext> action =
+						(Action<IActionContext>)
+						Delegate.CreateDelegate(typeof(Action<IActionContext>), method);
+					ActionEntry entry = new ActionEntry(action);
 
-			/*
-			 * Up
-			 */
+					// Pull out the state objects and add them into the entry.
+					object[] states = method.GetCustomAttributes(
+						typeof(ActionStateAttribute), false);
 
-			action = CaretMoveActions.Up;
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.KP_Up), action);
-			keyBindings.Add(GdkUtility.GetNormalizedKeyCode(Key.Up), action);
+					foreach (ActionStateAttribute actionState in states)
+					{
+						entry.StateTypes.Add(actionState.StateType);
+					}
+
+					// Pull out the key bindings and assign them.
+					object[] bindings =
+						method.GetCustomAttributes(typeof(KeyBindingAttribute), false);
+
+					foreach (KeyBindingAttribute keyBinding in bindings)
+					{
+						// Get the keys and modifiers.
+						var keyCode = GdkUtility.GetNormalizedKeyCode(
+							keyBinding.Key,
+							keyBinding.Modifier);
+
+						// Add the key to the dictionary.
+						keyBindings[keyCode] = entry;
+					}
+				}
+			}
 		}
 
 		#endregion
@@ -153,7 +183,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			// Check to see if we have a binding for this action.
 			if (keyBindings.Contains(keyCode))
 			{
-				Perform(keyBindings[keyCode]);
+				Perform(keyBindings[keyCode].Action);
 				return true;
 			}
 			//else if (unicodeKey != 0 && modifier == Gdk.ModifierType.None)
@@ -169,9 +199,11 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// Performs the specified action on the display context.
 		/// </summary>
 		/// <param name="action">The action to perform.</param>
-		private void Perform(Action<IDisplayContext> action)
+		private void Perform(Action<IActionContext> action)
 		{
-			action(textEditor);
+			// Create a new action context.
+			ActionContext context = new ActionContext(textEditor);
+			action(context);
 		}
 
 		#endregion

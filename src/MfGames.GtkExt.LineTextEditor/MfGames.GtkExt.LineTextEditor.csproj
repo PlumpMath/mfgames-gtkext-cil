@@ -42,12 +42,21 @@
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-2.0</Package>
     </Reference>
+    <Reference Include="MfGames, Version=3.0.0.0, Culture=neutral, PublicKeyToken=f4b9b04ed1870f79, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\MfGames.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cairo, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\CaretMoveActions.cs" />
+    <Compile Include="Actions\VerticalMovementActionState.cs" />
+    <Compile Include="Attributes\ActionAttribute.cs" />
+    <Compile Include="Attributes\ActionFixtureAttribute.cs" />
+    <Compile Include="Attributes\ActionStateAttribute.cs" />
+    <Compile Include="Attributes\KeyBindingAttribute.cs" />
     <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
@@ -56,10 +65,14 @@
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
     <Compile Include="DrawingUtility.cs" />
+    <Compile Include="Editing\ActionContext.cs" />
+    <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Editing\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
     <Compile Include="Editing\TextEditorController.cs" />
     <Compile Include="FontCache.cs" />
+    <Compile Include="Interfaces\IActionState.cs" />
+    <Compile Include="Interfaces\IActionContext.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
     <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
