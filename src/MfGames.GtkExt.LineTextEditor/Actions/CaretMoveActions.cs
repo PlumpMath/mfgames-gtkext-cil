@@ -152,7 +152,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Get the text and line for the position in question.
 			BufferPosition position = actionContext.Display.Caret.Position;
 			string text = actionContext.Display.LineLayoutBuffer.GetLineText(
-				position.LineIndex, 0, -1);
+				position.LineIndex);
 
 			// Figure out the boundaries.
 			int leftBoundary, rightBoundary;
