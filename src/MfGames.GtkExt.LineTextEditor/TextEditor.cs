@@ -41,7 +41,6 @@ using MfGames.GtkExt.LineTextEditor.Visuals;
 using Pango;
 
 using CairoHelper=Gdk.CairoHelper;
-using Color=Cairo.Color;
 using Context=Cairo.Context;
 using Key=Gdk.Key;
 using Layout=Pango.Layout;
@@ -277,7 +276,6 @@ namespace MfGames.GtkExt.LineTextEditor
 				// Create a render context.
 				var renderContext = new RenderContext(cairoContext);
 				renderContext.RenderRegion = cairoArea;
-				renderContext.VerticalAdjustment = verticalAdjustment.Value;
 
 				// Paint the background color of the window.
 				cairoContext.Color = theme.BackgroundColor;
@@ -352,11 +350,34 @@ namespace MfGames.GtkExt.LineTextEditor
 			return true;
 		}
 
+		/// <summary>
+		/// Queues a redraw of a specific area on the screen.
+		/// </summary>
+		/// <param name="region">The region.</param>
+		public void QueueDraw(Cairo.Rectangle region)
+		{
+			//QueueDrawArea(
+			//    (int) Math.Floor(region.X),
+			//    (int) Math.Floor(region.Y),
+			//    (int) Math.Ceiling(region.Width),
+			//    (int) Math.Ceiling(region.Height));
+			QueueDraw();
+		}
+
 		#endregion
 
 		#region Scrollbars
 
 		private Adjustment verticalAdjustment;
+
+		/// <summary>
+		/// Gets or sets the vertical adjustment or offset into the viewing area.
+		/// </summary>
+		/// <value>The vertical adjustment.</value>
+		public double BufferOffsetX
+		{
+			get { return verticalAdjustment.Value; }
+		}
 
 		/// <summary>
 		/// Called when the scroll adjustements are requested.

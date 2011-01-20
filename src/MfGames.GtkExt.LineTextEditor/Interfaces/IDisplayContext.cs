@@ -48,28 +48,10 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		Caret Caret { get; }
 
 		/// <summary>
-		/// Gets the GDK window associated with this context.
-		/// </summary>
-		/// <value>The GDK window.</value>
-		Window GdkWindow { get; }
-
-		/// <summary>
-		/// Gets the GTK style associated with this context.
-		/// </summary>
-		/// <value>The GTK style.</value>
-		Style GtkStyle { get; }
-
-		/// <summary>
 		/// Gets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
 		ILineLayoutBuffer LineLayoutBuffer { get; }
-
-		/// <summary>
-		/// Gets the Pango context associated with this display.
-		/// </summary>
-		/// <value>The pango context.</value>
-		Context PangoContext { get; }
 
 		/// <summary>
 		/// Gets the width of the area that can be used for rendering text.
@@ -103,5 +85,45 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		void SetLayout(
 			Layout layout,
 			BlockStyle style);
+
+		#region Windows
+
+
+		/// <summary>
+		/// Gets the GDK window associated with this context.
+		/// </summary>
+		/// <value>The GDK window.</value>
+		Window GdkWindow { get; }
+
+		/// <summary>
+		/// Gets the GTK style associated with this context.
+		/// </summary>
+		/// <value>The GTK style.</value>
+		Style GtkStyle { get; }
+
+		/// <summary>
+		/// Gets the Pango context associated with this display.
+		/// </summary>
+		/// <value>The pango context.</value>
+		Context PangoContext { get; }
+
+		/// <summary>
+		/// Gets or sets the vertical adjustment or offset into the viewing area.
+		/// </summary>
+		/// <value>The vertical adjustment.</value>
+		double BufferOffsetX { get; }
+
+		/// <summary>
+		/// Queues a redraw of the entire buffer.
+		/// </summary>
+		void QueueDraw();
+
+		/// <summary>
+		/// Queues a redraw of a specific area on the screen.
+		/// </summary>
+		/// <param name="region">The widget-relative region.</param>
+		void QueueDraw(Cairo.Rectangle region);
+
+		#endregion
 	}
 }

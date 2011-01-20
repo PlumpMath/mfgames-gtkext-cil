@@ -24,10 +24,12 @@
 
 #region Namespaces
 
+using System;
 using System.Diagnostics;
 
 using Cairo;
 
+using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
@@ -75,10 +77,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		#region Rendering
 
 		/// <summary>
-		/// Draws the caret using the given context objects.
+		/// Gets the region that the caret would be drawn in.
 		/// </summary>
-		/// <param name="renderContext">The render context.</param>
-		public void Draw(IRenderContext renderContext)
+		/// <returns></returns>
+		public Rectangle GetDrawRegion()
 		{
 			// Get the coordinates on the screen and the height of the current line.
 			int lineHeight;
@@ -87,22 +89,33 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			double y = point.Y;
 
 			// Translate the buffer coordinates into the screen visible coordinates.
-			y -= renderContext.VerticalAdjustment;
-
-			// If the caret would not be visible in the render area, then don't
-			// perform any drawing.
-			if (y > renderContext.RenderRegion.Y + renderContext.RenderRegion.Height ||
-			    y + lineHeight < renderContext.RenderRegion.Y)
-			{
-				// Don't show anything because it would be off-screen.
-				return;
-			}
+			y -= displayContext.BufferOffsetX;
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;
 			x +=
 				displayContext.LineLayoutBuffer.GetLineStyle(
 					displayContext, Position.LineIndex).Left;
+
+			// Return the resulting rectangle.
+			return new Rectangle(x, y, 1, lineHeight);
+		}
+
+		/// <summary>
+		/// Draws the caret using the given context objects.
+		/// </summary>
+		/// <param name="renderContext">The render context.</param>
+		public void Draw(IRenderContext renderContext)
+		{
+			// Get the draw region.
+			Rectangle drawRegion = GetDrawRegion();
+
+			// Make sure the render area intersects with the caret.
+			if (!renderContext.RenderRegion.IntersectsWith(drawRegion))
+			{
+				// Not visible, don't show anything.
+				return;
+			}
 
 			// Turn off antialiasing for a sharper, thin line.
 			Context context = renderContext.CairoContext;
@@ -116,8 +129,8 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				context.LineWidth = 1;
 				context.Color = new Color(0, 0, 0, 1);
 
-				context.MoveTo(x, y);
-				context.LineTo(x, y + lineHeight);
+				context.MoveTo(drawRegion.X, drawRegion.Y);
+				context.LineTo(drawRegion.X, drawRegion.Y + drawRegion.Height);
 				context.Stroke();
 			}
 			finally

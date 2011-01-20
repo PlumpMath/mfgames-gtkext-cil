@@ -106,7 +106,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="layout">The layout.</param>
 		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
 		/// <returns></returns>
-		public LayoutLine GetWrappedLine(IDisplayContext displayContext,
+		public LayoutLine GetWrappedLine(
+			IDisplayContext displayContext,
 			out Layout layout,
 			out int wrappedLineIndex)
 		{
@@ -148,6 +149,18 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
+		/// Determines whether the position is at the beginning of the line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is beginning of buffer] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsBeginningOfBuffer(IDisplayContext displayContext)
+		{
+			return IsBeginningOfBuffer(displayContext.LineLayoutBuffer);
+		}
+
+		/// <summary>
 		/// Determines whether the position is at the beginning of a line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
@@ -157,6 +170,18 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		public bool IsBeginningOfLine(ILineLayoutBuffer buffer)
 		{
 			return CharacterIndex == 0;
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the beginning of a line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is beginning of line] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsBeginningOfLine(IDisplayContext displayContext)
+		{
+			return IsBeginningOfLine(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
@@ -172,6 +197,18 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
+		/// Determines whether the position is at the end of the buffer.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is end of buffer] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsEndOfBuffer(IDisplayContext displayContext)
+		{
+			return IsEndOfBuffer(displayContext.LineLayoutBuffer);
+		}
+
+		/// <summary>
 		/// Determines whether the position is at the end of the line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
@@ -181,6 +218,18 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		public bool IsEndOfLine(ILineLayoutBuffer buffer)
 		{
 			return CharacterIndex == buffer.GetLineLength(LineIndex);
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the end of the line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is end of line] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsEndOfLine(IDisplayContext displayContext)
+		{
+			return IsEndOfLine(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
@@ -196,9 +245,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			Layout layout;
 			int wrappedLineIndex;
 			LayoutLine wrappedLine = GetWrappedLine(
-				displayContext,
-				out layout,
-				out wrappedLineIndex);
+				displayContext, out layout, out wrappedLineIndex);
 
 			// Move to the end of the wrapped line. If this isn't the last, we
 			// need to shift back one character.
@@ -224,12 +271,30 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
+		/// Moves the position to end beginning of buffer.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public void MoveToBeginningOfBuffer(IDisplayContext displayContext)
+		{
+			MoveToBeginningOfBuffer(displayContext.LineLayoutBuffer);
+		}
+
+		/// <summary>
 		/// Moves the position to the beginning of line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
 		public void MoveToBeginningOfLine(ILineLayoutBuffer buffer)
 		{
 			CharacterIndex = 0;
+		}
+
+		/// <summary>
+		/// Moves the position to the beginning of line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public void MoveToBeginningOfLine(IDisplayContext displayContext)
+		{
+			MoveToBeginningOfLine(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
@@ -252,12 +317,30 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
+		/// Moves the position to the end of buffer.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public void MoveToEndOfBuffer(IDisplayContext displayContext)
+		{
+			MoveToEndOfBuffer(displayContext.LineLayoutBuffer);
+		}
+
+		/// <summary>
 		/// Moves the position to the end of line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
 		public void MoveToEndOfLine(ILineLayoutBuffer buffer)
 		{
 			CharacterIndex = buffer.GetLineLength(LineIndex);
+		}
+
+		/// <summary>
+		/// Moves the position to the end of line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public void MoveToEndOfLine(IDisplayContext displayContext)
+		{
+			MoveToEndOfLine(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
@@ -270,9 +353,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			Layout layout;
 			int wrappedLineIndex;
 			LayoutLine wrappedLine = GetWrappedLine(
-				displayContext,
-				out layout, 
-				out wrappedLineIndex);
+				displayContext, out layout, out wrappedLineIndex);
 
 			// Move to the end of the wrapped line. If this isn't the last, we
 			// need to shift back one character.

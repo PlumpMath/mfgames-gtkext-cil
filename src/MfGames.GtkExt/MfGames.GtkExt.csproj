@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="CairoUtility.cs" />
     <Compile Include="EnumComboBox.cs" />
+    <Compile Include="Extensions\Cairo\CairoRectangleExtensions.cs" />
     <Compile Include="GdkUtility.cs" />
     <Compile Include="LabelWidgetTable.cs" />
     <Compile Include="StringListEntry.cs" />

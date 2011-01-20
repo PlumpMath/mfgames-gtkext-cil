@@ -59,7 +59,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// because we do relative movements to the screen.
 			BufferPosition position = actionContext.Display.Caret.Position;
 			ILineLayoutBuffer buffer = actionContext.Display.LineLayoutBuffer;
-			Layout layout = buffer.GetLineLayout(actionContext.Display, position.LineIndex);
+			Layout layout = buffer.GetLineLayout(
+				actionContext.Display, position.LineIndex);
 
 			int wrappedLineIndex, x;
 			layout.IndexToLineX(
@@ -151,8 +152,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			// Get the text and line for the position in question.
 			BufferPosition position = actionContext.Display.Caret.Position;
-			string text = actionContext.Display.LineLayoutBuffer.GetLineText(
-				position.LineIndex);
+			string text =
+				actionContext.Display.LineLayoutBuffer.GetLineText(position.LineIndex);
 
 			// Figure out the boundaries.
 			int leftBoundary, rightBoundary;
@@ -220,8 +221,9 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			// Get the text and line for the position in question.
 			BufferPosition position = actionContext.Display.Caret.Position;
-			string text = actionContext.Display.LineLayoutBuffer.GetLineText(
-				position.LineIndex, 0, -1);
+			string text =
+				actionContext.Display.LineLayoutBuffer.GetLineText(
+					position.LineIndex, 0, -1);
 
 			// Figure out the boundaries.
 			int leftBoundary, rightBoundary;
@@ -261,7 +263,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// because we do relative movements to the screen.
 			BufferPosition position = actionContext.Display.Caret.Position;
 			ILineLayoutBuffer buffer = actionContext.Display.LineLayoutBuffer;
-			Layout layout = buffer.GetLineLayout(actionContext.Display, position.LineIndex);
+			Layout layout = buffer.GetLineLayout(
+				actionContext.Display, position.LineIndex);
 
 			int wrappedLineIndex, x;
 			layout.IndexToLineX(
@@ -314,6 +317,25 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		#region End Of...
 
 		/// <summary>
+		/// Moves the caret to the end of the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_End, ModifierType.ControlMask)]
+		[KeyBinding(Key.End, ModifierType.ControlMask)]
+		public static void EndOfBuffer(IActionContext actionContext)
+		{
+			// Redraw the previous area of the caret.
+			IDisplayContext displayContext = actionContext.Display;
+
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			displayContext.Caret.Position.MoveToEndOfBuffer(displayContext);
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+		}
+
+		/// <summary>
 		/// Moves the caret to the end of the line.
 		/// </summary>
 		/// <param name="actionContext">The action context.</param>
@@ -322,22 +344,37 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		[KeyBinding(Key.End)]
 		public static void EndOfWrappedLine(IActionContext actionContext)
 		{
+			// Redraw the previous area of the caret.
 			IDisplayContext displayContext = actionContext.Display;
 
-			try
-			{
-				displayContext.Caret.Position.MoveToEndOfWrappedLine(displayContext);
-			}
-			finally
-			{
-				// Cause the text editor to redraw itself.
-				((TextEditor) displayContext).QueueDraw();
-			}
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			displayContext.Caret.Position.MoveToEndOfWrappedLine(displayContext);
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion
 
 		#region Beginning Of...
+
+		/// <summary>
+		/// Moves the caret to the end of the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_Home, ModifierType.ControlMask)]
+		[KeyBinding(Key.Home, ModifierType.ControlMask)]
+		public static void BeginningOfBuffer(IActionContext actionContext)
+		{
+			// Redraw the previous area of the caret.
+			IDisplayContext displayContext = actionContext.Display;
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			displayContext.Caret.Position.MoveToBeginningOfBuffer(displayContext);
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+		}
 
 		/// <summary>
 		/// Moves the caret to the end of the visible line.
@@ -348,17 +385,14 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		[KeyBinding(Key.Home)]
 		public static void BeginningOfWrappedLine(IActionContext actionContext)
 		{
+			// Redraw the previous area of the caret.
 			IDisplayContext displayContext = actionContext.Display;
 
-			try
-			{
-				displayContext.Caret.Position.MoveToBeginningOfWrappedLine(displayContext);
-			}
-			finally
-			{
-				// Cause the text editor to redraw itself.
-				((TextEditor) displayContext).QueueDraw();
-			}
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			displayContext.Caret.Position.MoveToBeginningOfWrappedLine(displayContext);
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion

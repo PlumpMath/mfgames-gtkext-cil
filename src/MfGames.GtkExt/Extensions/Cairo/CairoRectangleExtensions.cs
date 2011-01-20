@@ -28,24 +28,49 @@ using Cairo;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.Extensions.Cairo
 {
 	/// <summary>
-	/// Contains information a rendering context including the elements needed
-	/// to draw out elements.
+	/// Defines extensions for Cairo.Rectangle.
 	/// </summary>
-	public interface IRenderContext
+	public static class CairoRectangleExtensions
 	{
 		/// <summary>
-		/// Gets the Cairo context for rendering.
+		/// Determines if the two rectangles intersect with each other.
 		/// </summary>
-		/// <value>The cairo context.</value>
-		Context CairoContext { get; }
+		/// <param name="rectangle1">The rectangle.</param>
+		/// <param name="rectangle2">The rectangle2.</param>
+		/// <returns></returns>
+		public static bool IntersectsWith(
+			this Rectangle rectangle1,
+			Rectangle rectangle2)
+		{
+			// Check horizontal overlap.
+			double left1 = rectangle1.X;
+			double left2 = rectangle2.X;
+			double right1 = rectangle1.X + rectangle1.Width;
+			double right2 = rectangle2.X + rectangle2.Width;
 
-		/// <summary>
-		/// Gets or sets the render region that can be drawn into.
-		/// </summary>
-		/// <value>The render region.</value>
-		Rectangle RenderRegion { get; set; }
+			if (right1 < left2 || right2 < left1 || left1 > right2 || left2 > right1)
+			{
+				// There is no overlap horizontally.
+				return false;
+			}
+
+			// Check for vertical overlap.
+			double top1 = rectangle1.X;
+			double top2 = rectangle2.X;
+			double bottom1 = rectangle1.X + rectangle1.Width;
+			double bottom2 = rectangle2.X + rectangle2.Width;
+
+			if (bottom1 < top2 || bottom2 < top1 || top1 > bottom2 || top2 > bottom1)
+			{
+				// There is no overlap vertically.
+				return false;
+			}
+
+			// There is an overlap.
+			return true;
+		}
 	}
 }
