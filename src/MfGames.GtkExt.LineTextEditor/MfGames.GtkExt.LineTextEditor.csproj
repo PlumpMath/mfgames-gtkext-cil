@@ -83,6 +83,7 @@
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
     <Compile Include="Interfaces\LineBufferExtensions.cs" />
+    <Compile Include="Interfaces\LineLayoutBufferExtensions.cs" />
     <Compile Include="Margins\LineNumberMarginRenderer.cs" />
     <Compile Include="Margins\MarginRenderer.cs" />
     <Compile Include="Margins\MarginRendererCollection.cs" />
