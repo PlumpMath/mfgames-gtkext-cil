@@ -345,7 +345,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				// Draw the caret on the screen, but only if we have focus.
 				if (IsFocus)
 				{
-					caret.Draw(this, renderContext);
+					caret.Draw(renderContext);
 				}
 			}
 

@@ -77,11 +77,8 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// <summary>
 		/// Draws the caret using the given context objects.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <param name="renderContext">The render context.</param>
-		public void Draw(
-			IDisplayContext displayContext,
-			IRenderContext renderContext)
+		public void Draw(IRenderContext renderContext)
 		{
 			// Get the coordinates on the screen and the height of the current line.
 			int lineHeight;
