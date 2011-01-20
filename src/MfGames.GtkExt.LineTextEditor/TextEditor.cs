@@ -92,8 +92,8 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Save the line buffer which configures a number of other elements.
 			LineLayoutBuffer = lineLayoutBuffer;
 
-			// Set up the caret.
-			caret = new Caret();
+			// Set up the caret, this must be done after the buffer is set.
+			caret = new Caret(this);
 
 			// Set up the text editor controller.
 			controller = new TextEditorController(this);

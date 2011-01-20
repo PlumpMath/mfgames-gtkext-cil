@@ -35,7 +35,7 @@ using Rectangle=Pango.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Editing
+namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
 	/// <summary>
 	/// Represents a position within the text buffer using the line as a primary
@@ -48,18 +48,22 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> class.
 		/// </summary>
-		public BufferPosition()
+		public BufferPosition(ILineLayoutBuffer lineLayoutBuffer)
 		{
+			LineLayoutBuffer = lineLayoutBuffer;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> struct.
 		/// </summary>
+		/// <param name="lineLayoutBuffer">The line layout buffer.</param>
 		/// <param name="line">The line.</param>
 		/// <param name="character">The character.</param>
 		public BufferPosition(
+			ILineLayoutBuffer lineLayoutBuffer,
 			int line,
 			int character)
+			: this(lineLayoutBuffer)
 		{
 			LineIndex = line;
 			CharacterIndex = character;
@@ -81,6 +85,12 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// </summary>
 		/// <value>The line.</value>
 		public int LineIndex { get; set; }
+
+		/// <summary>
+		/// Gets the line layout buffer associated with this position.
+		/// </summary>
+		/// <value>The line layout buffer.</value>
+		public ILineLayoutBuffer LineLayoutBuffer { get; private set; }
 
 		#endregion
 

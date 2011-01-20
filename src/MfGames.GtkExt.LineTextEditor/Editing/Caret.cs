@@ -24,11 +24,11 @@
 
 #region Namespaces
 
-using System;
 using System.Diagnostics;
 
 using Cairo;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -45,15 +45,18 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Caret"/> class.
 		/// </summary>
-		public Caret()
+		/// <param name="displayContext">The display context.</param>
+		public Caret(IDisplayContext displayContext)
 		{
-			position = new BufferPosition();
+			this.displayContext = displayContext;
+			position = new BufferPosition(displayContext.LineLayoutBuffer);
 		}
 
 		#endregion
 
 		#region Position
 
+		private readonly IDisplayContext displayContext;
 		private BufferPosition position;
 
 		/// <summary>
@@ -64,7 +67,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		{
 			[DebuggerStepThrough]
 			get { return position; }
-			set { position = value ?? new BufferPosition(); }
+			set { position = value ?? new BufferPosition(displayContext.LineLayoutBuffer); }
 		}
 
 		#endregion
@@ -92,7 +95,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			// If the caret would not be visible in the render area, then don't
 			// perform any drawing.
 			if (y > renderContext.RenderRegion.Y + renderContext.RenderRegion.Height ||
-				y + lineHeight < renderContext.RenderRegion.Y)
+			    y + lineHeight < renderContext.RenderRegion.Y)
 			{
 				// Don't show anything because it would be off-screen.
 				return;
@@ -100,12 +103,14 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;
-			x += displayContext.LineLayoutBuffer.GetLineStyle(displayContext, Position.LineIndex).Left;
+			x +=
+				displayContext.LineLayoutBuffer.GetLineStyle(
+					displayContext, Position.LineIndex).Left;
 
 			// Turn off antialiasing for a sharper, thin line.
 			Context context = renderContext.CairoContext;
 
-			var oldAntialias = context.Antialias;
+			Antialias oldAntialias = context.Antialias;
 			context.Antialias = Antialias.None;
 
 			// Draw the caret on the screen.

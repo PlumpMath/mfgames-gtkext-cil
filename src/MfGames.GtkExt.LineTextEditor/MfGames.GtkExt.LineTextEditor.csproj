@@ -67,7 +67,7 @@
     <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\ActionContext.cs" />
     <Compile Include="Editing\ActionEntry.cs" />
-    <Compile Include="Editing\BufferPosition.cs" />
+    <Compile Include="Buffers\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
     <Compile Include="Editing\TextEditorController.cs" />
     <Compile Include="FontCache.cs" />
