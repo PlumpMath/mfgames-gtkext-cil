@@ -310,5 +310,57 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				((TextEditor) actionContext.Display).QueueDraw();
 			}
 		}
+
+		#region End Of...
+
+		/// <summary>
+		/// Moves the caret to the end of the line.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_End)]
+		[KeyBinding(Key.End)]
+		public static void EndOfWrappedLine(IActionContext actionContext)
+		{
+			IDisplayContext displayContext = actionContext.Display;
+
+			try
+			{
+				displayContext.Caret.Position.MoveToEndOfWrappedLine(displayContext);
+			}
+			finally
+			{
+				// Cause the text editor to redraw itself.
+				((TextEditor) displayContext).QueueDraw();
+			}
+		}
+
+		#endregion
+
+		#region Beginning Of...
+
+		/// <summary>
+		/// Moves the caret to the end of the visible line.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_Home)]
+		[KeyBinding(Key.Home)]
+		public static void BeginningOfWrappedLine(IActionContext actionContext)
+		{
+			IDisplayContext displayContext = actionContext.Display;
+
+			try
+			{
+				displayContext.Caret.Position.MoveToBeginningOfWrappedLine(displayContext);
+			}
+			finally
+			{
+				// Cause the text editor to redraw itself.
+				((TextEditor) displayContext).QueueDraw();
+			}
+		}
+
+		#endregion
 	}
 }

@@ -49,7 +49,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		public Caret(IDisplayContext displayContext)
 		{
 			this.displayContext = displayContext;
-			position = new BufferPosition(displayContext.LineLayoutBuffer);
+			position = new BufferPosition();
 		}
 
 		#endregion
@@ -67,7 +67,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		{
 			[DebuggerStepThrough]
 			get { return position; }
-			set { position = value ?? new BufferPosition(displayContext.LineLayoutBuffer); }
+			set { position = value ?? new BufferPosition(); }
 		}
 
 		#endregion

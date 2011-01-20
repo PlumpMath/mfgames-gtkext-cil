@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -50,27 +48,18 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> class.
 		/// </summary>
-		public BufferPosition(ILineLayoutBuffer lineLayoutbuffer)
+		public BufferPosition()
 		{
-			if (lineLayoutbuffer == null)
-			{
-				throw new ArgumentNullException("lineLayoutbuffer");
-			}
-
-			LineLayoutBuffer = lineLayoutbuffer;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> struct.
 		/// </summary>
-		/// <param name="lineLayoutBuffer">The line layout buffer.</param>
 		/// <param name="line">The line.</param>
 		/// <param name="character">The character.</param>
 		public BufferPosition(
-			ILineLayoutBuffer lineLayoutBuffer,
 			int line,
 			int character)
-			: this(lineLayoutBuffer)
 		{
 			LineIndex = line;
 			CharacterIndex = character;
@@ -79,12 +68,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		#endregion
 
 		#region Properties
-
-		/// <summary>
-		/// Gets or sets the line layout buffer associated with this position.
-		/// </summary>
-		/// <value>The line layout buffer.</value>
-		public ILineLayoutBuffer LineLayoutBuffer { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the character. In terms of caret positions, the position
@@ -103,9 +86,202 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		#region Movement
 
+		/// <summary>
+		/// Gets the wrapped line associated with this buffer position.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns></returns>
+		public LayoutLine GetWrappedLine(IDisplayContext displayContext)
+		{
+			Layout layout;
+			int wrappedLineIndex;
+
+			return GetWrappedLine(displayContext, out layout, out wrappedLineIndex);
+		}
+
+		/// <summary>
+		/// Gets the wrapped line associated with this buffer position.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="layout">The layout.</param>
+		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
+		/// <returns></returns>
+		public LayoutLine GetWrappedLine(IDisplayContext displayContext,
+			out Layout layout,
+			out int wrappedLineIndex)
+		{
+			// Get the layout associated with the line.
+			layout = displayContext.LineLayoutBuffer.GetLineLayout(
+				displayContext, LineIndex);
+
+			// Get the wrapped line associated with this character position.
+			int x;
+
+			layout.IndexToLineX(CharacterIndex, false, out wrappedLineIndex, out x);
+
+			// Return the resulting line.
+			return layout.Lines[wrappedLineIndex];
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the beginning of a wrapped line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is begining of wrapped line] [the specified display context]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsBeginingOfWrappedLine(IDisplayContext displayContext)
+		{
+			return CharacterIndex == GetWrappedLine(displayContext).StartIndex;
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the beginning of the line.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is beginning of buffer] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
 		public bool IsBeginningOfBuffer(ILineLayoutBuffer buffer)
 		{
 			return LineIndex == 0 && CharacterIndex == 0;
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the beginning of a line.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is beginning of line] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsBeginningOfLine(ILineLayoutBuffer buffer)
+		{
+			return CharacterIndex == 0;
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the end of the buffer.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is end of buffer] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsEndOfBuffer(ILineLayoutBuffer buffer)
+		{
+			return LineIndex == buffer.LineCount - 1 && IsEndOfLine(buffer);
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the end of the line.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is end of line] [the specified buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsEndOfLine(ILineLayoutBuffer buffer)
+		{
+			return CharacterIndex == buffer.GetLineLength(LineIndex);
+		}
+
+		/// <summary>
+		/// Determines whether the position is at the end of a wrapped line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is end of wrapped line] [the specified display context]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsEndOfWrappedLine(IDisplayContext displayContext)
+		{
+			// Get the wrapped line and layout.
+			Layout layout;
+			int wrappedLineIndex;
+			LayoutLine wrappedLine = GetWrappedLine(
+				displayContext,
+				out layout,
+				out wrappedLineIndex);
+
+			// Move to the end of the wrapped line. If this isn't the last, we
+			// need to shift back one character.
+			int characterIndex = wrappedLine.StartIndex + wrappedLine.Length;
+
+			if (wrappedLineIndex != layout.LineCount - 1)
+			{
+				characterIndex--;
+			}
+
+			// Return if these are equal.
+			return CharacterIndex == characterIndex;
+		}
+
+		/// <summary>
+		/// Moves the position to end beginning of buffer.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		public void MoveToBeginningOfBuffer(ILineLayoutBuffer buffer)
+		{
+			LineIndex = 0;
+			CharacterIndex = 0;
+		}
+
+		/// <summary>
+		/// Moves the position to the beginning of line.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		public void MoveToBeginningOfLine(ILineLayoutBuffer buffer)
+		{
+			CharacterIndex = 0;
+		}
+
+		/// <summary>
+		/// Moves the position to the beginning of wrapped line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public void MoveToBeginningOfWrappedLine(IDisplayContext displayContext)
+		{
+			CharacterIndex = GetWrappedLine(displayContext).StartIndex;
+		}
+
+		/// <summary>
+		/// Moves the position to the end of buffer.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		public void MoveToEndOfBuffer(ILineLayoutBuffer buffer)
+		{
+			LineIndex = buffer.LineCount - 1;
+			CharacterIndex = buffer.GetLineLength(LineIndex);
+		}
+
+		/// <summary>
+		/// Moves the position to the end of line.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
+		public void MoveToEndOfLine(ILineLayoutBuffer buffer)
+		{
+			CharacterIndex = buffer.GetLineLength(LineIndex);
+		}
+
+		/// <summary>
+		/// Moves the position to the end of wrapped line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public void MoveToEndOfWrappedLine(IDisplayContext displayContext)
+		{
+			// Get the wrapped line and layout.
+			Layout layout;
+			int wrappedLineIndex;
+			LayoutLine wrappedLine = GetWrappedLine(
+				displayContext,
+				out layout, 
+				out wrappedLineIndex);
+
+			// Move to the end of the wrapped line. If this isn't the last, we
+			// need to shift back one character.
+			CharacterIndex = wrappedLine.StartIndex + wrappedLine.Length;
+
+			if (wrappedLineIndex != layout.LineCount - 1)
+			{
+				CharacterIndex--;
+			}
 		}
 
 		#endregion
@@ -123,15 +299,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			IDisplayContext displayContext,
 			out int lineHeight)
 		{
-			// Make sure the line layout buffer corresponds to the display.
-			if (LineLayoutBuffer != displayContext.LineLayoutBuffer)
-			{
-				throw new Exception(
-					"Cannot use a display for a different line layout buffer");
-			}
-
 			// Pull out some of the common things we'll be using in this method.
-			ILineLayoutBuffer buffer = LineLayoutBuffer;
+			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
 			Layout layout = buffer.GetLineLayout(displayContext, LineIndex);
 			BlockStyle style = buffer.GetLineStyle(displayContext, LineIndex);
 
