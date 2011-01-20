@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -48,9 +50,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> class.
 		/// </summary>
-		public BufferPosition(ILineLayoutBuffer lineLayoutBuffer)
+		public BufferPosition(ILineLayoutBuffer lineLayoutbuffer)
 		{
-			LineLayoutBuffer = lineLayoutBuffer;
+			if (lineLayoutbuffer == null)
+			{
+				throw new ArgumentNullException("lineLayoutbuffer");
+			}
+
+			LineLayoutBuffer = lineLayoutbuffer;
 		}
 
 		/// <summary>
@@ -74,6 +81,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		#region Properties
 
 		/// <summary>
+		/// Gets or sets the line layout buffer associated with this position.
+		/// </summary>
+		/// <value>The line layout buffer.</value>
+		public ILineLayoutBuffer LineLayoutBuffer { get; private set; }
+
+		/// <summary>
 		/// Gets or sets the character. In terms of caret positions, the position
 		/// is always to the left of the character, not trailing it.
 		/// </summary>
@@ -86,11 +99,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <value>The line.</value>
 		public int LineIndex { get; set; }
 
-		/// <summary>
-		/// Gets the line layout buffer associated with this position.
-		/// </summary>
-		/// <value>The line layout buffer.</value>
-		public ILineLayoutBuffer LineLayoutBuffer { get; private set; }
+		#endregion
+
+		#region Movement
+
+		public bool IsBeginningOfBuffer(ILineLayoutBuffer buffer)
+		{
+			return LineIndex == 0 && CharacterIndex == 0;
+		}
 
 		#endregion
 
@@ -107,8 +123,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			IDisplayContext displayContext,
 			out int lineHeight)
 		{
+			// Make sure the line layout buffer corresponds to the display.
+			if (LineLayoutBuffer != displayContext.LineLayoutBuffer)
+			{
+				throw new Exception(
+					"Cannot use a display for a different line layout buffer");
+			}
+
 			// Pull out some of the common things we'll be using in this method.
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			ILineLayoutBuffer buffer = LineLayoutBuffer;
 			Layout layout = buffer.GetLineLayout(displayContext, LineIndex);
 			BlockStyle style = buffer.GetLineStyle(displayContext, LineIndex);
 
