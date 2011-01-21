@@ -31,12 +31,11 @@ using C5;
 
 using Gdk;
 
+using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-
-using MfGames.Extensions.System;
 
 #endregion
 
@@ -48,7 +47,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 	/// action which performs the action. For undoable or buffer commands, the
 	/// action will creates a command object which one or more buffer operations.
 	/// </summary>
-	public class TextEditorController
+	public class TextEditorController : IActionContext
 	{
 		#region Constructors
 
@@ -64,21 +63,41 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				throw new ArgumentNullException("textEditor");
 			}
 
-			this.textEditor = textEditor;
+			displayContext = textEditor;
 
 			// Bind the initial keybindings.
 			keyBindings = new HashDictionary<int, ActionEntry>();
 
 			BindActions();
+
+			// Bind the action states.
+			states = new ActionStateCollection();
 		}
 
 		#endregion
 
 		#region Setup
 
+		private readonly IDisplayContext displayContext;
 		private readonly HashDictionary<int, ActionEntry> keyBindings;
+		private readonly ActionStateCollection states;
 
-		private readonly IDisplayContext textEditor;
+		/// <summary>
+		/// Gets the display context for this action.
+		/// </summary>
+		/// <value>The display.</value>
+		public IDisplayContext DisplayContext
+		{
+			get { return displayContext; }
+		}
+
+		/// <summary>
+		/// Gets the action states associated with the action.
+		/// </summary>
+		public ActionStateCollection States
+		{
+			get { return states; }
+		}
 
 		/// <summary>
 		/// Binds the default actions into the controller.
@@ -124,10 +143,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 					}
 
 					// Create an action entry for this element.
-					Action<IActionContext> action =
+					var action =
 						(Action<IActionContext>)
 						Delegate.CreateDelegate(typeof(Action<IActionContext>), method);
-					ActionEntry entry = new ActionEntry(action);
+					var entry = new ActionEntry(action);
 
 					// Pull out the state objects and add them into the entry.
 					object[] states = method.GetCustomAttributes(
@@ -139,15 +158,14 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 					}
 
 					// Pull out the key bindings and assign them.
-					object[] bindings =
-						method.GetCustomAttributes(typeof(KeyBindingAttribute), false);
+					object[] bindings = method.GetCustomAttributes(
+						typeof(KeyBindingAttribute), false);
 
 					foreach (KeyBindingAttribute keyBinding in bindings)
 					{
 						// Get the keys and modifiers.
-						var keyCode = GdkUtility.GetNormalizedKeyCode(
-							keyBinding.Key,
-							keyBinding.Modifier);
+						int keyCode = GdkUtility.GetNormalizedKeyCode(
+							keyBinding.Key, keyBinding.Modifier);
 
 						// Add the key to the dictionary.
 						keyBindings[keyCode] = entry;
@@ -183,7 +201,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			// Check to see if we have a binding for this action.
 			if (keyBindings.Contains(keyCode))
 			{
-				Perform(keyBindings[keyCode].Action);
+				keyBindings[keyCode].Perform(this);
 				return true;
 			}
 			//else if (unicodeKey != 0 && modifier == Gdk.ModifierType.None)
@@ -193,17 +211,6 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 			// No idea what to do, so don't do anything.
 			return false;
-		}
-
-		/// <summary>
-		/// Performs the specified action on the display context.
-		/// </summary>
-		/// <param name="action">The action to perform.</param>
-		private void Perform(Action<IActionContext> action)
-		{
-			// Create a new action context.
-			ActionContext context = new ActionContext(textEditor);
-			action(context);
 		}
 
 		#endregion

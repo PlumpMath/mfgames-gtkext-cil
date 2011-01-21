@@ -11,7 +11,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// Gets the display context for this action.
 		/// </summary>
 		/// <value>The display.</value>
-		IDisplayContext Display { get; }
+		IDisplayContext DisplayContext { get; }
 
         /// <summary>
         /// Gets the action states associated with the action.

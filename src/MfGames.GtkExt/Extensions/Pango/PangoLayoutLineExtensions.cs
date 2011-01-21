@@ -24,56 +24,28 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using Pango;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Actions
+namespace MfGames.GtkExt.Extensions.Pango
 {
 	/// <summary>
-	/// Used to contain the state between vertical movement.
+	/// Defines extensions to the Pango.LayoutLine class.
 	/// </summary>
-	public class VerticalMovementActionState : IActionState
+	public static class PangoLayoutLineExtensions
 	{
-		#region Constructors
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="VerticalMovementActionState"/> class.
+		/// Determines whether this layout line is the last line in the layout.
 		/// </summary>
-		/// <param name="layoutLineX">The X coordinate in Pango units.</param>
-		public VerticalMovementActionState(int layoutLineX)
-		{
-			LayoutLineX = layoutLineX;
-		}
-
-		#endregion
-
-		#region Action State
-
-		/// <summary>
-		/// Determines whether this action state can be removed. This is also
-		/// an opportunity for the action to clean up before removed.
-		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
 		/// <returns>
-		///   <c>true</c> if this instance can remove; otherwise, <c>false</c>.
+		/// 	<c>true</c> if [is last line] [the specified layout line]; otherwise, <c>false</c>.
 		/// </returns>
-		public bool CanRemove()
+		public static bool IsLastLineInLayout(this LayoutLine layoutLine)
 		{
-			return true;
+			Layout layout = layoutLine.Layout;
+			return layout.Lines[layout.LineCount - 1].StartIndex == layoutLine.StartIndex;
 		}
-
-		#endregion
-
-		#region Properties
-
-		/// <summary>
-		/// Gets or sets the line X for vertical movements.
-		/// </summary>
-		/// <value>
-		/// The line X-coordinate.
-		/// </value>
-		public int LayoutLineX { get; set; }
-
-		#endregion
 	}
 }

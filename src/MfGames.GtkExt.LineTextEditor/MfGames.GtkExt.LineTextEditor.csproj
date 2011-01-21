@@ -69,7 +69,6 @@
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
     <Compile Include="DrawingUtility.cs" />
-    <Compile Include="Editing\ActionContext.cs" />
     <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Buffers\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />

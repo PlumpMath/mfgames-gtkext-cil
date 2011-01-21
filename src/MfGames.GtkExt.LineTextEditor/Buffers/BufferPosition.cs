@@ -261,6 +261,30 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
+		/// Determines whether this position represents the last line in the buffer.
+		/// </summary>
+		/// <param name="lineLayoutBuffer">The line layout buffer.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is last line in buffer] [the specified line layout buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsLastLineInBuffer(ILineLayoutBuffer lineLayoutBuffer)
+		{
+			return LineIndex == lineLayoutBuffer.LineCount - 1;
+		}
+
+		/// <summary>
+		/// Determines whether this position represents the last line in the buffer.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is last line in buffer] [the specified line layout buffer]; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsLastLineInBuffer(IDisplayContext displayContext)
+		{
+			return IsLastLineInBuffer(displayContext.LineLayoutBuffer);
+		}
+
+		/// <summary>
 		/// Moves the position to end beginning of buffer.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
