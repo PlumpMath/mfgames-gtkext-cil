@@ -55,7 +55,31 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		[KeyBinding(Key.Down)]
 		public static void Down(IActionContext actionContext)
 		{
-			// Get the position of the text. This uses the wrapped line index
+            // Figure out the X coordinate of the line. If there is an action context,
+            // use that. Otherwise, calculate it from the character index of the position.
+		    var state = actionContext.States.Get<VerticalMovementActionState>();
+		    double lineX;
+
+            if (state == null)
+            {
+                // Calculate the line state from the caret position.
+            }
+            else
+            {
+                // Get the line coordinate from the state.
+                lineX = state.LineX;
+            }
+
+            // Do the movement
+
+            // Put the state back into the collection.
+            if (state == null)
+            {
+                state = new VerticalMovementActionState();
+                actionContext.States.Add(state);
+            }
+
+		    // Get the position of the text. This uses the wrapped line index
 			// because we do relative movements to the screen.
 			BufferPosition position = actionContext.Display.Caret.Position;
 			ILineLayoutBuffer buffer = actionContext.Display.LineLayoutBuffer;

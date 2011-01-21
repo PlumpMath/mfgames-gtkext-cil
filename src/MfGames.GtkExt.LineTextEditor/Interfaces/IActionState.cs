@@ -32,5 +32,17 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 	/// </summary>
 	public interface IActionState
 	{
+	    #region Action State
+
+	    /// <summary>
+	    /// Determines whether this action state can be removed. This is also
+	    /// an opportunity for the action to clean up before removed.
+	    /// </summary>
+	    /// <returns>
+	    ///   <c>true</c> if this instance can remove; otherwise, <c>false</c>.
+	    /// </returns>
+	    bool CanRemove();
+
+	    #endregion
 	}
 }

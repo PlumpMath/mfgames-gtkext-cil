@@ -1,3 +1,5 @@
+using MfGames.GtkExt.LineTextEditor.Actions;
+
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
@@ -10,5 +12,10 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <value>The display.</value>
 		IDisplayContext Display { get; }
+
+        /// <summary>
+        /// Gets the action states associated with the action.
+        /// </summary>
+        ActionStateCollection States { get; }
 	}
 }

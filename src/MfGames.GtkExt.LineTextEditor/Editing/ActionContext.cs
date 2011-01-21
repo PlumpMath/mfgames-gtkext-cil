@@ -1,3 +1,4 @@
+using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 namespace MfGames.GtkExt.LineTextEditor.Editing
@@ -13,6 +14,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		public ActionContext(IDisplayContext displayContext)
 		{
 			this.displayContext = displayContext;
+            actionStates = new ActionStateCollection();
 		}
 
 		#endregion
@@ -20,6 +22,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		#region Context
 
 		private readonly IDisplayContext displayContext;
+	    private readonly ActionStateCollection actionStates;
 
 		/// <summary>
 		/// Gets the display context.
@@ -30,7 +33,11 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			get { return displayContext; }
 		}
 
-		#endregion
+        /// <summary>
+        /// Gets the action states associated with the action.
+        /// </summary>
+        public ActionStateCollection States { get { return actionStates; } }
 
+		#endregion
 	}
 }

@@ -35,5 +35,33 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	/// </summary>
 	public class VerticalMovementActionState : IActionState
 	{
+        #region Action State
+
+        /// <summary>
+        /// Determines whether this action state can be removed. This is also
+        /// an opportunity for the action to clean up before removed.
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance can remove; otherwise, <c>false</c>.
+        /// </returns>
+        public bool CanRemove()
+        {
+            return true;
+        }
+
+        #endregion
+
+	    #region Properties
+
+        /// <summary>
+        /// Gets or sets the line X for vertical movements.
+        /// </summary>
+        /// <value>
+        /// The line X-coordinate.
+        /// </value>
+        public double LineX { get; set; }
+
+	    #endregion
+
 	}
 }
