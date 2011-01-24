@@ -594,6 +594,9 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Change the adjustments (scrollbars).
 			SetAdjustments();
 
+			// Get rid of any input states.
+			controller.States.RemoveAll();
+
 			// Force the entire widget to draw.
 			QueueDraw();
 		}
