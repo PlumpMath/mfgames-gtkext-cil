@@ -37,6 +37,31 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 	/// </summary>
 	public static class LineLayoutBufferExtensions
 	{
+		#region Lines
+
+		/// <summary>
+		/// Gets the line at a specific point and returns it.
+		/// </summary>
+		/// <param name="lineLayoutBuffer">The line layout buffer.</param>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="bufferY">The buffer Y.</param>
+		/// <returns></returns>
+		public static int GetLineLayoutRange(
+			this ILineLayoutBuffer lineLayoutBuffer,
+			IDisplayContext displayContext,
+			double bufferY)
+		{
+			var rectangle = new Rectangle(0, bufferY, 0.1, 0.1);
+			int startLineIndex, endLineIndex;
+
+			lineLayoutBuffer.GetLineLayoutRange(
+				displayContext, rectangle, out startLineIndex, out endLineIndex);
+
+			return startLineIndex;
+		}
+
+		#endregion
+
 		#region Wrapped Lines
 
 		/// <summary>

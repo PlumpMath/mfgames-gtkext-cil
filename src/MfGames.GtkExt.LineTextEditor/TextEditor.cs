@@ -45,6 +45,7 @@ using CairoHelper=Gdk.CairoHelper;
 using Context=Cairo.Context;
 using Key=Gdk.Key;
 using Layout=Pango.Layout;
+using Point=Cairo.Point;
 using Rectangle=Cairo.Rectangle;
 using Style=Gtk.Style;
 using Window=Gdk.Window;
@@ -230,6 +231,19 @@ namespace MfGames.GtkExt.LineTextEditor
             get { return caret; }
         }
 
+		/// <summary>
+		/// Called when the user presses a button.
+		/// </summary>
+		/// <param name="e">The e.</param>
+		/// <returns></returns>
+		protected override bool OnButtonPressEvent(EventButton e)
+		{
+			// Wrap the event in various objects and pass it into the controller.
+			PointD point = new PointD(e.X, e.Y);
+
+			return controller.HandleMousePress(point, e.Button, e.State);
+		}
+
         /// <summary>
         /// Called when a key is pressed.
         /// </summary>
@@ -407,7 +421,7 @@ namespace MfGames.GtkExt.LineTextEditor
         /// Gets or sets the vertical adjustment or offset into the viewing area.
         /// </summary>
         /// <value>The vertical adjustment.</value>
-        public double BufferOffsetX
+        public double BufferOffsetY
         {
             get { return verticalAdjustment.Value; }
         }

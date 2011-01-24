@@ -29,6 +29,8 @@ using System.Reflection;
 
 using C5;
 
+using Cairo;
+
 using Gdk;
 
 using MfGames.Extensions.System;
@@ -36,6 +38,8 @@ using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using Point=Cairo.Point;
 
 #endregion
 
@@ -210,6 +214,40 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			//}
 
 			// No idea what to do, so don't do anything.
+			return false;
+		}
+
+		#endregion
+
+		#region Input
+
+		/// <summary>
+		/// Handles the mouse press and the associated code.
+		/// </summary>
+		/// <param name="point">The point.</param>
+		/// <param name="button">The button.</param>
+		/// <param name="modifier">The state.</param>
+		/// <returns></returns>
+		public bool HandleMousePress(
+			PointD point,
+			uint button,
+			ModifierType modifier)
+		{
+			// If we are pressing the left button (button 1), then we need to
+			// move the caret over.
+			if (button == 1)
+			{
+				// Figure out if we are clicking inside the text area.
+				if (point.X >= displayContext.TextX)
+				{
+					PointD textPoint = new PointD(point.X - displayContext.TextX, point.Y);
+					CaretMoveActions.Point(displayContext, textPoint);
+					return true;
+				}
+			}
+
+			// We haven't handled it, so return false so the rest of Gtk can
+			// decide what to do with the input.
 			return false;
 		}
 

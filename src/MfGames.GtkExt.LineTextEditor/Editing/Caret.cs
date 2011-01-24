@@ -89,7 +89,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			double y = point.Y;
 
 			// Translate the buffer coordinates into the screen visible coordinates.
-			y -= displayContext.BufferOffsetX;
+			y -= displayContext.BufferOffsetY;
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;

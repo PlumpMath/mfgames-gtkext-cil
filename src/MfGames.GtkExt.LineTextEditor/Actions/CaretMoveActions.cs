@@ -26,6 +26,8 @@
 
 using System;
 
+using Cairo;
+
 using Gdk;
 
 using MfGames.GtkExt.Extensions.Pango;
@@ -438,6 +440,51 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			displayContext.Caret.Position.MoveToBeginningOfWrappedLine(displayContext);
             displayContext.ScrollToCaret();
             displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+		}
+
+		#endregion
+
+		#region Coordinates
+
+		/// <summary>
+		/// Moves the caret to a specific widget-relative point on the screen.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="widgetPoint">The point in the widget.</param>
+		public static void Point(IDisplayContext displayContext, PointD widgetPoint)
+		{
+			// Find the line layout that is closest to the point given.
+			double y = widgetPoint.Y + displayContext.BufferOffsetY;
+			int lineIndex =
+				displayContext.LineLayoutBuffer.GetLineLayoutRange(displayContext, y);
+			Layout layout = displayContext.LineLayoutBuffer.GetLineLayout(
+				displayContext, lineIndex);
+
+			// Shift the buffer-relative coordinates to layout-relative coordinates.
+			double layoutY = y;
+
+			if (lineIndex > 0)
+			{
+				layoutY -= displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+					displayContext, 0, lineIndex - 1);
+			}
+
+			int pangoLayoutY = Units.FromPixels((int) layoutY);
+
+			// Determines where in the layout is the point.
+			int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
+			int characterIndex, trailing;
+
+			layout.XyToIndex(
+				pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
+
+			// Set the caret's position from the calculated values.
+			displayContext.Caret.Position.LineIndex = lineIndex;
+			displayContext.Caret.Position.CharacterIndex = characterIndex;
+
+			// Move to and draw the caret.
+			displayContext.ScrollToCaret();
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion

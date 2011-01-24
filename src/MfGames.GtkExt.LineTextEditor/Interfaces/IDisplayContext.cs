@@ -94,7 +94,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
         /// Gets or sets the vertical adjustment or offset into the viewing area.
         /// </summary>
         /// <value>The vertical adjustment.</value>
-        double BufferOffsetX { get; }
+        double BufferOffsetY { get; }
 
         /// <summary>
         /// Gets the GDK window associated with this context.
