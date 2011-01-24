@@ -35,7 +35,42 @@ namespace MfGames.GtkExt.Extensions.Cairo
 	/// </summary>
 	public static class CairoRectangleExtensions
 	{
-		/// <summary>
+        /// <summary>
+        /// Determines whether the inner rectangle is completely inside the outer one.
+        /// </summary>
+        /// <param name="outerRectangle">The rectangle.</param>
+        /// <param name="innerRectangle">The inner rectangle.</param>
+        /// <returns>
+        ///   <c>true</c> if [contains] [the specified rectangle]; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool Contains(
+            this Rectangle outerRectangle,
+            Rectangle innerRectangle)
+        {
+            // If the inner rectangle starts outside of the outer, then return false.
+            if (outerRectangle.X > innerRectangle.X ||
+                outerRectangle.Y > innerRectangle.Y)
+            {
+                return false;
+            }
+
+            // Make sure the right and bottom sides are within the outer.
+            double innerRight = innerRectangle.X + innerRectangle.Width;
+            double outerRight = outerRectangle.X + outerRectangle.Width;
+            double innerBottom = innerRectangle.Y + innerRectangle.Height;
+            double outerBottom = outerRectangle.Y + outerRectangle.Height;
+
+            if (innerRight > outerRight ||
+                innerBottom > outerBottom)
+            {
+                return false;
+            }
+
+            // At this point, the inner rectangle is completely inside the outer.
+            return true;
+        }
+
+	    /// <summary>
 		/// Determines if the two rectangles intersect with each other.
 		/// </summary>
 		/// <param name="rectangle1">The rectangle.</param>

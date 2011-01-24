@@ -89,6 +89,7 @@
     <Compile Include="Margins\MarginRendererCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Buffers\MemoryLineBuffer.cs" />
+    <Compile Include="DisplaySettings.cs" />
     <Compile Include="Visuals\Border.cs" />
     <Compile Include="Visuals\Borders.cs" />
     <Compile Include="Visuals\OptionalBorders.cs" />

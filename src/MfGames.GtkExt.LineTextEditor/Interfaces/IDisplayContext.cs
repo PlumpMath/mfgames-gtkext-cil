@@ -24,106 +24,112 @@
 
 #region Namespaces
 
+using Gdk;
+
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
+using Rectangle=Cairo.Rectangle;
 using Style=Gtk.Style;
-using Window=Gdk.Window;
 
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
-	/// <summary>
-	/// Contains information about the display and its appearance.
-	/// </summary>
-	public interface IDisplayContext
-	{
-		/// <summary>
-		/// Gets the caret used to indicate where the user is editing.
-		/// </summary>
-		/// <value>The caret.</value>
-		Caret Caret { get; }
+    /// <summary>
+    /// Contains information about the display and its appearance.
+    /// </summary>
+    public interface IDisplayContext
+    {
+        /// <summary>
+        /// Gets the caret used to indicate where the user is editing.
+        /// </summary>
+        /// <value>The caret.</value>
+        Caret Caret { get; }
 
-		/// <summary>
-		/// Gets the line layout buffer.
-		/// </summary>
-		/// <value>The line layout buffer.</value>
-		ILineLayoutBuffer LineLayoutBuffer { get; }
+        /// <summary>
+        /// Gets the line layout buffer.
+        /// </summary>
+        /// <value>The line layout buffer.</value>
+        ILineLayoutBuffer LineLayoutBuffer { get; }
 
-		/// <summary>
-		/// Gets the width of the area that can be used for rendering text.
-		/// </summary>
-		/// <value>The width of the text.</value>
-		int TextWidth { get; }
+        /// <summary>
+        /// Gets the width of the area that can be used for rendering text.
+        /// </summary>
+        /// <value>The width of the text.</value>
+        int TextWidth { get; }
 
-		/// <summary>
-		/// Gets the text X coordinate.
-		/// </summary>
-		/// <value>The text X.</value>
-		int TextX { get; }
+        /// <summary>
+        /// Gets the text X coordinate.
+        /// </summary>
+        /// <value>The text X.</value>
+        int TextX { get; }
 
-		/// <summary>
-		/// Gets the theme collection for this display.
-		/// </summary>
-		/// <value>The theme.</value>
-		Theme Theme { get; }
+        /// <summary>
+        /// Gets the theme collection for this display.
+        /// </summary>
+        /// <value>The theme.</value>
+        Theme Theme { get; }
 
-		/// <summary>
-		/// Gets or sets the word splitter.
-		/// </summary>
-		/// <value>The word splitter.</value>
-		IWordSplitter WordSplitter { get; set; }
+        /// <summary>
+        /// Gets or sets the word splitter.
+        /// </summary>
+        /// <value>The word splitter.</value>
+        IWordSplitter WordSplitter { get; set; }
 
-		/// <summary>
-		/// Sets the layout according to the given layout and style.
-		/// </summary>
-		/// <param name="layout">The layout.</param>
-		/// <param name="style">The style.</param>
-		void SetLayout(
-			Layout layout,
-			BlockStyle style);
+        /// <summary>
+        /// Sets the layout according to the given layout and style.
+        /// </summary>
+        /// <param name="layout">The layout.</param>
+        /// <param name="style">The style.</param>
+        void SetLayout(
+            Layout layout,
+            BlockStyle style);
 
-		#region Windows
+        #region Windows
 
+        /// <summary>
+        /// Gets or sets the vertical adjustment or offset into the viewing area.
+        /// </summary>
+        /// <value>The vertical adjustment.</value>
+        double BufferOffsetX { get; }
 
-		/// <summary>
-		/// Gets the GDK window associated with this context.
-		/// </summary>
-		/// <value>The GDK window.</value>
-		Window GdkWindow { get; }
+        /// <summary>
+        /// Gets the GDK window associated with this context.
+        /// </summary>
+        /// <value>The GDK window.</value>
+        Window GdkWindow { get; }
 
-		/// <summary>
-		/// Gets the GTK style associated with this context.
-		/// </summary>
-		/// <value>The GTK style.</value>
-		Style GtkStyle { get; }
+        /// <summary>
+        /// Gets the GTK style associated with this context.
+        /// </summary>
+        /// <value>The GTK style.</value>
+        Style GtkStyle { get; }
 
-		/// <summary>
-		/// Gets the Pango context associated with this display.
-		/// </summary>
-		/// <value>The pango context.</value>
-		Context PangoContext { get; }
+        /// <summary>
+        /// Gets the Pango context associated with this display.
+        /// </summary>
+        /// <value>The pango context.</value>
+        Context PangoContext { get; }
 
-		/// <summary>
-		/// Gets or sets the vertical adjustment or offset into the viewing area.
-		/// </summary>
-		/// <value>The vertical adjustment.</value>
-		double BufferOffsetX { get; }
+        /// <summary>
+        /// Queues a redraw of the entire buffer.
+        /// </summary>
+        void QueueDraw();
 
-		/// <summary>
-		/// Queues a redraw of the entire buffer.
-		/// </summary>
-		void QueueDraw();
+        /// <summary>
+        /// Queues a redraw of a specific area on the screen.
+        /// </summary>
+        /// <param name="region">The widget-relative region.</param>
+        void QueueDraw(Rectangle region);
 
-		/// <summary>
-		/// Queues a redraw of a specific area on the screen.
-		/// </summary>
-		/// <param name="region">The widget-relative region.</param>
-		void QueueDraw(Cairo.Rectangle region);
+        /// <summary>
+        /// Scrolls the display to the caret.
+        /// </summary>
+        void ScrollToCaret();
 
-		#endregion
-	}
+        #endregion
+    }
 }
