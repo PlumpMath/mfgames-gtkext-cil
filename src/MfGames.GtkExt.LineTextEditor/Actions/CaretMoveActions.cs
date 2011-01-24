@@ -125,6 +125,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
             }
 
 			// Draw the new location of the caret.
+		    displayContext.ScrollToCaret();
 			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
@@ -155,7 +156,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			((TextEditor) actionContext.DisplayContext).QueueDraw();
+            actionContext.DisplayContext.ScrollToCaret();
+            ((TextEditor)actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -194,7 +196,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			((TextEditor) actionContext.DisplayContext).QueueDraw();
+            actionContext.DisplayContext.ScrollToCaret();
+            ((TextEditor)actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -224,7 +227,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			((TextEditor) actionContext.DisplayContext).QueueDraw();
+            actionContext.DisplayContext.ScrollToCaret();
+            ((TextEditor)actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -263,7 +267,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			((TextEditor) actionContext.DisplayContext).QueueDraw();
+            actionContext.DisplayContext.ScrollToCaret();
+            ((TextEditor)actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -346,7 +351,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Draw the new location of the caret.
-			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+            displayContext.ScrollToCaret();
+            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#region End Of...
@@ -367,7 +373,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToEndOfBuffer(displayContext);
-			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+            displayContext.ScrollToCaret();
+            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		/// <summary>
@@ -386,7 +393,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToEndOfWrappedLine(displayContext);
-			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+            displayContext.ScrollToCaret();
+            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion
@@ -408,7 +416,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToBeginningOfBuffer(displayContext);
-			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+            displayContext.ScrollToCaret();
+            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		/// <summary>
@@ -427,7 +436,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToBeginningOfWrappedLine(displayContext);
-			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+            displayContext.ScrollToCaret();
+            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion

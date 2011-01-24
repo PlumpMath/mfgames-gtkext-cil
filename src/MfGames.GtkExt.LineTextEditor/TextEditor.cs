@@ -32,6 +32,7 @@ using Gdk;
 
 using Gtk;
 
+using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -44,7 +45,7 @@ using CairoHelper=Gdk.CairoHelper;
 using Context=Cairo.Context;
 using Key=Gdk.Key;
 using Layout=Pango.Layout;
-using Rectangle=Gdk.Rectangle;
+using Rectangle=Cairo.Rectangle;
 using Style=Gtk.Style;
 using Window=Gdk.Window;
 using WindowType=Gdk.WindowType;
@@ -53,476 +54,554 @@ using WindowType=Gdk.WindowType;
 
 namespace MfGames.GtkExt.LineTextEditor
 {
-	/// <summary>
-	/// The primary editor control for the virtualized line text editor.
-	/// </summary>
-	public class TextEditor : Widget, IDisplayContext
-	{
-		#region Constructors
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditor"/> class.
-		/// </summary>
-		public TextEditor()
-			: this(new SimpleLineLayoutBuffer(new MemoryLineBuffer()))
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditor"/> class.
-		/// </summary>
-		public TextEditor(ILineLayoutBuffer lineLayoutBuffer)
-		{
-			// Set up the basic characterstics of the widget.
-			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
-			         EventMask.ButtonReleaseMask | EventMask.EnterNotifyMask |
-			         EventMask.LeaveNotifyMask | EventMask.VisibilityNotifyMask |
-			         EventMask.FocusChangeMask | EventMask.ScrollMask |
-			         EventMask.KeyPressMask | EventMask.KeyReleaseMask;
-			DoubleBuffered = true;
-			CanFocus = true;
-			WidgetFlags |= WidgetFlags.NoWindow;
-
-			// Set up the rest of the screen elements.
-			margins = new MarginRendererCollection();
-			margins.Add(new LineNumberMarginRenderer());
-			theme = new Theme();
-
-			// Save the line buffer which configures a number of other elements.
-			LineLayoutBuffer = lineLayoutBuffer;
-
-			// Set up the caret, this must be done after the buffer is set.
-			caret = new Caret(this);
-
-			// Set up the text editor controller.
-			controller = new TextEditorController(this);
-			wordSplitter = new OffsetWordSplitter();
-		}
-
-		protected TextEditor(IntPtr raw)
-			: base(raw)
-		{
-		}
-
-		#endregion
-
-		#region Debugging
-
-		private readonly DateTime createdTimestamp = DateTime.Now;
-
-		#endregion
-
-		#region Line Buffer
-
-		private ILineLayoutBuffer lineLayoutBuffer;
-
-		/// <summary>
-		/// Gets or sets the line layout buffer.
-		/// </summary>
-		/// <value>The line layout buffer.</value>
-		public ILineLayoutBuffer LineLayoutBuffer
-		{
-			get { return lineLayoutBuffer; }
-			set
-			{
-				// Set the new buffer.
-				lineLayoutBuffer = value;
-
-				// Configure the new layout buffer.
-				if (lineLayoutBuffer != null)
-				{
-					// Reset the margins and force them to resize themselves.
-					margins.Resize(this);
-				}
-			}
-		}
-
-		#endregion
-
-		#region Layout
-
-		/// <summary>
-		/// Sets the layout using the given block style.
-		/// </summary>
-		/// <param name="layout">The layout.</param>
-		/// <param name="style">The style.</param>
-		public void SetLayout(
-			Layout layout,
-			BlockStyle style)
-		{
-			// Set the style elements.
-			layout.Wrap = style.GetWrap();
-			layout.Alignment = style.GetAlignment();
-			layout.FontDescription = style.GetFontDescription();
-
-			// Check to see if we are doing line wrapping and set the width,
-			// minus the padding, margins, and borders.
-			layout.Width = Units.FromPixels((int) Math.Ceiling(TextWidth - style.Width));
-		}
-
-		#endregion
-
-		#region Display
-
-		private readonly MarginRendererCollection margins;
-		private Theme theme;
-		private IWordSplitter wordSplitter;
-
-		/// <summary>
-		/// Gets the GTK style associated with this context.
-		/// </summary>
-		/// <value>The GTK style.</value>
-		public Style GtkStyle
-		{
-			get { return Style; }
-		}
-
-		/// <summary>
-		/// Gets or sets the theme.
-		/// </summary>
-		/// <value>The theme.</value>
-		public Theme Theme
-		{
-			get { return theme; }
-			set { theme = value ?? new Theme(); }
-		}
-
-		/// <summary>
-		/// Gets or sets the word splitter.
-		/// </summary>
-		/// <value>The word splitter.</value>
-		public IWordSplitter WordSplitter
-		{
-			get { return wordSplitter; }
-			set { wordSplitter = value ?? new OffsetWordSplitter(); }
-		}
-
-		#endregion
-
-		#region Editing
-
-		private readonly Caret caret;
-		private readonly TextEditorController controller;
-
-		/// <summary>
-		/// Gets the caret used to indicate where the user is editing.
-		/// </summary>
-		/// <value>The caret.</value>
-		public Caret Caret
-		{
-			get { return caret; }
-		}
-
-		/// <summary>
-		/// Called when a key is pressed.
-		/// </summary>
-		/// <param name="eventKey">The event key.</param>
-		/// <returns></returns>
-		protected override bool OnKeyPressEvent(EventKey eventKey)
-		{
-			// Decompose the key into its components.
-			ModifierType modifier;
-			Key key;
-			GdkUtility.DecomposeKeys(eventKey, out key, out modifier);
-
-			// Get the unicode character for this key.
-			uint unicodeChar = Keyval.ToUnicode(eventKey.KeyValue);
-
-			// Pass it on to the controller.
-			Console.WriteLine("Key " + key + ", modifier " + modifier);
-			return controller.HandleKeypress(key, unicodeChar, modifier);
-		}
-
-		protected override bool OnKeyReleaseEvent(EventKey evnt)
-		{
-			return base.OnKeyReleaseEvent(evnt);
-		}
-
-		#endregion
-
-		#region Rendering Events
-
-		/// <summary>
-		/// Gets the width of the area that can be used for rendering text.
-		/// </summary>
-		/// <value>The width of the text.</value>
-		public int TextWidth
-		{
-			get { return Allocation.Width - margins.Width; }
-		}
-
-		/// <summary>
-		/// Gets the text X coordinate.
-		/// </summary>
-		/// <value>The text X.</value>
-		public int TextX
-		{
-			get { return margins.Width; }
-		}
-
-		/// <summary>
-		/// Called when the widget is exposed or drawn.
-		/// </summary>
-		/// <param name="e">The e.</param>
-		/// <returns></returns>
-		protected override bool OnExposeEvent(EventExpose e)
-		{
-			// Figure out the area we are rendering into.
-			Rectangle area = e.Region.Clipbox;
-			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
-
-			using (Context cairoContext = CairoHelper.Create(e.Window))
-			{
-				// Create a render context.
-				var renderContext = new RenderContext(cairoContext);
-				renderContext.RenderRegion = cairoArea;
-
-				// Paint the background color of the window.
-				cairoContext.Color = theme.BackgroundColor;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
-
-				// Reset the layout and its properties.
-				lineLayoutBuffer.Width = area.Width - margins.Width;
-
-				// Figure out the viewport area we'll be drawing.
-				int offsetY = 0;
-
-				if (verticalAdjustment != null)
-				{
-					offsetY += (int) verticalAdjustment.Value;
-				}
-
-				var viewArea = new Cairo.Rectangle(
-					area.X, area.Y + offsetY, area.Width, area.Height);
-
-				// Determine the line range visible in the given area.
-				int startLine, endLine;
-				lineLayoutBuffer.GetLineLayoutRange(
-					this, viewArea, out startLine, out endLine);
-
-				// Determine where the first line actually starts.
-				int startLineY = 0;
-
-				if (startLine > 0)
-				{
-					startLineY = lineLayoutBuffer.GetLineLayoutHeight(this, 0, startLine - 1);
-				}
-
-				// Go through the lines and draw each one in the correct position.
-				double currentY = startLineY - offsetY;
-
-				for (int line = startLine; line <= endLine; line++)
-				{
-					// Pull out the layout and style since we'll use it.
-					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
-					BlockStyle style = lineLayoutBuffer.GetLineStyle(this, line);
-
-					// Get the extents for that line.
-					int layoutWidth, layoutHeight;
-					layout.GetPixelSize(out layoutWidth, out layoutHeight);
-
-					// Figure out the height of the line including padding.
-					double height = layoutHeight + style.Height;
-
-					// Draw the current line along with wrapping and padding.
-					DrawingUtility.DrawLayout(
-						this,
-						renderContext,
-						new Cairo.Rectangle(TextX, currentY, TextWidth, height),
-						layout,
-						style);
-
-					// Render out the margin renderers.
-					margins.Draw(this, renderContext, line, new PointD(0, currentY), height);
-
-					// Move down a line.
-					currentY += height;
-				}
-
-				// Draw the caret on the screen, but only if we have focus.
-				if (IsFocus)
-				{
-					caret.Draw(renderContext);
-				}
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Queues a redraw of a specific area on the screen.
-		/// </summary>
-		/// <param name="region">The region.</param>
-		public void QueueDraw(Cairo.Rectangle region)
-		{
-			//QueueDrawArea(
-			//    (int) Math.Floor(region.X),
-			//    (int) Math.Floor(region.Y),
-			//    (int) Math.Ceiling(region.Width),
-			//    (int) Math.Ceiling(region.Height));
-			QueueDraw();
-		}
-
-		#endregion
-
-		#region Scrollbars
-
-		private Adjustment verticalAdjustment;
-
-		/// <summary>
-		/// Gets or sets the vertical adjustment or offset into the viewing area.
-		/// </summary>
-		/// <value>The vertical adjustment.</value>
-		public double BufferOffsetX
-		{
-			get { return verticalAdjustment.Value; }
-		}
-
-		/// <summary>
-		/// Called when the scroll adjustements are requested.
-		/// </summary>
-		/// <param name="hadj">The hadj.</param>
-		/// <param name="vadj">The vadj.</param>
-		protected override void OnSetScrollAdjustments(
-			Adjustment hadj,
-			Adjustment vadj)
-		{
-			// Determine if we need to remove ourselves from the previous adjustment
-			// events.
-			if (verticalAdjustment != null)
-			{
-				verticalAdjustment.ValueChanged -= OnVerticalAdjustment;
-			}
-
-			// And set the bounds based on our size.
-			verticalAdjustment = vadj;
-
-			SetAdjustments();
-
-			// Add the events, if we have an adjustment.
-			if (verticalAdjustment != null)
-			{
-				verticalAdjustment.ValueChanged += OnVerticalAdjustment;
-			}
-		}
-
-		/// <summary>
-		/// Called when the vertical adjustment is changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnVerticalAdjustment(
-			object sender,
-			EventArgs args)
-		{
-			// Redraw the entire window.
-			QueueDraw();
-		}
-
-		/// <summary>
-		/// Used to set the adjustments on the scrollbars for the text editor
-		/// </summary>
-		private void SetAdjustments()
-		{
-			// We have to have a size and an adjustment.
-			if (verticalAdjustment == null)
-			{
-				return;
-			}
-
-			// If the text width is negative, then we can't format.
-			if (TextWidth < 0)
-			{
-				return;
-			}
-
-			// Set the line buffer's width and then request the height for all
-			// the lines in the buffer.
-			lineLayoutBuffer.Width = TextWidth;
-			int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, -1);
-
-			// Set the adjustments based on those values.
-			verticalAdjustment.SetBounds(
-				0.0,
-				height,
-				lineLayoutBuffer.GetLineLayoutHeight(this),
-				(int) (Allocation.Height / 2.0),
-				Allocation.Height);
-		}
-
-		#endregion
-
-		#region Window Events
-
-		/// <summary>
-		/// Called when the window is realized (shown).
-		/// </summary>
-		protected override void OnRealized()
-		{
-			WidgetFlags |= WidgetFlags.Realized;
-			var attributes = new WindowAttr();
-			attributes.WindowType = WindowType.Child;
-			attributes.X = Allocation.X;
-			attributes.Y = Allocation.Y;
-			attributes.Width = Allocation.Width;
-			attributes.Height = Allocation.Height;
-			attributes.Wclass = WindowClass.InputOutput;
-			attributes.Visual = Visual;
-			attributes.Colormap = Colormap;
-			attributes.EventMask = (int) (Events | EventMask.ExposureMask);
-			attributes.Mask = Events | EventMask.ExposureMask;
-
-			const WindowAttributesType mask =
-				WindowAttributesType.X | WindowAttributesType.Y |
-				WindowAttributesType.Colormap | WindowAttributesType.Visual;
-			GdkWindow = new Window(ParentWindow, attributes, mask);
-			GdkWindow.UserData = Raw;
-			Style = Style.Attach(GdkWindow);
-			WidgetFlags &= ~WidgetFlags.NoWindow;
-		}
-
-		/// <summary>
-		/// Called when the widget is resized.
-		/// </summary>
-		/// <param name="allocation">The allocation.</param>
-		protected override void OnSizeAllocated(Rectangle allocation)
-		{
-			// Call the base implementation.
-			base.OnSizeAllocated(allocation);
-
-			// If we have a GdkWindow, move it.
-			if (GdkWindow != null)
-			{
-				GdkWindow.MoveResize(allocation);
-			}
-
-			// We need to reset the buffer so it can recalculate all the widths
-			// and clear any caches.
-			LineLayoutBuffer.Reset();
-
-			// Change the adjustments (scrollbars).
-			SetAdjustments();
-
-			// Force the entire widget to draw.
-			QueueDraw();
-		}
-
-		/// <summary>
-		/// Called when the widget is unrealized (hidden).
-		/// </summary>
-		protected override void OnUnrealized()
-		{
-			if (GdkWindow != null)
-			{
-				GdkWindow.UserData = IntPtr.Zero;
-				GdkWindow.Destroy();
-				WidgetFlags |= WidgetFlags.NoWindow;
-			}
-
-			base.OnUnrealized();
-		}
-
-		#endregion
-	}
+    /// <summary>
+    /// The primary editor control for the virtualized line text editor.
+    /// </summary>
+    public class TextEditor : Widget, IDisplayContext
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextEditor"/> class.
+        /// </summary>
+        public TextEditor()
+            : this(new SimpleLineLayoutBuffer(new MemoryLineBuffer()))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextEditor"/> class.
+        /// </summary>
+        public TextEditor(ILineLayoutBuffer lineLayoutBuffer)
+        {
+            // Set up the basic characteristics of the widget.
+            Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
+                     EventMask.ButtonReleaseMask | EventMask.EnterNotifyMask |
+                     EventMask.LeaveNotifyMask | EventMask.VisibilityNotifyMask |
+                     EventMask.FocusChangeMask | EventMask.ScrollMask |
+                     EventMask.KeyPressMask | EventMask.KeyReleaseMask;
+            DoubleBuffered = true;
+            CanFocus = true;
+            WidgetFlags |= WidgetFlags.NoWindow;
+
+            // Set up the rest of the screen elements.
+            margins = new MarginRendererCollection();
+            margins.Add(new LineNumberMarginRenderer());
+            theme = new Theme();
+            displaySettings = new DisplaySettings();
+
+            // Save the line buffer which configures a number of other elements.
+            LineLayoutBuffer = lineLayoutBuffer;
+
+            // Set up the caret, this must be done after the buffer is set.
+            caret = new Caret(this);
+
+            // Set up the text editor controller.
+            controller = new TextEditorController(this);
+            wordSplitter = new OffsetWordSplitter();
+        }
+
+        protected TextEditor(IntPtr raw)
+            : base(raw)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        private readonly DateTime createdTimestamp = DateTime.Now;
+
+        private DisplaySettings displaySettings;
+
+        /// <summary>
+        /// Gets or sets the settings for the text editor.
+        /// </summary>
+        /// <value>
+        /// The text editor settings.
+        /// </value>
+        private DisplaySettings DisplaySettings
+        {
+            get { return displaySettings; }
+            set { displaySettings = value ?? new DisplaySettings(); }
+        }
+
+        #endregion
+
+        #region Line Buffer
+
+        private ILineLayoutBuffer lineLayoutBuffer;
+
+        /// <summary>
+        /// Gets or sets the line layout buffer.
+        /// </summary>
+        /// <value>The line layout buffer.</value>
+        public ILineLayoutBuffer LineLayoutBuffer
+        {
+            get { return lineLayoutBuffer; }
+            set
+            {
+                // Set the new buffer.
+                lineLayoutBuffer = value;
+
+                // Configure the new layout buffer.
+                if (lineLayoutBuffer != null)
+                {
+                    // Reset the margins and force them to resize themselves.
+                    margins.Resize(this);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Layout
+
+        /// <summary>
+        /// Sets the layout using the given block style.
+        /// </summary>
+        /// <param name="layout">The layout.</param>
+        /// <param name="style">The style.</param>
+        public void SetLayout(
+            Layout layout,
+            BlockStyle style)
+        {
+            // Set the style elements.
+            layout.Wrap = style.GetWrap();
+            layout.Alignment = style.GetAlignment();
+            layout.FontDescription = style.GetFontDescription();
+
+            // Check to see if we are doing line wrapping and set the width,
+            // minus the padding, margins, and borders.
+            layout.Width =
+                Units.FromPixels((int) Math.Ceiling(TextWidth - style.Width));
+        }
+
+        #endregion
+
+        #region Display
+
+        private readonly MarginRendererCollection margins;
+        private Theme theme;
+        private IWordSplitter wordSplitter;
+
+        /// <summary>
+        /// Gets the GTK style associated with this context.
+        /// </summary>
+        /// <value>The GTK style.</value>
+        public Style GtkStyle
+        {
+            get { return Style; }
+        }
+
+        /// <summary>
+        /// Gets or sets the theme.
+        /// </summary>
+        /// <value>The theme.</value>
+        public Theme Theme
+        {
+            get { return theme; }
+            set { theme = value ?? new Theme(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the word splitter.
+        /// </summary>
+        /// <value>The word splitter.</value>
+        public IWordSplitter WordSplitter
+        {
+            get { return wordSplitter; }
+            set { wordSplitter = value ?? new OffsetWordSplitter(); }
+        }
+
+        #endregion
+
+        #region Editing
+
+        private readonly Caret caret;
+        private readonly TextEditorController controller;
+
+        /// <summary>
+        /// Gets the caret used to indicate where the user is editing.
+        /// </summary>
+        /// <value>The caret.</value>
+        public Caret Caret
+        {
+            get { return caret; }
+        }
+
+        /// <summary>
+        /// Called when a key is pressed.
+        /// </summary>
+        /// <param name="eventKey">The event key.</param>
+        /// <returns></returns>
+        protected override bool OnKeyPressEvent(EventKey eventKey)
+        {
+            // Decompose the key into its components.
+            ModifierType modifier;
+            Key key;
+            GdkUtility.DecomposeKeys(eventKey, out key, out modifier);
+
+            // Get the unicode character for this key.
+            uint unicodeChar = Keyval.ToUnicode(eventKey.KeyValue);
+
+            // Pass it on to the controller.
+            Console.WriteLine("Key " + key + ", modifier " + modifier);
+            return controller.HandleKeypress(key, unicodeChar, modifier);
+        }
+
+        protected override bool OnKeyReleaseEvent(EventKey evnt)
+        {
+            return base.OnKeyReleaseEvent(evnt);
+        }
+
+        #endregion
+
+        #region Rendering Events
+
+        /// <summary>
+        /// Gets the width of the area that can be used for rendering text.
+        /// </summary>
+        /// <value>The width of the text.</value>
+        public int TextWidth
+        {
+            get { return Allocation.Width - margins.Width; }
+        }
+
+        /// <summary>
+        /// Gets the text X coordinate.
+        /// </summary>
+        /// <value>The text X.</value>
+        public int TextX
+        {
+            get { return margins.Width; }
+        }
+
+        /// <summary>
+        /// Called when the widget is exposed or drawn.
+        /// </summary>
+        /// <param name="e">The e.</param>
+        /// <returns></returns>
+        protected override bool OnExposeEvent(EventExpose e)
+        {
+            // Figure out the area we are rendering into.
+            Gdk.Rectangle area = e.Region.Clipbox;
+            var cairoArea = new Rectangle(
+                area.X, area.Y, area.Width, area.Height);
+
+            using (Context cairoContext = CairoHelper.Create(e.Window))
+            {
+                // Create a render context.
+                var renderContext = new RenderContext(cairoContext);
+                renderContext.RenderRegion = cairoArea;
+
+                // Paint the background color of the window.
+                cairoContext.Color = theme.BackgroundColor;
+                cairoContext.Rectangle(cairoArea);
+                cairoContext.Fill();
+
+                // Reset the layout and its properties.
+                lineLayoutBuffer.Width = area.Width - margins.Width;
+
+                // Figure out the viewport area we'll be drawing.
+                int offsetY = 0;
+
+                if (verticalAdjustment != null)
+                {
+                    offsetY += (int) verticalAdjustment.Value;
+                }
+
+                var viewArea = new Rectangle(
+                    area.X, area.Y + offsetY, area.Width, area.Height);
+
+                // Determine the line range visible in the given area.
+                int startLine, endLine;
+                lineLayoutBuffer.GetLineLayoutRange(
+                    this, viewArea, out startLine, out endLine);
+
+                // Determine where the first line actually starts.
+                int startLineY = 0;
+
+                if (startLine > 0)
+                {
+                    startLineY = lineLayoutBuffer.GetLineLayoutHeight(
+                        this, 0, startLine - 1);
+                }
+
+                // Go through the lines and draw each one in the correct position.
+                double currentY = startLineY - offsetY;
+
+                for (int line = startLine; line <= endLine; line++)
+                {
+                    // Pull out the layout and style since we'll use it.
+                    Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
+                    BlockStyle style = lineLayoutBuffer.GetLineStyle(this, line);
+
+                    // Get the extents for that line.
+                    int layoutWidth, layoutHeight;
+                    layout.GetPixelSize(out layoutWidth, out layoutHeight);
+
+                    // Figure out the height of the line including padding.
+                    double height = layoutHeight + style.Height;
+
+                    // Draw the current line along with wrapping and padding.
+                    DrawingUtility.DrawLayout(
+                        this,
+                        renderContext,
+                        new Rectangle(TextX, currentY, TextWidth, height),
+                        layout,
+                        style);
+
+                    // Render out the margin renderers.
+                    margins.Draw(
+                        this,
+                        renderContext,
+                        line,
+                        new PointD(0, currentY),
+                        height);
+
+                    // Move down a line.
+                    currentY += height;
+                }
+
+                // Draw the caret on the screen, but only if we have focus.
+                if (IsFocus)
+                {
+                    caret.Draw(renderContext);
+                }
+
+                // Show the scroll region, if requested.
+                if (displaySettings.ShowScrollPadding)
+                {
+                    cairoContext.Color = new Cairo.Color(1, 0.5, 0.5);
+                    cairoContext.Rectangle(scrollPaddingRegion);
+                    cairoContext.Stroke();
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Queues a redraw of a specific area on the screen.
+        /// </summary>
+        /// <param name="region">The region.</param>
+        public void QueueDraw(Rectangle region)
+        {
+            //QueueDrawArea(
+            //    (int) Math.Floor(region.X),
+            //    (int) Math.Floor(region.Y),
+            //    (int) Math.Ceiling(region.Width),
+            //    (int) Math.Ceiling(region.Height));
+            QueueDraw();
+        }
+
+        #endregion
+
+        #region Scrollbars
+
+        private Adjustment verticalAdjustment;
+        private Rectangle scrollPaddingRegion;
+
+        /// <summary>
+        /// Gets or sets the vertical adjustment or offset into the viewing area.
+        /// </summary>
+        /// <value>The vertical adjustment.</value>
+        public double BufferOffsetX
+        {
+            get { return verticalAdjustment.Value; }
+        }
+
+        /// <summary>
+        /// Scrolls the view to ensure the caret is visible.
+        /// </summary>
+        public void ScrollToCaret()
+        {
+            // Figure out if the caret is already in the visible area.
+            Rectangle caretRegion = caret.GetDrawRegion();
+
+            if (scrollPaddingRegion.Contains(caretRegion))
+            {
+                // We are already visible, so do nothing.
+                return;
+            }
+
+            // Figure out what direction we have to scroll.
+            if (caretRegion.Y < scrollPaddingRegion.Y)
+            {
+                // We have to scroll down. Start by figuring out the distance from the top
+                // of the caret to the top of the scroll region.
+                double difference = scrollPaddingRegion.Y - caretRegion.Y;
+                
+                verticalAdjustment.Value -= difference;
+            }
+            else
+            {
+                // We have to scroll up. Figure out the bottom of the caret in relation to
+                // the bottom of the scrolling region.
+                double caretBottom = caretRegion.Y + caretRegion.Height;
+                double bottom = scrollPaddingRegion.Y + scrollPaddingRegion.Height;
+                double difference = caretBottom - bottom;
+
+                verticalAdjustment.Value += difference;
+            }
+        }
+
+        /// <summary>
+        /// Called when the scroll adjustements are requested.
+        /// </summary>
+        /// <param name="hadj">The hadj.</param>
+        /// <param name="vadj">The vadj.</param>
+        protected override void OnSetScrollAdjustments(
+            Adjustment hadj,
+            Adjustment vadj)
+        {
+            // Determine if we need to remove ourselves from the previous adjustment
+            // events.
+            if (verticalAdjustment != null)
+            {
+                verticalAdjustment.ValueChanged -= OnVerticalAdjustment;
+            }
+
+            // And set the bounds based on our size.
+            verticalAdjustment = vadj;
+
+            SetAdjustments();
+
+            // Add the events, if we have an adjustment.
+            if (verticalAdjustment != null)
+            {
+                verticalAdjustment.ValueChanged += OnVerticalAdjustment;
+            }
+        }
+
+        /// <summary>
+        /// Called when the vertical adjustment is changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void OnVerticalAdjustment(
+            object sender,
+            EventArgs args)
+        {
+            // Redraw the entire window.
+            QueueDraw();
+        }
+
+        /// <summary>
+        /// Used to set the adjustments on the scrollbars for the text editor
+        /// </summary>
+        private void SetAdjustments()
+        {
+            // We have to have a size and an adjustment.
+            if (verticalAdjustment == null)
+            {
+                return;
+            }
+
+            // If the text width is negative, then we can't format.
+            if (TextWidth < 0)
+            {
+                return;
+            }
+
+            // Set the line buffer's width and then request the height for all
+            // the lines in the buffer.
+            lineLayoutBuffer.Width = TextWidth;
+            int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, -1);
+
+            // Set the adjustments based on those values.
+            int lineHeight = lineLayoutBuffer.GetLineLayoutHeight(this);
+
+            verticalAdjustment.SetBounds(
+                0.0,
+                height,
+                lineHeight,
+                (int) (Allocation.Height / 2.0),
+                Allocation.Height);
+
+            // Figure out the scroll padding.
+            int scrollPaddingHeight = lineHeight * displaySettings.CaretScrollPad;
+            
+            scrollPaddingRegion = new Rectangle(
+                0,
+                scrollPaddingHeight,
+                Allocation.Width,
+                Allocation.Height - scrollPaddingHeight * 2);
+        }
+
+        #endregion
+
+        #region Window Events
+
+        /// <summary>
+        /// Called when the window is realized (shown).
+        /// </summary>
+        protected override void OnRealized()
+        {
+            WidgetFlags |= WidgetFlags.Realized;
+            var attributes = new WindowAttr();
+            attributes.WindowType = WindowType.Child;
+            attributes.X = Allocation.X;
+            attributes.Y = Allocation.Y;
+            attributes.Width = Allocation.Width;
+            attributes.Height = Allocation.Height;
+            attributes.Wclass = WindowClass.InputOutput;
+            attributes.Visual = Visual;
+            attributes.Colormap = Colormap;
+            attributes.EventMask = (int) (Events | EventMask.ExposureMask);
+            attributes.Mask = Events | EventMask.ExposureMask;
+
+            const WindowAttributesType mask =
+                WindowAttributesType.X | WindowAttributesType.Y |
+                WindowAttributesType.Colormap | WindowAttributesType.Visual;
+            GdkWindow = new Window(ParentWindow, attributes, mask);
+            GdkWindow.UserData = Raw;
+            Style = Style.Attach(GdkWindow);
+            WidgetFlags &= ~WidgetFlags.NoWindow;
+        }
+
+        /// <summary>
+        /// Called when the widget is resized.
+        /// </summary>
+        /// <param name="allocation">The allocation.</param>
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            // Call the base implementation.
+            base.OnSizeAllocated(allocation);
+
+            // If we have a GdkWindow, move it.
+            if (GdkWindow != null)
+            {
+                GdkWindow.MoveResize(allocation);
+            }
+
+            // We need to reset the buffer so it can recalculate all the widths
+            // and clear any caches.
+            LineLayoutBuffer.Reset();
+
+            // Change the adjustments (scrollbars).
+            SetAdjustments();
+
+            // Force the entire widget to draw.
+            QueueDraw();
+        }
+
+        /// <summary>
+        /// Called when the widget is unrealized (hidden).
+        /// </summary>
+        protected override void OnUnrealized()
+        {
+            if (GdkWindow != null)
+            {
+                GdkWindow.UserData = IntPtr.Zero;
+                GdkWindow.Destroy();
+                WidgetFlags |= WidgetFlags.NoWindow;
+            }
+
+            base.OnUnrealized();
+        }
+
+        #endregion
+    }
 }
