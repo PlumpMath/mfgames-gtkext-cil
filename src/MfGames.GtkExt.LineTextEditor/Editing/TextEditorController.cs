@@ -39,8 +39,6 @@ using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
-using Point=Cairo.Point;
-
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Editing
@@ -240,7 +238,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				// Figure out if we are clicking inside the text area.
 				if (point.X >= displayContext.TextX)
 				{
-					PointD textPoint = new PointD(point.X - displayContext.TextX, point.Y);
+					var textPoint = new PointD(point.X - displayContext.TextX, point.Y);
 					CaretMoveActions.Point(displayContext, textPoint);
 					return true;
 				}
@@ -249,6 +247,14 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			// We haven't handled it, so return false so the rest of Gtk can
 			// decide what to do with the input.
 			return false;
+		}
+
+		/// <summary>
+		/// Resets the controller and its various internal states.
+		/// </summary>
+		public void Reset()
+		{
+			states.RemoveAll();
 		}
 
 		#endregion
