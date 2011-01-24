@@ -24,15 +24,17 @@
 
 #region Namespaces
 
-using Gdk;
+using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
+using Layout=Pango.Layout;
 using Rectangle=Cairo.Rectangle;
 using Style=Gtk.Style;
+using Window=Gdk.Window;
 
 #endregion
 
@@ -114,7 +116,13 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
         /// <value>The pango context.</value>
         Context PangoContext { get; }
 
-        /// <summary>
+    	/// <summary>
+    	/// Gets the vertical adjustment.
+    	/// </summary>
+    	/// <value>The vertical adjustment.</value>
+    	Adjustment VerticalAdjustment { get; }
+
+    	/// <summary>
         /// Queues a redraw of the entire buffer.
         /// </summary>
         void QueueDraw();

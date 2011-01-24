@@ -70,27 +70,13 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			Layout layout;
 			int wrappedLineIndex;
 			LayoutLine wrappedLine = position.GetWrappedLine(
-				displayContext, 
-				out layout, 
-				out wrappedLineIndex);
+				displayContext, out layout, out wrappedLineIndex);
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
-			int lineX;
-			var state = actionContext.States.Get<VerticalMovementActionState>();
-			
-			if (state == null)
-            {
-                // Calculate the line state from the caret position.
-            	lineX = wrappedLine.IndexToX(position.CharacterIndex, false);
-            }
-            else
-            {
-                // Get the line coordinate from the state.
-                lineX = state.LayoutLineX;
-            }
+			int lineX = GetLineX(actionContext, wrappedLine, position);
 
-            // Figure out which wrapped line we'll be moving the caret to.
+			// Figure out which wrapped line we'll be moving the caret to.
 			if (wrappedLine.IsLastLineInLayout())
 			{
 				// If we are the last line in the buffer, just do nothing.
@@ -119,16 +105,42 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			wrappedLine.XToIndex(lineX, out index, out trailing);
 			position.CharacterIndex = index;
 
-			// Put the state back into the collection.
-            if (state == null)
-            {
-                state = new VerticalMovementActionState(lineX);
-                actionContext.States.Add(state);
-            }
-
 			// Draw the new location of the caret.
-		    displayContext.ScrollToCaret();
+			displayContext.ScrollToCaret();
 			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+		}
+
+		/// <summary>
+		/// Gets the line X coordinates from either the state if we have one
+		/// or calculate it from the buffer position's X coordinate.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		/// <param name="wrappedLine">The wrapped line.</param>
+		/// <param name="position">The position.</param>
+		/// <returns></returns>
+		private static int GetLineX(
+			IActionContext actionContext,
+			LayoutLine wrappedLine,
+			BufferPosition position)
+		{
+			int lineX;
+			var state = actionContext.States.Get<VerticalMovementActionState>();
+
+			if (state == null)
+			{
+				// Calculate the line state from the caret position.
+				lineX = wrappedLine.IndexToX(position.CharacterIndex, false);
+
+				// Save a new state into the states.
+				state = new VerticalMovementActionState(lineX);
+				actionContext.States.Add(state);
+			}
+			else
+			{
+				// Get the line coordinate from the state.
+				lineX = state.LayoutLineX;
+			}
+			return lineX;
 		}
 
 		/// <summary>
@@ -149,7 +161,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				{
 					position.LineIndex--;
 					position.CharacterIndex =
-						actionContext.DisplayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
+						actionContext.DisplayContext.LineLayoutBuffer.GetLineLength(
+							position.LineIndex);
 				}
 			}
 			else
@@ -158,8 +171,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-            actionContext.DisplayContext.ScrollToCaret();
-            ((TextEditor)actionContext.DisplayContext).QueueDraw();
+			actionContext.DisplayContext.ScrollToCaret();
+			((TextEditor) actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -174,7 +187,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Get the text and line for the position in question.
 			BufferPosition position = actionContext.DisplayContext.Caret.Position;
 			string text =
-				actionContext.DisplayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
+				actionContext.DisplayContext.LineLayoutBuffer.GetLineText(
+					position.LineIndex);
 
 			// Figure out the boundaries.
 			int leftBoundary, rightBoundary;
@@ -189,7 +203,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				{
 					position.LineIndex--;
 					position.CharacterIndex =
-						actionContext.DisplayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
+						actionContext.DisplayContext.LineLayoutBuffer.GetLineLength(
+							position.LineIndex);
 				}
 			}
 			else
@@ -198,8 +213,98 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-            actionContext.DisplayContext.ScrollToCaret();
-            ((TextEditor)actionContext.DisplayContext).QueueDraw();
+			actionContext.DisplayContext.ScrollToCaret();
+			((TextEditor) actionContext.DisplayContext).QueueDraw();
+		}
+
+		/// <summary>
+		/// Moves the caret down one page.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Page_Down)]
+		[KeyBinding(Key.Page_Down)]
+		public static void PageDown(IActionContext actionContext)
+		{
+			// Extract a number of useful variable for this method.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+
+			// Queue a draw of the old caret position.
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+
+			// Figure out the layout and wrapped line we are currently on.
+			Layout layout;
+			int wrappedLineIndex;
+			LayoutLine wrappedLine = position.GetWrappedLine(
+				displayContext, out layout, out wrappedLineIndex);
+
+			// Figure out where in the buffer we're located.
+			int lineHeight;
+
+			PointD point = position.ToScreenCoordinates(displayContext, out lineHeight);
+
+			// Shift down the buffer a full page size and clamp it to the actual
+			// buffer size.
+			double bufferY =
+				Math.Min(
+					point.Y + displayContext.VerticalAdjustment.PageSize,
+					displayContext.LineLayoutBuffer.GetLineLayoutHeight(displayContext, 0, -1));
+
+			// Figure out the X coordinate of the line. If there is an action context,
+			// use that. Otherwise, calculate it from the character index of the position.
+			int lineX = Units.ToPixels(GetLineX(actionContext, wrappedLine, position));
+
+			// Move to the calculated point.
+			Point(
+				displayContext, 
+				new PointD(lineX, bufferY - displayContext.BufferOffsetY));
+		}
+
+		/// <summary>
+		/// Moves the caret down one page.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Page_Up)]
+		[KeyBinding(Key.Page_Up)]
+		public static void PageUp(IActionContext actionContext)
+		{
+			// Extract a number of useful variable for this method.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+
+			// Queue a draw of the old caret position.
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+
+			// Figure out the layout and wrapped line we are currently on.
+			Layout layout;
+			int wrappedLineIndex;
+			LayoutLine wrappedLine = position.GetWrappedLine(
+				displayContext, out layout, out wrappedLineIndex);
+
+			// Figure out where in the buffer we're located.
+			int lineHeight;
+
+			PointD point = position.ToScreenCoordinates(displayContext, out lineHeight);
+
+			// Shift down the buffer a full page size and clamp it to the actual
+			// buffer size.
+			double bufferY =
+				Math.Max(
+					point.Y - displayContext.VerticalAdjustment.PageSize,
+					0);
+
+			// Figure out the X coordinate of the line. If there is an action context,
+			// use that. Otherwise, calculate it from the character index of the position.
+			int lineX = Units.ToPixels(GetLineX(actionContext, wrappedLine, position));
+
+			// Move to the calculated point.
+			Point(
+				displayContext, 
+				new PointD(lineX, bufferY - displayContext.BufferOffsetY));
 		}
 
 		/// <summary>
@@ -229,8 +334,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-            actionContext.DisplayContext.ScrollToCaret();
-            ((TextEditor)actionContext.DisplayContext).QueueDraw();
+			actionContext.DisplayContext.ScrollToCaret();
+			((TextEditor) actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -257,7 +362,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			if (rightBoundary == -1)
 			{
 				// Check to see if we are at the top of the line or not.
-				if (position.LineIndex <= actionContext.DisplayContext.LineLayoutBuffer.LineCount)
+				if (position.LineIndex <=
+				    actionContext.DisplayContext.LineLayoutBuffer.LineCount)
 				{
 					position.LineIndex++;
 					position.CharacterIndex = 0;
@@ -269,8 +375,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-            actionContext.DisplayContext.ScrollToCaret();
-            ((TextEditor)actionContext.DisplayContext).QueueDraw();
+			actionContext.DisplayContext.ScrollToCaret();
+			((TextEditor) actionContext.DisplayContext).QueueDraw();
 		}
 
 		/// <summary>
@@ -295,25 +401,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			Layout layout;
 			int wrappedLineIndex;
 			LayoutLine wrappedLine = position.GetWrappedLine(
-				displayContext,
-				out layout,
-				out wrappedLineIndex);
+				displayContext, out layout, out wrappedLineIndex);
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
-			int lineX;
-			var state = actionContext.States.Get<VerticalMovementActionState>();
-
-			if (state == null)
-			{
-				// Calculate the line state from the caret position.
-				lineX = wrappedLine.IndexToX(position.CharacterIndex, false);
-			}
-			else
-			{
-				// Get the line coordinate from the state.
-				lineX = state.LayoutLineX;
-			}
+			int lineX = GetLineX(actionContext, wrappedLine, position);
 
 			// Figure out which wrapped line we'll be moving the caret to.
 			if (wrappedLineIndex == 0)
@@ -345,16 +437,9 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			wrappedLine.XToIndex(lineX, out index, out trailing);
 			position.CharacterIndex = index;
 
-			// Put the state back into the collection.
-			if (state == null)
-			{
-				state = new VerticalMovementActionState(lineX);
-				actionContext.States.Add(state);
-			}
-
 			// Draw the new location of the caret.
-            displayContext.ScrollToCaret();
-            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret();
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#region End Of...
@@ -375,8 +460,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToEndOfBuffer(displayContext);
-            displayContext.ScrollToCaret();
-            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret();
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		/// <summary>
@@ -395,8 +480,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToEndOfWrappedLine(displayContext);
-            displayContext.ScrollToCaret();
-            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret();
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion
@@ -418,8 +503,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToBeginningOfBuffer(displayContext);
-            displayContext.ScrollToCaret();
-            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret();
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		/// <summary>
@@ -438,8 +523,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Move the cursor and redraw the area.
 			displayContext.Caret.Position.MoveToBeginningOfWrappedLine(displayContext);
-            displayContext.ScrollToCaret();
-            displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret();
+			displayContext.QueueDraw(displayContext.Caret.GetDrawRegion());
 		}
 
 		#endregion
@@ -451,7 +536,9 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="widgetPoint">The point in the widget.</param>
-		public static void Point(IDisplayContext displayContext, PointD widgetPoint)
+		public static void Point(
+			IDisplayContext displayContext,
+			PointD widgetPoint)
 		{
 			// Find the line layout that is closest to the point given.
 			double y = widgetPoint.Y + displayContext.BufferOffsetY;
@@ -465,8 +552,9 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			if (lineIndex > 0)
 			{
-				layoutY -= displayContext.LineLayoutBuffer.GetLineLayoutHeight(
-					displayContext, 0, lineIndex - 1);
+				layoutY -=
+					displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+						displayContext, 0, lineIndex - 1);
 			}
 
 			int pangoLayoutY = Units.FromPixels((int) layoutY);
