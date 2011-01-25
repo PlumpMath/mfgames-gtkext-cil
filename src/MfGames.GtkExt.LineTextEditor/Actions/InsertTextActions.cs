@@ -24,32 +24,40 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Actions;
+using MfGames.GtkExt.LineTextEditor.Attributes;
+using MfGames.GtkExt.LineTextEditor.Commands;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Actions
 {
 	/// <summary>
-	/// Defines the interface to the context for a specific action.
+	/// Contains the various actions used for moving the caret (cursor) around
+	/// the text buffer.
 	/// </summary>
-	public interface IActionContext
+	[ActionFixture]
+	public static class InsertTextActions
 	{
 		/// <summary>
-		/// Gets the display context for this action.
+		/// Moves the caret down one line.
 		/// </summary>
-		/// <value>The display.</value>
-		IDisplayContext DisplayContext { get; }
+		/// <param name="actionContext">The display context.</param>
+		/// <param name="unicode">The unicode.</param>
+		public static void InsertText(
+			IActionContext actionContext,
+			char unicode)
+		{
+			// Create a set text operation.
+			SetTextOperation operation = new SetTextOperation();
+			operation.Position = actionContext.DisplayContext.Caret.Position;
+			operation.Text = unicode.ToString();
 
-		/// <summary>
-		/// Gets the action states associated with the action.
-		/// </summary>
-		ActionStateCollection States { get; }
+			// Perform the operation on the buffer.
+			actionContext.Do(operation);
 
-		/// <summary>
-		/// Performs the given operation on the line buffer.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		void Do(ILineBufferOperation operation);
+			// Shift the position over.
+			CaretMoveActions.Right(actionContext);
+		}
 	}
 }

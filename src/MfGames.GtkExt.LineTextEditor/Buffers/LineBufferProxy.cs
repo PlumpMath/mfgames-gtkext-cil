@@ -26,6 +26,7 @@
 
 using System;
 
+using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -52,6 +53,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 
 			this.buffer = buffer;
+			this.buffer.LineChanged += OnLineChanged;
 		}
 
 		#endregion
@@ -120,6 +122,37 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			int endIndex)
 		{
 			return buffer.GetLineText(line, startIndex, endIndex);
+		}
+
+		#endregion
+
+		#region Buffer Operations
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		public event EventHandler<LineChangedArgs> LineChanged;
+
+		public void FireLineChanged(object sender, LineChangedArgs args)
+		{
+			if (LineChanged != null)
+			{
+				LineChanged(sender, args);
+			}
+		}
+
+		public virtual void OnLineChanged(object sender, LineChangedArgs args)
+		{
+			FireLineChanged(sender, args);
+		}
+
+		/// <summary>
+		/// Performs the given operation, raising any events for changing.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		public virtual void Do(ILineBufferOperation operation)
+		{
+			buffer.Do(operation);
 		}
 
 		#endregion

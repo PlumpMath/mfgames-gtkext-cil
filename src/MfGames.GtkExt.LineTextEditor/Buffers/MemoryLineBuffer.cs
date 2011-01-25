@@ -27,6 +27,9 @@
 using System;
 using System.Collections.Generic;
 
+using MfGames.GtkExt.LineTextEditor.Commands;
+using MfGames.GtkExt.LineTextEditor.Enumerations;
+using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -131,6 +134,47 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Return the substring of the text based on indexes.
 			return text.Substring(startIndex, length);
+		}
+
+		#endregion
+
+		#region Buffer Operations
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		public event EventHandler<LineChangedArgs> LineChanged;
+
+		public void FireLineChanged(object sender, LineChangedArgs args)
+		{
+			if (LineChanged != null)
+			{
+				LineChanged(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Performs the given operation, raising any events for changing.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		public virtual void Do(ILineBufferOperation operation)
+		{
+			// Figure out what to do based on the operation.
+			switch (operation.LineBufferOperationType)
+			{
+				case LineBufferOperationType.SetText:
+					// Pull out the text operation.
+					SetTextOperation setTextOperation = (SetTextOperation) operation;
+
+					// Set the text of the line.
+					string line = lines[setTextOperation.Position.LineIndex];
+					line = line.Insert(setTextOperation.Position.CharacterIndex, setTextOperation.Text);
+					lines[setTextOperation.Position.LineIndex] = line;
+
+					// Fire a line changed operation.
+					FireLineChanged(this, new LineChangedArgs(setTextOperation.Position.LineIndex));
+					break;
+			}
 		}
 
 		#endregion

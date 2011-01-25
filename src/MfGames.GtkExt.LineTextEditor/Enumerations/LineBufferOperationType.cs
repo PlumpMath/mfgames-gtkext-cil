@@ -24,32 +24,20 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Actions;
+using MfGames.GtkExt.LineTextEditor.Commands;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Enumerations
 {
 	/// <summary>
-	/// Defines the interface to the context for a specific action.
+	/// Defines the various operations that a line buffer can receive.
 	/// </summary>
-	public interface IActionContext
+	public enum LineBufferOperationType : byte
 	{
 		/// <summary>
-		/// Gets the display context for this action.
+		/// Indicates that the associated operation extends <see cref="SetTextOperation"/>.
 		/// </summary>
-		/// <value>The display.</value>
-		IDisplayContext DisplayContext { get; }
-
-		/// <summary>
-		/// Gets the action states associated with the action.
-		/// </summary>
-		ActionStateCollection States { get; }
-
-		/// <summary>
-		/// Performs the given operation on the line buffer.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		void Do(ILineBufferOperation operation);
+		SetText,
 	}
 }

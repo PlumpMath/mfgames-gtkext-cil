@@ -28,6 +28,7 @@ using System;
 
 using C5;
 
+using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -479,6 +480,16 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Get the layout from the window.
 			BlockStyle style = window.GetLineStyle(displayContext, lineIndex);
 			return style;
+		}
+
+		#endregion
+
+		#region Buffer Editing
+
+		public override void OnLineChanged(object sender, LineChangedArgs args)
+		{
+			Reset();
+			base.OnLineChanged(sender, args);
 		}
 
 		#endregion

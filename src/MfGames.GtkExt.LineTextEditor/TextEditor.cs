@@ -35,6 +35,7 @@ using Gtk;
 using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Editing;
+using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
 using MfGames.GtkExt.LineTextEditor.Visuals;
@@ -150,6 +151,9 @@ namespace MfGames.GtkExt.LineTextEditor
 				{
 					// Reset the margins and force them to resize themselves.
 					margins.Resize(this);
+
+					// Hook up to the events.
+					lineLayoutBuffer.LineChanged += OnLineChanged;
 				}
 			}
 		}
@@ -220,6 +224,11 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		private readonly Caret caret;
 		private readonly TextEditorController controller;
+
+		private void OnLineChanged(object sender, LineChangedArgs args)
+		{
+			QueueDraw();
+		}
 
 		/// <summary>
 		/// Gets the caret used to indicate where the user is editing.

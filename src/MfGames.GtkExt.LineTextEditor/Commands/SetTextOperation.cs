@@ -24,32 +24,38 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Actions;
+using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Enumerations;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Commands
 {
 	/// <summary>
-	/// Defines the interface to the context for a specific action.
+	/// Defines an operation that changes text of a single line.
 	/// </summary>
-	public interface IActionContext
+	public class SetTextOperation : ILineBufferOperation
 	{
-		/// <summary>
-		/// Gets the display context for this action.
-		/// </summary>
-		/// <value>The display.</value>
-		IDisplayContext DisplayContext { get; }
+		#region Operation
 
 		/// <summary>
-		/// Gets the action states associated with the action.
+		/// Gets the type of the operation representing this object.
 		/// </summary>
-		ActionStateCollection States { get; }
+		/// <value>The type of the operation.</value>
+		public LineBufferOperationType LineBufferOperationType
+		{
+			get { return LineBufferOperationType.SetText; }
+		}
+
+		public BufferPosition Position { get; set; }
 
 		/// <summary>
-		/// Performs the given operation on the line buffer.
+		/// Gets or sets the text for this operation.
 		/// </summary>
-		/// <param name="operation">The operation.</param>
-		void Do(ILineBufferOperation operation);
+		/// <value>The text.</value>
+		public string Text { get; set; }
+
+		#endregion
 	}
 }

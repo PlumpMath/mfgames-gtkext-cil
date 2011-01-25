@@ -24,8 +24,10 @@
 
 #region Namespaces
 
+using System;
 using System.Text;
 
+using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -121,6 +123,24 @@ namespace GtkExtDemo.LineTextEditor
 
 			// Trim off the trailing space and return it.
 			return buffer.ToString().Trim();
+		}
+
+		#endregion
+
+		#region Buffer Operations
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		public event EventHandler<LineChangedArgs> LineChanged;
+
+		/// <summary>
+		/// Performs the given operation, raising any events for changing.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		public virtual void Do(ILineBufferOperation operation)
+		{
+			throw new InvalidOperationException();
 		}
 
 		#endregion

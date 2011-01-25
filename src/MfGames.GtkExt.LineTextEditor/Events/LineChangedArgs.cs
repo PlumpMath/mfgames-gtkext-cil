@@ -24,32 +24,22 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Actions;
+using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Events
 {
 	/// <summary>
-	/// Defines the interface to the context for a specific action.
+	/// Indicates a line changed.
 	/// </summary>
-	public interface IActionContext
+	public class LineChangedArgs : EventArgs
 	{
-		/// <summary>
-		/// Gets the display context for this action.
-		/// </summary>
-		/// <value>The display.</value>
-		IDisplayContext DisplayContext { get; }
+		public LineChangedArgs(int lineIndex)
+		{
+			LineIndex = lineIndex;
+		}
 
-		/// <summary>
-		/// Gets the action states associated with the action.
-		/// </summary>
-		ActionStateCollection States { get; }
-
-		/// <summary>
-		/// Performs the given operation on the line buffer.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		void Do(ILineBufferOperation operation);
+		public int LineIndex { get; set; }
 	}
 }

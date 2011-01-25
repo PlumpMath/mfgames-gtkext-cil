@@ -26,6 +26,10 @@
 
 #endregion
 
+using System;
+
+using MfGames.GtkExt.LineTextEditor.Events;
+
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
@@ -70,6 +74,21 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 			int lineIndex,
 			int startIndex,
 			int endIndex);
+
+		#endregion
+
+		#region Buffer Operations
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		event EventHandler<LineChangedArgs> LineChanged;
+
+		/// <summary>
+		/// Performs the given operation, raising any events for changing.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		void Do(ILineBufferOperation operation);
 
 		#endregion
 	}

@@ -206,13 +206,30 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				keyBindings[keyCode].Perform(this);
 				return true;
 			}
-			//else if (unicodeKey != 0 && modifier == Gdk.ModifierType.None)
-			//{
-			//    InsertCharacter(unicodeKey);
-			//}
+			
+			if (unicodeKey != 0 && modifier == ModifierType.None)
+			{
+				char unicode = (char) unicodeKey;
+				InsertTextActions.InsertText(this, unicode);
+				return true;
+			}
 
 			// No idea what to do, so don't do anything.
 			return false;
+		}
+
+		/// <summary>
+		/// Performs the given operation on the line buffer.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		public void Do(ILineBufferOperation operation)
+		{
+			if (operation == null)
+			{
+				throw new ArgumentNullException("operation");
+			}
+
+			displayContext.LineLayoutBuffer.Do(operation);
 		}
 
 		#endregion

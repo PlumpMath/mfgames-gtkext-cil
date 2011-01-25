@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Actions\ActionStateCollection.cs" />
     <Compile Include="Actions\CaretMoveActions.cs" />
+    <Compile Include="Actions\InsertTextActions.cs" />
     <Compile Include="Actions\VerticalMovementActionState.cs" />
     <Compile Include="Attributes\ActionAttribute.cs" />
     <Compile Include="Attributes\ActionFixtureAttribute.cs" />
@@ -68,16 +69,20 @@
     <Compile Include="Buffers\OffsetWordSplitter.cs" />
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
+    <Compile Include="Commands\SetTextOperation.cs" />
     <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Buffers\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
     <Compile Include="Editing\TextEditorController.cs" />
+    <Compile Include="Enumerations\LineBufferOperationType.cs" />
+    <Compile Include="Events\LineChangedArgs.cs" />
     <Compile Include="FontCache.cs" />
     <Compile Include="Interfaces\IActionState.cs" />
     <Compile Include="Interfaces\IActionContext.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
+    <Compile Include="Interfaces\ILineBufferOperation.cs" />
     <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
     <Compile Include="Interfaces\ILineMarkupBuffer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
