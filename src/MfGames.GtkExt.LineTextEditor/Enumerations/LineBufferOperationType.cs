@@ -39,5 +39,15 @@ namespace MfGames.GtkExt.LineTextEditor.Enumerations
 		/// Indicates that the associated operation extends <see cref="SetTextOperation"/>.
 		/// </summary>
 		SetText,
+
+		/// <summary>
+		/// Indicates that the associated operation extends <see cref="InsertLinesOperation"/>.
+		/// </summary>
+		InsertLines,
+
+		/// <summary>
+		/// Indicates that the associated operation extends <see cref="DeleteLinesOperation"/>.
+		/// </summary>
+		DeleteLines,
 	}
 }

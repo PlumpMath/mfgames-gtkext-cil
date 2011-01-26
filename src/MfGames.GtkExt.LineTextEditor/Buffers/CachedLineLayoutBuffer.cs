@@ -181,9 +181,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				// release them as needed.
 				foreach (CachedLine line in window.Lines)
 				{
-					line.Height = 0;
-					line.Style = null;
-					line.Layout = null;
+					line.Reset();
 				}
 
 				// Move the lines list back into the allocation list.
@@ -390,10 +388,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public override void GetLineLayoutRange(IDisplayContext displayContext,
-		                                        Rectangle viewArea,
-		                                        out int startLine,
-		                                        out int endLine)
+		public override void GetLineLayoutRange(
+			IDisplayContext displayContext,
+			Rectangle viewArea,
+			out int startLine,
+			out int endLine)
 		{
 			// Go through and find the windows that have the starting and ending
 			// area.
@@ -486,9 +485,23 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		#region Buffer Editing
 
-		public override void OnLineChanged(object sender, LineChangedArgs args)
+		/// <summary>
+		/// Called when a line is changed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		public override void OnLineChanged(
+			object sender,
+			LineChangedArgs args)
 		{
-			Reset();
+			// Get the window for the line change and reset that window.
+			int cachedWindowIndex = GetWindowIndex(args.LineIndex);
+			CachedWindow cachedWindow = windows[cachedWindowIndex];
+
+			cachedWindow.Reset();
+			Clear(cachedWindow);
+
+			// Call the base implementation to cascade the events up.
 			base.OnLineChanged(sender, args);
 		}
 
@@ -521,6 +534,16 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			/// </summary>
 			/// <value>The style.</value>
 			public BlockStyle Style { get; set; }
+
+			/// <summary>
+			/// Resets the cached line.
+			/// </summary>
+			public void Reset()
+			{
+				Height = 0;
+				Style = null;
+				Layout = null;
+			}
 
 			#endregion
 
@@ -622,9 +645,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			#region Caching
 
+			private bool needPopulate;
+
 			/// <summary>
 			/// Gets the line layout for a given line.
 			/// </summary>
+			/// <param name="displayContext">The display context.</param>
 			/// <param name="line">The line index which may not be in the window.</param>
 			/// <returns></returns>
 			public Layout GetLineLayout(
@@ -799,21 +825,28 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			/// <param name="displayContext">The text editor.</param>
 			internal void Populate(IDisplayContext displayContext)
 			{
-				// If the window already has lines, then it doesn't need to be populated.
-				if (Lines != null)
+				// Update our access time.
+				LastAccessed = DateTime.UtcNow;
+
+				// If the window already has lines or if we don't have a specific
+				// request to repopulate it, then don't do anything.
+				if (Lines != null && !needPopulate)
 				{
 					return;
 				}
 
-				// Get an array of lines from the list.
-				if (ParentBuffer.allocatedLines.Count <= 0)
+				// Only allocate lines if we don't have one.
+				if (Lines == null)
 				{
-					// We don't have any allocated lines, so free the last.
-					ParentBuffer.ClearLeastRecentlyUsedWindow();
-				}
+					// Get an array of lines from the list.
+					if (ParentBuffer.allocatedLines.Count <= 0)
+					{
+						// We don't have any allocated lines, so free the last.
+						ParentBuffer.ClearLeastRecentlyUsedWindow();
+					}
 
-				Lines = ParentBuffer.allocatedLines.Pop();
-				LastAccessed = DateTime.UtcNow;
+					Lines = ParentBuffer.allocatedLines.Pop();
+				}
 
 				// Go through all the lines in the window and populate them.
 				int height = 0;
@@ -822,25 +855,30 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				{
 					// Make sure we aren't going past the top line.
 					int line = WindowStartLine + lineIndex;
+					CachedLine cachedLine = Lines[lineIndex];
 
 					if (line > ParentBuffer.LineCount)
 					{
 						// Just reset the line.
-						Lines[lineIndex].Height = 0;
-						Lines[lineIndex].Style = null;
-						Lines[lineIndex].Layout = null;
+						cachedLine.Reset();
+						continue;
+					}
+
+					// If we have a height, then don't process it.
+					if (cachedLine.Height > 0)
+					{
 						continue;
 					}
 
 					// Get the height of this line.
-					Lines[lineIndex].Height =
+					cachedLine.Height =
 						ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
 							displayContext, line, line);
-					Lines[lineIndex].Style =
+					cachedLine.Style =
 						ParentBuffer.LineLayoutBuffer.GetLineStyle(displayContext, line);
-					Lines[lineIndex].Layout =
+					cachedLine.Layout =
 						ParentBuffer.LineLayoutBuffer.GetLineLayout(displayContext, line);
-					height += Lines[lineIndex].Height;
+					height += cachedLine.Height;
 				}
 
 				// Set the height of the window.
@@ -854,6 +892,17 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			{
 				// Reset the cached values in the window.
 				Height = null;
+			}
+
+			/// <summary>
+			/// Clears out any cached values inside the window along with
+			/// a specific line.
+			/// </summary>
+			public void Reset(int windowLineIndex)
+			{
+				Reset();
+				needPopulate = true;
+				Lines[windowLineIndex].Reset();
 			}
 
 			#endregion

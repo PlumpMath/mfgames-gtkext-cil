@@ -24,40 +24,58 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Attributes;
-using MfGames.GtkExt.LineTextEditor.Commands;
+using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Actions
+namespace MfGames.GtkExt.LineTextEditor.Commands
 {
 	/// <summary>
-	/// Contains the various actions used for moving the caret (cursor) around
-	/// the text buffer.
+	/// Indicates an operation that inserts lines into a line buffer.
 	/// </summary>
-	[ActionFixture]
-	public static class InsertTextActions
+	public class DeleteLinesOperation : ILineBufferOperation
 	{
+		#region Constructors
+
 		/// <summary>
-		/// Moves the caret down one line.
+		/// Initializes a new instance of the <see cref="DeleteLinesOperation"/> class.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
-		/// <param name="unicode">The unicode.</param>
-		public static void InsertText(
-			IActionContext actionContext,
-			char unicode)
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="count">The count.</param>
+		public DeleteLinesOperation(
+			int lineIndex,
+			int count)
 		{
-			// Create a set text operation.
-			var operation =
-				new SetTextOperation(
-					actionContext.DisplayContext.Caret.Position, unicode.ToString());
-
-			// Perform the operation on the buffer.
-			actionContext.Do(operation);
-
-			// Shift the position over.
-			CaretMoveActions.Right(actionContext);
+			LineIndex = lineIndex;
+			Count = count;
 		}
+
+		#endregion
+
+		#region Operation
+
+		/// <summary>
+		/// Gets the number of lines to delete.
+		/// </summary>
+		/// <value>The count.</value>
+		public int Count { get; private set; }
+
+		/// <summary>
+		/// Gets the type of the operation representing this object.
+		/// </summary>
+		/// <value>The type of the operation.</value>
+		public LineBufferOperationType LineBufferOperationType
+		{
+			get { return LineBufferOperationType.DeleteLines; }
+		}
+
+		/// <summary>
+		/// Gets the index of the first line to start deleting.
+		/// </summary>
+		/// <value>The index of the line.</value>
+		public int LineIndex { get; private set; }
+
+		#endregion
 	}
 }

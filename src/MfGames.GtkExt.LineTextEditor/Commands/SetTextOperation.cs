@@ -37,6 +37,23 @@ namespace MfGames.GtkExt.LineTextEditor.Commands
 	/// </summary>
 	public class SetTextOperation : ILineBufferOperation
 	{
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SetTextOperation"/> class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="text">The text.</param>
+		public SetTextOperation(
+			BufferPosition position,
+			string text)
+		{
+			Position = position;
+			Text = text;
+		}
+
+		#endregion
+
 		#region Operation
 
 		/// <summary>
@@ -48,13 +65,17 @@ namespace MfGames.GtkExt.LineTextEditor.Commands
 			get { return LineBufferOperationType.SetText; }
 		}
 
-		public BufferPosition Position { get; set; }
+		/// <summary>
+		/// Gets the position.
+		/// </summary>
+		/// <value>The position.</value>
+		public BufferPosition Position { get; private set; }
 
 		/// <summary>
-		/// Gets or sets the text for this operation.
+		/// Gets the text for this operation.
 		/// </summary>
 		/// <value>The text.</value>
-		public string Text { get; set; }
+		public string Text { get; private set; }
 
 		#endregion
 	}

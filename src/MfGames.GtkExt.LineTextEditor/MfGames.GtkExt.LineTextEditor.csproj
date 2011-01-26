@@ -69,6 +69,8 @@
     <Compile Include="Buffers\OffsetWordSplitter.cs" />
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
+    <Compile Include="Commands\DeleteLinesOperation.cs" />
+    <Compile Include="Commands\InsertLinesOperation.cs" />
     <Compile Include="Commands\SetTextOperation.cs" />
     <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\ActionEntry.cs" />
