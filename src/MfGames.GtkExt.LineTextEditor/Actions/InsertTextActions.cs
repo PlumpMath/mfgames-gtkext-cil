@@ -24,7 +24,10 @@
 
 #region Namespaces
 
+using Gdk;
+
 using MfGames.GtkExt.LineTextEditor.Attributes;
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -41,6 +44,44 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	public static class InsertTextActions
 	{
 		/// <summary>
+		/// Inserts the paragraph at the current buffer position.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.Return)]
+		public static void InsertParagraph(IActionContext actionContext)
+		{
+			// Get the text of the current line.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+			string lineText =
+				displayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
+
+			// Split the line based on the character index.
+			string before = lineText.Substring(0, position.CharacterIndex);
+			string after = lineText.Substring(position.CharacterIndex);
+
+			// Create an operation to insert a line after this point.
+			var insertOperation = new InsertLinesOperation(position.LineIndex, 1);
+
+			// Set the text for both lines.
+			var setTextOperation1 = new SetTextOperation(position.LineIndex, before);
+			var setTextOperation2 = new SetTextOperation(position.LineIndex + 1, after);
+
+			// Change the buffer position.
+			position.LineIndex++;
+			position.CharacterIndex = 0;
+
+			// Perform the operations.
+			actionContext.Do(insertOperation);
+			actionContext.Do(setTextOperation1);
+			actionContext.Do(setTextOperation2);
+
+			// Scroll to the caret to keep it on screen.
+			displayContext.ScrollToCaret();
+		}
+
+		/// <summary>
 		/// Moves the caret down one line.
 		/// </summary>
 		/// <param name="actionContext">The display context.</param>
@@ -49,10 +90,18 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			IActionContext actionContext,
 			char unicode)
 		{
-			// Create a set text operation.
+			// Get the text of the current line.
+			IDisplayContext displayContext = actionContext.DisplayContext;
 			Caret caret = actionContext.DisplayContext.Caret;
+			BufferPosition position = caret.Position;
+			string lineText =
+				displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
 
-			var operation = new SetTextOperation(caret.Position, unicode.ToString());
+			// Make the changes in the line.
+			lineText = lineText.Insert(position.CharacterIndex, unicode.ToString());
+
+			// Create a set text operation.
+			var operation = new SetTextOperation(position.LineIndex, lineText);
 
 			// Shift the cursor over since we know this won't be changing lines
 			// and we can avoid some additional refreshes.
@@ -60,6 +109,9 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Perform the operation on the buffer.
 			actionContext.Do(operation);
+
+			// Scroll to the caret to keep it on screen.
+			displayContext.ScrollToCaret();
 		}
 	}
 }

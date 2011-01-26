@@ -130,11 +130,6 @@ namespace GtkExtDemo.LineTextEditor
 		#region Buffer Operations
 
 		/// <summary>
-		/// Used to indicate that a line changed.
-		/// </summary>
-		public event EventHandler<LineChangedArgs> LineChanged;
-
-		/// <summary>
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
@@ -142,6 +137,66 @@ namespace GtkExtDemo.LineTextEditor
 		{
 			throw new InvalidOperationException();
 		}
+
+		/// <summary>
+		/// Fires the line changed event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		private void FireLineChanged(
+			object sender,
+			LineChangedArgs args)
+		{
+			if (LineChanged != null)
+			{
+				LineChanged(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Fires the lines deleted event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		private void FireLinesDeleted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			if (LinesDeleted != null)
+			{
+				LinesDeleted(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Fires the lines inserted event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		private void FireLinesInserted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			if (LinesInserted != null)
+			{
+				LinesInserted(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		public event EventHandler<LineChangedArgs> LineChanged;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		public event EventHandler<LineRangeEventArgs> LinesDeleted;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		public event EventHandler<LineRangeEventArgs> LinesInserted;
 
 		#endregion
 	}

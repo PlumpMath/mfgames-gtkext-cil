@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using Cairo;
 
@@ -140,7 +141,9 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <value>The line layout buffer.</value>
 		public ILineLayoutBuffer LineLayoutBuffer
 		{
+			[DebuggerStepThrough]
 			get { return lineLayoutBuffer; }
+
 			set
 			{
 				// Set the new buffer.
@@ -225,11 +228,6 @@ namespace MfGames.GtkExt.LineTextEditor
 		private readonly Caret caret;
 		private readonly TextEditorController controller;
 
-		private void OnLineChanged(object sender, LineChangedArgs args)
-		{
-			QueueDraw();
-		}
-
 		/// <summary>
 		/// Gets the caret used to indicate where the user is editing.
 		/// </summary>
@@ -275,6 +273,13 @@ namespace MfGames.GtkExt.LineTextEditor
 		protected override bool OnKeyReleaseEvent(EventKey evnt)
 		{
 			return base.OnKeyReleaseEvent(evnt);
+		}
+
+		private void OnLineChanged(
+			object sender,
+			LineChangedArgs args)
+		{
+			QueueDraw();
 		}
 
 		#endregion

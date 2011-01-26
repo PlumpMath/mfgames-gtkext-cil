@@ -79,6 +79,7 @@
     <Compile Include="Editing\TextEditorController.cs" />
     <Compile Include="Enumerations\LineBufferOperationType.cs" />
     <Compile Include="Events\LineChangedArgs.cs" />
+    <Compile Include="Events\LineRangeEventArgs.cs" />
     <Compile Include="FontCache.cs" />
     <Compile Include="Interfaces\IActionState.cs" />
     <Compile Include="Interfaces\IActionContext.cs" />

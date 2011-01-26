@@ -505,6 +505,34 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			base.OnLineChanged(sender, args);
 		}
 
+		/// <summary>
+		/// Called when the inner buffer deletes lines.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		public override void OnLinesDeleted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			Clear();
+			AllocateWindows();
+			base.OnLinesDeleted(sender, args);
+		}
+
+		/// <summary>
+		/// Called when the inner buffer inserts lines.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		public override void OnLinesInserted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			Clear();
+			AllocateWindows();
+			base.OnLinesInserted(sender, args);
+		}
+
 		#endregion
 
 		#region Nested type: CachedLine
@@ -857,7 +885,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 					int line = WindowStartLine + lineIndex;
 					CachedLine cachedLine = Lines[lineIndex];
 
-					if (line > ParentBuffer.LineCount)
+					if (line >= ParentBuffer.LineCount)
 					{
 						// Just reset the line.
 						cachedLine.Reset();

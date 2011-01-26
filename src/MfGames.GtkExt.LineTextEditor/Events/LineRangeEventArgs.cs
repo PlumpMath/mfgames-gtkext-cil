@@ -24,60 +24,47 @@
 
 #region Namespaces
 
-using System.Diagnostics;
-
-using MfGames.GtkExt.LineTextEditor.Enumerations;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Commands
+namespace MfGames.GtkExt.LineTextEditor.Events
 {
 	/// <summary>
-	/// Defines an operation that changes text of a single line.
+	/// Used to indicate an event applying to a range of lines.
 	/// </summary>
-	public class SetTextOperation : ILineBufferOperation
+	public class LineRangeEventArgs : EventArgs
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SetTextOperation"/> class.
+		/// Initializes a new instance of the <see cref="LineRangeEventArgs"/> class.
 		/// </summary>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <param name="text">The text.</param>
-		public SetTextOperation(
-			int lineIndex,
-			string text)
+		/// <param name="startLineIndex">Start index of the line.</param>
+		/// <param name="endLineIndex">End index of the line.</param>
+		public LineRangeEventArgs(
+			int startLineIndex,
+			int endLineIndex)
 		{
-			LineIndex = lineIndex;
-			Text = text;
+			StartLineIndex = startLineIndex;
+			EndLineIndex = endLineIndex;
 		}
 
 		#endregion
 
-		#region Operation
+		#region Properties
 
 		/// <summary>
-		/// Gets the type of the operation representing this object.
+		/// Gets or sets the end index of the line.
 		/// </summary>
-		/// <value>The type of the operation.</value>
-		public LineBufferOperationType LineBufferOperationType
-		{
-			[DebuggerStepThrough]
-			get { return LineBufferOperationType.SetText; }
-		}
+		/// <value>The end index of the line.</value>
+		public int EndLineIndex { get; private set; }
 
 		/// <summary>
-		/// Gets or sets the index of the line.
+		/// Gets or sets the start index of the line.
 		/// </summary>
-		/// <value>The index of the line.</value>
-		public int LineIndex { get; private set; }
-
-		/// <summary>
-		/// Gets the text for this operation.
-		/// </summary>
-		/// <value>The text.</value>
-		public string Text { get; private set; }
+		/// <value>The start index of the line.</value>
+		public int StartLineIndex { get; private set; }
 
 		#endregion
 	}

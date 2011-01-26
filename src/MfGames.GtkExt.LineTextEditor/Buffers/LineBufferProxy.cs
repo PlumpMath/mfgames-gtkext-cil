@@ -54,6 +54,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			this.buffer = buffer;
 			this.buffer.LineChanged += OnLineChanged;
+			this.buffer.LinesInserted += OnLinesInserted;
+			this.buffer.LinesDeleted += OnLinesDeleted;
 		}
 
 		#endregion
@@ -129,11 +131,22 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		#region Buffer Operations
 
 		/// <summary>
-		/// Used to indicate that a line changed.
+		/// Performs the given operation, raising any events for changing.
 		/// </summary>
-		public event EventHandler<LineChangedArgs> LineChanged;
+		/// <param name="operation">The operation.</param>
+		public virtual void Do(ILineBufferOperation operation)
+		{
+			buffer.Do(operation);
+		}
 
-		public void FireLineChanged(object sender, LineChangedArgs args)
+		/// <summary>
+		/// Fires the line changed event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		protected void FireLineChanged(
+			object sender,
+			LineChangedArgs args)
 		{
 			if (LineChanged != null)
 			{
@@ -141,18 +154,85 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 		}
 
-		public virtual void OnLineChanged(object sender, LineChangedArgs args)
+		/// <summary>
+		/// Fires the lines deleted event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		protected void FireLinesDeleted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			if (LinesDeleted != null)
+			{
+				LinesDeleted(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Fires the lines inserted event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		protected void FireLinesInserted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			if (LinesInserted != null)
+			{
+				LinesInserted(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		public event EventHandler<LineChangedArgs> LineChanged;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		public event EventHandler<LineRangeEventArgs> LinesDeleted;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		public event EventHandler<LineRangeEventArgs> LinesInserted;
+
+		/// <summary>
+		/// Called when the inner buffer's line changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		public virtual void OnLineChanged(
+			object sender,
+			LineChangedArgs args)
 		{
 			FireLineChanged(sender, args);
 		}
 
 		/// <summary>
-		/// Performs the given operation, raising any events for changing.
+		/// Called when the inner buffer deletes lines.
 		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public virtual void Do(ILineBufferOperation operation)
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		public virtual void OnLinesDeleted(
+			object sender,
+			LineRangeEventArgs args)
 		{
-			buffer.Do(operation);
+			FireLinesDeleted(sender, args);
+		}
+
+		/// <summary>
+		/// Called when the inner buffer inserts lines.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		public virtual void OnLinesInserted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			FireLinesInserted(sender, args);
 		}
 
 		#endregion

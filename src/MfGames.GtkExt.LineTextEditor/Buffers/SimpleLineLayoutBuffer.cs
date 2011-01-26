@@ -136,11 +136,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				return 0;
 			}
 
-			// Normalize the last line, if we have one.
+			// Normalize the last line, if we have one. If we have -1, then
+			// go to the end. If we are past the line count, then cap it
+			// by the line count.
 			if (endLineIndex == -1)
 			{
 				endLineIndex = LineCount - 1;
 			}
+
+			endLineIndex = Math.Min(endLineIndex, LineCount - 1);
 
 			// Get a total of all the heights.
 			int height = 0;

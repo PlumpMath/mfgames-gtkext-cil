@@ -24,11 +24,11 @@
 
 #region Namespaces
 
-#endregion
-
 using System;
 
 using MfGames.GtkExt.LineTextEditor.Events;
+
+#endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
@@ -80,15 +80,25 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		#region Buffer Operations
 
 		/// <summary>
+		/// Performs the given operation, raising any events for changing.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		void Do(ILineBufferOperation operation);
+
+		/// <summary>
 		/// Used to indicate that a line changed.
 		/// </summary>
 		event EventHandler<LineChangedArgs> LineChanged;
 
 		/// <summary>
-		/// Performs the given operation, raising any events for changing.
+		/// Occurs when lines are inserted into the buffer.
 		/// </summary>
-		/// <param name="operation">The operation.</param>
-		void Do(ILineBufferOperation operation);
+		event EventHandler<LineRangeEventArgs> LinesDeleted;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		event EventHandler<LineRangeEventArgs> LinesInserted;
 
 		#endregion
 	}

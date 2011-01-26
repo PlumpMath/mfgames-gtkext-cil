@@ -73,6 +73,10 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		private readonly List<string> lines;
 
+		/// <summary>
+		/// Gets the line count.
+		/// </summary>
+		/// <value>The line count.</value>
 		public int LineCount
 		{
 			get { return lines.Count; }
@@ -126,6 +130,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			if (startIndex > endIndex)
 			{
 				throw new ArgumentOutOfRangeException(
+					"endIndex",
 					"endIndex cannot be before startIndex");
 			}
 
@@ -141,19 +146,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		#region Buffer Operations
 
 		/// <summary>
-		/// Used to indicate that a line changed.
-		/// </summary>
-		public event EventHandler<LineChangedArgs> LineChanged;
-
-		public void FireLineChanged(object sender, LineChangedArgs args)
-		{
-			if (LineChanged != null)
-			{
-				LineChanged(sender, args);
-			}
-		}
-
-		/// <summary>
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
@@ -164,18 +156,93 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			{
 				case LineBufferOperationType.SetText:
 					// Pull out the text operation.
-					SetTextOperation setTextOperation = (SetTextOperation) operation;
+					var setTextOperation = (SetTextOperation) operation;
 
 					// Set the text of the line.
-					string line = lines[setTextOperation.Position.LineIndex];
-					line = line.Insert(setTextOperation.Position.CharacterIndex, setTextOperation.Text);
-					lines[setTextOperation.Position.LineIndex] = line;
+					lines[setTextOperation.LineIndex] = setTextOperation.Text;
 
 					// Fire a line changed operation.
-					FireLineChanged(this, new LineChangedArgs(setTextOperation.Position.LineIndex));
+					FireLineChanged(this, new LineChangedArgs(setTextOperation.LineIndex));
+					break;
+
+				case LineBufferOperationType.InsertLines:
+					// Pull out the insert operation.
+					var insertLinesOperation = (InsertLinesOperation) operation;
+
+					// Insert the new lines into the buffer.
+					for (int index = 0; index < insertLinesOperation.Count; index++)
+					{
+						lines.Insert(insertLinesOperation.LineIndex, string.Empty);
+					}
+
+					// Fire an insert line change.
+					FireLinesInserted(
+						this,
+						new LineRangeEventArgs(
+							insertLinesOperation.LineIndex, insertLinesOperation.Count));
 					break;
 			}
 		}
+
+		/// <summary>
+		/// Fires the line changed event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		private void FireLineChanged(
+			object sender,
+			LineChangedArgs args)
+		{
+			if (LineChanged != null)
+			{
+				LineChanged(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Fires the lines deleted event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		private void FireLinesDeleted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			if (LinesDeleted != null)
+			{
+				LinesDeleted(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Fires the lines inserted event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
+		private void FireLinesInserted(
+			object sender,
+			LineRangeEventArgs args)
+		{
+			if (LinesInserted != null)
+			{
+				LinesInserted(sender, args);
+			}
+		}
+
+		/// <summary>
+		/// Used to indicate that a line changed.
+		/// </summary>
+		public event EventHandler<LineChangedArgs> LineChanged;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		public event EventHandler<LineRangeEventArgs> LinesDeleted;
+
+		/// <summary>
+		/// Occurs when lines are inserted into the buffer.
+		/// </summary>
+		public event EventHandler<LineRangeEventArgs> LinesInserted;
 
 		#endregion
 	}
