@@ -26,6 +26,7 @@
 
 using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Commands;
+using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -49,15 +50,16 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			char unicode)
 		{
 			// Create a set text operation.
-			var operation =
-				new SetTextOperation(
-					actionContext.DisplayContext.Caret.Position, unicode.ToString());
+			Caret caret = actionContext.DisplayContext.Caret;
+
+			var operation = new SetTextOperation(caret.Position, unicode.ToString());
+
+			// Shift the cursor over since we know this won't be changing lines
+			// and we can avoid some additional refreshes.
+			caret.Position.CharacterIndex++;
 
 			// Perform the operation on the buffer.
 			actionContext.Do(operation);
-
-			// Shift the position over.
-			CaretMoveActions.Right(actionContext);
 		}
 	}
 }

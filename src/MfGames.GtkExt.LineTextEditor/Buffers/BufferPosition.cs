@@ -65,6 +65,16 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			CharacterIndex = character;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BufferPosition"/> class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		public BufferPosition(BufferPosition position)
+		{
+			LineIndex = position.LineIndex;
+			CharacterIndex = position.CharacterIndex;
+		}
+
 		#endregion
 
 		#region Properties

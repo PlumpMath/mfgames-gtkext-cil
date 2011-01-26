@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System.Diagnostics;
+
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -56,12 +58,15 @@ namespace MfGames.GtkExt.LineTextEditor.Commands
 
 		#region Operation
 
+		private BufferPosition position;
+
 		/// <summary>
 		/// Gets the type of the operation representing this object.
 		/// </summary>
 		/// <value>The type of the operation.</value>
 		public LineBufferOperationType LineBufferOperationType
 		{
+			[DebuggerStepThrough]
 			get { return LineBufferOperationType.SetText; }
 		}
 
@@ -69,7 +74,18 @@ namespace MfGames.GtkExt.LineTextEditor.Commands
 		/// Gets the position.
 		/// </summary>
 		/// <value>The position.</value>
-		public BufferPosition Position { get; private set; }
+		public BufferPosition Position
+		{
+			[DebuggerStepThrough]
+			get { return position; }
+
+			private set
+			{
+				// We copy the position because as a class, changes made after
+				// this operation won't change the position.
+				position = new BufferPosition(value);
+			}
+		}
 
 		/// <summary>
 		/// Gets the text for this operation.
