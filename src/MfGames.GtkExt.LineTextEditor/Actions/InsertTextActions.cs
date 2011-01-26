@@ -58,8 +58,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				displayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
 
 			// Split the line based on the character index.
-			string before = lineText.Substring(0, position.CharacterIndex);
-			string after = lineText.Substring(position.CharacterIndex);
+			string before = lineText.Substring(0, position.CharacterIndex).Trim();
+			string after = lineText.Substring(position.CharacterIndex).Trim();
 
 			// Create an operation to insert a line after this point.
 			var insertOperation = new InsertLinesOperation(position.LineIndex, 1);
