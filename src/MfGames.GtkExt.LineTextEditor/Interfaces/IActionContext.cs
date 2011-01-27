@@ -25,6 +25,7 @@
 #region Namespaces
 
 using MfGames.GtkExt.LineTextEditor.Actions;
+using MfGames.GtkExt.LineTextEditor.Commands;
 
 #endregion
 
@@ -46,10 +47,21 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		ActionStateCollection States { get; }
 
-		/// <summary>
+	    /// <summary>
+	    /// Gets the commands for the text editor.
+	    /// </summary>
+	    CommandManager Commands { get; }
+
+	    /// <summary>
 		/// Performs the given operation on the line buffer.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
 		void Do(ILineBufferOperation operation);
-	}
+
+        /// <summary>
+        /// Performs the given command on the line buffer.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        void Do(Command command);
+    }
 }

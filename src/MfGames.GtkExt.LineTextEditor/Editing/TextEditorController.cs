@@ -38,6 +38,7 @@ using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Attributes;
+using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -75,6 +76,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
             // Bind the action states.
             states = new ActionStateCollection();
+            Commands = new CommandManager();
         }
 
         #endregion
@@ -184,6 +186,15 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
         #endregion
 
+        #region Commands
+
+        /// <summary>
+        /// Gets the commands for the text editor.
+        /// </summary>
+        public CommandManager Commands { get; private set; }
+
+        #endregion
+
         #region Actions
 
         private bool inAction;
@@ -231,6 +242,22 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
             }
 
             displayContext.LineLayoutBuffer.Do(operation);
+        }
+
+        /// <summary>
+        /// Performs the given command on the line buffer.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        public void Do(Command command)
+        {
+            // Perform the various operations for the initial command.
+            foreach (var operation in command.Operations)
+            {
+                Do(operation);
+            }
+
+            // Add the command to the manager.
+            Commands.Add(command);
         }
 
         /// <summary>

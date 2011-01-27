@@ -69,17 +69,20 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
                 displayContext.WordSplitter.GetPreviousWordBoundary(
                     lineText, position.CharacterIndex);
 
-            // Delete the text segment from the string.
+            // Remove the text from the boundary to the caret in an operation.
             string deletedText = lineText.Substring(0, leftBoundary) +
                                  lineText.Substring(position.CharacterIndex);
             var operation = new SetTextOperation(
                 position.LineIndex, deletedText);
 
+            var command = new Command();
+            command.Operations.Add(operation);
+
             // Move the position to the left boundary.
             position.CharacterIndex = leftBoundary;
 
             // Perform the operation.
-            actionContext.Do(operation);
+            actionContext.Do(command);
 
             // Scroll to the caret to keep it on screen.
             displayContext.Caret.Position = position;
@@ -118,8 +121,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
             var operation = new SetTextOperation(
                 position.LineIndex, deletedText);
 
-            // Perform the operation.
-            actionContext.Do(operation);
+            // Perform the operations after wrapping them in a command.
+            var command = new Command();
+            command.Operations.Add(operation);
+
+            actionContext.Do(command);
 
             // No need to scroll since we aren't moving the caret.
         }
@@ -145,6 +151,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
             // If we are at the beginning of the line, then we are combining paragraphs.
             ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
             string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+            Command command = new Command();
 
             if (position.CharacterIndex == 0)
             {
@@ -155,34 +162,36 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
                     lineLayoutBuffer.GetLineText(position.LineIndex - 1);
                 string newText = previousText + lineText;
 
-                // Set up the operations.
-                var delete = new DeleteLinesOperation(position.LineIndex, 1);
-                var join = new SetTextOperation(position.LineIndex - 1, newText);
+                // Set up the operations in the command.
+                command.Operations.Add(
+                    new DeleteLinesOperation(position.LineIndex, 1));
+                command.Operations.Add(
+                    new SetTextOperation(position.LineIndex - 1, newText));
 
                 // Relocate the caret position to the previous line's end.
                 position.LineIndex--;
                 position.CharacterIndex = previousText.Length;
-
-                // Perform the actions.
-                actionContext.Do(delete);
-                actionContext.Do(join);
             }
             else
             {
                 // This is a single-line manipulation, so delete the character.
-                lineText = lineText.Substring(0, position.CharacterIndex - 1) +
-                           lineText.Substring(position.CharacterIndex);
+                string newText =
+                    lineText.Substring(0, position.CharacterIndex - 1) +
+                    lineText.Substring(position.CharacterIndex);
 
                 // Create the set text operation.
-                var operation = new SetTextOperation(
-                    position.LineIndex, lineText);
+                command.Operations.Add(
+                    new SetTextOperation(position.LineIndex, newText));
+
+                command.UndoOperations.Add(
+                    new SetTextOperation(position.LineIndex, lineText));
 
                 // Shift the caret back.
                 position.CharacterIndex--;
-
-                // Perform the action.
-                actionContext.Do(operation);
             }
+
+            // Perform the command in the context.
+            actionContext.Do(command);
 
             // Scroll to the caret to keep it on screen.
             displayContext.Caret.Position = position;
@@ -210,6 +219,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
             // If we are at the beginning of the line, then we are combining paragraphs.
             ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
             string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+            Command command = new Command();
 
             if (position.CharacterIndex == lineText.Length)
             {
@@ -220,29 +230,26 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
                     lineLayoutBuffer.GetLineText(position.LineIndex + 1);
                 string newText = lineText + nextText;
 
-                // Set up the operations.
-                var delete = new DeleteLinesOperation(position.LineIndex + 1, 1);
-                var join = new SetTextOperation(position.LineIndex, newText);
-
-                // Perform the actions.
-                actionContext.Do(delete);
-                actionContext.Do(join);
+                // Set up the operations and add them to the command.
+                command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
+                command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
             }
             else
             {
                 // This is a single-line manipulation, so delete the character.
-                lineText = lineText.Substring(0, position.CharacterIndex) +
-                           lineText.Substring(position.CharacterIndex + 1);
+                string newText =
+                    lineText.Substring(0, position.CharacterIndex) +
+                    lineText.Substring(position.CharacterIndex + 1);
 
-                // Create the set text operation.
-                var operation = new SetTextOperation(
-                    position.LineIndex, lineText);
+                // Create the operations for both performing and undoing the command.
+                command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
 
-                // Perform the action.
-                actionContext.Do(operation);
+                command.UndoOperations.Add(
+                    new SetTextOperation(position.LineIndex, lineText));
             }
 
-            // We don't need to scroll since the caret isn't moving.
+            // Perform the command to the action context.
+            actionContext.Do(command);
         }
 
         /// <summary>
