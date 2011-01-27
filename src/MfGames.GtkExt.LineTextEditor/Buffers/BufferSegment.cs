@@ -1,19 +1,16 @@
 namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
-    public class BufferSegment
+    /// <summary>
+    /// Represents a range inside a buffer.
+    /// </summary>
+    public struct BufferSegment
     {
-        private BufferPosition startPosition;
-        public BufferPosition StartPosition
-        {
-            get { return startPosition; }
-            set { startPosition = value; }
-        }
+        #region Properties
 
-        private BufferPosition endPosition;
-        public BufferPosition EndPosition
-        {
-            get { return endPosition; }
-            set { endPosition = value; }
-        }
+        public BufferPosition StartPosition { get; set; }
+
+        public BufferPosition EndPosition { get; set; }
+
+        #endregion
     }
 }

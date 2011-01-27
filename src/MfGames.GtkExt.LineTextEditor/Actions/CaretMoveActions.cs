@@ -577,8 +577,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
 
 			// Set the caret's position from the calculated values.
-			displayContext.Caret.Position.LineIndex = lineIndex;
-			displayContext.Caret.Position.CharacterIndex = characterIndex;
+		    displayContext.Caret.Position.Set(lineIndex, characterIndex);
 
 			// Move to and draw the caret.
 			displayContext.ScrollToCaret();

@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -41,16 +43,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	/// Represents a position within the text buffer using the line as a primary
 	/// and the character within the line's text.
 	/// </summary>
-	public class BufferPosition
+	public struct BufferPosition
 	{
 		#region Constructors
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="BufferPosition"/> class.
-		/// </summary>
-		public BufferPosition()
-		{
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> struct.
@@ -61,8 +56,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			int line,
 			int character)
 		{
-			LineIndex = line;
-			CharacterIndex = character;
+			lineIndex = line;
+			characterIndex = character;
 		}
 
 		/// <summary>
@@ -71,28 +66,61 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="position">The position.</param>
 		public BufferPosition(BufferPosition position)
 		{
-			LineIndex = position.LineIndex;
-			CharacterIndex = position.CharacterIndex;
+			lineIndex = position.LineIndex;
+			characterIndex = position.CharacterIndex;
 		}
 
 		#endregion
 
 		#region Properties
 
-		/// <summary>
+	    private int characterIndex;
+
+	    /// <summary>
 		/// Gets or sets the character. In terms of caret positions, the position
 		/// is always to the left of the character, not trailing it.
 		/// </summary>
 		/// <value>The character.</value>
-		public int CharacterIndex { get; set; }
+		public int CharacterIndex
+	    {
+	        get { return characterIndex; }
+	        set { characterIndex = value; }
+	    }
 
-		/// <summary>
+	    private int lineIndex;
+
+	    /// <summary>
 		/// Gets or sets the line.
 		/// </summary>
 		/// <value>The line.</value>
-		public int LineIndex { get; set; }
+		public int LineIndex
+	    {
+	        get { return lineIndex; }
+	        set { lineIndex = value; }
+	    }
 
-		#endregion
+        /// <summary>
+        /// Sets the specified coordinates.
+        /// </summary>
+        /// <param name="newLineIndex">New index of the line.</param>
+        /// <param name="newCharacterIndex">New index of the character.</param>
+        public void Set(int newLineIndex,
+                int newCharacterIndex)
+        {
+            lineIndex = newLineIndex;
+            characterIndex = newCharacterIndex;
+        }
+
+        /// <summary>
+        /// Adds to the character index by the given offset.
+        /// </summary>
+        /// <param name="offset">The offset.</param>
+        public void AddCharacterIndex(int offset)
+        {
+            characterIndex += offset;
+        }
+
+	    #endregion
 
 		#region Movement
 

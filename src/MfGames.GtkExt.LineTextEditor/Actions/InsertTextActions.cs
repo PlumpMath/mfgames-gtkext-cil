@@ -105,7 +105,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Shift the cursor over since we know this won't be changing lines
 			// and we can avoid some additional refreshes.
-			caret.Position.CharacterIndex++;
+			caret.Position.AddCharacterIndex(1);
 
 			// Perform the operation on the buffer.
 			actionContext.Do(operation);
