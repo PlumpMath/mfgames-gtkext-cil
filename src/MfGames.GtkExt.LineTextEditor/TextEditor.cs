@@ -438,7 +438,6 @@ namespace MfGames.GtkExt.LineTextEditor
             }
             else
             {
-                Console.WriteLine("ABACAD");
                 QueueDraw();
             }
         }

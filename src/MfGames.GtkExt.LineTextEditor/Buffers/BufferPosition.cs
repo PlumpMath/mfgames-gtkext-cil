@@ -100,18 +100,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	    }
 
         /// <summary>
-        /// Sets the specified coordinates.
-        /// </summary>
-        /// <param name="newLineIndex">New index of the line.</param>
-        /// <param name="newCharacterIndex">New index of the character.</param>
-        public void Set(int newLineIndex,
-                int newCharacterIndex)
-        {
-            lineIndex = newLineIndex;
-            characterIndex = newCharacterIndex;
-        }
-
-        /// <summary>
         /// Adds to the character index by the given offset.
         /// </summary>
         /// <param name="offset">The offset.</param>
@@ -326,90 +314,90 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Moves the position to end beginning of buffer.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public void MoveToBeginningOfBuffer(ILineLayoutBuffer buffer)
+		public BufferPosition ToBeginningOfBuffer(ILineLayoutBuffer buffer)
 		{
-			LineIndex = 0;
-			CharacterIndex = 0;
+            return new BufferPosition(0, 0);
 		}
 
 		/// <summary>
 		/// Moves the position to end beginning of buffer.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public void MoveToBeginningOfBuffer(IDisplayContext displayContext)
+		public BufferPosition ToBeginningOfBuffer(IDisplayContext displayContext)
 		{
-			MoveToBeginningOfBuffer(displayContext.LineLayoutBuffer);
+			return ToBeginningOfBuffer(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
 		/// Moves the position to the beginning of line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public void MoveToBeginningOfLine(ILineLayoutBuffer buffer)
+		public BufferPosition ToBeginningOfLine(ILineLayoutBuffer buffer)
 		{
-			CharacterIndex = 0;
+            return new BufferPosition(lineIndex, 0);
 		}
 
 		/// <summary>
 		/// Moves the position to the beginning of line.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public void MoveToBeginningOfLine(IDisplayContext displayContext)
+		public BufferPosition ToBeginningOfLine(IDisplayContext displayContext)
 		{
-			MoveToBeginningOfLine(displayContext.LineLayoutBuffer);
+			return ToBeginningOfLine(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
 		/// Moves the position to the beginning of wrapped line.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public void MoveToBeginningOfWrappedLine(IDisplayContext displayContext)
+		public BufferPosition ToBeginningOfWrappedLine(IDisplayContext displayContext)
 		{
-			CharacterIndex = GetWrappedLine(displayContext).StartIndex;
+			return new BufferPosition(lineIndex, GetWrappedLine(displayContext).StartIndex);
 		}
 
 		/// <summary>
 		/// Moves the position to the end of buffer.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public void MoveToEndOfBuffer(ILineLayoutBuffer buffer)
+		public BufferPosition ToEndOfBuffer(ILineLayoutBuffer buffer)
 		{
-			LineIndex = buffer.LineCount - 1;
-			CharacterIndex = buffer.GetLineLength(LineIndex);
+		    int endLineIndex = buffer.LineCount - 1;
+
+		    return new BufferPosition(endLineIndex, buffer.GetLineLength(endLineIndex));
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Moves the position to the end of buffer.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public void MoveToEndOfBuffer(IDisplayContext displayContext)
+		public BufferPosition ToEndOfBuffer(IDisplayContext displayContext)
 		{
-			MoveToEndOfBuffer(displayContext.LineLayoutBuffer);
+			return ToEndOfBuffer(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
 		/// Moves the position to the end of line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public void MoveToEndOfLine(ILineLayoutBuffer buffer)
+		public BufferPosition ToEndOfLine(ILineLayoutBuffer buffer)
 		{
-			CharacterIndex = buffer.GetLineLength(LineIndex);
+            return new BufferPosition(lineIndex, buffer.GetLineLength(lineIndex));
 		}
 
 		/// <summary>
 		/// Moves the position to the end of line.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public void MoveToEndOfLine(IDisplayContext displayContext)
+		public BufferPosition ToEndOfLine(IDisplayContext displayContext)
 		{
-			MoveToEndOfLine(displayContext.LineLayoutBuffer);
+			return ToEndOfLine(displayContext.LineLayoutBuffer);
 		}
 
 		/// <summary>
 		/// Moves the position to the end of wrapped line.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public void MoveToEndOfWrappedLine(IDisplayContext displayContext)
+		public BufferPosition ToEndOfWrappedLine(IDisplayContext displayContext)
 		{
 			// Get the wrapped line and layout.
 			Layout layout;
@@ -419,12 +407,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Move to the end of the wrapped line. If this isn't the last, we
 			// need to shift back one character.
-			CharacterIndex = wrappedLine.StartIndex + wrappedLine.Length;
+			int index = wrappedLine.StartIndex + wrappedLine.Length;
 
 			if (wrappedLineIndex != layout.LineCount - 1)
 			{
-				CharacterIndex--;
+				index--;
 			}
+
+		    return new BufferPosition(lineIndex, index);
 		}
 
 		#endregion
@@ -505,5 +495,21 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		#endregion
+
+	    #region Conversion
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return string.Format(
+                "Buffer Position ({0}, {1})", lineIndex, characterIndex);
+        }
+	    #endregion
+
 	}
 }

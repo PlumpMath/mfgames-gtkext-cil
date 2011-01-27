@@ -304,7 +304,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
                 try
                 {
-                    InsertTextActions.InsertText(this, (char) unicodeKey);
+                    TextActions.InsertText(this, (char) unicodeKey);
                 }
                 finally
                 {
@@ -339,7 +339,9 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
                 {
                     var textPoint = new PointD(
                         point.X - displayContext.TextX, point.Y);
-                    CaretMoveActions.Point(displayContext, textPoint);
+                    InAction = true;
+                    MoveActions.Point(displayContext, textPoint);
+                    InAction = false;
                     return true;
                 }
             }

@@ -181,7 +181,21 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 						new LineRangeEventArgs(
 							insertLinesOperation.LineIndex, insertLinesOperation.Count));
 					break;
-			}
+
+                case LineBufferOperationType.DeleteLines:
+                    // Pull out the delete operation.
+                    var deleteLinesOperation = (DeleteLinesOperation)operation;
+
+                    // Delete the lines from the buffer.
+                    lines.RemoveRange(deleteLinesOperation.LineIndex, deleteLinesOperation.Count);
+
+                    // Fire an delete line change.
+                    FireLinesDeleted(
+                        this,
+                        new LineRangeEventArgs(
+                            deleteLinesOperation.LineIndex, deleteLinesOperation.Count));
+                    break;
+            }
 		}
 
 		/// <summary>

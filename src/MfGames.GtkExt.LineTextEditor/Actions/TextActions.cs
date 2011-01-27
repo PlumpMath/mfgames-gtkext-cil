@@ -41,9 +41,56 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	/// the text buffer.
 	/// </summary>
 	[ActionFixture]
-	public static class InsertTextActions
+	public static class TextActions
 	{
-		/// <summary>
+        /// <summary>
+        /// Deletes the character to the left.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        [Action]
+        [KeyBinding(Key.BackSpace)]
+        public static void BackSpace(IActionContext actionContext)
+        {
+            // Get the position in the buffer.
+            IDisplayContext displayContext = actionContext.DisplayContext;
+            BufferPosition position = displayContext.Caret.Position;
+
+            if (position.LineIndex == 0 && position.CharacterIndex == 0)
+            {
+                // We are in the beginning of the buffer, so we don't do anything.
+                return;
+            }
+
+            // If we are at the beginning of the line, then we are combining paragraphs.
+            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+
+            if (position.CharacterIndex == 0)
+            {
+
+            }
+            else
+            {
+                // This is a single-line manipulation, so delete the character.
+                lineText = lineText.Substring(0, position.CharacterIndex - 1) +
+                           lineText.Substring(position.CharacterIndex);
+
+                // Create the set text operation.
+                var operation = new SetTextOperation(
+                    position.LineIndex, lineText);
+
+                // Shift the caret back.
+                position.AddCharacterIndex(-1);
+
+                // Perform the action.
+                actionContext.Do(operation);
+            }
+
+            // Scroll to the caret to keep it on screen.
+            displayContext.ScrollToCaret();
+        }
+
+	    /// <summary>
 		/// Inserts the paragraph at the current buffer position.
 		/// </summary>
 		/// <param name="actionContext">The action context.</param>
