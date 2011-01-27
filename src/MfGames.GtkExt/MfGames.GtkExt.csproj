@@ -52,6 +52,7 @@
     <Compile Include="Extensions\Pango\PangoLayoutLineExtensions.cs" />
     <Compile Include="GdkUtility.cs" />
     <Compile Include="LabelWidgetTable.cs" />
+    <Compile Include="PangoUtility.cs" />
     <Compile Include="StringListEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

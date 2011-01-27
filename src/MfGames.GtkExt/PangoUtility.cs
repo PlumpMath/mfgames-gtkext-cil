@@ -24,58 +24,54 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using System.Text;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt
 {
 	/// <summary>
-	/// Creates a line markup that does no formatting on a inner line object.
+	/// Utility functions for dealing with Pango.
 	/// </summary>
-	public class UnformattedLineMarkupBuffer : LineBufferProxy, ILineMarkupBuffer
+	public class PangoUtility
 	{
-		#region Constructors
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UnformattedLineMarkupBuffer"/> class.
+		/// Escapes the specified input for Pango.
 		/// </summary>
-		/// <param name="lineBuffer">The line buffer.</param>
-		public UnformattedLineMarkupBuffer(ILineBuffer lineBuffer)
-			: base(lineBuffer)
-		{
-		}
-
-		#endregion
-
-		#region Markup
-
-		/// <summary>
-		/// Gets the Pango markup for a given line.
-		/// </summary>
-		/// <param name="lineIndex">The line.</param>
+		/// <param name="input">The input.</param>
 		/// <returns></returns>
-		public string GetLineMarkup(int lineIndex)
+		public static string Escape(string input)
 		{
-			string text = GetLineText(lineIndex, 0, -1);
+			// If we have a blank or null string, just pass it on.
+			if (string.IsNullOrEmpty(input))
+			{
+				return input;
+			}
 
-			return PangoUtility.Escape(text);
+			// Go through the string and come out with a marked up version.
+			var buffer = new StringBuilder();
+
+			foreach (char c in input)
+			{
+				switch (c)
+				{
+					case '&':
+						buffer.Append("&amp;");
+						break;
+					case '<':
+						buffer.Append("&lt;");
+						break;
+					case '>':
+						buffer.Append("&gt;");
+						break;
+					default:
+						buffer.Append(c);
+						break;
+				}
+			}
+
+			// Return the resulting buffer.
+			return buffer.ToString();
 		}
-
-		/// <summary>
-		/// Gets the line style for a given line.
-		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
-		/// <param name="lineIndex">The line number.</param>
-		/// <returns></returns>
-		public BlockStyle GetLineStyle(
-			IDisplayContext displayContext,
-			int lineIndex)
-		{
-			return displayContext.Theme.TextBlockStyle;
-		}
-
-		#endregion
 	}
 }
