@@ -65,6 +65,7 @@
     <Compile Include="Attributes\KeyBindingAttribute.cs" />
     <Compile Include="Buffers\BufferSegment.cs" />
     <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
+    <Compile Include="Buffers\EnglishWordSplitter.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />

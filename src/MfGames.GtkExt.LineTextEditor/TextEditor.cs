@@ -101,7 +101,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			// Set up the text editor controller.
 			controller = new TextEditorController(this);
-			wordSplitter = new OffsetWordSplitter();
+			wordSplitter = new EnglishWordSplitter();
 
 			controller.BeginAction += OnBeginAction;
 			controller.EndAction += OnEndAction;
