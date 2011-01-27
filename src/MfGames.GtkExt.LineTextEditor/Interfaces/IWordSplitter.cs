@@ -24,22 +24,29 @@
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
-	/// <summary>
-	/// Interface that identifies the boundaries between words.
-	/// </summary>
-	public interface IWordSplitter
-	{
-		/// <summary>
-		/// Finds the word boundaries in a given text.
-		/// </summary>
-		/// <param name="text">The text to parse.</param>
-		/// <param name="character">The character index inside the text.</param>
-		/// <param name="leftBoundary">The left boundary or -1 if there is no boundary to the left.</param>
-		/// <param name="rightBoundary">The right boundary or -1 if there is no boundary to the right.</param>
-		void FindWordBoundaries(
-			string text,
-			int character,
-			out int leftBoundary,
-			out int rightBoundary);
-	}
+    /// <summary>
+    /// Interface that identifies the boundaries between words.
+    /// </summary>
+    public interface IWordSplitter
+    {
+        /// <summary>
+        /// Gets the next word boundary from the given string and character index.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="characterIndex">Index of the character.</param>
+        /// <returns></returns>
+        int GetNextWordBoundary(
+            string text,
+            int characterIndex);
+
+        /// <summary>
+        /// Gets the previous word boundary from the given string and character index.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="characterIndex">Index of the character.</param>
+        /// <returns></returns>
+        int GetPreviousWordBoundary(
+            string text,
+            int characterIndex);
+    }
 }

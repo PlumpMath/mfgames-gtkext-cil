@@ -196,13 +196,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				displayContext.LineLayoutBuffer.GetLineText(
 					position.LineIndex);
 
-			// Figure out the boundaries.
-			int leftBoundary, rightBoundary;
-			displayContext.WordSplitter.FindWordBoundaries(
-				text, position.CharacterIndex, out leftBoundary, out rightBoundary);
-
 			// If there is no left boundary, we move up a line.
-			if (leftBoundary == -1)
+            int leftBoundary = displayContext.WordSplitter.GetPreviousWordBoundary(text, position.CharacterIndex);
+            
+            if (leftBoundary == -1)
 			{
 				// Check to see if we are at the top of the line or not.
 				if (position.LineIndex > 0)
@@ -363,13 +360,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				displayContext.LineLayoutBuffer.GetLineText(
 					position.LineIndex, 0, -1);
 
-			// Figure out the boundaries.
-			int leftBoundary, rightBoundary;
-			displayContext.WordSplitter.FindWordBoundaries(
-				text, position.CharacterIndex, out leftBoundary, out rightBoundary);
-
 			// If there is no right boundary, we move down a line.
-			if (rightBoundary == -1)
+            int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(text, position.CharacterIndex);
+            
+            if (rightBoundary == -1)
 			{
 				// Check to see if we are at the top of the line or not.
 				if (position.LineIndex <=
