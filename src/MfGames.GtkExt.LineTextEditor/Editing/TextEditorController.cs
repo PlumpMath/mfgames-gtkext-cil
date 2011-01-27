@@ -253,6 +253,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 			// Add the command to the manager.
 			Commands.Add(command);
+
+			// Scroll to the command's end position.
+			displayContext.Caret.Position = command.EndPosition;
+			displayContext.ScrollToCaret();
 		}
 
 		/// <summary>

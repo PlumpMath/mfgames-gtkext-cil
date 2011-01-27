@@ -64,7 +64,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// If we are at the beginning of the line, then we are combining paragraphs.
 			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
 			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
-			var command = new Command();
+			var command = new Command(position);
 
 			if (position.CharacterIndex == 0)
 			{
@@ -100,11 +100,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Perform the command in the context.
+			command.EndPosition = position;
 			actionContext.Do(command);
-
-			// Scroll to the caret to keep it on screen.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
 		}
 
 		/// <summary>
@@ -138,18 +135,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			                     lineText.Substring(position.CharacterIndex);
 			var operation = new SetTextOperation(position.LineIndex, deletedText);
 
-			var command = new Command();
+			var command = new Command(position);
 			command.Operations.Add(operation);
 
 			// Move the position to the left boundary.
 			position.CharacterIndex = leftBoundary;
 
 			// Perform the operation.
+			command.EndPosition = position;
 			actionContext.Do(command);
-
-			// Scroll to the caret to keep it on screen.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
 		}
 
 		/// <summary>
@@ -173,7 +167,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// If we are at the beginning of the line, then we are combining paragraphs.
 			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
 			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
-			var command = new Command();
+			var command = new Command(position);
 
 			if (position.CharacterIndex == lineText.Length)
 			{
@@ -201,6 +195,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Perform the command to the action context.
+			command.EndPosition = position;
 			actionContext.Do(command);
 		}
 
@@ -235,12 +230,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			var operation = new SetTextOperation(position.LineIndex, deletedText);
 
 			// Perform the operations after wrapping them in a command.
-			var command = new Command();
+			var command = new Command(position);
+
 			command.Operations.Add(operation);
-
 			actionContext.Do(command);
-
-			// No need to scroll since we aren't moving the caret.
 		}
 
 		/// <summary>
@@ -261,25 +254,20 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			string before = lineText.Substring(0, position.CharacterIndex).Trim();
 			string after = lineText.Substring(position.CharacterIndex).Trim();
 
-			// Create an operation to insert a line after this point.
-			var insertOperation = new InsertLinesOperation(position.LineIndex, 1);
+			// Create the command and add the operations.
+			var command = new Command(position);
 
-			// Set the text for both lines.
-			var setTextOperation1 = new SetTextOperation(position.LineIndex, before);
-			var setTextOperation2 = new SetTextOperation(position.LineIndex + 1, after);
+			command.Operations.Add(new InsertLinesOperation(position.LineIndex, 1));
+			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
+			command.Operations.Add(new SetTextOperation(position.LineIndex + 1, after));
 
 			// Change the buffer position.
 			position.LineIndex++;
 			position.CharacterIndex = 0;
 
-			// Perform the operations.
-			actionContext.Do(insertOperation);
-			actionContext.Do(setTextOperation1);
-			actionContext.Do(setTextOperation2);
-
-			// Scroll to the caret to keep it on screen.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
+			// Perform the operations in the command.
+			command.EndPosition = position;
+			actionContext.Do(command);
 		}
 
 		/// <summary>
@@ -301,20 +289,18 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Make the changes in the line.
 			lineText = lineText.Insert(position.CharacterIndex, unicode.ToString());
 
-			// Create a set text operation.
-			var operation = new SetTextOperation(position.LineIndex, lineText);
+			// Create the command.
+			var command = new Command(position);
+			
+			command.Operations.Add(new SetTextOperation(position.LineIndex, lineText));
 
 			// Shift the cursor over since we know this won't be changing lines
 			// and we can avoid some additional refreshes.
 			position.CharacterIndex++;
 
 			// Perform the operation on the buffer.
-			actionContext.Do(operation);
-
-			// Scroll to the caret to keep it on screen.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw();
+			command.EndPosition = position;
+			actionContext.Do(command);
 		}
 	}
 }

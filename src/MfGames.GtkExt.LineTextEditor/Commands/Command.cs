@@ -26,6 +26,7 @@
 
 using C5;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -49,14 +50,36 @@ namespace MfGames.GtkExt.LineTextEditor.Commands
 			UndoOperations = new ArrayList<ILineBufferOperation>();
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Command"/> class.
+		/// </summary>
+		/// <param name="startPosition">The start position.</param>
+		public Command(BufferPosition startPosition)
+			: this()
+		{
+			EndPosition = StartPosition = startPosition;
+		}
+
 		#endregion
 
 		#region Operations
 
 		/// <summary>
+		/// Gets or sets the position at the end of the operations.
+		/// </summary>
+		/// <value>The end position.</value>
+		public BufferPosition EndPosition { get; set; }
+
+		/// <summary>
 		/// Gets the operations for the command.
 		/// </summary>
 		public ArrayList<ILineBufferOperation> Operations { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the position for the start of the operations.
+		/// </summary>
+		/// <value>The operation position.</value>
+		public BufferPosition StartPosition { get; set; }
 
 		/// <summary>
 		/// Gets the undo operations for this command.
