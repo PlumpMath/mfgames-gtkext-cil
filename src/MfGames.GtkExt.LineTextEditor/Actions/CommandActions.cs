@@ -65,6 +65,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Push the command on the redo stack.
 			actionContext.Commands.UndoCommands.Push(redoCommand);
+
+			// Move the caret and scroll to it.
+			actionContext.DisplayContext.Caret.Position = redoCommand.EndPosition;
+			actionContext.DisplayContext.ScrollToCaret();
 		}
 
 		/// <summary>
@@ -92,6 +96,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Push the command on the redo stack.
 			actionContext.Commands.RedoCommands.Push(undoCommand);
+
+			// Move the caret and scroll to it.
+			actionContext.DisplayContext.Caret.Position = undoCommand.StartPosition;
+			actionContext.DisplayContext.ScrollToCaret();
 		}
 	}
 }

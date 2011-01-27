@@ -79,6 +79,12 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				command.Operations.Add(
 					new SetTextOperation(position.LineIndex - 1, newText));
 
+				command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex - 1, 1));
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex - 1, previousText));
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex, lineText));
+
 				// Relocate the caret position to the previous line's end.
 				position.LineIndex--;
 				position.CharacterIndex = previousText.Length;
@@ -133,10 +139,13 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Remove the text from the boundary to the caret in an operation.
 			string deletedText = lineText.Substring(0, leftBoundary) +
 			                     lineText.Substring(position.CharacterIndex);
-			var operation = new SetTextOperation(position.LineIndex, deletedText);
 
+			// Create the command object with undo.
 			var command = new Command(position);
-			command.Operations.Add(operation);
+
+			command.Operations.Add(new SetTextOperation(position.LineIndex, deletedText));
+
+			command.UndoOperations.Add(new SetTextOperation(position.LineIndex, lineText));
 
 			// Move the position to the left boundary.
 			position.CharacterIndex = leftBoundary;
@@ -180,6 +189,12 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				// Set up the operations and add them to the command.
 				command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
 				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+
+				command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex, 1));
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex, lineText));
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex + 1, nextText));
 			}
 			else
 			{
@@ -227,12 +242,16 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Delete the text segment from the string.
 			string deletedText = lineText.Substring(0, position.CharacterIndex) +
 			                     lineText.Substring(rightBoundary);
-			var operation = new SetTextOperation(position.LineIndex, deletedText);
 
-			// Perform the operations after wrapping them in a command.
+			// Create a command that wraps the operations.
 			var command = new Command(position);
 
-			command.Operations.Add(operation);
+			command.Operations.Add(new SetTextOperation(position.LineIndex, deletedText));
+
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
+
+			// Finish by performing the command.
 			actionContext.Do(command);
 		}
 
@@ -261,6 +280,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
 			command.Operations.Add(new SetTextOperation(position.LineIndex + 1, after));
 
+			command.UndoOperations.Add(new DeleteLinesOperation(position.LineIndex, 1));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
+
 			// Change the buffer position.
 			position.LineIndex++;
 			position.CharacterIndex = 0;
@@ -287,12 +310,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
 
 			// Make the changes in the line.
-			lineText = lineText.Insert(position.CharacterIndex, unicode.ToString());
+			string newText = lineText.Insert(position.CharacterIndex, unicode.ToString());
 
 			// Create the command.
 			var command = new Command(position);
 			
-			command.Operations.Add(new SetTextOperation(position.LineIndex, lineText));
+			command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
 
 			// Shift the cursor over since we know this won't be changing lines
 			// and we can avoid some additional refreshes.
