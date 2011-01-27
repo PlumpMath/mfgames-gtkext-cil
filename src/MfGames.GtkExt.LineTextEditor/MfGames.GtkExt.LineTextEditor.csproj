@@ -62,6 +62,7 @@
     <Compile Include="Attributes\ActionFixtureAttribute.cs" />
     <Compile Include="Attributes\ActionStateAttribute.cs" />
     <Compile Include="Attributes\KeyBindingAttribute.cs" />
+    <Compile Include="Buffers\BufferSegment.cs" />
     <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
