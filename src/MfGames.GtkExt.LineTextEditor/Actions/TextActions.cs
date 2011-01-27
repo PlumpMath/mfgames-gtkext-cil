@@ -67,7 +67,24 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
             if (position.CharacterIndex == 0)
             {
+                // This is the beginning of a paragraph and not the first one in
+                // the buffer. This operation combines the text of the two paragraphs
+                // together.
+                string previousText =
+                    lineLayoutBuffer.GetLineText(position.LineIndex - 1);
+                string newText = previousText + lineText;
 
+                // Set up the operations.
+                var delete = new DeleteLinesOperation(position.LineIndex, 1);
+                var join = new SetTextOperation(position.LineIndex - 1, newText);
+
+                // Relocate the caret position to the previous line's end.
+                position.LineIndex--;
+                position.CharacterIndex = previousText.Length;
+
+                // Perform the actions.
+                actionContext.Do(delete);
+                actionContext.Do(join);
             }
             else
             {
@@ -154,12 +171,13 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Shift the cursor over since we know this won't be changing lines
 			// and we can avoid some additional refreshes.
-			caret.Position.AddCharacterIndex(1);
+		    position.CharacterIndex++;
 
 			// Perform the operation on the buffer.
 			actionContext.Do(operation);
 
 			// Scroll to the caret to keep it on screen.
+		    displayContext.Caret.Position = position;
 			displayContext.ScrollToCaret();
             displayContext.RequestRedraw();
 		}

@@ -99,15 +99,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	        set { lineIndex = value; }
 	    }
 
-        /// <summary>
-        /// Adds to the character index by the given offset.
-        /// </summary>
-        /// <param name="offset">The offset.</param>
-        public void AddCharacterIndex(int offset)
-        {
-            characterIndex += offset;
-        }
-
 	    #endregion
 
 		#region Movement
