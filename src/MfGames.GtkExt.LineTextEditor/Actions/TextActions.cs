@@ -44,12 +44,93 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	public static class TextActions
 	{
         /// <summary>
+        /// Deletes the left word from the caret.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        [Action]
+        [KeyBinding(Key.BackSpace, ModifierType.ControlMask)]
+        public static void DeleteLeftWord(IActionContext actionContext)
+        {
+            // Get the position in the buffer.
+            IDisplayContext displayContext = actionContext.DisplayContext;
+            BufferPosition position = displayContext.Caret.Position;
+
+            if (position.IsBeginningOfLine(actionContext.DisplayContext))
+            {
+                // We are in the beginning of the buffer, so we don't do anything.
+                DeleteLeft(actionContext);
+                return;
+            }
+
+            // Get the index of the previous word.
+            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+            int leftBoundary =
+                displayContext.WordSplitter.GetPreviousWordBoundary(
+                    lineText, position.CharacterIndex);
+
+            // Delete the text segment from the string.
+            string deletedText = lineText.Substring(0, leftBoundary) +
+                                 lineText.Substring(position.CharacterIndex);
+            var operation = new SetTextOperation(
+                position.LineIndex, deletedText);
+
+            // Move the position to the left boundary.
+            position.CharacterIndex = leftBoundary;
+
+            // Perform the operation.
+            actionContext.Do(operation);
+
+            // Scroll to the caret to keep it on screen.
+            displayContext.Caret.Position = position;
+            displayContext.ScrollToCaret();
+        }
+
+        /// <summary>
+        /// Deletes the right word from the caret.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        [Action]
+        [KeyBinding(Key.Delete, ModifierType.ControlMask)]
+        public static void DeleteRightWord(IActionContext actionContext)
+        {
+            // Get the position in the buffer.
+            IDisplayContext displayContext = actionContext.DisplayContext;
+            BufferPosition position = displayContext.Caret.Position;
+
+            if (position.IsEndOfLine(actionContext.DisplayContext))
+            {
+                // We are in the beginning of the buffer, so we don't do anything.
+                DeleteRight(actionContext);
+                return;
+            }
+
+            // Get the index of the previous word.
+            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+            int rightBoundary =
+                displayContext.WordSplitter.GetNextWordBoundary(
+                    lineText, position.CharacterIndex);
+
+            // Delete the text segment from the string.
+            string deletedText = lineText.Substring(0, position.CharacterIndex) +
+                                 lineText.Substring(rightBoundary);
+            var operation = new SetTextOperation(
+                position.LineIndex, deletedText);
+
+            // Perform the operation.
+            actionContext.Do(operation);
+
+            // No need to scroll since we aren't moving the caret.
+        }
+
+        /// <summary>
         /// Deletes the character to the left.
         /// </summary>
         /// <param name="actionContext">The action context.</param>
         [Action]
         [KeyBinding(Key.BackSpace)]
-        public static void BackSpace(IActionContext actionContext)
+        public static void DeleteLeft(IActionContext actionContext)
         {
             // Get the position in the buffer.
             IDisplayContext displayContext = actionContext.DisplayContext;
@@ -114,7 +195,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
         /// <param name="actionContext">The action context.</param>
         [Action]
         [KeyBinding(Key.Delete)]
-        public static void Delete(IActionContext actionContext)
+        public static void DeleteRight(IActionContext actionContext)
         {
             // Get the position in the buffer.
             IDisplayContext displayContext = actionContext.DisplayContext;
