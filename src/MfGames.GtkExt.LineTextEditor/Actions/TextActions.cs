@@ -80,13 +80,14 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
                     position.LineIndex, lineText);
 
                 // Shift the caret back.
-                position.AddCharacterIndex(-1);
+                position.CharacterIndex--;
 
                 // Perform the action.
                 actionContext.Do(operation);
             }
 
             // Scroll to the caret to keep it on screen.
+            displayContext.Caret.Position = position;
             displayContext.ScrollToCaret();
         }
 
@@ -125,6 +126,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			actionContext.Do(setTextOperation2);
 
 			// Scroll to the caret to keep it on screen.
+	        displayContext.Caret.Position = position;
 			displayContext.ScrollToCaret();
 		}
 
