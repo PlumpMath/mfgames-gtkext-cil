@@ -102,6 +102,9 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Set up the text editor controller.
 			controller = new TextEditorController(this);
 			wordSplitter = new OffsetWordSplitter();
+
+		    controller.BeginAction += OnBeginAction;
+		    controller.EndAction += OnEndAction;
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -237,6 +240,29 @@ namespace MfGames.GtkExt.LineTextEditor
 			get { return caret; }
 		}
 
+        /// <summary>
+        /// Called when an action begins.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void OnBeginAction(object sender, EventArgs args)
+        {
+            requestedRedraw = false;
+        }
+
+        /// <summary>
+        /// Called when an action ends.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void OnEndAction(object sender, EventArgs args)
+        {
+            if (requestedRedraw)
+            {
+                QueueDraw();
+            }
+        }
+
 		/// <summary>
 		/// Called when the user presses a button.
 		/// </summary>
@@ -266,20 +292,19 @@ namespace MfGames.GtkExt.LineTextEditor
 			uint unicodeChar = Keyval.ToUnicode(eventKey.KeyValue);
 
 			// Pass it on to the controller.
-			Console.WriteLine("Key " + key + ", modifier " + modifier);
 			return controller.HandleKeypress(key, unicodeChar, modifier);
 		}
 
-		protected override bool OnKeyReleaseEvent(EventKey evnt)
-		{
-			return base.OnKeyReleaseEvent(evnt);
-		}
-
+        /// <summary>
+        /// Called when the line changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
 		private void OnLineChanged(
 			object sender,
 			LineChangedArgs args)
 		{
-			QueueDraw();
+			RequestRedraw();
 		}
 
 		#endregion
@@ -402,19 +427,32 @@ namespace MfGames.GtkExt.LineTextEditor
 			return true;
 		}
 
+        /// <summary>
+        /// Requests a redraw of a specific area on the screen.
+        /// </summary>
+        public void RequestRedraw()
+        {
+            if (controller.InAction)
+            {
+                requestedRedraw = true;
+            }
+            else
+            {
+                Console.WriteLine("ABACAD");
+                QueueDraw();
+            }
+        }
+
 		/// <summary>
-		/// Queues a redraw of a specific area on the screen.
+		/// Requests a redraw of a specific area on the screen.
 		/// </summary>
 		/// <param name="region">The region.</param>
-		public void QueueDraw(Rectangle region)
+		public void RequestRedraw(Rectangle region)
 		{
-			//QueueDrawArea(
-			//    (int) Math.Floor(region.X),
-			//    (int) Math.Floor(region.Y),
-			//    (int) Math.Ceiling(region.Width),
-			//    (int) Math.Ceiling(region.Height));
-			QueueDraw();
+            RequestRedraw();
 		}
+
+	    private bool requestedRedraw;
 
 		#endregion
 
@@ -515,6 +553,9 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				verticalAdjustment.Value += difference;
 			}
+
+            // Redraw the screen.
+		    RequestRedraw();
 		}
 
 		/// <summary>

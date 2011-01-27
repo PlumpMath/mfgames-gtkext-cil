@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 using C5;
@@ -43,237 +44,319 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 namespace MfGames.GtkExt.LineTextEditor.Editing
 {
-	/// <summary>
-	/// Contains the functionality of processing input for the text editor
-	/// and performing actions. The general flow is the controller calls an
-	/// action which performs the action. For undoable or buffer commands, the
-	/// action will creates a command object which one or more buffer operations.
-	/// </summary>
-	public class TextEditorController : IActionContext
-	{
-		#region Constructors
+    /// <summary>
+    /// Contains the functionality of processing input for the text editor
+    /// and performing actions. The general flow is the controller calls an
+    /// action which performs the action. For undoable or buffer commands, the
+    /// action will creates a command object which one or more buffer operations.
+    /// </summary>
+    public class TextEditorController : IActionContext
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditorController"/> class.
-		/// </summary>
-		/// <param name="textEditor">The text editor associated with this controller.</param>
-		public TextEditorController(TextEditor textEditor)
-		{
-			// Saves the display context for performing actions.
-			if (textEditor == null)
-			{
-				throw new ArgumentNullException("textEditor");
-			}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextEditorController"/> class.
+        /// </summary>
+        /// <param name="textEditor">The text editor associated with this controller.</param>
+        public TextEditorController(TextEditor textEditor)
+        {
+            // Saves the display context for performing actions.
+            if (textEditor == null)
+            {
+                throw new ArgumentNullException("textEditor");
+            }
 
-			displayContext = textEditor;
+            displayContext = textEditor;
 
-			// Bind the initial keybindings.
-			keyBindings = new HashDictionary<int, ActionEntry>();
+            // Bind the initial keybindings.
+            keyBindings = new HashDictionary<int, ActionEntry>();
 
-			BindActions();
+            BindActions();
 
-			// Bind the action states.
-			states = new ActionStateCollection();
-		}
+            // Bind the action states.
+            states = new ActionStateCollection();
+        }
 
-		#endregion
+        #endregion
 
-		#region Setup
+        #region Setup
 
-		private readonly IDisplayContext displayContext;
-		private readonly HashDictionary<int, ActionEntry> keyBindings;
-		private readonly ActionStateCollection states;
+        private readonly IDisplayContext displayContext;
+        private readonly HashDictionary<int, ActionEntry> keyBindings;
+        private readonly ActionStateCollection states;
 
-		/// <summary>
-		/// Gets the display context for this action.
-		/// </summary>
-		/// <value>The display.</value>
-		public IDisplayContext DisplayContext
-		{
-			get { return displayContext; }
-		}
+        /// <summary>
+        /// Gets the display context for this action.
+        /// </summary>
+        /// <value>The display.</value>
+        public IDisplayContext DisplayContext
+        {
+            get { return displayContext; }
+        }
 
-		/// <summary>
-		/// Gets the action states associated with the action.
-		/// </summary>
-		public ActionStateCollection States
-		{
-			get { return states; }
-		}
+        /// <summary>
+        /// Gets the action states associated with the action.
+        /// </summary>
+        public ActionStateCollection States
+        {
+            get { return states; }
+        }
 
-		/// <summary>
-		/// Binds the default actions into the controller.
-		/// </summary>
-		private void BindActions()
-		{
-			BindActions(GetType().Assembly);
-		}
+        /// <summary>
+        /// Binds the default actions into the controller.
+        /// </summary>
+        private void BindActions()
+        {
+            BindActions(GetType().Assembly);
+        }
 
-		/// <summary>
-		/// Binds the actions from the various classes inside the assembly.
-		/// </summary>
-		/// <param name="assembly">The assembly.</param>
-		public void BindActions(Assembly assembly)
-		{
-			// Make sure we have sane data.
-			if (assembly == null)
-			{
-				throw new ArgumentNullException("assembly");
-			}
+        /// <summary>
+        /// Binds the actions from the various classes inside the assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
+        public void BindActions(Assembly assembly)
+        {
+            // Make sure we have sane data.
+            if (assembly == null)
+            {
+                throw new ArgumentNullException("assembly");
+            }
 
-			// Go through the types in the assembly.
-			foreach (Type type in assembly.GetTypes())
-			{
-				// Check to see if the type contains our attribute.
-				bool isFixture = type.HasCustomAttribute<ActionFixtureAttribute>();
+            // Go through the types in the assembly.
+            foreach (Type type in assembly.GetTypes())
+            {
+                // Check to see if the type contains our attribute.
+                bool isFixture =
+                    type.HasCustomAttribute<ActionFixtureAttribute>();
 
-				if (!isFixture)
-				{
-					continue;
-				}
+                if (!isFixture)
+                {
+                    continue;
+                }
 
-				// Go through all the methods inside the type and make sure they
-				// have the action attribute.
-				foreach (MethodInfo method in type.GetMethods())
-				{
-					// Check to see if this method has the action attribute.
-					bool isAction = method.HasCustomAttribute<ActionAttribute>();
+                // Go through all the methods inside the type and make sure they
+                // have the action attribute.
+                foreach (MethodInfo method in type.GetMethods())
+                {
+                    // Check to see if this method has the action attribute.
+                    bool isAction = method.HasCustomAttribute<ActionAttribute>();
 
-					if (!isAction)
-					{
-						continue;
-					}
+                    if (!isAction)
+                    {
+                        continue;
+                    }
 
-					// Create an action entry for this element.
-					var action =
-						(Action<IActionContext>)
-						Delegate.CreateDelegate(typeof(Action<IActionContext>), method);
-					var entry = new ActionEntry(action);
+                    // Create an action entry for this element.
+                    var action =
+                        (Action<IActionContext>)
+                        Delegate.CreateDelegate(
+                            typeof(Action<IActionContext>), method);
+                    var entry = new ActionEntry(action);
 
-					// Pull out the state objects and add them into the entry.
-					object[] states = method.GetCustomAttributes(
-						typeof(ActionStateAttribute), false);
+                    // Pull out the state objects and add them into the entry.
+                    object[] states =
+                        method.GetCustomAttributes(
+                            typeof(ActionStateAttribute), false);
 
-					foreach (ActionStateAttribute actionState in states)
-					{
-						entry.StateTypes.Add(actionState.StateType);
-					}
+                    foreach (ActionStateAttribute actionState in states)
+                    {
+                        entry.StateTypes.Add(actionState.StateType);
+                    }
 
-					// Pull out the key bindings and assign them.
-					object[] bindings = method.GetCustomAttributes(
-						typeof(KeyBindingAttribute), false);
+                    // Pull out the key bindings and assign them.
+                    object[] bindings =
+                        method.GetCustomAttributes(
+                            typeof(KeyBindingAttribute), false);
 
-					foreach (KeyBindingAttribute keyBinding in bindings)
-					{
-						// Get the keys and modifiers.
-						int keyCode = GdkUtility.GetNormalizedKeyCode(
-							keyBinding.Key, keyBinding.Modifier);
+                    foreach (KeyBindingAttribute keyBinding in bindings)
+                    {
+                        // Get the keys and modifiers.
+                        int keyCode =
+                            GdkUtility.GetNormalizedKeyCode(
+                                keyBinding.Key, keyBinding.Modifier);
 
-						// Add the key to the dictionary.
-						keyBindings[keyCode] = entry;
-					}
-				}
-			}
-		}
+                        // Add the key to the dictionary.
+                        keyBindings[keyCode] = entry;
+                    }
+                }
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Actions
+        #region Actions
 
-		/// <summary>
-		/// Handles a keypress and performs the appropriate action.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <param name="unicodeKey">The unicode key.</param>
-		/// <param name="modifier">The modifier.</param>
-		public bool HandleKeypress(
-			Key key,
-			uint unicodeKey,
-			ModifierType modifier)
-		{
-			// Normalize the key code and remove excessive modifiers.
-			ModifierType filteredModifiers = modifier &
-			                                 (ModifierType.ShiftMask |
-			                                  ModifierType.Mod1Mask |
-			                                  ModifierType.ControlMask |
-			                                  ModifierType.MetaMask |
-			                                  ModifierType.SuperMask);
-			int keyCode = GdkUtility.GetNormalizedKeyCode(key, filteredModifiers);
+        private bool inAction;
 
-			// Check to see if we have a binding for this action.
-			if (keyBindings.Contains(keyCode))
-			{
-				keyBindings[keyCode].Perform(this);
-				return true;
-			}
-			
-			if (unicodeKey != 0 && modifier == ModifierType.None)
-			{
-				char unicode = (char) unicodeKey;
-				InsertTextActions.InsertText(this, unicode);
-				return true;
-			}
+        /// <summary>
+        /// Gets a value indicating whether an action is being performed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [in action]; otherwise, <c>false</c>.
+        /// </value>
+        public bool InAction
+        {
+            [DebuggerStepThrough]
+            get { return inAction; }
+            
+            private set
+            {
+                inAction = value;
 
-			// No idea what to do, so don't do anything.
-			return false;
-		}
+                if (inAction)
+                {
+                    FireBeginAction();
+                }
+                else
+                {
+                    FireEndAction();
+                }
+            }
+        }
 
-		/// <summary>
-		/// Performs the given operation on the line buffer.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public void Do(ILineBufferOperation operation)
-		{
-			if (operation == null)
-			{
-				throw new ArgumentNullException("operation");
-			}
+        /// <summary>
+        /// Occurs when an action is begun.
+        /// </summary>
+        public event EventHandler BeginAction;
 
-			displayContext.LineLayoutBuffer.Do(operation);
-		}
+        /// <summary>
+        /// Performs the given operation on the line buffer.
+        /// </summary>
+        /// <param name="operation">The operation.</param>
+        public void Do(ILineBufferOperation operation)
+        {
+            if (operation == null)
+            {
+                throw new ArgumentNullException("operation");
+            }
 
-		#endregion
+            displayContext.LineLayoutBuffer.Do(operation);
+        }
 
-		#region Input
+        /// <summary>
+        /// Occurs when an action has completed.
+        /// </summary>
+        public event EventHandler EndAction;
 
-		/// <summary>
-		/// Handles the mouse press and the associated code.
-		/// </summary>
-		/// <param name="point">The point.</param>
-		/// <param name="button">The button.</param>
-		/// <param name="modifier">The state.</param>
-		/// <returns></returns>
-		public bool HandleMousePress(
-			PointD point,
-			uint button,
-			ModifierType modifier)
-		{
-			// If we are pressing the left button (button 1), then we need to
-			// move the caret over.
-			if (button == 1)
-			{
-				// Figure out if we are clicking inside the text area.
-				if (point.X >= displayContext.TextX)
-				{
-					var textPoint = new PointD(point.X - displayContext.TextX, point.Y);
-					CaretMoveActions.Point(displayContext, textPoint);
-					return true;
-				}
-			}
+        /// <summary>
+        /// Fires the BeginAction event.
+        /// </summary>
+        private void FireBeginAction()
+        {
+            if (BeginAction != null)
+            {
+                BeginAction(this, EventArgs.Empty);
+            }
+        }
 
-			// We haven't handled it, so return false so the rest of Gtk can
-			// decide what to do with the input.
-			return false;
-		}
+        /// <summary>
+        /// Fires the EndAction event.
+        /// </summary>
+        public void FireEndAction()
+        {
+            if (EndAction != null)
+            {
+                EndAction(this, EventArgs.Empty);
+            }
+        }
 
-		/// <summary>
-		/// Resets the controller and its various internal states.
-		/// </summary>
-		public void Reset()
-		{
-			states.RemoveAll();
-		}
+        /// <summary>
+        /// Handles a keypress and performs the appropriate action.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="unicodeKey">The unicode key.</param>
+        /// <param name="modifier">The modifier.</param>
+        public bool HandleKeypress(
+            Key key,
+            uint unicodeKey,
+            ModifierType modifier)
+        {
+            // Normalize the key code and remove excessive modifiers.
+            ModifierType filteredModifiers = modifier &
+                                             (ModifierType.ShiftMask |
+                                              ModifierType.Mod1Mask |
+                                              ModifierType.ControlMask |
+                                              ModifierType.MetaMask |
+                                              ModifierType.SuperMask);
+            int keyCode = GdkUtility.GetNormalizedKeyCode(
+                key, filteredModifiers);
 
-		#endregion
-	}
+            // Check to see if we have a binding for this action.
+            if (keyBindings.Contains(keyCode))
+            {
+                InAction = true;
+
+                try
+                {
+                    keyBindings[keyCode].Perform(this);
+                }
+                finally
+                {
+                    InAction = false;
+                }
+
+                return true;
+            }
+
+            if (unicodeKey != 0 && modifier == ModifierType.None)
+            {
+                InAction = true;
+
+                try
+                {
+                    InsertTextActions.InsertText(this, (char) unicodeKey);
+                }
+                finally
+                {
+                    InAction = false;
+                }
+
+                return true;
+            }
+
+            // No idea what to do, so don't do anything.
+            return false;
+        }
+
+        /// <summary>
+        /// Handles the mouse press and the associated code.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="button">The button.</param>
+        /// <param name="modifier">The state.</param>
+        /// <returns></returns>
+        public bool HandleMousePress(
+            PointD point,
+            uint button,
+            ModifierType modifier)
+        {
+            // If we are pressing the left button (button 1), then we need to
+            // move the caret over.
+            if (button == 1)
+            {
+                // Figure out if we are clicking inside the text area.
+                if (point.X >= displayContext.TextX)
+                {
+                    var textPoint = new PointD(
+                        point.X - displayContext.TextX, point.Y);
+                    CaretMoveActions.Point(displayContext, textPoint);
+                    return true;
+                }
+            }
+
+            // We haven't handled it, so return false so the rest of Gtk can
+            // decide what to do with the input.
+            return false;
+        }
+
+        /// <summary>
+        /// Resets the controller and its various internal states.
+        /// </summary>
+        public void Reset()
+        {
+            states.RemoveAll();
+        }
+
+        #endregion
+    }
 }

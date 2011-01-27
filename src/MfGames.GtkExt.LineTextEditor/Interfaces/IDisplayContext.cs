@@ -123,15 +123,15 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
     	Adjustment VerticalAdjustment { get; }
 
     	/// <summary>
-        /// Queues a redraw of the entire buffer.
+        /// Requests the entire widget is redrawn.
         /// </summary>
-        void QueueDraw();
+        void RequestRedraw();
 
         /// <summary>
-        /// Queues a redraw of a specific area on the screen.
+        /// Requests the given region is redrawn.
         /// </summary>
         /// <param name="region">The widget-relative region.</param>
-        void QueueDraw(Rectangle region);
+        void RequestRedraw(Rectangle region);
 
         /// <summary>
         /// Scrolls the display to the caret.

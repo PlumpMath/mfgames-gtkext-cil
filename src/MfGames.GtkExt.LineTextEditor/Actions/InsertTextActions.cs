@@ -112,6 +112,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Scroll to the caret to keep it on screen.
 			displayContext.ScrollToCaret();
+            displayContext.RequestRedraw();
 		}
 	}
 }
