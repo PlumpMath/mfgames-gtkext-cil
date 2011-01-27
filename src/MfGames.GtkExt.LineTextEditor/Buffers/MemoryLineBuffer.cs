@@ -130,8 +130,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			if (startIndex > endIndex)
 			{
 				throw new ArgumentOutOfRangeException(
-					"endIndex",
-					"endIndex cannot be before startIndex");
+					"endIndex", "endIndex cannot be before startIndex");
 			}
 
 			// Substrings use lengths, not end indexes.
@@ -182,20 +181,21 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 							insertLinesOperation.LineIndex, insertLinesOperation.Count));
 					break;
 
-                case LineBufferOperationType.DeleteLines:
-                    // Pull out the delete operation.
-                    var deleteLinesOperation = (DeleteLinesOperation)operation;
+				case LineBufferOperationType.DeleteLines:
+					// Pull out the delete operation.
+					var deleteLinesOperation = (DeleteLinesOperation) operation;
 
-                    // Delete the lines from the buffer.
-                    lines.RemoveRange(deleteLinesOperation.LineIndex, deleteLinesOperation.Count);
+					// Delete the lines from the buffer.
+					lines.RemoveRange(
+						deleteLinesOperation.LineIndex, deleteLinesOperation.Count);
 
-                    // Fire an delete line change.
-                    FireLinesDeleted(
-                        this,
-                        new LineRangeEventArgs(
-                            deleteLinesOperation.LineIndex, deleteLinesOperation.Count));
-                    break;
-            }
+					// Fire an delete line change.
+					FireLinesDeleted(
+						this,
+						new LineRangeEventArgs(
+							deleteLinesOperation.LineIndex, deleteLinesOperation.Count));
+					break;
+			}
 		}
 
 		/// <summary>

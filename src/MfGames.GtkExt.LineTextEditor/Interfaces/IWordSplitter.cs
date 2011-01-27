@@ -24,29 +24,29 @@
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
-    /// <summary>
-    /// Interface that identifies the boundaries between words.
-    /// </summary>
-    public interface IWordSplitter
-    {
-        /// <summary>
-        /// Gets the next word boundary from the given string and character index.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="characterIndex">Index of the character.</param>
-        /// <returns></returns>
-        int GetNextWordBoundary(
-            string text,
-            int characterIndex);
+	/// <summary>
+	/// Interface that identifies the boundaries between words.
+	/// </summary>
+	public interface IWordSplitter
+	{
+		/// <summary>
+		/// Gets the next word boundary from the given string and character index.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="characterIndex">Index of the character.</param>
+		/// <returns></returns>
+		int GetNextWordBoundary(
+			string text,
+			int characterIndex);
 
-        /// <summary>
-        /// Gets the previous word boundary from the given string and character index.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="characterIndex">Index of the character.</param>
-        /// <returns></returns>
-        int GetPreviousWordBoundary(
-            string text,
-            int characterIndex);
-    }
+		/// <summary>
+		/// Gets the previous word boundary from the given string and character index.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="characterIndex">Index of the character.</param>
+		/// <returns></returns>
+		int GetPreviousWordBoundary(
+			string text,
+			int characterIndex);
+	}
 }

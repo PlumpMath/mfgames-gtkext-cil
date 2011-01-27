@@ -38,42 +38,44 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	/// </summary>
 	public class OffsetWordSplitter : IWordSplitter
 	{
-        /// <summary>
-        /// Gets the next word boundary from the given string and character index.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="characterIndex">Index of the character.</param>
-        /// <returns></returns>
-	    public int GetNextWordBoundary(string text,
-	                                   int characterIndex)
-	    {
-            // If we are at the beginning, return -1.
-            if (characterIndex == text.Length)
-            {
-                return -1;
-            }
+		/// <summary>
+		/// Gets the next word boundary from the given string and character index.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="characterIndex">Index of the character.</param>
+		/// <returns></returns>
+		public int GetNextWordBoundary(
+			string text,
+			int characterIndex)
+		{
+			// If we are at the beginning, return -1.
+			if (characterIndex == text.Length)
+			{
+				return -1;
+			}
 
-            // Move back five characters or to the beginning.
-            return Math.Min(text.Length, characterIndex + 5);
-        }
+			// Move back five characters or to the beginning.
+			return Math.Min(text.Length, characterIndex + 5);
+		}
 
-        /// <summary>
-        /// Gets the previous word boundary from the given string and character index.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="characterIndex">Index of the character.</param>
-        /// <returns></returns>
-	    public int GetPreviousWordBoundary(string text,
-	                                       int characterIndex)
-	    {
-            // If we are at the beginning, return -1.
-            if (characterIndex == 0)
-            {
-                return -1;
-            }
+		/// <summary>
+		/// Gets the previous word boundary from the given string and character index.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="characterIndex">Index of the character.</param>
+		/// <returns></returns>
+		public int GetPreviousWordBoundary(
+			string text,
+			int characterIndex)
+		{
+			// If we are at the beginning, return -1.
+			if (characterIndex == 0)
+			{
+				return -1;
+			}
 
-            // Move back five characters or to the beginning.
-            return Math.Max(0, characterIndex - 5);
-	    }
+			// Move back five characters or to the beginning.
+			return Math.Max(0, characterIndex - 5);
+		}
 	}
 }

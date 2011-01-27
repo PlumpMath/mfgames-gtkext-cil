@@ -126,11 +126,12 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		/// <param name="lineIndex">The line index being rendered.</param>
 		/// <param name="point">The point of the specific line number.</param>
 		/// <param name="height">The height of the rendered line.</param>
-		public override void Draw(IDisplayContext displayContext,
-		                          IRenderContext renderContext,
-		                          int lineIndex,
-		                          PointD point,
-		                          double height)
+		public override void Draw(
+			IDisplayContext displayContext,
+			IRenderContext renderContext,
+			int lineIndex,
+			PointD point,
+			double height)
 		{
 			// Create a layout object if we don't have one.
 			BlockStyle style = displayContext.Theme.LineNumberBlockStyle;
@@ -150,7 +151,8 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			}
 
 			// Wrap the text in a markup that includes the foreground color.
-			string markup = DrawingUtility.WrapColorMarkup(lineNumber, style.GetForegroundColor());
+			string markup = DrawingUtility.WrapColorMarkup(
+				lineNumber, style.GetForegroundColor());
 			layout.SetMarkup(markup);
 
 			// Use the common drawing routine to handle the borders and padding.

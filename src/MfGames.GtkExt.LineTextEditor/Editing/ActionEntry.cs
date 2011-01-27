@@ -61,20 +61,6 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		private readonly ArrayList<Type> stateTypes;
 
 		/// <summary>
-		/// Performs the specified action using the context.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		public void Perform(IActionContext actionContext)
-		{
-			// Start by going through the states and remove anything that isn't
-			// in our state types.
-			actionContext.States.RemoveAllExcluding(stateTypes);
-
-			// Perform the action itself.
-			Action(actionContext);
-		}
-
-		/// <summary>
 		/// Gets the action delegate to perform this action.
 		/// </summary>
 		public Action<IActionContext> Action;
@@ -87,6 +73,20 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		public ArrayList<Type> StateTypes
 		{
 			get { return stateTypes; }
+		}
+
+		/// <summary>
+		/// Performs the specified action using the context.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		public void Perform(IActionContext actionContext)
+		{
+			// Start by going through the states and remove anything that isn't
+			// in our state types.
+			actionContext.States.RemoveAllExcluding(stateTypes);
+
+			// Perform the action itself.
+			Action(actionContext);
 		}
 
 		#endregion

@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -74,32 +72,32 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		#region Properties
 
-	    private int characterIndex;
+		private int characterIndex;
 
-	    /// <summary>
+		private int lineIndex;
+
+		/// <summary>
 		/// Gets or sets the character. In terms of caret positions, the position
 		/// is always to the left of the character, not trailing it.
 		/// </summary>
 		/// <value>The character.</value>
 		public int CharacterIndex
-	    {
-	        get { return characterIndex; }
-	        set { characterIndex = value; }
-	    }
+		{
+			get { return characterIndex; }
+			set { characterIndex = value; }
+		}
 
-	    private int lineIndex;
-
-	    /// <summary>
+		/// <summary>
 		/// Gets or sets the line.
 		/// </summary>
 		/// <value>The line.</value>
 		public int LineIndex
-	    {
-	        get { return lineIndex; }
-	        set { lineIndex = value; }
-	    }
+		{
+			get { return lineIndex; }
+			set { lineIndex = value; }
+		}
 
-	    #endregion
+		#endregion
 
 		#region Movement
 
@@ -307,7 +305,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="buffer">The buffer.</param>
 		public BufferPosition ToBeginningOfBuffer(ILineLayoutBuffer buffer)
 		{
-            return new BufferPosition(0, 0);
+			return new BufferPosition(0, 0);
 		}
 
 		/// <summary>
@@ -325,7 +323,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="buffer">The buffer.</param>
 		public BufferPosition ToBeginningOfLine(ILineLayoutBuffer buffer)
 		{
-            return new BufferPosition(lineIndex, 0);
+			return new BufferPosition(lineIndex, 0);
 		}
 
 		/// <summary>
@@ -343,7 +341,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		public BufferPosition ToBeginningOfWrappedLine(IDisplayContext displayContext)
 		{
-			return new BufferPosition(lineIndex, GetWrappedLine(displayContext).StartIndex);
+			return new BufferPosition(
+				lineIndex, GetWrappedLine(displayContext).StartIndex);
 		}
 
 		/// <summary>
@@ -352,12 +351,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="buffer">The buffer.</param>
 		public BufferPosition ToEndOfBuffer(ILineLayoutBuffer buffer)
 		{
-		    int endLineIndex = buffer.LineCount - 1;
+			int endLineIndex = buffer.LineCount - 1;
 
-		    return new BufferPosition(endLineIndex, buffer.GetLineLength(endLineIndex));
+			return new BufferPosition(endLineIndex, buffer.GetLineLength(endLineIndex));
 		}
 
-	    /// <summary>
+		/// <summary>
 		/// Moves the position to the end of buffer.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
@@ -372,7 +371,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="buffer">The buffer.</param>
 		public BufferPosition ToEndOfLine(ILineLayoutBuffer buffer)
 		{
-            return new BufferPosition(lineIndex, buffer.GetLineLength(lineIndex));
+			return new BufferPosition(lineIndex, buffer.GetLineLength(lineIndex));
 		}
 
 		/// <summary>
@@ -405,7 +404,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				index--;
 			}
 
-		    return new BufferPosition(lineIndex, index);
+			return new BufferPosition(lineIndex, index);
 		}
 
 		#endregion
@@ -487,20 +486,19 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		#endregion
 
-	    #region Conversion
+		#region Conversion
 
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return string.Format(
-                "Buffer Position ({0}, {1})", lineIndex, characterIndex);
-        }
-	    #endregion
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents this instance.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.String"/> that represents this instance.
+		/// </returns>
+		public override string ToString()
+		{
+			return string.Format("Buffer Position ({0}, {1})", lineIndex, characterIndex);
+		}
 
+		#endregion
 	}
 }

@@ -142,10 +142,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public virtual void GetLineLayoutRange(IDisplayContext displayContext,
-		                                       Rectangle viewArea,
-		                                       out int startLine,
-		                                       out int endLine)
+		public virtual void GetLineLayoutRange(
+			IDisplayContext displayContext,
+			Rectangle viewArea,
+			out int startLine,
+			out int endLine)
 		{
 			LineLayoutBuffer.GetLineLayoutRange(
 				displayContext, viewArea, out startLine, out endLine);

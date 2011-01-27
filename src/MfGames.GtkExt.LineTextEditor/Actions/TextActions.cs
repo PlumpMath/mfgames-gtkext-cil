@@ -43,216 +43,207 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	[ActionFixture]
 	public static class TextActions
 	{
-        /// <summary>
-        /// Deletes the left word from the caret.
-        /// </summary>
-        /// <param name="actionContext">The action context.</param>
-        [Action]
-        [KeyBinding(Key.BackSpace, ModifierType.ControlMask)]
-        public static void DeleteLeftWord(IActionContext actionContext)
-        {
-            // Get the position in the buffer.
-            IDisplayContext displayContext = actionContext.DisplayContext;
-            BufferPosition position = displayContext.Caret.Position;
+		/// <summary>
+		/// Deletes the character to the left.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.BackSpace)]
+		public static void DeleteLeft(IActionContext actionContext)
+		{
+			// Get the position in the buffer.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
 
-            if (position.IsBeginningOfLine(actionContext.DisplayContext))
-            {
-                // We are in the beginning of the buffer, so we don't do anything.
-                DeleteLeft(actionContext);
-                return;
-            }
+			if (position.IsBeginningOfBuffer(actionContext.DisplayContext))
+			{
+				// We are in the beginning of the buffer, so we don't do anything.
+				return;
+			}
 
-            // Get the index of the previous word.
-            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
-            int leftBoundary =
-                displayContext.WordSplitter.GetPreviousWordBoundary(
-                    lineText, position.CharacterIndex);
+			// If we are at the beginning of the line, then we are combining paragraphs.
+			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			var command = new Command();
 
-            // Remove the text from the boundary to the caret in an operation.
-            string deletedText = lineText.Substring(0, leftBoundary) +
-                                 lineText.Substring(position.CharacterIndex);
-            var operation = new SetTextOperation(
-                position.LineIndex, deletedText);
+			if (position.CharacterIndex == 0)
+			{
+				// This is the beginning of a paragraph and not the first one in
+				// the buffer. This operation combines the text of the two paragraphs
+				// together.
+				string previousText = lineLayoutBuffer.GetLineText(position.LineIndex - 1);
+				string newText = previousText + lineText;
 
-            var command = new Command();
-            command.Operations.Add(operation);
+				// Set up the operations in the command.
+				command.Operations.Add(new DeleteLinesOperation(position.LineIndex, 1));
+				command.Operations.Add(
+					new SetTextOperation(position.LineIndex - 1, newText));
 
-            // Move the position to the left boundary.
-            position.CharacterIndex = leftBoundary;
+				// Relocate the caret position to the previous line's end.
+				position.LineIndex--;
+				position.CharacterIndex = previousText.Length;
+			}
+			else
+			{
+				// This is a single-line manipulation, so delete the character.
+				string newText = lineText.Substring(0, position.CharacterIndex - 1) +
+				                 lineText.Substring(position.CharacterIndex);
 
-            // Perform the operation.
-            actionContext.Do(command);
+				// Create the set text operation.
+				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
 
-            // Scroll to the caret to keep it on screen.
-            displayContext.Caret.Position = position;
-            displayContext.ScrollToCaret();
-        }
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex, lineText));
 
-        /// <summary>
-        /// Deletes the right word from the caret.
-        /// </summary>
-        /// <param name="actionContext">The action context.</param>
-        [Action]
-        [KeyBinding(Key.Delete, ModifierType.ControlMask)]
-        public static void DeleteRightWord(IActionContext actionContext)
-        {
-            // Get the position in the buffer.
-            IDisplayContext displayContext = actionContext.DisplayContext;
-            BufferPosition position = displayContext.Caret.Position;
+				// Shift the caret back.
+				position.CharacterIndex--;
+			}
 
-            if (position.IsEndOfLine(actionContext.DisplayContext))
-            {
-                // We are in the beginning of the buffer, so we don't do anything.
-                DeleteRight(actionContext);
-                return;
-            }
+			// Perform the command in the context.
+			actionContext.Do(command);
 
-            // Get the index of the previous word.
-            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
-            int rightBoundary =
-                displayContext.WordSplitter.GetNextWordBoundary(
-                    lineText, position.CharacterIndex);
+			// Scroll to the caret to keep it on screen.
+			displayContext.Caret.Position = position;
+			displayContext.ScrollToCaret();
+		}
 
-            // Delete the text segment from the string.
-            string deletedText = lineText.Substring(0, position.CharacterIndex) +
-                                 lineText.Substring(rightBoundary);
-            var operation = new SetTextOperation(
-                position.LineIndex, deletedText);
+		/// <summary>
+		/// Deletes the left word from the caret.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.BackSpace, ModifierType.ControlMask)]
+		public static void DeleteLeftWord(IActionContext actionContext)
+		{
+			// Get the position in the buffer.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
 
-            // Perform the operations after wrapping them in a command.
-            var command = new Command();
-            command.Operations.Add(operation);
+			if (position.IsBeginningOfLine(actionContext.DisplayContext))
+			{
+				// We are in the beginning of the buffer, so we don't do anything.
+				DeleteLeft(actionContext);
+				return;
+			}
 
-            actionContext.Do(command);
+			// Get the index of the previous word.
+			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			int leftBoundary =
+				displayContext.WordSplitter.GetPreviousWordBoundary(
+					lineText, position.CharacterIndex);
 
-            // No need to scroll since we aren't moving the caret.
-        }
+			// Remove the text from the boundary to the caret in an operation.
+			string deletedText = lineText.Substring(0, leftBoundary) +
+			                     lineText.Substring(position.CharacterIndex);
+			var operation = new SetTextOperation(position.LineIndex, deletedText);
 
-        /// <summary>
-        /// Deletes the character to the left.
-        /// </summary>
-        /// <param name="actionContext">The action context.</param>
-        [Action]
-        [KeyBinding(Key.BackSpace)]
-        public static void DeleteLeft(IActionContext actionContext)
-        {
-            // Get the position in the buffer.
-            IDisplayContext displayContext = actionContext.DisplayContext;
-            BufferPosition position = displayContext.Caret.Position;
+			var command = new Command();
+			command.Operations.Add(operation);
 
-            if (position.IsBeginningOfBuffer(actionContext.DisplayContext))
-            {
-                // We are in the beginning of the buffer, so we don't do anything.
-                return;
-            }
+			// Move the position to the left boundary.
+			position.CharacterIndex = leftBoundary;
 
-            // If we are at the beginning of the line, then we are combining paragraphs.
-            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
-            Command command = new Command();
+			// Perform the operation.
+			actionContext.Do(command);
 
-            if (position.CharacterIndex == 0)
-            {
-                // This is the beginning of a paragraph and not the first one in
-                // the buffer. This operation combines the text of the two paragraphs
-                // together.
-                string previousText =
-                    lineLayoutBuffer.GetLineText(position.LineIndex - 1);
-                string newText = previousText + lineText;
+			// Scroll to the caret to keep it on screen.
+			displayContext.Caret.Position = position;
+			displayContext.ScrollToCaret();
+		}
 
-                // Set up the operations in the command.
-                command.Operations.Add(
-                    new DeleteLinesOperation(position.LineIndex, 1));
-                command.Operations.Add(
-                    new SetTextOperation(position.LineIndex - 1, newText));
+		/// <summary>
+		/// Deletes the character to the right.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.Delete)]
+		public static void DeleteRight(IActionContext actionContext)
+		{
+			// Get the position in the buffer.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
 
-                // Relocate the caret position to the previous line's end.
-                position.LineIndex--;
-                position.CharacterIndex = previousText.Length;
-            }
-            else
-            {
-                // This is a single-line manipulation, so delete the character.
-                string newText =
-                    lineText.Substring(0, position.CharacterIndex - 1) +
-                    lineText.Substring(position.CharacterIndex);
+			if (position.IsEndOfBuffer(actionContext.DisplayContext))
+			{
+				// We are in the end of the buffer, so we don't do anything.
+				return;
+			}
 
-                // Create the set text operation.
-                command.Operations.Add(
-                    new SetTextOperation(position.LineIndex, newText));
+			// If we are at the beginning of the line, then we are combining paragraphs.
+			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			var command = new Command();
 
-                command.UndoOperations.Add(
-                    new SetTextOperation(position.LineIndex, lineText));
+			if (position.CharacterIndex == lineText.Length)
+			{
+				// This is the end of a paragraph and not the first one in
+				// the buffer. This operation combines the text of the two paragraphs
+				// together.
+				string nextText = lineLayoutBuffer.GetLineText(position.LineIndex + 1);
+				string newText = lineText + nextText;
 
-                // Shift the caret back.
-                position.CharacterIndex--;
-            }
+				// Set up the operations and add them to the command.
+				command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
+				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+			}
+			else
+			{
+				// This is a single-line manipulation, so delete the character.
+				string newText = lineText.Substring(0, position.CharacterIndex) +
+				                 lineText.Substring(position.CharacterIndex + 1);
 
-            // Perform the command in the context.
-            actionContext.Do(command);
+				// Create the operations for both performing and undoing the command.
+				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
 
-            // Scroll to the caret to keep it on screen.
-            displayContext.Caret.Position = position;
-            displayContext.ScrollToCaret();
-        }
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex, lineText));
+			}
 
-        /// <summary>
-        /// Deletes the character to the right.
-        /// </summary>
-        /// <param name="actionContext">The action context.</param>
-        [Action]
-        [KeyBinding(Key.Delete)]
-        public static void DeleteRight(IActionContext actionContext)
-        {
-            // Get the position in the buffer.
-            IDisplayContext displayContext = actionContext.DisplayContext;
-            BufferPosition position = displayContext.Caret.Position;
+			// Perform the command to the action context.
+			actionContext.Do(command);
+		}
 
-            if (position.IsEndOfBuffer(actionContext.DisplayContext))
-            {
-                // We are in the end of the buffer, so we don't do anything.
-                return;
-            }
+		/// <summary>
+		/// Deletes the right word from the caret.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.Delete, ModifierType.ControlMask)]
+		public static void DeleteRightWord(IActionContext actionContext)
+		{
+			// Get the position in the buffer.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
 
-            // If we are at the beginning of the line, then we are combining paragraphs.
-            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
-            Command command = new Command();
+			if (position.IsEndOfLine(actionContext.DisplayContext))
+			{
+				// We are in the beginning of the buffer, so we don't do anything.
+				DeleteRight(actionContext);
+				return;
+			}
 
-            if (position.CharacterIndex == lineText.Length)
-            {
-                // This is the end of a paragraph and not the first one in
-                // the buffer. This operation combines the text of the two paragraphs
-                // together.
-                string nextText =
-                    lineLayoutBuffer.GetLineText(position.LineIndex + 1);
-                string newText = lineText + nextText;
+			// Get the index of the previous word.
+			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
+				lineText, position.CharacterIndex);
 
-                // Set up the operations and add them to the command.
-                command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
-                command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
-            }
-            else
-            {
-                // This is a single-line manipulation, so delete the character.
-                string newText =
-                    lineText.Substring(0, position.CharacterIndex) +
-                    lineText.Substring(position.CharacterIndex + 1);
+			// Delete the text segment from the string.
+			string deletedText = lineText.Substring(0, position.CharacterIndex) +
+			                     lineText.Substring(rightBoundary);
+			var operation = new SetTextOperation(position.LineIndex, deletedText);
 
-                // Create the operations for both performing and undoing the command.
-                command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+			// Perform the operations after wrapping them in a command.
+			var command = new Command();
+			command.Operations.Add(operation);
 
-                command.UndoOperations.Add(
-                    new SetTextOperation(position.LineIndex, lineText));
-            }
+			actionContext.Do(command);
 
-            // Perform the command to the action context.
-            actionContext.Do(command);
-        }
+			// No need to scroll since we aren't moving the caret.
+		}
 
-        /// <summary>
+		/// <summary>
 		/// Inserts the paragraph at the current buffer position.
 		/// </summary>
 		/// <param name="actionContext">The action context.</param>
@@ -287,7 +278,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			actionContext.Do(setTextOperation2);
 
 			// Scroll to the caret to keep it on screen.
-	        displayContext.Caret.Position = position;
+			displayContext.Caret.Position = position;
 			displayContext.ScrollToCaret();
 		}
 
@@ -315,15 +306,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Shift the cursor over since we know this won't be changing lines
 			// and we can avoid some additional refreshes.
-		    position.CharacterIndex++;
+			position.CharacterIndex++;
 
 			// Perform the operation on the buffer.
 			actionContext.Do(operation);
 
 			// Scroll to the caret to keep it on screen.
-		    displayContext.Caret.Position = position;
+			displayContext.Caret.Position = position;
 			displayContext.ScrollToCaret();
-            displayContext.RequestRedraw();
+			displayContext.RequestRedraw();
 		}
 	}
 }

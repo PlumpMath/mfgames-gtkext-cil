@@ -24,9 +24,6 @@
 
 #region Namespaces
 
-using System;
-using System.Diagnostics;
-
 using Cairo;
 
 using MfGames.GtkExt.Extensions.Cairo;
@@ -60,41 +57,15 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 		private readonly IDisplayContext displayContext;
 
-	    /// <summary>
-	    /// Gets or sets the buffer position of the caret.
-	    /// </summary>
-	    /// <value>The buffer position.</value>
-	    public BufferPosition Position {
-	    get; set; }
+		/// <summary>
+		/// Gets or sets the buffer position of the caret.
+		/// </summary>
+		/// <value>The buffer position.</value>
+		public BufferPosition Position { get; set; }
 
-	    #endregion
+		#endregion
 
 		#region Rendering
-
-		/// <summary>
-		/// Gets the region that the caret would be drawn in.
-		/// </summary>
-		/// <returns></returns>
-		public Rectangle GetDrawRegion()
-		{
-			// Get the coordinates on the screen and the height of the current line.
-			int lineHeight;
-			PointD point = Position.ToScreenCoordinates(displayContext, out lineHeight);
-			double x = point.X;
-			double y = point.Y;
-
-			// Translate the buffer coordinates into the screen visible coordinates.
-			y -= displayContext.BufferOffsetY;
-
-			// Shift the contents to compenstate for the margins.
-			x += displayContext.TextX;
-			x +=
-				displayContext.LineLayoutBuffer.GetLineStyle(
-					displayContext, Position.LineIndex).Left;
-
-			// Return the resulting rectangle.
-			return new Rectangle(x, y, 1, lineHeight);
-		}
 
 		/// <summary>
 		/// Draws the caret using the given context objects.
@@ -133,6 +104,31 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				// Restore the context.
 				context.Antialias = oldAntialias;
 			}
+		}
+
+		/// <summary>
+		/// Gets the region that the caret would be drawn in.
+		/// </summary>
+		/// <returns></returns>
+		public Rectangle GetDrawRegion()
+		{
+			// Get the coordinates on the screen and the height of the current line.
+			int lineHeight;
+			PointD point = Position.ToScreenCoordinates(displayContext, out lineHeight);
+			double x = point.X;
+			double y = point.Y;
+
+			// Translate the buffer coordinates into the screen visible coordinates.
+			y -= displayContext.BufferOffsetY;
+
+			// Shift the contents to compenstate for the margins.
+			x += displayContext.TextX;
+			x +=
+				displayContext.LineLayoutBuffer.GetLineStyle(
+					displayContext, Position.LineIndex).Left;
+
+			// Return the resulting rectangle.
+			return new Rectangle(x, y, 1, lineHeight);
 		}
 
 		#endregion

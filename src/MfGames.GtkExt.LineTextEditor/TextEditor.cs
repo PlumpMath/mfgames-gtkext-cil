@@ -103,8 +103,8 @@ namespace MfGames.GtkExt.LineTextEditor
 			controller = new TextEditorController(this);
 			wordSplitter = new OffsetWordSplitter();
 
-		    controller.BeginAction += OnBeginAction;
-		    controller.EndAction += OnEndAction;
+			controller.BeginAction += OnBeginAction;
+			controller.EndAction += OnEndAction;
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -240,28 +240,17 @@ namespace MfGames.GtkExt.LineTextEditor
 			get { return caret; }
 		}
 
-        /// <summary>
-        /// Called when an action begins.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void OnBeginAction(object sender, EventArgs args)
-        {
-            requestedRedraw = false;
-        }
-
-        /// <summary>
-        /// Called when an action ends.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void OnEndAction(object sender, EventArgs args)
-        {
-            if (requestedRedraw)
-            {
-                QueueDraw();
-            }
-        }
+		/// <summary>
+		/// Called when an action begins.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnBeginAction(
+			object sender,
+			EventArgs args)
+		{
+			requestedRedraw = false;
+		}
 
 		/// <summary>
 		/// Called when the user presses a button.
@@ -274,6 +263,21 @@ namespace MfGames.GtkExt.LineTextEditor
 			var point = new PointD(e.X, e.Y);
 
 			return controller.HandleMousePress(point, e.Button, e.State);
+		}
+
+		/// <summary>
+		/// Called when an action ends.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnEndAction(
+			object sender,
+			EventArgs args)
+		{
+			if (requestedRedraw)
+			{
+				QueueDraw();
+			}
 		}
 
 		/// <summary>
@@ -295,11 +299,11 @@ namespace MfGames.GtkExt.LineTextEditor
 			return controller.HandleKeypress(key, unicodeChar, modifier);
 		}
 
-        /// <summary>
-        /// Called when the line changed.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="args">The args.</param>
+		/// <summary>
+		/// Called when the line changed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The args.</param>
 		private void OnLineChanged(
 			object sender,
 			LineChangedArgs args)
@@ -310,6 +314,8 @@ namespace MfGames.GtkExt.LineTextEditor
 		#endregion
 
 		#region Rendering Events
+
+		private bool requestedRedraw;
 
 		/// <summary>
 		/// Gets the width of the area that can be used for rendering text.
@@ -427,20 +433,20 @@ namespace MfGames.GtkExt.LineTextEditor
 			return true;
 		}
 
-        /// <summary>
-        /// Requests a redraw of a specific area on the screen.
-        /// </summary>
-        public void RequestRedraw()
-        {
-            if (controller.InAction)
-            {
-                requestedRedraw = true;
-            }
-            else
-            {
-                QueueDraw();
-            }
-        }
+		/// <summary>
+		/// Requests a redraw of a specific area on the screen.
+		/// </summary>
+		public void RequestRedraw()
+		{
+			if (controller.InAction)
+			{
+				requestedRedraw = true;
+			}
+			else
+			{
+				QueueDraw();
+			}
+		}
 
 		/// <summary>
 		/// Requests a redraw of a specific area on the screen.
@@ -448,10 +454,8 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <param name="region">The region.</param>
 		public void RequestRedraw(Rectangle region)
 		{
-            RequestRedraw();
+			RequestRedraw();
 		}
-
-	    private bool requestedRedraw;
 
 		#endregion
 
@@ -553,8 +557,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				verticalAdjustment.Value += difference;
 			}
 
-            // Redraw the screen.
-		    RequestRedraw();
+			// Redraw the screen.
+			RequestRedraw();
 		}
 
 		/// <summary>

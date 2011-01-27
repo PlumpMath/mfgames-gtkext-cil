@@ -192,10 +192,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public void GetLineLayoutRange(IDisplayContext displayContext,
-		                               Rectangle viewArea,
-		                               out int startLine,
-		                               out int endLine)
+		public void GetLineLayoutRange(
+			IDisplayContext displayContext,
+			Rectangle viewArea,
+			out int startLine,
+			out int endLine)
 		{
 			// Reset the start line to negative to indicate we don't have a
 			// visible line yet.

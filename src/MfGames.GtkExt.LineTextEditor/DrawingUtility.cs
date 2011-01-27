@@ -81,7 +81,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Get the context and save settings because we use anti-aliasing
 			// to get a sharper line.
 			Context cairoContext = renderContext.CairoContext;
-			var oldAntialias = cairoContext.Antialias;
+			Antialias oldAntialias = cairoContext.Antialias;
 
 			try
 			{
@@ -167,7 +167,8 @@ namespace MfGames.GtkExt.LineTextEditor
 			string text,
 			Color color)
 		{
-			return String.Format("<span color=\"#{1}\">{0}</span>", text, color.ToRgbHexString());
+			return String.Format(
+				"<span color=\"#{1}\">{0}</span>", text, color.ToRgbHexString());
 		}
 	}
 }
