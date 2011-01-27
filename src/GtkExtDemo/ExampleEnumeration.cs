@@ -30,7 +30,7 @@ using System.ComponentModel;
 
 namespace GtkExtDemo
 {
-	public enum TestEnum
+	public enum ExampleEnumeration
 	{
 		[Description("Short Name")]
 		ShortName,

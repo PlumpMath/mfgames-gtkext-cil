@@ -55,9 +55,9 @@ namespace GtkExtDemo
 			table.Attach(row++, "EnumComboBox", ecb);
 
 			// An unexpanded described
-			testEnumCombo = new EnumComboBox(typeof(TestEnum));
+			testEnumCombo = new EnumComboBox(typeof(ExampleEnumeration));
 			testEnumCombo.Changed += OnTestEnumChanged;
-			table.Attach(row++, "Enum.ComboBox TestEnum", testEnumCombo);
+			table.Attach(row++, "Enum.ComboBox ExampleEnumeration", testEnumCombo);
 
 			// Add the string entry
 			var sle = new StringListEntry();
@@ -84,7 +84,7 @@ namespace GtkExtDemo
 		{
 			Demo.Statusbar.Push(
 				0,
-				"TestEnum: " + testEnumCombo.ActiveEnum + " (" + testEnumCombo.Active + ")");
+				"ExampleEnumeration: " + testEnumCombo.ActiveEnum + " (" + testEnumCombo.Active + ")");
 		}
 
 		#endregion

@@ -36,7 +36,7 @@
     <Compile Include="DemoComponents.cs" />
     <Compile Include="LineTextEditor\DemoLineTextEditor.cs" />
     <Compile Include="LineTextEditor\PatternLineBuffer.cs" />
-    <Compile Include="TestEnum.cs" />
+    <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor\MfGames.GtkExt.LineTextEditor.csproj">
