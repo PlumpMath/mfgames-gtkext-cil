@@ -55,7 +55,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
             IDisplayContext displayContext = actionContext.DisplayContext;
             BufferPosition position = displayContext.Caret.Position;
 
-            if (position.LineIndex == 0 && position.CharacterIndex == 0)
+            if (position.IsBeginningOfBuffer(actionContext.DisplayContext))
             {
                 // We are in the beginning of the buffer, so we don't do anything.
                 return;
@@ -108,7 +108,63 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
             displayContext.ScrollToCaret();
         }
 
-	    /// <summary>
+        /// <summary>
+        /// Deletes the character to the right.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        [Action]
+        [KeyBinding(Key.Delete)]
+        public static void Delete(IActionContext actionContext)
+        {
+            // Get the position in the buffer.
+            IDisplayContext displayContext = actionContext.DisplayContext;
+            BufferPosition position = displayContext.Caret.Position;
+
+            if (position.IsEndOfBuffer(actionContext.DisplayContext))
+            {
+                // We are in the end of the buffer, so we don't do anything.
+                return;
+            }
+
+            // If we are at the beginning of the line, then we are combining paragraphs.
+            ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+            string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+
+            if (position.CharacterIndex == lineText.Length)
+            {
+                // This is the end of a paragraph and not the first one in
+                // the buffer. This operation combines the text of the two paragraphs
+                // together.
+                string nextText =
+                    lineLayoutBuffer.GetLineText(position.LineIndex + 1);
+                string newText = lineText + nextText;
+
+                // Set up the operations.
+                var delete = new DeleteLinesOperation(position.LineIndex + 1, 1);
+                var join = new SetTextOperation(position.LineIndex, newText);
+
+                // Perform the actions.
+                actionContext.Do(delete);
+                actionContext.Do(join);
+            }
+            else
+            {
+                // This is a single-line manipulation, so delete the character.
+                lineText = lineText.Substring(0, position.CharacterIndex) +
+                           lineText.Substring(position.CharacterIndex + 1);
+
+                // Create the set text operation.
+                var operation = new SetTextOperation(
+                    position.LineIndex, lineText);
+
+                // Perform the action.
+                actionContext.Do(operation);
+            }
+
+            // We don't need to scroll since the caret isn't moving.
+        }
+
+        /// <summary>
 		/// Inserts the paragraph at the current buffer position.
 		/// </summary>
 		/// <param name="actionContext">The action context.</param>
