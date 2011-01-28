@@ -264,15 +264,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Move to the end of the wrapped line. If this isn't the last, we
 			// need to shift back one character.
-			int characterIndex = wrappedLine.StartIndex + wrappedLine.Length;
+			int wrappedCharacterIndex = wrappedLine.StartIndex + wrappedLine.Length;
 
 			if (wrappedLineIndex != layout.LineCount - 1)
 			{
-				characterIndex--;
+				wrappedCharacterIndex--;
 			}
 
 			// Return if these are equal.
-			return CharacterIndex == characterIndex;
+			return CharacterIndex == wrappedCharacterIndex;
 		}
 
 		/// <summary>
@@ -428,20 +428,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			BlockStyle style = buffer.GetLineStyle(displayContext, LineIndex);
 
 			// Figure out the top of the current line in relation to the entire
-			// buffer and view.
-			double y;
-
-			if (LineIndex == 0)
-			{
-				y = 0;
-			}
-			else
-			{
-				// We use GetLineLayoutHeight because it also takes into account
-				// the line spacing and borders which we would have to calculate
-				// otherwise.
-				y = buffer.GetLineLayoutHeight(displayContext, 0, LineIndex - 1);
-			}
+			// buffer and view. For lines beyond the first, we use
+			// GetLineLayoutHeight because it also takes into account the line 
+			// spacing and borders which we would have to calculate otherwise.
+			double y = LineIndex == 0
+			           	? 0
+			           	: buffer.GetLineLayoutHeight(displayContext, 0, LineIndex - 1);
 
 			// Add the style offset for the top-padding.
 			y += style.Top;
@@ -482,6 +474,141 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Return the results.
 			return new PointD(Units.ToPixels(layoutX), y);
+		}
+
+		#endregion
+
+		#region Operators
+
+		/// <summary>
+		/// Determines if two positions are equal.
+		/// </summary>
+		/// <param name="other">The other.</param>
+		/// <returns></returns>
+		public bool Equals(BufferPosition other)
+		{
+			return other.characterIndex == characterIndex && other.lineIndex == lineIndex;
+		}
+
+		/// <summary>
+		/// Indicates whether this instance and a specified object are equal.
+		/// </summary>
+		/// <param name="obj">Another object to compare to.</param>
+		/// <returns>
+		/// true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false.
+		/// </returns>
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+			if (obj.GetType() != typeof(BufferPosition))
+			{
+				return false;
+			}
+			return Equals((BufferPosition) obj);
+		}
+
+		/// <summary>
+		/// Returns the hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A 32-bit signed integer that is the hash code for this instance.
+		/// </returns>
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (characterIndex * 397) ^ lineIndex;
+			}
+		}
+
+		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator ==(BufferPosition a,
+		                               BufferPosition b)
+		{
+			return a.Equals(b);
+		}
+
+		/// <summary>
+		/// Implements the operator &gt;.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator >(BufferPosition a,
+		                              BufferPosition b)
+		{
+			return !(a < b);
+		}
+
+		/// <summary>
+		/// Implements the operator &gt;=.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator >=(BufferPosition a,
+		                               BufferPosition b)
+		{
+			return a > b || a == b;
+		}
+
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator !=(BufferPosition a,
+		                               BufferPosition b)
+		{
+			return !a.Equals(b);
+		}
+
+		/// <summary>
+		/// Implements the operator &lt;.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator <(BufferPosition a,
+		                              BufferPosition b)
+		{
+			if (a.lineIndex < b.lineIndex)
+			{
+				return true;
+			}
+
+			if (a.lineIndex > b.lineIndex)
+			{
+				return false;
+			}
+
+			if (a.characterIndex < b.CharacterIndex)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Implements the operator &lt;=.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator <=(BufferPosition a,
+		                               BufferPosition b)
+		{
+			return a < b || a == b;
 		}
 
 		#endregion
