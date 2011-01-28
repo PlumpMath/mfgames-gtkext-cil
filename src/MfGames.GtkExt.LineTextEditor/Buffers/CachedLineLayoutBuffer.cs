@@ -324,11 +324,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
 
-			// If we got a negative line, then set it to the end.
-			if (endLineIndex == -1)
-			{
-				endLineIndex = LineCount - 1;
-			}
+			// Normalize the end line so we don't go over our bounds.
+			endLineIndex = Math.Min(endLineIndex, LineCount - 1);
 
 			// Go through the windows and find the starting one.
 			int startingWindowIndex = GetWindowIndex(startLineIndex);

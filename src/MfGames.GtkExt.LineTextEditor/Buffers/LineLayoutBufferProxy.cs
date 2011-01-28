@@ -109,8 +109,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Gets the pixel height of the lines in the buffer. If endLine is -1
-		/// it means the last line in the buffer.
+		/// Gets the pixel height of the lines in the buffer. 
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
 		/// <param name="startLineIndex">The start line.</param>

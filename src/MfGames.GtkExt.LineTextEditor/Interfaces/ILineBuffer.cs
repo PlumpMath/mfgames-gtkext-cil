@@ -51,7 +51,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <summary>
 		/// Gets the length of the line.
 		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer or -1 for the last line.</param>
+		/// <param name="lineIndex">The line index in the buffer.</param>
 		/// <returns>The length of the line.</returns>
 		int GetLineLength(int lineIndex);
 

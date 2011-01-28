@@ -22,6 +22,12 @@
 
 #endregion
 
+#region Namespaces
+
+using System;
+
+#endregion
+
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {
 	/// <summary>
@@ -39,7 +45,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 			this ILineBuffer lineBuffer,
 			int lineIndex)
 		{
-			return lineBuffer.GetLineText(lineIndex, 0, -1);
+			return lineBuffer.GetLineText(lineIndex, 0, Int32.MaxValue);
 		}
 	}
 }

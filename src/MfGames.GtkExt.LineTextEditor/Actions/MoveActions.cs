@@ -251,7 +251,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			double bufferY =
 				Math.Min(
 					point.Y + displayContext.VerticalAdjustment.PageSize,
-					displayContext.LineLayoutBuffer.GetLineLayoutHeight(displayContext, 0, -1));
+					displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+						displayContext, 0, Int32.MaxValue));
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
@@ -349,8 +350,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Get the text and line for the position in question.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			string text = displayContext.LineLayoutBuffer.GetLineText(
-				position.LineIndex, 0, -1);
+			string text = displayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
 
 			// If there is no right boundary, we move down a line.
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(

@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -61,7 +63,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			IDisplayContext displayContext,
 			int lineIndex)
 		{
-			string text = GetLineText(lineIndex, 0, -1);
+			string text = GetLineText(lineIndex, 0, Int32.MaxValue);
 
 			return PangoUtility.Escape(text);
 		}

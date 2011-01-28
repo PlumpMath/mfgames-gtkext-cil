@@ -118,8 +118,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Gets the pixel height of the lines in the buffer. If endLine is -1
-		/// it means the last line in the buffer.
+		/// Gets the pixel height of the lines in the buffer.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
 		/// <param name="startLineIndex">The start line.</param>
@@ -136,14 +135,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				return 0;
 			}
 
-			// Normalize the last line, if we have one. If we have -1, then
-			// go to the end. If we are past the line count, then cap it
-			// by the line count.
-			if (endLineIndex == -1)
-			{
-				endLineIndex = LineCount - 1;
-			}
-
+			// The endLineIndex can be beyond the end of the buffer's lines, so
+			// cap it by the buffer.
 			endLineIndex = Math.Min(endLineIndex, LineCount - 1);
 
 			// Get a total of all the heights.

@@ -90,7 +90,7 @@ namespace GtkExtDemo.LineTextEditor
 
 		public int GetLineLength(int lineIndex)
 		{
-			return GetLineText(lineIndex, 0, -1).Length;
+			return GetLineText(lineIndex, 0, Int32.MaxValue).Length;
 		}
 
 		public string GetLineNumber(int lineIndex)

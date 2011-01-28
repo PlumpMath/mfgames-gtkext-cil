@@ -63,7 +63,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			for (int line = 0; line < lineCount; line++)
 			{
-				lines.Add(buffer.GetLineText(line, 0, -1));
+				lines.Add(buffer.GetLineText(line, 0, Int32.MaxValue));
 			}
 		}
 
@@ -110,17 +110,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// If we are from 0 to -1, then we want the entire string and don't
 			// need to do anything else.
-			if (startIndex == 0 && endIndex == -1)
+			if (startIndex == 0 && endIndex >= text.Length)
 			{
 				return text;
 			}
 
-			// Make sure the indexes are normalized. The end index can be -1 which
-			// means the end of the string.
-			if (endIndex == -1)
-			{
-				endIndex = text.Length;
-			}
+			// Make sure the indexes are normalized. The end index can be beyond
+			// the limits of the string.
+			endIndex = Math.Min(endIndex, text.Length);
 
 			if (startIndex < 0)
 			{

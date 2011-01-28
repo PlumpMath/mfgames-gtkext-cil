@@ -581,7 +581,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Set the line buffer's width and then request the height for all
 			// the lines in the buffer.
 			lineLayoutBuffer.Width = TextWidth;
-			int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, -1);
+			int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, Int32.MaxValue);
 
 			// Set the adjustments based on those values.
 			int lineHeight = lineLayoutBuffer.GetLineLayoutHeight(this);

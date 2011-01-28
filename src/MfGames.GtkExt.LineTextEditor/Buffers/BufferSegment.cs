@@ -136,7 +136,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			if (lineIndex > startPosition.LineIndex && lineIndex < endPosition.LineIndex)
 			{
 				startCharacterIndex = 0;
-				endCharacterIndex = -1;
+				endCharacterIndex = Int32.MaxValue;
 				return true;
 			}
 

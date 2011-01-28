@@ -60,6 +60,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 						// Add the text to format our selection.
 						buffer.Append("<span background='#CCCCFF'>");
+
+						// Mark that we are in the selection.
+						inSelection = true;
 					}
 
 					// Check to see if we are at the end of the selection.
@@ -70,6 +73,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 						buffer.Append("</span>");
 
 						// Apply the spans that should have existed here.
+
+						// Leave the selection so we don't close it twice.
+						inSelection = false;
 					}
 
 					// Add the character to the buffer.
@@ -77,7 +83,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				}
 
 				// If the end index is -1, then we finish up the spans at the end.
-				if (endCharacterIndex == -1)
+				if (inSelection)
 				{
 					// Remove any spans currently in effect for the selection.
 					buffer.Append("</span>");
