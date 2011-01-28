@@ -31,8 +31,45 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	{
 		#region Properties
 
-		public BufferPosition EndPosition { get; set; }
-		public BufferPosition StartPosition { get; set; }
+		/// <summary>
+		/// Gets or sets the anchor (or beginning) of the selection.
+		/// </summary>
+		/// <value>The anchor position.</value>
+		public BufferPosition AnchorPosition { get; set; }
+
+		/// <summary>
+		/// Gets the highest position between the anchor and tail.
+		/// </summary>
+		/// <value>The end position.</value>
+		public BufferPosition EndPosition
+		{
+			get { return AnchorPosition > TailPosition ? AnchorPosition : TailPosition; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this segment is empty.
+		/// </summary>
+		/// <value><c>true</c> if this instance is empty; otherwise, <c>false</c>.</value>
+		public bool IsEmpty
+		{
+			get { return AnchorPosition == TailPosition; }
+		}
+
+		/// <summary>
+		/// Gets the start position which is defined as the lessor of the anchor
+		/// or tail.
+		/// </summary>
+		/// <value>The start position.</value>
+		public BufferPosition StartPosition
+		{
+			get { return AnchorPosition < TailPosition ? AnchorPosition : TailPosition; }
+		}
+
+		/// <summary>
+		/// Gets or sets the tail position (end) of the selection.
+		/// </summary>
+		/// <value>The tail position.</value>
+		public BufferPosition TailPosition { get; set; }
 
 		#endregion
 	}

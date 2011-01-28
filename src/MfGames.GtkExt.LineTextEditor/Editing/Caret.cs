@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System.Diagnostics;
+
 using Cairo;
 
 using MfGames.GtkExt.Extensions.Cairo;
@@ -53,15 +55,34 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 		#endregion
 
-		#region Position
+		#region Position and Range
 
 		private readonly IDisplayContext displayContext;
+
+		private BufferSegment selection;
 
 		/// <summary>
 		/// Gets or sets the buffer position of the caret.
 		/// </summary>
 		/// <value>The buffer position.</value>
-		public BufferPosition Position { get; set; }
+		public BufferPosition Position
+		{
+			[DebuggerStepThrough]
+			get { return selection.TailPosition; }
+			[DebuggerStepThrough]
+			set { selection.TailPosition = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the selection which also represents the caret at the
+		/// tail.
+		/// </summary>
+		/// <value>The selection.</value>
+		public BufferSegment Selection
+		{
+			get { return selection; }
+			set { selection = value; }
+		}
 
 		#endregion
 
