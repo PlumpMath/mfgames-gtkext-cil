@@ -71,6 +71,7 @@
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />
     <Compile Include="Buffers\OffsetWordSplitter.cs" />
     <Compile Include="Buffers\SimpleLineLayoutBuffer.cs" />
+    <Compile Include="Buffers\SimpleSelectionLineMarkupBuffer.cs" />
     <Compile Include="Buffers\UnformattedLineMarkupBuffer.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandCollection.cs" />

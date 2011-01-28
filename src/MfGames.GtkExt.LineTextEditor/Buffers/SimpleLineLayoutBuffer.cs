@@ -87,7 +87,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			var layout = new Layout(displayContext.PangoContext);
 
 			displayContext.SetLayout(layout, displayContext.Theme.TextBlockStyle);
-			layout.SetMarkup(GetLineMarkup(lineIndex));
+			layout.SetMarkup(GetLineMarkup(displayContext, lineIndex));
 
 			return layout;
 		}

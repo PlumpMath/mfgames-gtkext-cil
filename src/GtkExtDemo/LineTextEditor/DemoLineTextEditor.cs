@@ -50,8 +50,10 @@ namespace GtkExtDemo.LineTextEditor
 			// Create an unformatted markup buffer and simple layout with a cache.
 			ILineMarkupBuffer lineMarkupBuffer =
 				new UnformattedLineMarkupBuffer(lineBuffer);
+			ILineMarkupBuffer selectionMarkupBuffer =
+				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
 			ILineLayoutBuffer lineLayoutBuffer =
-				new SimpleLineLayoutBuffer(lineMarkupBuffer);
+				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
 			ILineLayoutBuffer cachedLayoutBuffer =
 				new CachedLineLayoutBuffer(lineLayoutBuffer);
 
