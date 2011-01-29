@@ -59,7 +59,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public string GetLineMarkup(
+		public virtual string GetLineMarkup(
 			IDisplayContext displayContext,
 			int lineIndex)
 		{
@@ -74,7 +74,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The text editor.</param>
 		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
-		public BlockStyle GetLineStyle(
+		public virtual BlockStyle GetLineStyle(
 			IDisplayContext displayContext,
 			int lineIndex)
 		{

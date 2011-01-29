@@ -53,11 +53,20 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				return -1;
 			}
 
-			// Go through the character string until we find a boundary.
-			bool hasSpace = text[characterIndex] == ' ';
+			// Check the starting character. If it is puncutation, then our
+			// next word is the next character.
+			char startingChar = text[characterIndex];
+			bool returnAfterWhitespace = false;
 
+			if (IsPunctuation(startingChar) || IsWhitespace(startingChar))
+			{
+				returnAfterWhitespace = true;
+			}
+
+			// Go through the character string until we find a boundary.
 			for (int index = characterIndex + 1; index < text.Length; index++)
 			{
+				// If we go to punctuation, then we are done looking.
 				if (IsPunctuation(text[index]))
 				{
 					return index;
@@ -65,13 +74,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 				if (IsWhitespace(text[index]))
 				{
-					hasSpace = true;
+					returnAfterWhitespace = true;
 				}
 				else
 				{
 					// If we are here, we have a non-whitespace or punctuation
 					// character.
-					if (hasSpace)
+					if (returnAfterWhitespace)
 					{
 						return index;
 					}
@@ -99,27 +108,35 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				return -1;
 			}
 
-			// Go through the character string until we find a boundary. It uses
-			// the same rules, but we can't include ourselves.
-			bool hasSpace = text[characterIndex - 1] == ' ';
+			// Get the starting character's state, which uses slightly different
+			// rules.
+			char startingChar = text[characterIndex - 1];
+			bool hasCharacter = !IsWhitespace(startingChar);
+			bool initialWhitespace = !hasCharacter;
 
+			if (IsPunctuation(startingChar))
+			{
+				return characterIndex - 1;
+			}
+
+			// Loop through the the remaining characters.
 			for (int index = characterIndex - 1; index >= 0; index--)
 			{
 				if (IsPunctuation(text[index]))
 				{
-					return index;
+					return initialWhitespace && !hasCharacter ? index : index + 1;
 				}
 
 				if (IsWhitespace(text[index]))
 				{
-					if (hasSpace)
-					{
-						hasSpace = false;
-					}
-					else
+					if (hasCharacter)
 					{
 						return index + 1;
 					}
+				}
+				else
+				{
+					hasCharacter = true;
 				}
 			}
 
@@ -148,6 +165,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				case '(':
 				case ')':
 				case '-':
+				case '>':
+				case '<':
 					return true;
 				default:
 					return false;
