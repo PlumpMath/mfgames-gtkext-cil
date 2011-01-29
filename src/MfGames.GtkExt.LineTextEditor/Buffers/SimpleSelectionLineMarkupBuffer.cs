@@ -1,6 +1,34 @@
+#region Copyright and License
+
+// Copyright (c) 2009-2011, Moonfire Games
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+#region Namespaces
+
 using System.Text;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+#endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
@@ -31,23 +59,28 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public override string GetLineMarkup(IDisplayContext displayContext, int lineIndex)
+		public override string GetLineMarkup(
+			IDisplayContext displayContext,
+			int lineIndex)
 		{
 			// Get the line markup from the underlying buffer.
 			string markup = base.GetLineMarkup(displayContext, lineIndex);
 
 			// Check to see if we are in the selection.
 			int startCharacterIndex, endCharacterIndex;
-			bool containsLine = displayContext.Caret.Selection.ContainsLine(lineIndex, out startCharacterIndex, out endCharacterIndex);
+			bool containsLine = displayContext.Caret.Selection.ContainsLine(
+				lineIndex, out startCharacterIndex, out endCharacterIndex);
 
 			if (containsLine)
 			{
 				// Loop through the markup and strip off the existing markup
 				// for the selection area.
-				StringBuilder buffer = new StringBuilder();
+				var buffer = new StringBuilder();
 				bool inSelection = false;
 
-				for (int characterIndex = 0; characterIndex < markup.Length; characterIndex++)
+				for (int characterIndex = 0;
+				     characterIndex < markup.Length;
+				     characterIndex++)
 				{
 					// Pull out the character we are processing.
 					char c = markup[characterIndex];
@@ -98,6 +131,5 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		#endregion
-
 	}
 }

@@ -41,7 +41,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets or sets the anchor (or beginning) of the selection.
 		/// </summary>
 		/// <value>The anchor position.</value>
-		public BufferPosition AnchorPosition { get; set; }
+		public BufferPosition AnchorPosition;
+
+		/// <summary>
+		/// Gets or sets the tail position (end) of the selection.
+		/// </summary>
+		/// <value>The tail position.</value>
+		public BufferPosition TailPosition;
 
 		/// <summary>
 		/// Gets the highest position between the anchor and tail.
@@ -70,12 +76,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			get { return AnchorPosition < TailPosition ? AnchorPosition : TailPosition; }
 		}
-
-		/// <summary>
-		/// Gets or sets the tail position (end) of the selection.
-		/// </summary>
-		/// <value>The tail position.</value>
-		public BufferPosition TailPosition { get; set; }
 
 		#endregion
 
@@ -140,6 +140,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				return true;
 			}
 
+			// See if the start and end are on the same line.
+			if (startPosition.LineIndex == endPosition.LineIndex)
+			{
+				startCharacterIndex = startPosition.CharacterIndex;
+				endCharacterIndex = endPosition.CharacterIndex;
+				return true;
+			}
+
 			// Check the start of the line.
 			if (lineIndex == startPosition.LineIndex)
 			{
@@ -189,6 +197,81 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Check for the range.
 			return position.CharacterIndex >= startCharacterIndex &&
 			       position.CharacterIndex <= endCharacterIndex;
+		}
+
+		#endregion
+
+		#region Operators
+
+		/// <summary>
+		/// Compares this segment to another one.
+		/// </summary>
+		/// <param name="other">The other.</param>
+		/// <returns></returns>
+		public bool Equals(BufferSegment other)
+		{
+			return other.AnchorPosition.Equals(AnchorPosition) &&
+			       other.TailPosition.Equals(TailPosition);
+		}
+
+		/// <summary>
+		/// Indicates whether this instance and a specified object are equal.
+		/// </summary>
+		/// <param name="obj">Another object to compare to.</param>
+		/// <returns>
+		/// true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false.
+		/// </returns>
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
+
+			if (obj.GetType() != typeof(BufferSegment))
+			{
+				return false;
+			}
+
+			return Equals((BufferSegment) obj);
+		}
+
+		/// <summary>
+		/// Returns the hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A 32-bit signed integer that is the hash code for this instance.
+		/// </returns>
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (AnchorPosition.GetHashCode() * 397) ^ TailPosition.GetHashCode();
+			}
+		}
+
+		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator ==(BufferSegment a,
+		                               BufferSegment b)
+		{
+			return a.Equals(b);
+		}
+
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="a">A.</param>
+		/// <param name="b">The b.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator !=(BufferSegment a,
+		                               BufferSegment b)
+		{
+			return !a.Equals(b);
 		}
 
 		#endregion

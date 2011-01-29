@@ -24,6 +24,7 @@
 
 #region Namespaces
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
@@ -57,6 +58,17 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		BlockStyle GetLineStyle(
 			IDisplayContext displayContext,
 			int lineIndex);
+
+		#endregion
+
+		#region Selections
+
+		/// <summary>
+		/// Updates the caret/selection on screen.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="previousSelection">The previous selection.</param>
+		void UpdateSelection(IDisplayContext displayContext, BufferSegment previousSelection);
 
 		#endregion
 	}

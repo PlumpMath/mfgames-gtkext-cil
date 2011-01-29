@@ -82,5 +82,21 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		#endregion
+
+		#region Selections
+
+		/// <summary>
+		/// Updates the caret/selection on screen.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="previousSelection">The previous selection.</param>
+		public virtual void UpdateSelection(
+			IDisplayContext displayContext,
+			BufferSegment previousSelection)
+		{
+			// We don't do anything with this buffer.
+		}
+
+		#endregion
 	}
 }

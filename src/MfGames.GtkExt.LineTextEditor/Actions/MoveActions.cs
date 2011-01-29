@@ -49,6 +49,54 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 	[ActionFixture]
 	public static class MoveActions
 	{
+		#region Cursor Movement
+
+		/// <summary>
+		/// Moves the caret to the end of the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_Home, ModifierType.ControlMask)]
+		[KeyBinding(Key.Home, ModifierType.ControlMask)]
+		public static void BeginningOfBuffer(IActionContext actionContext)
+		{
+			// Redraw the previous area of the caret.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+
+			// Queue a draw of the old caret position.
+			Caret caret = displayContext.Caret;
+
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			caret.Position = caret.Position.ToBeginningOfBuffer(displayContext);
+			displayContext.ScrollToCaret();
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+		}
+
+		/// <summary>
+		/// Moves the caret to the end of the visible line.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_Home)]
+		[KeyBinding(Key.Home)]
+		public static void BeginningOfWrappedLine(IActionContext actionContext)
+		{
+			// Redraw the previous area of the caret.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+
+			// Queue a draw of the old caret position.
+			Caret caret = displayContext.Caret;
+
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			caret.Position = caret.Position.ToBeginningOfWrappedLine(displayContext);
+			displayContext.ScrollToCaret();
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+		}
+
 		/// <summary>
 		/// Moves the caret down one line.
 		/// </summary>
@@ -110,6 +158,52 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Draw the new location of the caret.
 			displayContext.ScrollToCaret();
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+		}
+
+		/// <summary>
+		/// Moves the caret to the end of the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_End, ModifierType.ControlMask)]
+		[KeyBinding(Key.End, ModifierType.ControlMask)]
+		public static void EndOfBuffer(IActionContext actionContext)
+		{
+			// Redraw the previous area of the caret.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+
+			// Queue a draw of the old caret position.
+			Caret caret = displayContext.Caret;
+
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			caret.Position = caret.Position.ToEndOfBuffer(displayContext);
+			displayContext.ScrollToCaret();
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+		}
+
+		/// <summary>
+		/// Moves the caret to the end of the line.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.KP_End)]
+		[KeyBinding(Key.End)]
+		public static void EndOfWrappedLine(IActionContext actionContext)
+		{
+			// Redraw the previous area of the caret.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+
+			// Queue a draw of the old caret position.
+			Caret caret = displayContext.Caret;
+
+			displayContext.RequestRedraw(caret.GetDrawRegion());
+
+			// Move the cursor and redraw the area.
+			caret.Position = caret.Position.ToEndOfWrappedLine(displayContext);
+			displayContext.ScrollToCaret();
+			displayContext.RequestRedraw(caret.GetDrawRegion());
 		}
 
 		/// <summary>
@@ -440,104 +534,6 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 		}
 
-		#region End Of...
-
-		/// <summary>
-		/// Moves the caret to the end of the buffer.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		[Action]
-		[KeyBinding(Key.KP_End, ModifierType.ControlMask)]
-		[KeyBinding(Key.End, ModifierType.ControlMask)]
-		public static void EndOfBuffer(IActionContext actionContext)
-		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
-			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToEndOfBuffer(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-		}
-
-		/// <summary>
-		/// Moves the caret to the end of the line.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		[Action]
-		[KeyBinding(Key.KP_End)]
-		[KeyBinding(Key.End)]
-		public static void EndOfWrappedLine(IActionContext actionContext)
-		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
-			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToEndOfWrappedLine(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-		}
-
-		#endregion
-
-		#region Beginning Of...
-
-		/// <summary>
-		/// Moves the caret to the end of the buffer.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		[Action]
-		[KeyBinding(Key.KP_Home, ModifierType.ControlMask)]
-		[KeyBinding(Key.Home, ModifierType.ControlMask)]
-		public static void BeginningOfBuffer(IActionContext actionContext)
-		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
-			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToBeginningOfBuffer(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-		}
-
-		/// <summary>
-		/// Moves the caret to the end of the visible line.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		[Action]
-		[KeyBinding(Key.KP_Home)]
-		[KeyBinding(Key.Home)]
-		public static void BeginningOfWrappedLine(IActionContext actionContext)
-		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
-			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToBeginningOfWrappedLine(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-		}
-
 		#endregion
 
 		#region Coordinates
@@ -583,6 +579,188 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Move to and draw the caret.
 			displayContext.ScrollToCaret();
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+		}
+
+		#endregion
+
+		#region Selection
+
+		/// <summary>
+		/// Performs an action that handles a move action coupled with an
+		/// extend or set selection.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		/// <param name="action">The action.</param>
+		private static void SelectAction(
+			IActionContext actionContext,
+			Action<IActionContext> action)
+		{
+			// Grab the anchor position of the selection since that will
+			// remain the same after the command.
+			Caret caret = actionContext.DisplayContext.Caret;
+			BufferPosition anchorPosition = caret.Selection.AnchorPosition;
+
+			// Perform the move command.
+			action(actionContext);
+
+			// Restore the anchor position which will extend the selection back.
+			caret.Selection.AnchorPosition = anchorPosition;
+		}
+
+		/// <summary>
+		/// Expands the selection to the beginning of the buffer.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Home, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		[KeyBinding(Key.Home, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		public static void SelectBeginningOfBuffer(IActionContext actionContext)
+		{
+			SelectAction(actionContext, BeginningOfBuffer);
+		}
+
+		/// <summary>
+		/// Expands the selection to the beginning of the line.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Home, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Home, ModifierType.ShiftMask)]
+		public static void SelectBeginningOfWrappedLine(IActionContext actionContext)
+		{
+			SelectAction(actionContext, BeginningOfWrappedLine);
+		}
+
+		/// <summary>
+		/// Expands the selection down one line.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Down, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Down, ModifierType.ShiftMask)]
+		public static void SelectDown(IActionContext actionContext)
+		{
+			SelectAction(actionContext, Down);
+		}
+
+		/// <summary>
+		/// Expands the selection to the end of the buffer.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_End, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		[KeyBinding(Key.End, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		public static void SelectEndOfBuffer(IActionContext actionContext)
+		{
+			SelectAction(actionContext, EndOfBuffer);
+		}
+
+		/// <summary>
+		/// Expands the selection to the end of the line.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_End, ModifierType.ShiftMask)]
+		[KeyBinding(Key.End, ModifierType.ShiftMask)]
+		public static void SelectEndOfWrappedLine(IActionContext actionContext)
+		{
+			SelectAction(actionContext, EndOfWrappedLine);
+		}
+
+		/// <summary>
+		/// Expands the selection left one character.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Left, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Left, ModifierType.ShiftMask)]
+		public static void SelectLeft(IActionContext actionContext)
+		{
+			SelectAction(actionContext, Left);
+		}
+
+		/// <summary>
+		/// Expands the selection left one word.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Left, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		[KeyBinding(Key.Left, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		public static void SelectLeftWord(IActionContext actionContext)
+		{
+			SelectAction(actionContext, LeftWord);
+		}
+
+		/// <summary>
+		/// Expands the selection down one page.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Page_Down, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Page_Down, ModifierType.ShiftMask)]
+		public static void SelectPageDown(IActionContext actionContext)
+		{
+			SelectAction(actionContext, PageDown);
+		}
+
+		/// <summary>
+		/// Expands the selection up one page.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Page_Up, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Page_Up, ModifierType.ShiftMask)]
+		public static void SelectPageUp(IActionContext actionContext)
+		{
+			SelectAction(actionContext, PageUp);
+		}
+
+		/// <summary>
+		/// Expands the selection right one character.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Right, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Right, ModifierType.ShiftMask)]
+		public static void SelectRight(IActionContext actionContext)
+		{
+			SelectAction(actionContext, Right);
+		}
+
+		/// <summary>
+		/// Expands the selection right one word.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Right, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		[KeyBinding(Key.Right, ModifierType.ShiftMask | ModifierType.ControlMask)]
+		public static void SelectRightWord(IActionContext actionContext)
+		{
+			SelectAction(actionContext, RightWord);
+		}
+
+		/// <summary>
+		/// Expands the selection up one line.
+		/// </summary>
+		/// <param name="actionContext">The display context.</param>
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.KP_Up, ModifierType.ShiftMask)]
+		[KeyBinding(Key.Up, ModifierType.ShiftMask)]
+		public static void SelectUp(IActionContext actionContext)
+		{
+			SelectAction(actionContext, Up);
 		}
 
 		#endregion

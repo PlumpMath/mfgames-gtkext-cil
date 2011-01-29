@@ -953,5 +953,49 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		#endregion
+
+		#region Selection
+
+		/// <summary>
+		/// Updates the caret/selection on screen.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="previousSelection">The previous selection.</param>
+		public override void UpdateSelection(
+			IDisplayContext displayContext,
+			BufferSegment previousSelection)
+		{
+			// Clear out the cache for all the lines in the new and old selections.
+			BufferSegment currentSelection = displayContext.Caret.Selection;
+
+			for (int lineIndex = currentSelection.StartPosition.LineIndex;
+			     lineIndex <= currentSelection.EndPosition.LineIndex;
+			     lineIndex++)
+			{
+				// Get the window for the line change and reset that window.
+				int cachedWindowIndex = GetWindowIndex(lineIndex);
+				CachedWindow cachedWindow = windows[cachedWindowIndex];
+
+				cachedWindow.Reset();
+				Clear(cachedWindow);
+			}
+
+			for (int lineIndex = previousSelection.StartPosition.LineIndex;
+			     lineIndex <= previousSelection.EndPosition.LineIndex;
+			     lineIndex++)
+			{
+				// Get the window for the line change and reset that window.
+				int cachedWindowIndex = GetWindowIndex(lineIndex);
+				CachedWindow cachedWindow = windows[cachedWindowIndex];
+
+				cachedWindow.Reset();
+				Clear(cachedWindow);
+			}
+
+			// Call the base implementation.
+			base.UpdateSelection(displayContext, previousSelection);
+		}
+
+		#endregion
 	}
 }

@@ -38,6 +38,7 @@ using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Attributes;
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
@@ -154,10 +155,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 					var entry = new ActionEntry(action);
 
 					// Pull out the state objects and add them into the entry.
-					object[] states = method.GetCustomAttributes(
+					object[] actionStates = method.GetCustomAttributes(
 						typeof(ActionStateAttribute), false);
 
-					foreach (ActionStateAttribute actionState in states)
+					foreach (ActionStateAttribute actionState in actionStates)
 					{
 						entry.StateTypes.Add(actionState.StateType);
 					}
@@ -306,36 +307,42 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			                                  ModifierType.SuperMask);
 			int keyCode = GdkUtility.GetNormalizedKeyCode(key, filteredModifiers);
 
-			// Check to see if we have a binding for this action.
-			if (keyBindings.Contains(keyCode))
+			// Check to see if we have an action for this.
+			if (keyBindings.Contains(keyCode) ||
+			    (unicodeKey != 0 && modifier == ModifierType.None))
 			{
+				// Keep track of the original selection.
+				BufferSegment previousSelection = displayContext.Caret.Selection;
+
+				// Mark that we are starting a new action and fire events so
+				// other listeners and handle it.
 				InAction = true;
 
+				// Perform the appropriate action.
 				try
 				{
-					keyBindings[keyCode].Perform(this);
+					if (keyBindings.Contains(keyCode))
+					{
+						keyBindings[keyCode].Perform(this);
+					}
+					else if (unicodeKey != 0 && modifier == ModifierType.None)
+					{
+						TextActions.InsertText(this, (char) unicodeKey);
+					}
 				}
 				finally
 				{
 					InAction = false;
 				}
 
-				return true;
-			}
-
-			if (unicodeKey != 0 && modifier == ModifierType.None)
-			{
-				InAction = true;
-
-				try
+				// Check to see if the selection changed.
+				if (previousSelection != displayContext.Caret.Selection)
 				{
-					TextActions.InsertText(this, (char) unicodeKey);
-				}
-				finally
-				{
-					InAction = false;
+					displayContext.LineLayoutBuffer.UpdateSelection(
+						displayContext, previousSelection);
 				}
 
+				// We did something, so return processed.
 				return true;
 			}
 

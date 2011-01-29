@@ -50,7 +50,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		public Caret(IDisplayContext displayContext)
 		{
 			this.displayContext = displayContext;
-			selection.TailPosition = new BufferPosition(3, 10);
+			Selection.TailPosition = new BufferPosition(3, 10);
 		}
 
 		#endregion
@@ -59,7 +59,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 		private readonly IDisplayContext displayContext;
 
-		private BufferSegment selection;
+		/// <summary>
+		/// Contains the selection of the caret.
+		/// </summary>
+		public BufferSegment Selection;
 
 		/// <summary>
 		/// Gets or sets the buffer position of the caret.
@@ -68,24 +71,13 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		public BufferPosition Position
 		{
 			[DebuggerStepThrough]
-			get { return selection.TailPosition; }
+			get { return Selection.TailPosition; }
 			[DebuggerStepThrough]
 			set
 			{
-				selection.TailPosition = value;
-				selection.AnchorPosition = value;
+				Selection.TailPosition = value;
+				Selection.AnchorPosition = value;
 			}
-		}
-
-		/// <summary>
-		/// Gets or sets the selection which also represents the caret at the
-		/// tail.
-		/// </summary>
-		/// <value>The selection.</value>
-		public BufferSegment Selection
-		{
-			get { return selection; }
-			set { selection = value; }
 		}
 
 		#endregion
