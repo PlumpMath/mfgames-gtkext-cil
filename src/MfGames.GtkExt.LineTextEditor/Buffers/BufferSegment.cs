@@ -68,6 +68,17 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether this segment is entirely on one line.
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if this instance is same line; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsSameLine
+		{
+			get { return AnchorPosition.LineIndex == TailPosition.LineIndex; }
+		}
+
+		/// <summary>
 		/// Gets the start position which is defined as the lessor of the anchor
 		/// or tail.
 		/// </summary>

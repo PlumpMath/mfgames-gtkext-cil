@@ -107,6 +107,10 @@ namespace GtkExtDemo.LineTextEditor
 			// Build up a string buffer with the line text. This will always
 			// be no more than the width of the line.
 			var buffer = new StringBuilder();
+
+			buffer.AppendFormat("Line {0:N0}: ", lineIndex + 1);
+
+			// Create a patterned line with a varying length.
 			int index = lineIndex % Words.Length;
 			int lineWidth = width / (1 + lineIndex % divisor);
 

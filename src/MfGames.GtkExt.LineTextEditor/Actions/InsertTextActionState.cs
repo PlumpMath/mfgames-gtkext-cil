@@ -98,9 +98,9 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			get
 			{
-				// There is only one operation in the list and that is the
-				// set text operation.
-				return (SetTextOperation) Command.Operations[0];
+				// Even with the delete selection, the final operation will
+				// be the set text operation.
+				return (SetTextOperation) Command.Operations.Last;
 			}
 		}
 
