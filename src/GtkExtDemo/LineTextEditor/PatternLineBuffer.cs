@@ -120,6 +120,17 @@ namespace GtkExtDemo.LineTextEditor
 				string nextWord = Words[index];
 				index = (index + 1) % Words.Length;
 
+				// Scatter in some warnings and errors.
+				if (index == 0 && (lineIndex % 229) == 0)
+				{
+					nextWord = "error";
+				}
+
+				if (index == 0 && (lineIndex % 113) == 0)
+				{
+					nextWord = "warning";
+				}
+
 				// Append the word to the string along with a space.
 				buffer.Append(nextWord);
 				buffer.Append(" ");
