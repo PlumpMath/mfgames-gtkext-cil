@@ -50,7 +50,6 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		public Caret(IDisplayContext displayContext)
 		{
 			this.displayContext = displayContext;
-			Selection.TailPosition = new BufferPosition(3, 10);
 		}
 
 		#endregion

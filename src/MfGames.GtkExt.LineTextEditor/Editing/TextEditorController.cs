@@ -369,11 +369,43 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				// Figure out if we are clicking inside the text area.
 				if (point.X >= displayContext.TextX)
 				{
+					// Figure out text-relative coordinates.
 					var textPoint = new PointD(point.X - displayContext.TextX, point.Y);
+
+					// Grab the anchor position of the selection since that will
+					// remain the same after the command.
+					Caret caret = displayContext.Caret;
+					BufferSegment previousSelection = caret.Selection;
+
+					// Mark that we are starting a new action and fire events so
+					// other listeners and handle it.
 					InAction = true;
-					MoveActions.Point(displayContext, textPoint);
-					InAction = false;
-					return true;
+
+					// Perform the appropriate action.
+					try
+					{
+						MoveActions.Point(displayContext, textPoint);
+					}
+					finally
+					{
+						InAction = false;
+					}
+
+					// If we are holding down the shift-key, then we want to
+					// restore the previous selection anchor.
+					if ((modifier & ModifierType.ShiftMask) == ModifierType.ShiftMask)
+					{
+						// Restore the anchor position which will extend the selection back.
+						displayContext.Caret.Selection.AnchorPosition =
+							previousSelection.AnchorPosition;
+
+						// Check to see if the selection changed.
+						if (previousSelection != displayContext.Caret.Selection)
+						{
+							displayContext.LineLayoutBuffer.UpdateSelection(
+								displayContext, previousSelection);
+						}
+					}
 				}
 			}
 
