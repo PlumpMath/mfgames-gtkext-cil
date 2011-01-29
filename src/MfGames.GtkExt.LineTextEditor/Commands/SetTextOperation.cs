@@ -77,7 +77,7 @@ namespace MfGames.GtkExt.LineTextEditor.Commands
 		/// Gets the text for this operation.
 		/// </summary>
 		/// <value>The text.</value>
-		public string Text { get; private set; }
+		public string Text { get; set; }
 
 		#endregion
 	}

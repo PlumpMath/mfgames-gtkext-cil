@@ -302,6 +302,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			IActionContext actionContext,
 			char unicode)
 		{
+			// Because InsertText isn't a proper "action", we need to manually
+			// remove all action states.
+			actionContext.States.RemoveAllExcluding(typeof(InsertTextActionState));
+			var actionState = actionContext.States.Get<InsertTextActionState>();
+
 			// Get the text of the current line.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			Caret caret = actionContext.DisplayContext.Caret;
@@ -311,11 +316,53 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Make the changes in the line.
 			string newText = lineText.Insert(position.CharacterIndex, unicode.ToString());
+			var setTextOperation = new SetTextOperation(position.LineIndex, newText);
 
-			// Create the command.
+			// Figure out if we are doing a new command or joining into the
+			// previous one. If we are joining, then we just perform the operations
+			// to set the line text and adding to the command.
+			if (actionState != null)
+			{
+				// Pull out the text and see if we are entering a word boundary.
+				string stateText = actionState.Text + unicode;
+				int wordBoundary = displayContext.WordSplitter.GetNextWordBoundary(stateText, 0);
+
+				if (wordBoundary == stateText.Length)
+				{
+					// We aren't at a word boundary, so append the text to
+					// the state so we can undo/redo it later. Start by setting
+					// the text to the text value it would have been if the
+					// operations are combined.
+					actionState.Text = stateText;
+
+					// Change the redo operation to what would be the text
+					// after this and the previous operations. The undo operation
+					// doesn't change because it will be the same initial state.
+					actionState.SetTextOperation.Text = newText;
+
+					// After the insert completes, the state's end position would
+					// shift to the right one more for the new character.
+					position.CharacterIndex++;
+					actionState.EndPosition = position;
+
+					// Perform the operation and do the various redraws.
+					// Scroll to the command's end position.
+					actionContext.Do(setTextOperation);
+
+					displayContext.Caret.Position = position;
+					displayContext.ScrollToCaret();
+
+					// We are done.
+					return;
+				}
+			}
+
+			// We either don't have a previous state we can append to or there
+			// was no state to start with. So, create a new command with both
+			// the redo and undo operations.
 			var command = new Command(position);
-			
-			command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+
+			command.Operations.Add(setTextOperation);
 
 			command.UndoOperations.Add(
 				new SetTextOperation(position.LineIndex, lineText));
@@ -327,6 +374,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Perform the operation on the buffer.
 			command.EndPosition = position;
 			actionContext.Do(command);
+
+			// Create a new action state and add it to the states list.
+			if (actionState != null)
+			{
+				actionContext.States.Remove(actionState);
+			}
+
+			actionState = new InsertTextActionState(command, unicode.ToString());
+			actionContext.States.Add(actionState);
 		}
 	}
 }

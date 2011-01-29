@@ -294,8 +294,8 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// <param name="modifier">The modifier.</param>
 		public bool HandleKeypress(
 			Key key,
-			uint unicodeKey,
-			ModifierType modifier)
+			ModifierType modifier,
+			uint unicodeKey)
 		{
 			// Normalize the key code and remove excessive modifiers.
 			ModifierType filteredModifiers = modifier &

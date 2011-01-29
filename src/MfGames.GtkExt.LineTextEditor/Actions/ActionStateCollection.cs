@@ -65,7 +65,16 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		/// </summary>
 		public void RemoveAll()
 		{
-			RemoveAllExcluding(new ArrayList<Type>());
+			RemoveAllExcluding();
+		}
+
+		/// <summary>
+		/// Removes all states excluding the ones given.
+		/// </summary>
+		/// <param name="types">The types.</param>
+		public void RemoveAllExcluding(params Type[] types)
+		{
+			RemoveAllExcluding((IEnumerable<Type>) types);
 		}
 
 		/// <summary>
