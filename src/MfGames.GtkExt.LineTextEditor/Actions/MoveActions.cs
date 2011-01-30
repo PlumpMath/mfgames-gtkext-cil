@@ -763,6 +763,22 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			SelectAction(actionContext, Up);
 		}
 
+		/// <summary>
+		/// Selects all the text in the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.A, ModifierType.ControlMask)]
+		public static void SelectAll(IActionContext actionContext)
+		{
+			actionContext.DisplayContext.Caret.Selection.AnchorPosition =
+				new BufferPosition(0, 0);
+			actionContext.DisplayContext.Caret.Selection.TailPosition =
+				new BufferPosition(Int32.MaxValue, Int32.MaxValue);
+
+			actionContext.DisplayContext.RequestRedraw();
+		}
+
 		#endregion
 	}
 }

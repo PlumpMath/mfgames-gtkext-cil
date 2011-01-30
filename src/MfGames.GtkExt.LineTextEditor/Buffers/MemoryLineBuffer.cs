@@ -95,7 +95,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		public string GetLineNumber(int lineIndex)
 		{
-			// Line numebers are given as 1-based instead of 0-based.
+			// Line numbers are given as 1-based instead of 0-based.
 			return (lineIndex + 1).ToString("N0");
 		}
 

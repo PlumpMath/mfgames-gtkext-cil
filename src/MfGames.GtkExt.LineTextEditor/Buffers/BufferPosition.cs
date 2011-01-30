@@ -424,16 +424,17 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			// Pull out some of the common things we'll be using in this method.
 			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
-			Layout layout = buffer.GetLineLayout(displayContext, LineIndex);
-			BlockStyle style = buffer.GetLineStyle(displayContext, LineIndex);
+			int bufferLineIndex = buffer.NormalizeLineIndex(LineIndex);
+			Layout layout = buffer.GetLineLayout(displayContext, bufferLineIndex);
+			BlockStyle style = buffer.GetLineStyle(displayContext, bufferLineIndex);
 
 			// Figure out the top of the current line in relation to the entire
 			// buffer and view. For lines beyond the first, we use
 			// GetLineLayoutHeight because it also takes into account the line 
 			// spacing and borders which we would have to calculate otherwise.
-			double y = LineIndex == 0
+			double y = bufferLineIndex == 0
 			           	? 0
-			           	: buffer.GetLineLayoutHeight(displayContext, 0, LineIndex - 1);
+			           	: buffer.GetLineLayoutHeight(displayContext, 0, bufferLineIndex - 1);
 
 			// Add the style offset for the top-padding.
 			y += style.Top;
@@ -445,7 +446,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			bool trailing = false;
 			int character = CharacterIndex;
 
-			if (character == buffer.GetLineLength(LineIndex))
+			if (character == buffer.GetLineLength(bufferLineIndex))
 			{
 				// Shift back one character to calculate the position and put
 				// the cursor at the end of the character.

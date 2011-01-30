@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using Gdk;
 
 using MfGames.GtkExt.LineTextEditor.Attributes;
@@ -228,7 +230,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			BufferPosition startPosition = selection.StartPosition;
 			int startLineIndex = startPosition.LineIndex;
 			BufferPosition endPosition = selection.EndPosition;
-			int endLineIndex = endPosition.LineIndex;
+			int endLineIndex =
+				displayContext.LineLayoutBuffer.NormalizeLineIndex(endPosition.LineIndex);
 
 			command.EndPosition = startPosition;
 			position = startPosition;
@@ -257,9 +260,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// the beginning of the first line and end of the last. We put this
 			// into the first line we are editing.
 			string endLine = buffer.GetLineText(endLineIndex);
+			int endCharacterIndex = Math.Min(endLine.Length, endPosition.CharacterIndex);
 
 			lineText = startLine.Substring(0, startPosition.CharacterIndex) +
-			          endLine.Substring(endPosition.CharacterIndex);
+			           endLine.Substring(endCharacterIndex);
 
 			command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
 

@@ -47,5 +47,19 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		{
 			return lineBuffer.GetLineText(lineIndex, 0, Int32.MaxValue);
 		}
+
+		/// <summary>
+		/// Normalizes the index of the line and makes sure nothing is beyond
+		/// the limits.
+		/// </summary>
+		/// <param name="lineBuffer">The line buffer.</param>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <returns></returns>
+		public static int NormalizeLineIndex(
+			this ILineBuffer lineBuffer,
+			int lineIndex)
+		{
+			return Math.Min(lineBuffer.LineCount - 1, lineIndex);
+		}
 	}
 }

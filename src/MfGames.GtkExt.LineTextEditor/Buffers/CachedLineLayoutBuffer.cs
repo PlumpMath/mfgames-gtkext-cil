@@ -301,6 +301,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			AllocateWindows();
 
 			// Go through the windows and find the starting one.
+			lineIndex = LineBuffer.NormalizeLineIndex(lineIndex);
 			int windowIndex = GetWindowIndex(lineIndex);
 			CachedWindow window = windows[windowIndex];
 
@@ -325,7 +326,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			AllocateWindows();
 
 			// Normalize the end line so we don't go over our bounds.
-			endLineIndex = Math.Min(endLineIndex, LineCount - 1);
+			endLineIndex = LineBuffer.NormalizeLineIndex(endLineIndex);
 
 			// Go through the windows and find the starting one.
 			int startingWindowIndex = GetWindowIndex(startLineIndex);
@@ -382,6 +383,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
@@ -460,6 +462,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the line style for a given line.
 		/// </summary>
+		/// <param name="displayContext">The text editor.</param>
 		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
 		public override BlockStyle GetLineStyle(
@@ -470,6 +473,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			AllocateWindows();
 
 			// Go through the windows and find the starting one.
+			lineIndex = LineBuffer.NormalizeLineIndex(lineIndex);
 			int windowIndex = GetWindowIndex(lineIndex);
 			CachedWindow window = windows[windowIndex];
 
@@ -967,9 +971,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			// Clear out the cache for all the lines in the new and old selections.
 			BufferSegment currentSelection = displayContext.Caret.Selection;
+			int endLineIndex =
+				displayContext.LineLayoutBuffer.NormalizeLineIndex(
+					currentSelection.EndPosition.LineIndex);
 
 			for (int lineIndex = currentSelection.StartPosition.LineIndex;
-			     lineIndex <= currentSelection.EndPosition.LineIndex;
+			     lineIndex <= endLineIndex;
 			     lineIndex++)
 			{
 				// Get the window for the line change and reset that window.
@@ -981,7 +988,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 
 			for (int lineIndex = previousSelection.StartPosition.LineIndex;
-			     lineIndex <= previousSelection.EndPosition.LineIndex;
+			     lineIndex <= endLineIndex;
 			     lineIndex++)
 			{
 				// Get the window for the line change and reset that window.
