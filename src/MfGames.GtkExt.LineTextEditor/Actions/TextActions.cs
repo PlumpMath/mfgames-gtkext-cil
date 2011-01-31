@@ -29,11 +29,15 @@ using System.Text;
 
 using Gdk;
 
+using Gtk;
+
 using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using Key=Gdk.Key;
 
 #endregion
 
@@ -289,7 +293,89 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		[KeyBinding(Key.V, ModifierType.ControlMask)]
 		public static void Paste(IActionContext actionContext)
 		{
-		}
+            // Get the text from the clipboard.
+		    IDisplayContext displayContext = actionContext.DisplayContext;
+		    Clipboard clipboard = displayContext.Clipboard;
+
+		    clipboard.RequestText(null);
+		    
+            string clipboardText = clipboard.WaitForText();
+
+            if (string.IsNullOrEmpty(clipboardText))
+            {
+                return;
+            }
+
+		    // See if the last character ends in newlines. We need that to figure out how
+            // we'll be pasting the last line.
+		    bool lastIsEol = clipboardText[clipboardText.Length - 1] == '\n';
+
+            // Split the clipboard text into different lines.
+		    string[] lines = clipboardText.Split('\n');
+
+            // If there is a selection, then we want to delete it using the common
+            // processing for selections.
+		    Caret caret = displayContext.Caret;
+            BufferPosition position = caret.Position;
+            var command = new Command();
+		    string lineText;
+
+		    bool deletedSelection = DeleteSelection(actionContext, command, ref position, out lineText);
+
+            if (!deletedSelection)
+            {
+                // There is no selection, so get the line text from the buffer.
+                lineText =
+                    displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
+            }
+
+		    string nextLineText =
+		        displayContext.LineLayoutBuffer.GetLineText(
+		            caret.Position.LineIndex + 1);
+
+            // The paste will happen in the line, splitting the current line in half.
+		    string before = lineText.Substring(0, position.CharacterIndex);
+		    string after = lineText.Substring(position.CharacterIndex);
+
+            // Insert the number of lines we'll need past the first.
+		    int linesNeeded = lines.Length - 1;
+
+		    command.Operations.Add(
+		        new InsertLinesOperation(position.LineIndex, linesNeeded));
+
+		    command.UndoOperations.Add(
+		        new DeleteLinesOperation(position.LineIndex + 1, linesNeeded));
+		    command.UndoOperations.Add(
+		        new SetTextOperation(position.LineIndex + 1, nextLineText));
+
+            if (!deletedSelection)
+            {
+                command.UndoOperations.Add(
+                    new SetTextOperation(position.LineIndex, lineText));
+            }
+
+            // The first pasted line will combine with the before text.
+		    before += lines[0];
+
+		    command.Operations.Add(new SetTextOperation(position.LineIndex, before));
+
+            // Insert the lines between the first and the last one, exclusive.
+            for (int index = 1; index < linesNeeded; index++)
+            {
+                command.Operations.Add(
+                    new SetTextOperation(
+                        position.LineIndex + index, lines[index]));
+            }
+
+            // If the last does not end in an EOL, then we need to combine it.
+		    command.Operations.Add(
+		        new SetTextOperation(
+		            position.LineIndex + lines.Length - 1,
+		            lines[lines.Length - 1] + after));
+
+		    // Perform the command.
+		    actionContext.Do(command);
+        }
 
 		#endregion
 
