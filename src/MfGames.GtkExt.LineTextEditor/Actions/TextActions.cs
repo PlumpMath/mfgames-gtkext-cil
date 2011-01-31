@@ -264,6 +264,21 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		[KeyBinding(Key.X, ModifierType.ControlMask)]
 		public static void Cut(IActionContext actionContext)
 		{
+			// If we don't have anything selected, we don't do anything.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferSegment selection = displayContext.Caret.Selection;
+
+			if (selection.IsEmpty)
+			{
+				return;
+			}
+
+			// Copy the text first.
+			Copy(actionContext);
+
+			// Then delete the text. Since we know we have a selection, this
+			// will only delete the selected text.
+			DeleteLeft(actionContext);
 		}
 
 		/// <summary>
