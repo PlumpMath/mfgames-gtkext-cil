@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Text;
 
 using Gdk;
 
@@ -127,7 +128,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			{
 				// Pull out the text and see if we are entering a word boundary.
 				string stateText = actionState.Text + unicode;
-				int wordBoundary = displayContext.WordSplitter.GetNextWordBoundary(stateText, 0);
+				int wordBoundary = displayContext.WordSplitter.GetNextWordBoundary(
+					stateText, 0);
 
 				if (wordBoundary == stateText.Length)
 				{
@@ -189,111 +191,94 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			actionContext.States.Add(actionState);
 		}
 
-		#region Deleting
+		#region Clipboard
 
 		/// <summary>
-		/// If there is a selection already there, then this adds the operations
-		/// needed to delete the selection and the corresponding undo operations.
+		/// Copies the selection into the clipboard.
 		/// </summary>
 		/// <param name="actionContext">The action context.</param>
-		/// <param name="command">The command.</param>
-		/// <returns>True if operations were added to delete the selection.</returns>
-		private static bool DeleteSelection(IActionContext actionContext, Command command)
+		[Action]
+		[ActionState(typeof(VerticalMovementActionState))]
+		[KeyBinding(Key.C, ModifierType.ControlMask)]
+		[KeyBinding(Key.Insert, ModifierType.ControlMask)]
+		public static void Copy(IActionContext actionContext)
 		{
-			BufferPosition position = new BufferPosition();
-			string lineText;
-
-			return DeleteSelection(actionContext, command, ref position, out lineText);
-		}
-
-		/// <summary>
-		/// If there is a selection already there, then this adds the operations
-		/// needed to delete the selection and the corresponding undo operations.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		/// <param name="command">The command.</param>
-		/// <returns>True if operations were added to delete the selection.</returns>
-		private static bool DeleteSelection(IActionContext actionContext, Command command, ref BufferPosition position, out string lineText)
-		{
-			// If we don't have a selection, then we don't do anything.
+			// If we don't have anything selected, we don't do anything.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferSegment selection = displayContext.Caret.Selection;
 
 			if (selection.IsEmpty)
 			{
-				lineText = null;
-				return false;
+				return;
 			}
 
-			// We have a selection, so we need to create operations to delete
-			// and restore it.
-			BufferPosition startPosition = selection.StartPosition;
-			int startLineIndex = startPosition.LineIndex;
-			BufferPosition endPosition = selection.EndPosition;
-			int endLineIndex =
-				displayContext.LineLayoutBuffer.NormalizeLineIndex(endPosition.LineIndex);
+			// Go through the selection and figure out if we have a single-line
+			// copy.
+			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+			int endLineIndex = lineLayoutBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
+			string firstLine = lineLayoutBuffer.GetLineText(selection.StartPosition.LineIndex);
 
-			command.EndPosition = startPosition;
-			position = startPosition;
-
-			// If we have a single-line selection, then we have a simplier path
-			// for these operations.
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
-			string startLine = buffer.GetLineText(startLineIndex);
-
-			if (selection.IsSameLine)
+			if (endLineIndex == selection.StartPosition.LineIndex)
 			{
-				// Pull out the new line text.
-				lineText = startLine.Substring(0, startPosition.CharacterIndex) +
-				          startLine.Substring(endPosition.CharacterIndex);
+				// Single-line copy is much easier since we just need a substring.
+				string singleLineText =
+					firstLine.Substring(
+						selection.StartPosition.CharacterIndex,
+						selection.EndPosition.CharacterIndex);
 
-				// Create the operations for undoing and redoing the lines.
-				command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
-
-				command.UndoOperations.Add(new SetTextOperation(startLineIndex, startLine));
-
-				// We have the proper commands, so return that we deleted it.
-				return true;
+				// Set the clipboard's text and return.
+				displayContext.Clipboard.Text = singleLineText;
+				return;
 			}
 
-			// Multi-line deletes are more complicated. Our new text will be
-			// the beginning of the first line and end of the last. We put this
-			// into the first line we are editing.
-			string endLine = buffer.GetLineText(endLineIndex);
-			int endCharacterIndex = Math.Min(endLine.Length, endPosition.CharacterIndex);
+			// For multiple line copies, we need to copy every line from the first
+			// to the last. We already have the first, so just copy that.
+			StringBuilder buffer = new StringBuilder();
+			buffer.Append(
+				firstLine.Substring(selection.StartPosition.CharacterIndex));
+			buffer.Append("\n");
 
-			lineText = startLine.Substring(0, startPosition.CharacterIndex) +
-			           endLine.Substring(endCharacterIndex);
-
-			command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
-
-			command.UndoOperations.Add(new SetTextOperation(startLineIndex, startLine));
-
-			// For all the remaining lines, we delete them. We can do this in
-			// a single operation that deletes all lines past the first one.
-			command.Operations.Add(
-				new DeleteLinesOperation(
-					startLineIndex + 1, endLineIndex - startLineIndex));
-
-			command.UndoOperations.Add(
-				new InsertLinesOperation(
-					startLineIndex + 1, endLineIndex - startLineIndex));
-
-			// For undo operations, we need to recover the line text. So we
-			// create a set text operation for each line.
-			for (int lineIndex = startLineIndex + 1; lineIndex <= endLineIndex; lineIndex++)
+			// Loop through the second to just shy of the last line, adding
+			// each one as a full line.
+			for (int lineIndex = selection.StartPosition.LineIndex + 1; lineIndex < endLineIndex; lineIndex++)
 			{
-				// Get the line text. When we delete, we just delete one above
-				// the start index because the lines will be shifting up. When
-				// we are undoing it, we are moving down so we have to use the index.
-				string deletedLineText = buffer.GetLineText(lineIndex);
-
-				command.UndoOperations.Add(new SetTextOperation(lineIndex, deletedLineText));
+				buffer.Append(lineLayoutBuffer.GetLineText(lineIndex));
+				buffer.Append("\n");
 			}
 
-			// We populated the command index.
-			return true;
+			// Add the last line, which is a substring, but we don't add a
+			// newline to the end of this one.
+			buffer.Append(
+				lineLayoutBuffer.GetLineText(endLineIndex).Substring(
+					0, selection.EndPosition.CharacterIndex));
+
+			// Set the clipboard value.
+			displayContext.Clipboard.Text = buffer.ToString();
 		}
+
+		/// <summary>
+		/// Copies, then deletes the selected text.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.X, ModifierType.ControlMask)]
+		public static void Cut(IActionContext actionContext)
+		{
+		}
+
+		/// <summary>
+		/// Pastes the contents of the clipboard into the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.V, ModifierType.ControlMask)]
+		public static void Paste(IActionContext actionContext)
+		{
+		}
+
+		#endregion
+
+		#region Deleting
 
 		/// <summary>
 		/// Deletes the character to the left.
@@ -339,7 +324,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				command.Operations.Add(
 					new SetTextOperation(position.LineIndex - 1, newText));
 
-				command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex - 1, 1));
+				command.UndoOperations.Add(
+					new InsertLinesOperation(position.LineIndex - 1, 1));
 				command.UndoOperations.Add(
 					new SetTextOperation(position.LineIndex - 1, previousText));
 				command.UndoOperations.Add(
@@ -412,7 +398,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Create the operations we need to perform the action.
 			command.Operations.Add(new SetTextOperation(position.LineIndex, deletedText));
 
-			command.UndoOperations.Add(new SetTextOperation(position.LineIndex, lineText));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
 
 			// Move the position to the left boundary.
 			position.CharacterIndex = leftBoundary;
@@ -535,6 +522,116 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Finish by performing the command.
 			actionContext.Do(command);
+		}
+
+		/// <summary>
+		/// If there is a selection already there, then this adds the operations
+		/// needed to delete the selection and the corresponding undo operations.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		/// <param name="command">The command.</param>
+		/// <returns>True if operations were added to delete the selection.</returns>
+		private static bool DeleteSelection(
+			IActionContext actionContext,
+			Command command)
+		{
+			var position = new BufferPosition();
+			string lineText;
+
+			return DeleteSelection(actionContext, command, ref position, out lineText);
+		}
+
+		/// <summary>
+		/// If there is a selection already there, then this adds the operations
+		/// needed to delete the selection and the corresponding undo operations.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		/// <param name="command">The command.</param>
+		/// <returns>True if operations were added to delete the selection.</returns>
+		private static bool DeleteSelection(
+			IActionContext actionContext,
+			Command command,
+			ref BufferPosition position,
+			out string lineText)
+		{
+			// If we don't have a selection, then we don't do anything.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			BufferSegment selection = displayContext.Caret.Selection;
+
+			if (selection.IsEmpty)
+			{
+				lineText = null;
+				return false;
+			}
+
+			// We have a selection, so we need to create operations to delete
+			// and restore it.
+			BufferPosition startPosition = selection.StartPosition;
+			int startLineIndex = startPosition.LineIndex;
+			BufferPosition endPosition = selection.EndPosition;
+			int endLineIndex =
+				displayContext.LineLayoutBuffer.NormalizeLineIndex(endPosition.LineIndex);
+
+			command.EndPosition = startPosition;
+			position = startPosition;
+
+			// If we have a single-line selection, then we have a simplier path
+			// for these operations.
+			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			string startLine = buffer.GetLineText(startLineIndex);
+
+			if (selection.IsSameLine)
+			{
+				// Pull out the new line text.
+				lineText = startLine.Substring(0, startPosition.CharacterIndex) +
+				           startLine.Substring(endPosition.CharacterIndex);
+
+				// Create the operations for undoing and redoing the lines.
+				command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
+
+				command.UndoOperations.Add(new SetTextOperation(startLineIndex, startLine));
+
+				// We have the proper commands, so return that we deleted it.
+				return true;
+			}
+
+			// Multi-line deletes are more complicated. Our new text will be
+			// the beginning of the first line and end of the last. We put this
+			// into the first line we are editing.
+			string endLine = buffer.GetLineText(endLineIndex);
+			int endCharacterIndex = Math.Min(endLine.Length, endPosition.CharacterIndex);
+
+			lineText = startLine.Substring(0, startPosition.CharacterIndex) +
+			           endLine.Substring(endCharacterIndex);
+
+			command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
+
+			command.UndoOperations.Add(new SetTextOperation(startLineIndex, startLine));
+
+			// For all the remaining lines, we delete them. We can do this in
+			// a single operation that deletes all lines past the first one.
+			command.Operations.Add(
+				new DeleteLinesOperation(startLineIndex + 1, endLineIndex - startLineIndex));
+
+			command.UndoOperations.Add(
+				new InsertLinesOperation(startLineIndex + 1, endLineIndex - startLineIndex));
+
+			// For undo operations, we need to recover the line text. So we
+			// create a set text operation for each line.
+			for (int lineIndex = startLineIndex + 1;
+			     lineIndex <= endLineIndex;
+			     lineIndex++)
+			{
+				// Get the line text. When we delete, we just delete one above
+				// the start index because the lines will be shifting up. When
+				// we are undoing it, we are moving down so we have to use the index.
+				string deletedLineText = buffer.GetLineText(lineIndex);
+
+				command.UndoOperations.Add(new SetTextOperation(lineIndex, deletedLineText));
+			}
+
+			// We populated the command index.
+			return true;
 		}
 
 		#endregion

@@ -52,6 +52,12 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		Caret Caret { get; }
 
 		/// <summary>
+		/// Gets the clipboard associated with this editor.
+		/// </summary>
+		/// <value>The clipboard.</value>
+		Clipboard Clipboard { get; }
+
+		/// <summary>
 		/// Gets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
