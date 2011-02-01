@@ -350,6 +350,9 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			return false;
 		}
 
+	    private bool inTextSelect;
+	    private BufferSegment previousTextSelection;
+
 		/// <summary>
 		/// Handles the mouse press and the associated code.
 		/// </summary>
@@ -376,6 +379,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 					// remain the same after the command.
 					Caret caret = displayContext.Caret;
 					BufferSegment previousSelection = caret.Selection;
+
+                    // Keep track of the selection so we can drag-select.
+                    inTextSelect = true;
+				    previousTextSelection = previousSelection;
 
 					// Mark that we are starting a new action and fire events so
 					// other listeners and handle it.
@@ -406,6 +413,14 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 								displayContext, previousSelection);
 						}
 					}
+					else if (!previousSelection.IsEmpty)
+					{
+                        displayContext.LineLayoutBuffer.UpdateSelection(
+                            displayContext, previousSelection);
+                    }
+
+                    // Redraw the widget.
+                    displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 				}
 			}
 
@@ -414,7 +429,91 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			return false;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Handles the mouse movement.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="modifier">The modifier.</param>
+        /// <returns></returns>
+        public bool HandleMouseMotion(
+            PointD point,
+            ModifierType modifier)
+        {
+            // Mark ourselves as inside an action.
+            InAction = true;
+
+            try
+            {
+                // If we are in a text select, update the selection.
+                if (inTextSelect && point.X >= displayContext.TextX)
+                {
+                    // Figure out text-relative coordinates.
+                    var textPoint = new PointD(
+                        point.X - displayContext.TextX, point.Y);
+
+                    // Get the previous selection.
+                    BufferSegment previousSelection =
+                        displayContext.Caret.Selection;
+
+                    // Set the tail of the anchor to the current mouse position.
+                    displayContext.Caret.Selection.TailPosition =
+                        MoveActions.GetBufferPosition(textPoint, displayContext);
+
+                    // Update the display.
+                    displayContext.LineLayoutBuffer.UpdateSelection(
+                        displayContext, previousSelection);
+                    displayContext.RequestRedraw();
+
+                    // We processed this motion.
+                    return true;
+                }
+
+                // We didn't process it, so return false.
+                return false;
+            }
+            finally
+            {
+                // Remove the action flag.
+                InAction = false;
+            }
+        }
+
+	    /// <summary>
+        /// Handles the mouse release and the associated code.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="button">The button.</param>
+        /// <param name="modifier">The state.</param>
+        /// <returns></returns>
+        public bool HandleMouseRelease(
+            PointD point,
+            uint button,
+            ModifierType modifier)
+        {
+            // If we are releasing the left button (button 1), then we need to extend the
+            // selection.
+            if (button == 1)
+            {
+                // Figure out if we are clicking inside the text area.
+                if (point.X < displayContext.TextX)
+                {
+                    // We didn't release in the text area.
+                    BufferSegment currentSelection = displayContext.Caret.Selection;
+
+                    displayContext.Caret.Selection = previousTextSelection;
+                    displayContext.LineLayoutBuffer.UpdateSelection(displayContext, currentSelection);
+                }
+            }
+
+            // Release the various motion flags.
+	        inTextSelect = false;
+
+            // We haven't handled it, so return false so the rest of Gtk can
+            // decide what to do with the input.
+            return false;
+        }
+
+        /// <summary>
 		/// Resets the controller and its various internal states.
 		/// </summary>
 		public void Reset()

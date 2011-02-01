@@ -548,40 +548,51 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			PointD widgetPoint)
 		{
 			// Find the line layout that is closest to the point given.
-			double y = widgetPoint.Y + displayContext.BufferOffsetY;
-			int lineIndex =
-				displayContext.LineLayoutBuffer.GetLineLayoutRange(displayContext, y);
-			Layout layout = displayContext.LineLayoutBuffer.GetLineLayout(
-				displayContext, lineIndex);
+            displayContext.Caret.Position = GetBufferPosition(widgetPoint, displayContext);
 
-			// Shift the buffer-relative coordinates to layout-relative coordinates.
-			double layoutY = y;
-
-			if (lineIndex > 0)
-			{
-				layoutY -=
-					displayContext.LineLayoutBuffer.GetLineLayoutHeight(
-						displayContext, 0, lineIndex - 1);
-			}
-
-			int pangoLayoutY = Units.FromPixels((int) layoutY);
-
-			// Determines where in the layout is the point.
-			int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
-			int characterIndex, trailing;
-
-			layout.XyToIndex(
-				pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
-
-			// Set the caret's position from the calculated values.
-			displayContext.Caret.Position = new BufferPosition(lineIndex, characterIndex);
-
-			// Move to and draw the caret.
+		    // Move to and draw the caret.
 			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 		}
 
-		#endregion
+        /// <summary>
+        /// Gets the buffer position from a given point.
+        /// </summary>
+        /// <param name="widgetPoint">The widget point.</param>
+        /// <param name="displayContext">The display context.</param>
+        /// <returns></returns>
+	    public static BufferPosition GetBufferPosition(PointD widgetPoint,
+	                                          IDisplayContext displayContext)
+	    {
+	        double y = widgetPoint.Y + displayContext.BufferOffsetY;
+	        int lineIndex =
+	            displayContext.LineLayoutBuffer.GetLineLayoutRange(displayContext, y);
+	        Layout layout = displayContext.LineLayoutBuffer.GetLineLayout(
+	            displayContext, lineIndex);
+
+	        // Shift the buffer-relative coordinates to layout-relative coordinates.
+	        double layoutY = y;
+
+	        if (lineIndex > 0)
+	        {
+	            layoutY -=
+	                displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+	                    displayContext, 0, lineIndex - 1);
+	        }
+
+	        int pangoLayoutY = Units.FromPixels((int) layoutY);
+
+	        // Determines where in the layout is the point.
+	        int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
+	        int characterIndex, trailing;
+
+	        layout.XyToIndex(
+	            pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
+
+	        // Return the buffer position.
+	        return new BufferPosition(lineIndex, characterIndex);
+	    }
+
+	    #endregion
 
 		#region Selection
 

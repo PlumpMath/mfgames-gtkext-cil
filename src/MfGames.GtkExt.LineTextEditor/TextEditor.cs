@@ -78,11 +78,12 @@ namespace MfGames.GtkExt.LineTextEditor
 		public TextEditor(ILineLayoutBuffer lineLayoutBuffer)
 		{
 			// Set up the basic characteristics of the widget.
-			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
-			         EventMask.ButtonReleaseMask | EventMask.EnterNotifyMask |
-			         EventMask.LeaveNotifyMask | EventMask.VisibilityNotifyMask |
-			         EventMask.FocusChangeMask | EventMask.ScrollMask |
-			         EventMask.KeyPressMask | EventMask.KeyReleaseMask;
+		    Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
+		             EventMask.PointerMotionHintMask | EventMask.ButtonReleaseMask |
+		             EventMask.EnterNotifyMask | EventMask.LeaveNotifyMask |
+		             EventMask.VisibilityNotifyMask | EventMask.FocusChangeMask |
+		             EventMask.ScrollMask | EventMask.KeyPressMask |
+		             EventMask.KeyReleaseMask;
 			DoubleBuffered = true;
 			CanFocus = true;
 			WidgetFlags |= WidgetFlags.NoWindow;
@@ -259,18 +260,44 @@ namespace MfGames.GtkExt.LineTextEditor
 			requestedRedraw = false;
 		}
 
-		/// <summary>
-		/// Called when the user presses a button.
-		/// </summary>
-		/// <param name="e">The e.</param>
-		/// <returns></returns>
-		protected override bool OnButtonPressEvent(EventButton e)
+        /// <summary>
+        /// Called when the mouse moves.
+        /// </summary>
+        /// <param name="motionEvent">The motion event.</param>
+        /// <returns></returns>
+        protected override bool OnMotionNotifyEvent(EventMotion motionEvent)
+        {
+            // Wrap the event in various objects and pass it into the controller.
+            var point = new PointD(motionEvent.X, motionEvent.Y);
+
+            return controller.HandleMouseMotion(point, motionEvent.State);
+        }
+
+        /// <summary>
+        /// Called when the user presses a button.
+        /// </summary>
+        /// <param name="buttonEvent">The event.</param>
+        /// <returns></returns>
+		protected override bool OnButtonPressEvent(EventButton buttonEvent)
 		{
 			// Wrap the event in various objects and pass it into the controller.
-			var point = new PointD(e.X, e.Y);
+			var point = new PointD(buttonEvent.X, buttonEvent.Y);
 
-			return controller.HandleMousePress(point, e.Button, e.State);
+			return controller.HandleMousePress(point, buttonEvent.Button, buttonEvent.State);
 		}
+
+        /// <summary>
+        /// Called when the user releases the button.
+        /// </summary>
+        /// <param name="buttonEvent">The @event.</param>
+        /// <returns></returns>
+        protected override bool OnButtonReleaseEvent(EventButton buttonEvent)
+        {
+            // Wrap the event in various objects and pass it into the controller.
+            var point = new PointD(buttonEvent.X, buttonEvent.Y);
+
+            return controller.HandleMouseRelease(point, buttonEvent.Button, buttonEvent.State);
+        }
 
 		/// <summary>
 		/// Called when an action ends.
