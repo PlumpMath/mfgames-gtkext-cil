@@ -34,6 +34,8 @@ using Cairo;
 
 using Gdk;
 
+using Gtk;
+
 using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
@@ -41,6 +43,8 @@ using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using Key=Gdk.Key;
 
 #endregion
 
@@ -367,7 +371,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		{
 			// If we are pressing the left button (button 1), then we need to
 			// move the caret over.
-			if (button == 1)
+			if (button == 1 || button == 3)
 			{
 				// Figure out if we are clicking inside the text area.
 				if (point.X >= displayContext.TextX)
@@ -381,10 +385,13 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 					BufferSegment previousSelection = caret.Selection;
 
                     // Keep track of the selection so we can drag-select.
-                    inTextSelect = true;
-				    previousTextSelection = previousSelection;
+                    if (button == 1)
+				    {
+				        inTextSelect = true;
+				        previousTextSelection = previousSelection;
+				    }
 
-					// Mark that we are starting a new action and fire events so
+				    // Mark that we are starting a new action and fire events so
 					// other listeners and handle it.
 					InAction = true;
 
@@ -423,11 +430,47 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
                     displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 				}
 			}
+            
+            // If we are pressing the right mouse, then show the context menu.
+            if (button == 3)
+            {
+                // Create the context menu for this position.
+                Menu contextMenu = CreateContextMenu();
+
+                // Shift the position of the cursor to match right underneath the selection.
+
+                // Attach the menu and show it to the user.
+                contextMenu.AttachToWidget((TextEditor) displayContext, null);
+                contextMenu.Popup();
+                contextMenu.ShowAll();
+            }
 
 			// We haven't handled it, so return false so the rest of Gtk can
 			// decide what to do with the input.
 			return false;
 		}
+
+        /// <summary>
+        /// Creates the context menu for the position.
+        /// </summary>
+        /// <returns></returns>
+        private static Menu CreateContextMenu()
+        {
+            // Create a new menu and add the three basic controls.
+            var menu = new Menu();
+
+            var cutMenuItem = new MenuItem("Cut");
+            menu.Append(cutMenuItem);
+
+            var copyMenuItem = new MenuItem("Copy");
+            menu.Add(copyMenuItem);
+
+            var pasteMenuItem = new MenuItem("Paste");
+            menu.Add(pasteMenuItem);
+
+            // Return the resulting menu.
+            return menu;
+        }
 
         /// <summary>
         /// Handles the mouse movement.
@@ -492,7 +535,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
         {
             // If we are releasing the left button (button 1), then we need to extend the
             // selection.
-            if (button == 1)
+            if (button == 1 || button == 3)
             {
                 // Figure out if we are clicking inside the text area.
                 if (point.X < displayContext.TextX)
