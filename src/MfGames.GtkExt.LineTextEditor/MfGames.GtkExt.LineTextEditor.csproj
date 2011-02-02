@@ -88,6 +88,7 @@
     <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Buffers\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
+    <Compile Include="Events\PopulateContextMenuArgs.cs" />
     <Compile Include="Editing\TextEditorController.cs" />
     <Compile Include="Enumerations\LineBufferOperationType.cs" />
     <Compile Include="Events\LineChangedArgs.cs" />

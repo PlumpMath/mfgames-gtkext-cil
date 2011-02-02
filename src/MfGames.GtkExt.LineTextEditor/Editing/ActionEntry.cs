@@ -34,61 +34,73 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 namespace MfGames.GtkExt.LineTextEditor.Editing
 {
-	/// <summary>
-	/// Contains a single action entry object.
-	/// </summary>
-	public class ActionEntry
-	{
-		#region Constructors
+    /// <summary>
+    /// Contains a single action entry object.
+    /// </summary>
+    public class ActionEntry
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionEntry"/> class.
-		/// </summary>
-		/// <param name="action">The action.</param>
-		public ActionEntry(Action<IActionContext> action)
-		{
-			// Save the action for processing.
-			Action = action;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActionEntry"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="action">The action.</param>
+        public ActionEntry(
+            string name,
+            Action<IActionContext> action)
+        {
+            // Save the action for processing.
+            Action = action;
+            Name = name;
 
-			// Create a list of state types needed.
-			stateTypes = new ArrayList<Type>();
-		}
+            // Create a list of state types needed.
+            stateTypes = new ArrayList<Type>();
+        }
 
-		#endregion
+        #endregion
 
-		#region Actions
+        #region Actions
 
-		private readonly ArrayList<Type> stateTypes;
+        private readonly ArrayList<Type> stateTypes;
 
-		/// <summary>
-		/// Gets the action delegate to perform this action.
-		/// </summary>
-		public Action<IActionContext> Action;
+        /// <summary>
+        /// Gets the action delegate to perform this action.
+        /// </summary>
+        public Action<IActionContext> Action;
 
-		/// <summary>
-		/// Gets the type objects that represent the states that this action
-		/// uses.
-		/// </summary>
-		/// <value>The state types.</value>
-		public ArrayList<Type> StateTypes
-		{
-			get { return stateTypes; }
-		}
+        /// <summary>
+        /// Gets or sets the name of the action.
+        /// </summary>
+        /// <value>
+        /// The action name.
+        /// </value>
+        public string Name { get; set; }
 
-		/// <summary>
-		/// Performs the specified action using the context.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		public void Perform(IActionContext actionContext)
-		{
-			// Start by going through the states and remove anything that isn't
-			// in our state types.
-			actionContext.States.RemoveAllExcluding(stateTypes);
+        /// <summary>
+        /// Gets the type objects that represent the states that this action
+        /// uses.
+        /// </summary>
+        /// <value>The state types.</value>
+        public ArrayList<Type> StateTypes
+        {
+            get { return stateTypes; }
+        }
 
-			// Perform the action itself.
-			Action(actionContext);
-		}
+        /// <summary>
+        /// Performs the specified action using the context.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        public void Perform(IActionContext actionContext)
+        {
+            // Start by going through the states and remove anything that isn't
+            // in our state types.
+            actionContext.States.RemoveAllExcluding(stateTypes);
 
-		#endregion
-	}
+            // Perform the action itself.
+            Action(actionContext);
+        }
+
+        #endregion
+    }
 }

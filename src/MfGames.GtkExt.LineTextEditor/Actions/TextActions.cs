@@ -228,7 +228,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				string singleLineText =
 					firstLine.Substring(
 						selection.StartPosition.CharacterIndex,
-						selection.EndPosition.CharacterIndex);
+						selection.EndPosition.CharacterIndex - selection.StartPosition.CharacterIndex);
 
 				// Set the clipboard's text and return.
 				displayContext.Clipboard.Text = singleLineText;
@@ -337,7 +337,26 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		    string before = lineText.Substring(0, position.CharacterIndex);
 		    string after = lineText.Substring(position.CharacterIndex);
 
-            // Insert the number of lines we'll need past the first.
+            // Check to see if we only have one line and it doesn't end in a newline.
+            if (lines.Length == 1 && !lastIsEol)
+            {
+                // Just before a set text operation.
+                command.Operations.Add(
+                    new SetTextOperation(position.LineIndex, before + lines[0] + after));
+
+                command.UndoOperations.Add(
+                    new SetTextOperation(position.LineIndex, lineText));
+
+                // Set the end of the command position.
+                position.CharacterIndex = (before + lines[0]).Length;
+                command.EndPosition = position;
+
+                // Perform the command.
+                actionContext.Do(command);
+                return;
+            }
+
+		    // Insert the number of lines we'll need past the first.
 		    int linesNeeded = lines.Length - 1;
 
 		    command.Operations.Add(

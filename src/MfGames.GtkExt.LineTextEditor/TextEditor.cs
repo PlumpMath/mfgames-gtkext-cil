@@ -330,7 +330,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			uint unicodeChar = Keyval.ToUnicode(eventKey.KeyValue);
 
 			// Pass it on to the controller.
-			return controller.HandleKeypress(key, modifier, unicodeChar);
+			return controller.HandleKeyPress(key, modifier, unicodeChar);
 		}
 
 		/// <summary>
