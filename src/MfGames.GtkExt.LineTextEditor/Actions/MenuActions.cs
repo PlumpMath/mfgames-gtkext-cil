@@ -58,25 +58,43 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
         [KeyBinding(Key.Return, ModifierType.Mod1Mask)]
         public static void ShowContextMenu(IActionContext actionContext)
         {
-            // Get the screen coordinates to show the menu.
-            int lineHeight;
-            IDisplayContext displayContext = actionContext.DisplayContext;
+            // Get the coordinates to display the menu. Since the popup that
+			// sets the coordinates based on the screen, we have to adjust from
+			// text-specific coordinates clear to screen coordinates.
+
+			// Start by getting the widget's screen coordinates.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			int screenX, screenY;
+
+        	displayContext.GdkWindow.GetOrigin(
+        		out screenX,
+        		out screenY);
+
+			// Figure out the position of the position in the screen. We add
+			// the screen relative coordinate to the widget-relative, plus add
+			// the height of a single line to shift it down slightly.
+			int lineHeight;
             PointD point = displayContext.Caret.Position.ToScreenCoordinates(displayContext, out lineHeight);
+
+        	int widgetY = (int) (screenY + lineHeight + point.Y);
 
             // Create the context menu to show.
             Menu menu = actionContext.CreateContextMenu();
             menu.ShowAll();
-            menu.Popup(null, null, null, 3, Gtk.Global.CurrentEventTime);
-        }
-
-        private static void PositionMenu(Menu menu,
-                                         out int x,
-                                         out int y,
-                                         out bool push_in)
-        {
-            x = 0;
-            y = 0;
-            push_in = true;
+        	menu.Popup(
+        		null,
+        		null,
+        		delegate(Menu delegateMenu,
+        		         out int x,
+        		         out int y,
+        		         out bool pushIn)
+        		{
+        			x = screenX;
+        			y = widgetY;
+        			pushIn = true;
+        		},
+        		3,
+        		Gtk.Global.CurrentEventTime);
         }
 
         #endregion
