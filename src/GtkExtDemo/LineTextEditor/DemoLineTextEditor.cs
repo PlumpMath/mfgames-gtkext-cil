@@ -78,8 +78,17 @@ namespace GtkExtDemo.LineTextEditor
 			scrolledWindow.VscrollbarPolicy = PolicyType.Always;
 			scrolledWindow.Add(textEditor);
 
-			// Add the editor to the current tab.
-			PackStart(scrolledWindow, true, true, 0);
+			// Create the indicator bar that is 10 px wide.
+			var indicatorBar = new LineIndicatorBar();
+			indicatorBar.SetSizeRequest(10, 1);
+			indicatorBar.IndicatorPixelHeight = 2;
+
+			// Add the editor and bar to the current tab.
+			var hbox = new HBox(false, 0);
+			hbox.PackStart(scrolledWindow, true, true, 0);
+			hbox.PackStart(indicatorBar, false, false, 4);
+
+			PackStart(hbox, true, true, 2);
 		}
 
 		#endregion
