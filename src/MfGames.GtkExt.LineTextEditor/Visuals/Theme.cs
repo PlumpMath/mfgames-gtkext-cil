@@ -44,6 +44,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 		public const string BaseStyle = "Base";
 		public const string LineNumberStyle = "LineNumber";
+		public const string CurrentLineNumberStyle = "CurrentLineNumber";
 		public const string MarginStyle = "Margin";
 		public const string TextStyle = "Text";
 
@@ -71,21 +72,30 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			lineNumberStyle.Borders.Right = new Border(1, new Color(0.5, 0.5, 0.5));
 			lineNumberStyle.Padding.Right = 4;
 			lineNumberStyle.Padding.Left = 4;
-			lineNumberStyle.Margins.Right = 8;
+			lineNumberStyle.Margins.Right = 0;
 			lineNumberStyle.Margins.Top = 4;
 			lineNumberStyle.Margins.Bottom = 4;
+
+			var currentLineNumberStyle = new BlockStyle(lineNumberStyle);
+			currentLineNumberStyle.BackgroundColor = new Color(0.8, 0.8, 0.8);
+			currentLineNumberStyle.ForegroundColor = new Color(0.0, 0.0, 0.0);
 
 			var textStyle = new BlockStyle(baseStyle);
 			textStyle.Margins.Top = 4;
 			textStyle.Margins.Bottom = 4;
+			textStyle.Margins.Left = 8;
 
 			blockStyles[BaseStyle] = baseStyle;
 			blockStyles[MarginStyle] = marginStyle;
 			blockStyles[LineNumberStyle] = lineNumberStyle;
+			blockStyles[CurrentLineNumberStyle] = currentLineNumberStyle;
 			blockStyles[TextStyle] = textStyle;
 
 			// Colors
 			BackgroundColor = new Color(1, 1, 1);
+			CurrentLineBackgroundColor = new Color(255 / 255.0, 250 / 255.0, 205 / 255.0);
+			CurrentWrappedLineBackgroundColor = new Color(
+				238 / 255.0, 233 / 255.0, 191 / 255.0);
 		}
 
 		#endregion
@@ -97,6 +107,19 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// </summary>
 		/// <value>The color of the background.</value>
 		public Color BackgroundColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets the background color for the currently selected line.
+		/// </summary>
+		/// <value>The color of the current line background.</value>
+		public Color? CurrentLineBackgroundColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets the background color of the current positioned wrapped
+		/// line.
+		/// </summary>
+		/// <value>The color of the current wrapped line background.</value>
+		public Color? CurrentWrappedLineBackgroundColor { get; set; }
 
 		#endregion
 
@@ -120,6 +143,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		public BlockStyle LineNumberBlockStyle
 		{
 			get { return blockStyles[LineNumberStyle]; }
+		}
+
+		/// <summary>
+		/// Gets the current line number block style.
+		/// </summary>
+		/// <value>The line number block style.</value>
+		public BlockStyle CurrentLineNumberBlockStyle
+		{
+			get { return blockStyles[CurrentLineNumberStyle]; }
 		}
 
 		/// <summary>

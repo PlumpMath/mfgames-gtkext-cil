@@ -34,6 +34,7 @@ using Gdk;
 using Gtk;
 
 using MfGames.GtkExt.Extensions.Cairo;
+using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Events;
@@ -432,11 +433,11 @@ namespace MfGames.GtkExt.LineTextEditor
 				// Go through the lines and draw each one in the correct position.
 				double currentY = startLineY - offsetY;
 
-				for (int line = startLine; line <= endLine; line++)
+				for (int lineIndex = startLine; lineIndex <= endLine; lineIndex++)
 				{
 					// Pull out the layout and style since we'll use it.
-					Layout layout = lineLayoutBuffer.GetLineLayout(this, line);
-					BlockStyle style = lineLayoutBuffer.GetLineStyle(this, line);
+					Layout layout = lineLayoutBuffer.GetLineLayout(this, lineIndex);
+					BlockStyle style = lineLayoutBuffer.GetLineStyle(this, lineIndex);
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
@@ -444,6 +445,54 @@ namespace MfGames.GtkExt.LineTextEditor
 
 					// Figure out the height of the line including padding.
 					double height = layoutHeight + style.Height;
+
+					// If this is the current line, then we draw an additional
+					// background color if the theme requests it.
+					if (lineIndex == caret.Position.LineIndex)
+					{
+						// If we have a full-line background color, display it.
+						if (theme.CurrentLineBackgroundColor.HasValue)
+						{
+							var lineArea = new Rectangle(TextX, currentY, TextWidth, height);
+
+							cairoContext.Color = theme.CurrentLineBackgroundColor.Value;
+							cairoContext.Rectangle(lineArea);
+							cairoContext.Fill();
+						}
+
+						// If we have a wrapped line background color, draw it.
+						if (theme.CurrentWrappedLineBackgroundColor.HasValue)
+						{
+							// Get the wrapped line for the caret's position.
+							LayoutLine wrappedLine = caret.Position.GetWrappedLine(this);
+							Pango.Rectangle wrappedLineExtents;
+
+							wrappedLine.GetPixelExtents(out wrappedLineExtents);
+
+							//// Figure out where in the screen we'll be drawing this layout.
+							//double wrappedY = currentY + logicalRegion.Y + style.Top;
+
+							//Console.WriteLine(
+							//    string.Format(
+							//        "wy {0} cy {1} ly {2} iy {4} st {3}",
+							//        wrappedY,
+							//        currentY,
+							//        logicalRegion.Y,
+							//        style.Top,
+							//        inkRegion.Y));
+
+							// Draw the current wrapped line index.
+							var wrappedLineArea = new Rectangle(
+								TextX,
+								currentY + wrappedLineExtents.Y + style.Top,
+								TextWidth,
+								wrappedLineExtents.Height);
+
+							cairoContext.Color = theme.CurrentWrappedLineBackgroundColor.Value;
+							cairoContext.Rectangle(wrappedLineArea);
+							cairoContext.Fill();
+						}
+					}
 
 					// Draw the current line along with wrapping and padding.
 					DrawingUtility.DrawLayout(
@@ -454,7 +503,8 @@ namespace MfGames.GtkExt.LineTextEditor
 						style);
 
 					// Render out the margin renderers.
-					margins.Draw(this, renderContext, line, new PointD(0, currentY), height);
+					margins.Draw(
+						this, renderContext, lineIndex, new PointD(0, currentY), height);
 
 					// Move down a line.
 					currentY += height;

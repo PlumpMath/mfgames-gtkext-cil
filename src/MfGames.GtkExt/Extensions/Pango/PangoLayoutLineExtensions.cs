@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using Pango;
 
 #endregion
@@ -46,6 +48,64 @@ namespace MfGames.GtkExt.Extensions.Pango
 		{
 			Layout layout = layoutLine.Layout;
 			return layout.Lines[layout.LineCount - 1].StartIndex == layoutLine.StartIndex;
+		}
+
+		/// <summary>
+		/// Gets the index of the layout line inside the layout.
+		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
+		/// <returns></returns>
+		public static int GetLayoutLineIndex(this LayoutLine layoutLine)
+		{
+			// Go through all the lines in the layout and find the index.
+			for (int index = 0; index < layoutLine.Layout.LineCount; index++)
+			{
+				if (layoutLine.Layout.Lines[index].StartIndex == layoutLine.StartIndex)
+				{
+					return index;
+				}
+			}
+
+			// We can't find this layout line inside the layout.
+			throw new Exception("Cannot find layout line inside layout");
+		}
+
+		/// <summary>
+		/// Gets the size of the wrapped line in pixels and relative to the layout.
+		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
+		/// <param name="size">The size.</param>
+		public static void GetPixelExtents(this LayoutLine layoutLine, out Rectangle size)
+		{
+			// Go through and populate the size regions.
+			size = new Rectangle();
+			size.X = 0;
+			size.Width = layoutLine.Layout.Width;
+
+			// Build up the Y coordinates of all the lines before it.
+			int layoutLineIndex = layoutLine.GetLayoutLineIndex();
+			int y = 0;
+
+			for (int index = 0; index < layoutLineIndex; index++)
+			{
+				LayoutLine preceedingLayoutLine = layoutLine.Layout.Lines[index];
+				var ink = new Rectangle();
+				var logical = new Rectangle();
+
+				preceedingLayoutLine.GetPixelExtents(ref ink, ref logical);
+
+				y += logical.Height;
+			}
+
+			size.Y = y;
+
+			// Figure out the height of the given wrapped line.
+			var ink2 = new Rectangle();
+			var logical2 = new Rectangle();
+
+			layoutLine.GetPixelExtents(ref ink2, ref logical2);
+
+			size.Height = logical2.Height;
 		}
 	}
 }

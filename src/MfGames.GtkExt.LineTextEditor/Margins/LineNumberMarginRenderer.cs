@@ -133,9 +133,20 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			PointD point,
 			double height)
 		{
-			// Create a layout object if we don't have one.
-			BlockStyle style = displayContext.Theme.LineNumberBlockStyle;
+			// Figure out the style we need to use.
+			BlockStyle style;
 
+			if (displayContext.Caret.Position.LineIndex == lineIndex)
+			{
+				// This is the current line.
+				style = displayContext.Theme.CurrentLineNumberBlockStyle;
+			}
+			else
+			{
+				style = displayContext.Theme.LineNumberBlockStyle;
+			}
+
+			// Create a layout object if we don't have one.
 			if (layout == null)
 			{
 				layout = new Layout(displayContext.PangoContext);
