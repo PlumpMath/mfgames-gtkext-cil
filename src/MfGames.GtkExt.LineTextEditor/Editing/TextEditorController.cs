@@ -243,10 +243,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
         public event EventHandler BeginAction;
 
         /// <summary>
-        /// Creates the context menu for the position.
+        /// Creates the context menu for the caret position.
         /// </summary>
         /// <returns></returns>
-        private Menu CreateContextMenu()
+        public Menu CreateContextMenu()
         {
             // Create a new menu and add the three basic controls.
             var menu = new Menu();

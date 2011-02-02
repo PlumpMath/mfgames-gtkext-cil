@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using Gtk;
+
 using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Commands;
 
@@ -63,5 +65,11 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <param name="command">The command.</param>
 		void Do(Command command);
+
+	    /// <summary>
+	    /// Creates the context menu for the caret position.
+	    /// </summary>
+	    /// <returns></returns>
+	    Menu CreateContextMenu();
 	}
 }

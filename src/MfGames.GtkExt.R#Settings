@@ -1160,6 +1160,30 @@ THE SOFTWARE.]]></FileHeader>
         <IdentifierWordIsNotInDictionary>SUGGESTION</IdentifierWordIsNotInDictionary>
       </SeverityTable>
     </HighlightingSettings>
-    <CodeCleanup RecentlyUsed="Full Cleanup" />
+    <CodeCleanup SilentCleanup="Deep Cleanup" RecentlyUsed="Deep Cleanup">
+      <Profile name="Deep Cleanup">
+        <CSArrangeThisQualifier>True</CSArrangeThisQualifier>
+        <CSRemoveCodeRedundancies>True</CSRemoveCodeRedundancies>
+        <CSUseAutoProperty>True</CSUseAutoProperty>
+        <CSMakeFieldReadonly>True</CSMakeFieldReadonly>
+        <CSUseVar>
+          <BehavourStyle>DISABLED</BehavourStyle>
+          <LocalVariableStyle>IMPLICIT_WHEN_INITIALIZER_HAS_TYPE</LocalVariableStyle>
+          <ForeachVariableStyle>ALWAYS_EXPLICIT</ForeachVariableStyle>
+        </CSUseVar>
+        <CSUpdateFileHeader>True</CSUpdateFileHeader>
+        <VBOptimizeImports>False</VBOptimizeImports>
+        <VBShortenReferences>False</VBShortenReferences>
+        <CSOptimizeUsings>
+          <OptimizeUsings>True</OptimizeUsings>
+          <EmbraceInRegion>True</EmbraceInRegion>
+          <RegionName>Namespaces</RegionName>
+        </CSOptimizeUsings>
+        <CSShortenReferences>True</CSShortenReferences>
+        <VBReformatCode>False</VBReformatCode>
+        <CSReformatCode>True</CSReformatCode>
+        <CSReorderTypeMembers>True</CSReorderTypeMembers>
+      </Profile>
+    </CodeCleanup>
   </ResharperSettings>
 </Configuration>

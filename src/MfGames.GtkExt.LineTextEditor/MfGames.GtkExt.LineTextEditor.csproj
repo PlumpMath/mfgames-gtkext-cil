@@ -61,6 +61,7 @@
     <Compile Include="Actions\ActionStateCollection.cs" />
     <Compile Include="Actions\CommandActions.cs" />
     <Compile Include="Actions\InsertTextActionState.cs" />
+    <Compile Include="Actions\MenuActions.cs" />
     <Compile Include="Actions\MoveActions.cs" />
     <Compile Include="Actions\TextActions.cs" />
     <Compile Include="Actions\VerticalMovementActionState.cs" />
