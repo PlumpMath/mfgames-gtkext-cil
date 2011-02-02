@@ -36,6 +36,8 @@
     <Compile Include="DemoComponents.cs" />
     <Compile Include="LineTextEditor\DemoLineTextEditor.cs" />
     <Compile Include="LineTextEditor\KeywordLineMarkupBuffer.cs" />
+    <Compile Include="LineTextEditor\KeywordMarkupEntry.cs" />
+    <Compile Include="LineTextEditor\KeywordMarkupType.cs" />
     <Compile Include="LineTextEditor\PatternLineBuffer.cs" />
     <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>
