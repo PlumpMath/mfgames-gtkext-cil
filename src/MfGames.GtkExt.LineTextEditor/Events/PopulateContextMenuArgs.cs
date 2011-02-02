@@ -34,9 +34,23 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 namespace MfGames.GtkExt.LineTextEditor.Events
 {
+	/// <summary>
+	/// Arguments for when the text editor needs to populate the context
+	/// menu with contextual elements. Listeners are able to add elements based
+	/// on the current buffer position.
+	/// </summary>
     public class PopulateContextMenuArgs : EventArgs
     {
-        public IDisplayContext DisplayContext { get; set; }
+		/// <summary>
+		/// Gets or sets the action context for this context.
+		/// </summary>
+		/// <value>The action context.</value>
+        public IActionContext ActionContext { get; set; }
+
+		/// <summary>
+		/// Contains the menu that will be shown to the user. If this is set to 
+		/// <see langword="null"/>, then no menu will be shown.
+		/// </summary>
         public Menu Menu { get; set; }
     }
 }

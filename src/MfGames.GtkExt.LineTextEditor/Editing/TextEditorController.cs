@@ -272,7 +272,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
                 // Create the arguments for the event.
                 var args = new PopulateContextMenuArgs();
                 args.Menu = menu;
-                args.DisplayContext = displayContext;
+                args.ActionContext = this;
 
                 // Trigger the event.
                 PopulateContextMenu(this, args);
@@ -551,9 +551,12 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
                 Menu contextMenu = CreateContextMenu();
 
                 // Attach the menu and show it to the user.
-                contextMenu.AttachToWidget((TextEditor) displayContext, null);
-                contextMenu.Popup();
-                contextMenu.ShowAll();
+				if (contextMenu != null)
+				{
+					contextMenu.AttachToWidget((TextEditor) displayContext, null);
+					contextMenu.Popup();
+					contextMenu.ShowAll();
+				}
             }
 
             // We haven't handled it, so return false so the rest of Gtk can

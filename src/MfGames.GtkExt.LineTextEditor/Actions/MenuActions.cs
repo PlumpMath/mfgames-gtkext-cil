@@ -78,23 +78,28 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
         	int widgetY = (int) (screenY + lineHeight + point.Y);
 
-            // Create the context menu to show.
-            Menu menu = actionContext.CreateContextMenu();
-            menu.ShowAll();
-        	menu.Popup(
-        		null,
-        		null,
-        		delegate(Menu delegateMenu,
-        		         out int x,
-        		         out int y,
-        		         out bool pushIn)
-        		{
-        			x = screenX;
-        			y = widgetY;
-        			pushIn = true;
-        		},
-        		3,
-        		Gtk.Global.CurrentEventTime);
+            // Create the context menu and show it on the screen right below
+			// where the user is currently focused.
+            Menu contextMenu = actionContext.CreateContextMenu();
+
+			if (contextMenu != null)
+			{
+				contextMenu.ShowAll();
+				contextMenu.Popup(
+					null,
+					null,
+					delegate(Menu delegateMenu,
+					         out int x,
+					         out int y,
+					         out bool pushIn)
+					{
+						x = screenX;
+						y = widgetY;
+						pushIn = true;
+					},
+					3,
+					Gtk.Global.CurrentEventTime);
+			}
         }
 
         #endregion
