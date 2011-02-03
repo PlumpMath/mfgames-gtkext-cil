@@ -48,6 +48,19 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		int Width { get; set; }
 
 		/// <summary>
+		/// Gets the index of the line from a given wrapped line index. This also
+		/// returns the relative line index inside the layout.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
+		/// <param name="layoutLineIndex">Index of the layout line.</param>
+		/// <returns></returns>
+		int GetLineIndex(
+			IDisplayContext displayContext,
+			int wrappedLineIndex,
+			out int layoutLineIndex);
+
+		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
@@ -89,6 +102,25 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 			Rectangle viewArea,
 			out int startLineIndex,
 			out int endLineIndex);
+
+		/// <summary>
+		/// Gets the wrapped line count for all the lines in the buffer.
+		/// </summary>
+		/// <value>The wrapped line count.</value>
+		int GetWrappedLineCount(IDisplayContext displayContext);
+
+		/// <summary>
+		/// Gets the wrapped line indexes for a given line index.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="lineIndex">The line index.</param>
+		/// <param name="startWrappedLineIndex">Start index of the wrapped line.</param>
+		/// <param name="endWrappedLineIndex">End index of the wrapped line.</param>
+		void GetWrappedLineIndexes(
+			IDisplayContext displayContext,
+			int lineIndex,
+			out int startWrappedLineIndex,
+			out int endWrappedLineIndex);
 
 		/// <summary>
 		/// Indicates that the underlying text editor has changed in some manner

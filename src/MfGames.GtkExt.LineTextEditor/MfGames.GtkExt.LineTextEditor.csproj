@@ -70,9 +70,11 @@
     <Compile Include="Attributes\ActionStateAttribute.cs" />
     <Compile Include="Attributes\KeyBindingAttribute.cs" />
     <Compile Include="Buffers\BufferSegment.cs" />
+    <Compile Include="Buffers\CachedLineIndicatorBuffer.cs" />
     <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
     <Compile Include="Buffers\EnglishWordSplitter.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
+    <Compile Include="Buffers\LineIndicatorBufferProxy.cs" />
     <Compile Include="Buffers\LineLayoutBufferProxy.cs" />
     <Compile Include="Buffers\LineMarkupBufferProxy.cs" />
     <Compile Include="Buffers\OffsetWordSplitter.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Buffers\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
+    <Compile Include="Enumerations\IndicatorRenderStyle.cs" />
     <Compile Include="Events\PopulateContextMenuArgs.cs" />
     <Compile Include="Editing\TextEditorController.cs" />
     <Compile Include="Enumerations\LineBufferOperationType.cs" />
@@ -100,6 +103,8 @@
     <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Interfaces\ILineBuffer.cs" />
     <Compile Include="Interfaces\ILineBufferOperation.cs" />
+    <Compile Include="Interfaces\ILineIndicator.cs" />
+    <Compile Include="Interfaces\ILineIndicatorBuffer.cs" />
     <Compile Include="Interfaces\ILineLayoutBuffer.cs" />
     <Compile Include="Interfaces\ILineMarkupBuffer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="Tests\EnglishWordSplitterTests.cs" />
     <Compile Include="Visuals\Border.cs" />
     <Compile Include="Visuals\Borders.cs" />
+    <Compile Include="Visuals\IndicatorStyle.cs" />
     <Compile Include="Visuals\OptionalBorders.cs" />
     <Compile Include="Visuals\OptionalSpacing.cs" />
     <Compile Include="Visuals\BlockStyle.cs" />

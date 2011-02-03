@@ -28,6 +28,8 @@ using System;
 
 using C5;
 
+using MfGames.GtkExt.LineTextEditor.Interfaces;
+
 #endregion
 
 namespace GtkExtDemo.LineTextEditor
@@ -35,7 +37,7 @@ namespace GtkExtDemo.LineTextEditor
 	/// <summary>
 	/// Defines a single range of markup in a text buffer.
 	/// </summary>
-	public class KeywordMarkupEntry : IComparable<KeywordMarkupEntry>
+	public class KeywordMarkupEntry : IComparable<KeywordMarkupEntry>, ILineIndicator
 	{
 		#region Properties
 
@@ -59,13 +61,30 @@ namespace GtkExtDemo.LineTextEditor
 
 		#endregion
 
+		#region Line Indicators
+
+		/// <summary>
+		/// Gets the style used to draw the line indicator.
+		/// </summary>
+		/// <value>The line indicator style.</value>
+		public string LineIndicatorStyle
+		{
+			get { return Markup.ToString(); }
+		}
+
+		#endregion
+
 		#region Sorting
 
 		/// <summary>
 		/// Compares the current object with another object of the same type.
 		/// </summary>
 		/// <returns>
-		/// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
+		/// A 32-bit signed integer that indicates the relative order of the objects
+		/// being compared. The return value has the following meanings: Value Meaning
+		/// Less than zero This object is less than the <paramref name="other"/>
+		/// parameter.Zero This object is equal to <paramref name="other"/>. Greater
+		/// than zero This object is greater than <paramref name="other"/>. 
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
 		public int CompareTo(KeywordMarkupEntry other)

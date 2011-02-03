@@ -34,8 +34,13 @@ using MfGames.GtkExt.LineTextEditor;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Editing;
+using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+
+using Cairo;
+
+using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
 
@@ -66,12 +71,21 @@ namespace GtkExtDemo.LineTextEditor
 				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
 			ILineLayoutBuffer lineLayoutBuffer =
 				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
-			ILineLayoutBuffer cachedLayoutBuffer =
-				new CachedLineLayoutBuffer(lineLayoutBuffer);
+			ILineIndicatorBuffer lineIndicatorBuffer =
+				new KeywordLineIndicatorBuffer(lineLayoutBuffer);
+			var cachedLineBuffer =
+				new CachedLineIndicatorBuffer(lineIndicatorBuffer);
 
 			// Create the text editor with the resulting buffer.
-			textEditor = new TextEditor(cachedLayoutBuffer);
+			textEditor = new TextEditor(cachedLineBuffer);
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
+
+			// Update the theme with some additional colors.
+			textEditor.Theme.IndicatorStyles["Error"] = new IndicatorStyle(
+				"Error", 100, new Color(1, 0, 0));
+			textEditor.Theme.IndicatorStyles["Warning"] = new IndicatorStyle(
+				"Warning", 10, new Color(1, 165 / 255.0, 0));
+			textEditor.Theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
 
 			// Wrap the text editor in a scrollbar.
 			var scrolledWindow = new ScrolledWindow();
@@ -79,8 +93,8 @@ namespace GtkExtDemo.LineTextEditor
 			scrolledWindow.Add(textEditor);
 
 			// Create the indicator bar that is 10 px wide.
-			var indicatorBar = new LineIndicatorBar();
-			indicatorBar.SetSizeRequest(10, 1);
+			var indicatorBar = new LineIndicatorBar(textEditor, cachedLineBuffer);
+			indicatorBar.SetSizeRequest(20, 1);
 			indicatorBar.IndicatorPixelHeight = 2;
 
 			// Add the editor and bar to the current tab.

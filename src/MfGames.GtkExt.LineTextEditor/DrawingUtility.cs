@@ -64,19 +64,14 @@ namespace MfGames.GtkExt.LineTextEditor
 			IDisplayContext displayContext,
 			IRenderContext renderContext,
 			Rectangle region,
-			Layout layout,
 			BlockStyle style)
 		{
 			// Get the style for the line number.
 			Spacing margins = style.GetMargins();
-			Spacing padding = style.GetPadding();
 			Borders borders = style.GetBorders();
 
 			double marginLeftX = margins.Left + borders.Left.LineWidth;
 			double marginRightX = margins.Right + borders.Right.LineWidth;
-
-			double paddingLeftX = marginLeftX + padding.Left;
-			double paddingRightX = marginRightX + padding.Right;
 
 			// Get the context and save settings because we use anti-aliasing
 			// to get a sharper line.
@@ -130,6 +125,33 @@ namespace MfGames.GtkExt.LineTextEditor
 				// Restore the context.
 				cairoContext.Antialias = oldAntialias;
 			}
+		}
+
+		/// <summary>
+		/// Draws a layout with a given style to the render context.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="renderContext">The render context.</param>
+		/// <param name="region">The region for the various elements.</param>
+		/// <param name="layout">The layout to use for text.</param>
+		/// <param name="style">The style used for borders and padding.</param>
+		public static void DrawLayout(
+			IDisplayContext displayContext,
+			IRenderContext renderContext,
+			Rectangle region,
+			Layout layout,
+			BlockStyle style)
+		{
+			// Get the style for the line number.
+			Spacing margins = style.GetMargins();
+			Spacing padding = style.GetPadding();
+			Borders borders = style.GetBorders();
+
+			double marginLeftX = margins.Left + borders.Left.LineWidth;
+			double paddingLeftX = marginLeftX + padding.Left;
+
+			// Draw the layout with out the text.
+			DrawLayout(displayContext, renderContext, region, style);
 
 			// Figure out the extents of the layout.
 			int layoutWidth, layoutHeight;

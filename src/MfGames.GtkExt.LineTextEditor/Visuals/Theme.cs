@@ -26,6 +26,8 @@
 
 using C5;
 
+using MfGames.GtkExt.LineTextEditor.Enumerations;
+
 using Pango;
 
 using Color=Cairo.Color;
@@ -43,8 +45,8 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		#region Constants
 
 		public const string BaseStyle = "Base";
-		public const string LineNumberStyle = "LineNumber";
 		public const string CurrentLineNumberStyle = "CurrentLineNumber";
+		public const string LineNumberStyle = "LineNumber";
 		public const string MarginStyle = "Margin";
 		public const string TextStyle = "Text";
 
@@ -93,9 +95,13 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 			// Colors
 			BackgroundColor = new Color(1, 1, 1);
+			IndicatorBackgroundColor = new Color(1, 1, 1);
 			CurrentLineBackgroundColor = new Color(255 / 255.0, 250 / 255.0, 205 / 255.0);
 			CurrentWrappedLineBackgroundColor = new Color(
 				238 / 255.0, 233 / 255.0, 191 / 255.0);
+
+			// Indicator styles.
+			indicatorStyles = new HashDictionary<string, IndicatorStyle>();
 		}
 
 		#endregion
@@ -121,9 +127,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// <value>The color of the current wrapped line background.</value>
 		public Color? CurrentWrappedLineBackgroundColor { get; set; }
 
+		/// <summary>
+		/// Gets or sets the background color of an indicator bar.
+		/// </summary>
+		/// <value>The color of the background.</value>
+		public Color IndicatorBackgroundColor { get; set; }
+
 		#endregion
 
-		#region Styles
+		#region Block Styles
 
 		private readonly HashDictionary<string, BlockStyle> blockStyles;
 
@@ -137,15 +149,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		}
 
 		/// <summary>
-		/// Gets the line number block style.
-		/// </summary>
-		/// <value>The line number block style.</value>
-		public BlockStyle LineNumberBlockStyle
-		{
-			get { return blockStyles[LineNumberStyle]; }
-		}
-
-		/// <summary>
 		/// Gets the current line number block style.
 		/// </summary>
 		/// <value>The line number block style.</value>
@@ -155,12 +158,42 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		}
 
 		/// <summary>
+		/// Gets the line number block style.
+		/// </summary>
+		/// <value>The line number block style.</value>
+		public BlockStyle LineNumberBlockStyle
+		{
+			get { return blockStyles[LineNumberStyle]; }
+		}
+
+		/// <summary>
 		/// Gets the text block style.
 		/// </summary>
 		/// <value>The text block style.</value>
 		public BlockStyle TextBlockStyle
 		{
 			get { return blockStyles[TextStyle]; }
+		}
+
+		#endregion
+
+		#region Indicator Styles
+
+		private readonly HashDictionary<string, IndicatorStyle> indicatorStyles;
+
+		/// <summary>
+		/// Gets or sets the indicator render style.
+		/// </summary>
+		/// <value>The indicator render style.</value>
+		public IndicatorRenderStyle IndicatorRenderStyle { get; set; }
+
+		/// <summary>
+		/// Gets the indicator styles in this theme.
+		/// </summary>
+		/// <value>The indicator styles.</value>
+		public HashDictionary<string, IndicatorStyle> IndicatorStyles
+		{
+			get { return indicatorStyles; }
 		}
 
 		#endregion

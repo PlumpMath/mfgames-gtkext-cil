@@ -41,9 +41,9 @@ using Rectangle=Cairo.Rectangle;
 namespace MfGames.GtkExt.LineTextEditor.Buffers
 {
 	/// <summary>
-	/// Implements a simple cache ILineLayoutBuffer that keeps the various
-	/// heights in memory to allow for rapid retrieval of line heights. This
-	/// uses the idea of cache windows to keep track of individual lines while
+	/// Implements a simple cache <see cref="ILineLayoutBuffer"/> that keeps the
+	/// various heights in memory to allow for rapid retrieval of line heights.
+	/// This uses the idea of cache windows to keep track of individual lines while
 	/// allow a window to be unloaded but the height of a line range to be
 	/// retained.
 	/// </summary>
@@ -262,6 +262,57 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		private int? lineHeight;
 
+		public override void GetWrappedLineIndexes(IDisplayContext displayContext, int lineIndex, out int startWrappedLineIndex, out int endWrappedLineIndex)
+		{
+			// Make sure we have all the windows allocated.
+			AllocateWindows();
+
+			// Figure out which window we need to stop on.
+			int windowIndex = GetWindowIndex(lineIndex);
+
+			// Go through the windows and find the one that contains the
+			// wrapped line index.
+			int currentWrappedIndex = 0;
+
+			for (int currentWindowIndex = 0; currentWindowIndex < windows.Count; currentWindowIndex++)
+			{
+				// Get the window and populate it if we don't have a wrapped
+				// line count.
+				CachedWindow window = windows[currentWindowIndex];
+
+				if (window.WrappedLineCount <= 0)
+				{
+					window.Populate(displayContext);
+				}
+
+				// If this window is before the one we need, just add to the
+				// count and continue.
+				if (currentWindowIndex != windowIndex)
+				{
+					currentWrappedIndex += window.WrappedLineCount;
+					continue;
+				}
+
+				// We are in the window we need, go through all the lines before
+				// the line that we actually need.
+				for (int windowLineIndex = window.WindowStartLine; windowLineIndex < lineIndex; windowLineIndex++)
+				{
+					currentWrappedIndex += window.GetLineLayout(displayContext, windowLineIndex).LineCount;
+				}
+
+				// Finally, get the window we requested.
+				Layout lineLayout = window.GetLineLayout(displayContext, lineIndex);
+				startWrappedLineIndex = currentWrappedIndex;
+				endWrappedLineIndex = currentWindowIndex + lineLayout.LineCount - 1;
+
+				// We are done, so break out.
+				return;
+			}
+
+			// If we got this far, we can't find it.
+			throw new Exception("Cannot find wrapped line index in buffer");
+		}
+
 		/// <summary>
 		/// Sets the width on the underlying buffer and resets the cache windows
 		/// if the width changes.
@@ -285,6 +336,66 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				// Set the new width in the underlying buffer.
 				base.Width = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets the index of the line from a given wrapped line index. This also
+		/// returns the relative line index inside the layout.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
+		/// <param name="layoutLineIndex">Index of the layout line.</param>
+		/// <returns></returns>
+		public override int GetLineIndex(IDisplayContext displayContext, int wrappedLineIndex, out int layoutLineIndex)
+		{
+			// Make sure we have all the windows allocated.
+			AllocateWindows();
+
+			// Go through the windows and find the one that contains the
+			// wrapped line index.
+			int currentWrappedIndex = 0;
+
+			for (int windowIndex = 0; windowIndex < windows.Count; windowIndex++)
+			{
+				// Get the number of wrapped lines in this window.
+				CachedWindow window = windows[windowIndex];
+
+				if (window.WrappedLineCount <= 0)
+				{
+					window.Populate(displayContext);
+				}
+
+				// Check to see if this layout is in the window.
+				if (wrappedLineIndex >= currentWrappedIndex + window.WrappedLineCount)
+				{
+					// It isn't so add the count to the list and continue.
+					currentWrappedIndex += window.WrappedLineCount;
+					continue;
+				}
+
+				// The index is inside this window, look for the layout that
+				// contains it. We set the window line, then subtract the
+				// number of lines in each one until we are <= than zero
+				// which means we found our line. The negative amount is the
+				// relative index.
+				int windowLine = wrappedLineIndex - currentWrappedIndex;
+
+				for (int lineIndex = 0; lineIndex < window.Lines.Length; lineIndex++)
+				{
+					// Subtract the number of lines in the layout.
+					CachedLine line = window.Lines[lineIndex];
+					windowLine -= line.Layout.LineCount;
+
+					if (windowLine < 0)
+					{
+						layoutLineIndex = -(windowLine + 1);
+						return window.WindowStartLine + lineIndex;
+					}
+				}
+			}
+
+			// If we got this far, we can't find it.
+			throw new Exception("Cannot find wrapped line index in buffer");
 		}
 
 		/// <summary>
@@ -670,6 +781,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				get { return WindowIndex * ParentBuffer.windowSize; }
 			}
 
+			/// <summary>
+			/// Gets the start index for wrapped lines.
+			/// </summary>
+			/// <value>The window start wrapped line.</value>
+			internal int WrappedLineCount
+			{
+				get; private set;
+			}
+
 			#endregion
 
 			#region Caching
@@ -879,6 +999,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 				// Go through all the lines in the window and populate them.
 				int height = 0;
+				int wrappedLineCount = 0;
 
 				for (int lineIndex = 0; lineIndex < ParentBuffer.windowSize; lineIndex++)
 				{
@@ -907,10 +1028,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 						ParentBuffer.LineLayoutBuffer.GetLineStyle(displayContext, line);
 					cachedLine.Layout =
 						ParentBuffer.LineLayoutBuffer.GetLineLayout(displayContext, line);
+
 					height += cachedLine.Height;
+					wrappedLineCount += cachedLine.Layout.LineCount;
 				}
 
 				// Set the height of the window.
+				WrappedLineCount = wrappedLineCount;
 				Height = height;
 			}
 
@@ -921,6 +1045,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			{
 				// Reset the cached values in the window.
 				Height = null;
+				WrappedLineCount = -1;
 			}
 
 			/// <summary>
