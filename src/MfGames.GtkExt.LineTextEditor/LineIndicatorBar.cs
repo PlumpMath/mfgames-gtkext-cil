@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 using C5;
 
@@ -42,6 +43,7 @@ using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.Locking;
 
 using Pango;
 
@@ -75,47 +77,18 @@ namespace MfGames.GtkExt.LineTextEditor
 			DisplayContext = displayContext;
 			LineIndicatorBuffer = lineIndicatorBuffer;
 
-			// Hook up to the idle function.
-			Idle.Add(OnIdle);
+			// Start the background update.
+			sync = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+			StartBackgroundUpdate();
 		}
 
 		#endregion
 
-		#region Buffers
-
-		#endregion
-
-		#region Drawing
+		#region Indicator Lines
 
 		private ArrayList<IndicatorLine> indicatorLines;
 
-		/// <summary>
-		/// Keeps track of the last indicator line updated.
-		/// </summary>
-		private int lastIndicatorLineUpdated;
-
 		private ILineIndicatorBuffer lineIndicatorBuffer;
-
-		/// <summary>
-		/// Internal flag to determine if we need to update our indicators.
-		/// </summary>
-		private bool needUpdate;
-
-		private int visibleLineCount;
-
-		/// <summary>
-		/// Gets or sets the display context.
-		/// </summary>
-		/// <value>The display context.</value>
-		public IDisplayContext DisplayContext { get; private set; }
-
-		/// <summary>
-		/// Gets or sets the height of an individual indicator line. This will
-		/// determine how many actual wrapped lines will be combined into a
-		/// single displayed line.
-		/// </summary>
-		/// <value>The height of the indicator pixel.</value>
-		public int IndicatorPixelHeight { get; set; }
 
 		/// <summary>
 		/// Gets or sets the line indicator buffer associated with this view.
@@ -135,6 +108,125 @@ namespace MfGames.GtkExt.LineTextEditor
 				AssignLines();
 			}
 		}
+
+		/// <summary>
+		/// Goes through the buffer lines and assigns those lines to the
+		/// indicator lines.
+		/// </summary>
+		private void AssignLines()
+		{
+			// If we don't have any lines or if we have no height, then don't
+			// do anything.
+			int lineCount = lineIndicatorBuffer.LineCount;
+
+			if (visibleLineCount == 0 || lineIndicatorBuffer == null || lineCount == 0)
+			{
+				return;
+			}
+
+			// Figure out how many indicator lines we'll be using.
+			int bufferLinesPerIndicatorLine = BufferLinesPerIndicatorLine;
+			int indicatorLinesUsed = 1 +
+			                         lineIndicatorBuffer.LineCount /
+									 bufferLinesPerIndicatorLine;
+
+			// Reset the lines we're using and clear out the lines we aren't.
+			for (int indicatorLineIndex = 0; indicatorLineIndex < visibleLineCount; indicatorLineIndex++)
+			{
+				IndicatorLine indicatorLine = indicatorLines[indicatorLineIndex];
+
+				if (indicatorLineIndex < indicatorLinesUsed)
+				{
+					indicatorLine.Reset();
+					indicatorLine.StartLineIndex = indicatorLineIndex *
+					                               bufferLinesPerIndicatorLine;
+					indicatorLine.EndLineIndex = (indicatorLineIndex + 1) *
+					                             bufferLinesPerIndicatorLine - 1;
+				}
+				else
+				{
+					indicatorLine.Visible = false;
+					indicatorLine.StartLineIndex = -1;
+					indicatorLine.EndLineIndex = -1;
+				}
+			}
+
+			// Since we assigned the lines, we start updating the idle.
+			StartBackgroundUpdate();
+		}
+
+		/// <summary>
+		/// Called when the buffer changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnBufferChanged(
+			object sender,
+			EventArgs args)
+		{
+			AssignLines();
+		}
+
+		/// <summary>
+		/// Called when a single line changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The event arguments.</param>
+		private void OnLineChanged(
+			object sender,
+			LineChangedArgs args)
+		{
+			// Reset the line indicator so it reparses later.
+			int indicatorLineIndex = args.LineIndex / BufferLinesPerIndicatorLine;
+
+			indicatorLines[indicatorLineIndex].Reset();
+
+			// Start the background update, if it isn't already.
+			StartBackgroundUpdate();
+		}
+
+		/// <summary>
+		/// Reallocates the indicator line objects.
+		/// </summary>
+		private void ReallocateLines()
+		{
+			// Create a new indicator line which is then populated
+			// with null values to reset the bar.
+			indicatorLines = new ArrayList<IndicatorLine>(visibleLineCount);
+
+			for (int index = 0; index < visibleLineCount; index++)
+			{
+				indicatorLines.Add(new IndicatorLine());
+			}
+
+			// Assign the lines, since we may have changed.
+			AssignLines();
+		}
+
+		#endregion
+
+		#region Drawing
+
+		/// <summary>
+		/// Keeps track of the last indicator line updated.
+		/// </summary>
+		private int lastIndicatorLineUpdated;
+
+		private int visibleLineCount;
+
+		/// <summary>
+		/// Gets or sets the display context.
+		/// </summary>
+		/// <value>The display context.</value>
+		public IDisplayContext DisplayContext { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the height of an individual indicator line. This will
+		/// determine how many actual wrapped lines will be combined into a
+		/// single displayed line.
+		/// </summary>
+		/// <value>The height of the indicator pixel.</value>
+		public int IndicatorPixelHeight { get; set; }
 
 		/// <summary>
 		/// Gets the theme associated with this bar.
@@ -173,90 +265,108 @@ namespace MfGames.GtkExt.LineTextEditor
 		}
 
 		/// <summary>
-		/// Gets or sets the wrapped line count.
-		/// </summary>
-		/// <value>The wrapped line count.</value>
-		protected int WrappedLineCount { get; set; }
-
-		/// <summary>
-		/// Gets the wrapped lines per indicator line.
+		/// Gets the lines per indicator line.
 		/// </summary>
 		/// <value>The wrapped lines per indicator line.</value>
-		protected int WrappedLinesPerIndicatorLine
+		protected int BufferLinesPerIndicatorLine
 		{
-			get { return Math.Max(1, WrappedLineCount / visibleLineCount); }
+			get { return Math.Max(1, lineIndicatorBuffer.LineCount / visibleLineCount); }
+		}
+
+		#endregion
+
+		#region Gtk
+
+		private bool idleRunning;
+		private readonly ReaderWriterLockSlim sync;
+
+		/// <summary>
+		/// Starts the background update of the elements if it isn't already
+		/// running.
+		/// </summary>
+		private void StartBackgroundUpdate()
+		{
+			using (new WriteLock(sync))
+			{
+				// If the idle is already running, then we don't need to worry
+				// about the idle. If it isn't, then set the flag and attach
+				// the idle function to the Gtk# loop.
+				if (!idleRunning)
+				{
+					idleRunning = true;
+					Idle.Add(OnIdle);
+				}
+			}
 		}
 
 		/// <summary>
-		/// Goes through the buffer lines and assigns those lines to the
-		/// indicator lines.
+		/// Called when the GUI is idle and we can finish updating.
 		/// </summary>
-		private void AssignLines()
+		/// <returns>True if this idle should remain in effect.</returns>
+		private bool OnIdle()
 		{
-			// If we don't have any lines or if we have no height, then don't
-			// do anything.
-			if (visibleLineCount == 0 || lineIndicatorBuffer == null)
+			// Keep track of our start time since we want to limit how long
+			// we are in this function. Using UtcNow is more efficient than
+			// local time because it does no time zone processing.
+			const int maximumProcessTime = 100;
+			DateTime start = DateTime.UtcNow;
+
+			try
 			{
-				return;
-			}
+				// Look for lines that need to be populated. We can do this since
+				// we are on the GUI thread.
+				bool startedAtBeginning = lastIndicatorLineUpdated == 0;
 
-			WrappedLineCount = lineIndicatorBuffer.GetWrappedLineCount(DisplayContext);
-
-			if (WrappedLineCount == 0)
-			{
-				return;
-			}
-
-			// If we are assigning lines, we need an update.
-			needUpdate = true;
-
-			// Figure out how many buffer lines we need to put into a single
-			// indicator line.
-			int wrappedLinesPerIndicatorLine = WrappedLinesPerIndicatorLine;
-
-			// Go through indicator lines and set up their indexes.
-			int wrappedLineIndex = 0;
-
-			for (int indicatorIndex = 0;
-			     indicatorIndex < visibleLineCount;
-			     indicatorIndex++)
-			{
-				// If we are beyond the wrapped line count, we don't show the
-				// line at all.
-				IndicatorLine indicatorLine = indicatorLines[indicatorIndex];
-
-				if (wrappedLineIndex > WrappedLineCount)
+				for (int index = lastIndicatorLineUpdated;
+				     index < indicatorLines.Count;
+				     index++)
 				{
-					// We are beyond the limits.
-					indicatorLine.StartWrappedLineIndex = -1;
-					indicatorLine.EndWrappedLineIndex = -1;
-					indicatorLine.NeedIndicators = false;
-					indicatorLine.Visible = false;
+					// If we need data, then do something.
+					IndicatorLine indicatorLine = indicatorLines[index];
+
+					if (indicatorLine.NeedIndicators)
+					{
+						// We need to update this indicator.
+						indicatorLine.Update(DisplayContext, lineIndicatorBuffer);
+					}
+
+					// Update the last indicator update.
+					lastIndicatorLineUpdated = index;
+
+					// Check to see if we exceeded our time.
+					TimeSpan elapsed = DateTime.UtcNow - start;
+
+					if (elapsed.TotalMilliseconds > maximumProcessTime)
+					{
+						return true;
+					}
+				}
+
+				// If we didn't start at the beginning, then we start over to see if
+				// there are more that need updating. Otherwise, we are done.
+				if (startedAtBeginning)
+				{
+					// We set the flag to indicate we aren't running an idle
+					// function and detach from GLib's idle processing. This is
+					// done to save CPU cycles when nothing changes.
+					using (new WriteLock(sync))
+					{
+						idleRunning = false;
+						return false;
+					}
 				}
 				else
 				{
-					// Get the wrapped line index range we are using.
-					indicatorLine.StartWrappedLineIndex = wrappedLineIndex;
-					indicatorLine.EndWrappedLineIndex = Math.Min(
-						WrappedLineCount, wrappedLineIndex + wrappedLinesPerIndicatorLine) - 1;
-					indicatorLine.Reset();
+					lastIndicatorLineUpdated = 0;
 				}
-
-				// Increment the line index for the next line.
-				wrappedLineIndex += wrappedLinesPerIndicatorLine;
 			}
-		}
+			finally
+			{
+				// In all of these cases, we need to queue a redraw.
+				QueueDraw();
+			}
 
-		/// <summary>
-		/// Called when the buffer changes.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnBufferChanged(
-			object sender,
-			EventArgs args)
-		{
-			AssignLines();
+			return true;
 		}
 
 		/// <summary>
@@ -307,113 +417,6 @@ namespace MfGames.GtkExt.LineTextEditor
 		}
 
 		/// <summary>
-		/// Called when the GUI is idle and we can finish updating.
-		/// </summary>
-		/// <returns>True if this idle should remain in effect.</returns>
-		private bool OnIdle()
-		{
-			// Check to see if we need to update at least one.
-			if (!needUpdate)
-			{
-				return true;
-			}
-
-			// Keep track of our start time since we want to limit how long
-			// we are in this function. Using UtcNow is more efficient than
-			// local time because it does no time zone processing.
-			const int maximumProcessTime = 100;
-			DateTime start = DateTime.UtcNow;
-
-			try
-			{
-				// Look for lines that need to be populated. We can do this since
-				// we are on the GUI thread.
-				bool startedAtBeginning = lastIndicatorLineUpdated == 0;
-
-				for (int index = lastIndicatorLineUpdated;
-				     index < indicatorLines.Count;
-				     index++)
-				{
-					// If we need data, then do something.
-					IndicatorLine indicatorLine = indicatorLines[index];
-
-					if (indicatorLine.NeedIndicators)
-					{
-						// We need to update this indicator.
-						indicatorLine.Update(DisplayContext, lineIndicatorBuffer);
-					}
-
-					// Update the last indicator update.
-					lastIndicatorLineUpdated = index;
-
-					// Check to see if we exceeded our time.
-					TimeSpan elapsed = DateTime.UtcNow - start;
-
-					if (elapsed.TotalMilliseconds > maximumProcessTime)
-					{
-						return true;
-					}
-				}
-
-				// If we didn't start at the beginning, then we start over to see if
-				// there are more that need updating. Otherwise, we are done.
-				if (startedAtBeginning)
-				{
-					// We need to keep processing this even though we have nothing to do.
-					needUpdate = false;
-				}
-				else
-				{
-					lastIndicatorLineUpdated = 0;
-				}
-			}
-			finally
-			{
-				// In all of these cases, we need to queue a redraw.
-				QueueDraw();
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Called when a single line changes.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The event arguments.</param>
-		private void OnLineChanged(
-			object sender,
-			LineChangedArgs args)
-		{
-			// Figure out which wrapped line indexes are represented by this
-			// line.
-			int startWrappedLineIndex, endWrappedLineIndex;
-
-			lineIndicatorBuffer.GetWrappedLineIndexes(
-				DisplayContext,
-				args.LineIndex,
-				out startWrappedLineIndex,
-				out endWrappedLineIndex);
-
-			// Use the wrapped indexes to determine which indicator lines need
-			// to be reset.
-			int startIndicatorIndex = Math.Max(
-				0, startWrappedLineIndex / WrappedLinesPerIndicatorLine - 1);
-			int endIndicatorIndex = Math.Min(
-				visibleLineCount - 1, endWrappedLineIndex / WrappedLinesPerIndicatorLine + 1);
-
-			for (int indicatorIndex = startIndicatorIndex;
-			     indicatorIndex <= endIndicatorIndex;
-			     indicatorIndex++)
-			{
-				indicatorLines[indicatorIndex].Reset();
-			}
-
-			// Since we reset a line, have the idle thread update.
-			needUpdate = true;
-		}
-
-		/// <summary>
 		/// Called when the widget is resized.
 		/// </summary>
 		/// <param name="allocation">The allocation.</param>
@@ -427,27 +430,9 @@ namespace MfGames.GtkExt.LineTextEditor
 			VisibleLineCount = Allocation.Height / IndicatorPixelHeight;
 		}
 
-		/// <summary>
-		/// Reallocates the indicator line objects.
-		/// </summary>
-		private void ReallocateLines()
-		{
-			// Create a new indicator line which is then populated
-			// with null values to reset the bar.
-			indicatorLines = new ArrayList<IndicatorLine>(visibleLineCount);
-
-			for (int index = 0; index < visibleLineCount; index++)
-			{
-				indicatorLines.Add(new IndicatorLine());
-			}
-
-			// Assign the lines, since we may have changed.
-			AssignLines();
-		}
-
 		#endregion
 
-		#region Indicator
+		#region Indicators
 
 		/// <summary>
 		/// Represents a single visible line on the indicator.
@@ -461,23 +446,23 @@ namespace MfGames.GtkExt.LineTextEditor
 			private double[] ratios;
 
 			/// <summary>
-			/// Gets or sets the indexes of the last wrapped line.
+			/// Gets or sets the indexes of the last line.
 			/// </summary>
 			/// <value>The end index of the line.</value>
-			public int EndWrappedLineIndex { get; set; }
+			public int EndLineIndex { private get; set; }
 
 			/// <summary>
 			/// Gets or sets a value indicating whether this instance needs to
 			/// be populated with indicators.
 			/// </summary>
 			/// <value><c>true</c> if [need indicators]; otherwise, <c>false</c>.</value>
-			public bool NeedIndicators { get; set; }
+			public bool NeedIndicators { get; private set; }
 
 			/// <summary>
-			/// Gets or sets the index of the first wrapped line.
+			/// Gets or sets the index of the first line.
 			/// </summary>
 			/// <value>The start index of the line.</value>
-			public int StartWrappedLineIndex { get; set; }
+			public int StartLineIndex { private get; set; }
 
 			/// <summary>
 			/// Resets this indicator so we can query for more information.
@@ -592,7 +577,13 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				if (highestStyle != null)
 				{
-					Color = highestStyle.Color;
+					colors = new[] { highestStyle.Color };
+					ratios = new[] { 1.0 };
+				}
+				else
+				{
+					colors = null;
+					ratios = null;
 				}
 			}
 
@@ -609,33 +600,19 @@ namespace MfGames.GtkExt.LineTextEditor
 				Reset();
 
 				// If the start and end are negative, then don't do anything.
-				if (StartWrappedLineIndex < 0 || EndWrappedLineIndex < 0)
+				if (StartLineIndex < 0)
 				{
 					return;
 				}
 
-				// Gather up all the indicators for the wrapped lines assigned
-				// to this line indicator.
-				for (int wrappedLineIndex = StartWrappedLineIndex;
-				     wrappedLineIndex <= EndWrappedLineIndex;
-				     wrappedLineIndex++)
+				// Gather up all the indicators for the lines assigned to this
+				// indicator line.
+				for (int lineIndex = StartLineIndex; lineIndex <= EndLineIndex; lineIndex++)
 				{
-					// Get the line and layout we are working with.
-					int layoutLineIndex;
-					int lineIndex = buffer.GetLineIndex(
-						displayContext, wrappedLineIndex, out layoutLineIndex);
-					Layout layout = buffer.GetLineLayout(displayContext, lineIndex);
-
-					// Figure out the string index of the layout line.
-					LayoutLine layoutLine = layout.Lines[layoutLineIndex];
-					int startCharacterIndex = layoutLine.StartIndex;
-					int endCharacterIndex = startCharacterIndex + layoutLine.Length;
-
 					// Get the line indicators for that character range and add
 					// them to the current range of indicators.
 					IEnumerable<ILineIndicator> lineIndicators =
-						buffer.GetLineIndicators(
-							displayContext, lineIndex, startCharacterIndex, endCharacterIndex);
+						buffer.GetLineIndicators(displayContext, lineIndex);
 
 					if (lineIndicators != null)
 					{
@@ -670,7 +647,6 @@ namespace MfGames.GtkExt.LineTextEditor
 				{
 					case IndicatorRenderStyle.Highest:
 						// Find the most important style and use that.
-						ratios = new double[] { 1 };
 						SetHighestColor(displayContext);
 						break;
 
@@ -692,12 +668,6 @@ namespace MfGames.GtkExt.LineTextEditor
 			#region Drawing
 
 			/// <summary>
-			/// Gets or sets the color for the indicator line.
-			/// </summary>
-			/// <value>The color.</value>
-			public Color Color { get; private set; }
-
-			/// <summary>
 			/// Determines if this indicator is visible.
 			/// </summary>
 			/// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
@@ -714,6 +684,12 @@ namespace MfGames.GtkExt.LineTextEditor
 				double y,
 				double width)
 			{
+				// If we don't have a color, then we don't do anything.
+				if (colors == null || ratios == null)
+				{
+					return;
+				}
+
 				// Go through the the various colors/ratios and render each one.
 				double x = 0;
 

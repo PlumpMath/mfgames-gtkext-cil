@@ -110,6 +110,7 @@
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
     <Compile Include="Interfaces\LineBufferExtensions.cs" />
+    <Compile Include="Interfaces\LineIndicatorBufferExtensions.cs" />
     <Compile Include="Interfaces\LineLayoutBufferExtensions.cs" />
     <Compile Include="LineIndicatorBar.cs" />
     <Compile Include="Margins\LineNumberMarginRenderer.cs" />

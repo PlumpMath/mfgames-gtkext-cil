@@ -24,6 +24,7 @@
 
 #region Namespaces
 
+using System;
 using System.Collections.Generic;
 
 using C5;
@@ -76,12 +77,16 @@ namespace GtkExtDemo.LineTextEditor
 		{
 			// Get the escaped line markup.
 			string text = this.GetLineText(lineIndex);
+
+			endCharacterIndex = Math.Min(endCharacterIndex, text.Length);
+
 			string partialText = text.Substring(
 				startCharacterIndex, endCharacterIndex - startCharacterIndex);
 
 			// Parse through the markup and get a list of entries. If we don't
 			// get any out of this, return null.
-			ArrayList<KeywordMarkupEntry> entries = KeywordMarkupEntry.ParseText(partialText);
+			ArrayList<KeywordMarkupEntry> entries =
+				KeywordMarkupEntry.ParseText(partialText);
 
 			if (entries.Count == 0)
 			{

@@ -56,7 +56,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
 		public CachedLineLayoutBuffer(ILineLayoutBuffer buffer)
-			: this(buffer, 8, 128)
+			: this(buffer, 8, 16)
 		{
 		}
 

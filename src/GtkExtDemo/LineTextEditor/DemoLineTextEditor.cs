@@ -85,7 +85,7 @@ namespace GtkExtDemo.LineTextEditor
 				"Error", 100, new Color(1, 0, 0));
 			textEditor.Theme.IndicatorStyles["Warning"] = new IndicatorStyle(
 				"Warning", 10, new Color(1, 165 / 255.0, 0));
-			textEditor.Theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
+			//textEditor.Theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
 
 			// Wrap the text editor in a scrollbar.
 			var scrolledWindow = new ScrolledWindow();
