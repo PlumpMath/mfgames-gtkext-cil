@@ -375,8 +375,10 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
                 key, filteredModifiers);
 
             // Check to see if we have an action for this.
-            if (keyBindings.Contains(keyCode) ||
-                (unicodeKey != 0 && modifier == ModifierType.None))
+        	bool isCharacter = unicodeKey != 0 && filteredModifiers == ModifierType.None;
+        	bool isAction = keyBindings.Contains(keyCode);
+
+        	if (isAction || isCharacter)
             {
                 // Keep track of the original selection.
                 BufferSegment previousSelection = displayContext.Caret.Selection;
@@ -388,11 +390,11 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
                 // Perform the appropriate action.
                 try
                 {
-                    if (keyBindings.Contains(keyCode))
+                    if (isAction)
                     {
                         keyBindings[keyCode].Perform(this);
                     }
-                    else if (unicodeKey != 0 && modifier == ModifierType.None)
+					else
                     {
                         TextActions.InsertText(this, (char) unicodeKey);
                     }
