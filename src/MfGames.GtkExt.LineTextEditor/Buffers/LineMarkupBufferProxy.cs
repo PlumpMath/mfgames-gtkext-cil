@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System.Diagnostics;
+
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -39,6 +41,10 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	{
 		#region Constructors
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LineMarkupBufferProxy"/> class.
+		/// </summary>
+		/// <param name="buffer">The buffer.</param>
 		public LineMarkupBufferProxy(ILineMarkupBuffer buffer)
 			: base(buffer)
 		{
@@ -52,8 +58,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the line markup buffer.
 		/// </summary>
 		/// <value>The line markup buffer.</value>
-		protected ILineMarkupBuffer LineMarkupBuffer
+		internal ILineMarkupBuffer LineMarkupBuffer
 		{
+			[DebuggerStepThrough]
 			get
 			{
 				// This works since we passed in a ILineMarkupBuffer into

@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -68,8 +69,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the underlying buffer for this proxy.
 		/// </summary>
 		/// <value>The buffer.</value>
-		protected ILineBuffer LineBuffer
+		internal ILineBuffer LineBuffer
 		{
+			[DebuggerStepThrough]
 			get { return buffer; }
 		}
 

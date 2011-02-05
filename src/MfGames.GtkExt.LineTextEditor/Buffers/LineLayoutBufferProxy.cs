@@ -61,13 +61,13 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
-		protected ILineLayoutBuffer LineLayoutBuffer
+		internal ILineLayoutBuffer LineLayoutBuffer
 		{
 			[DebuggerStepThrough]
 			get
 			{
 				// This works because ILineLayoutBuffer extends ILineMarkupBuffer.
-				return (ILineLayoutBuffer) LineMarkupBuffer;
+				return (ILineLayoutBuffer) LineBuffer;
 			}
 		}
 
@@ -83,26 +83,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		#endregion
 
 		#region Line Layout
-
-		/// <summary>
-		/// Gets the wrapped line indexes for a given line index.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineIndex">The line index.</param>
-		/// <param name="startWrappedLineIndex">Start index of the wrapped line.</param>
-		/// <param name="endWrappedLineIndex">End index of the wrapped line.</param>
-		public virtual void GetWrappedLineIndexes(
-			IDisplayContext displayContext,
-			int lineIndex,
-			out int startWrappedLineIndex,
-			out int endWrappedLineIndex)
-		{
-			LineLayoutBuffer.GetWrappedLineIndexes(
-				displayContext,
-				lineIndex,
-				out startWrappedLineIndex,
-				out endWrappedLineIndex);
-		}
 
 		/// <summary>
 		/// Sets the pixel width of a layout in case the layout uses word
@@ -195,6 +175,26 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		public virtual int GetWrappedLineCount(IDisplayContext displayContext)
 		{
 			return LineLayoutBuffer.GetWrappedLineCount(displayContext);
+		}
+
+		/// <summary>
+		/// Gets the wrapped line indexes for a given line index.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="lineIndex">The line index.</param>
+		/// <param name="startWrappedLineIndex">Start index of the wrapped line.</param>
+		/// <param name="endWrappedLineIndex">End index of the wrapped line.</param>
+		public virtual void GetWrappedLineIndexes(
+			IDisplayContext displayContext,
+			int lineIndex,
+			out int startWrappedLineIndex,
+			out int endWrappedLineIndex)
+		{
+			LineLayoutBuffer.GetWrappedLineIndexes(
+				displayContext,
+				lineIndex,
+				out startWrappedLineIndex,
+				out endWrappedLineIndex);
 		}
 
 		#endregion

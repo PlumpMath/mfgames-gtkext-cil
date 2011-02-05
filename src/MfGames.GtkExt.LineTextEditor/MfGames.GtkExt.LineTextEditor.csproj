@@ -70,8 +70,10 @@
     <Compile Include="Attributes\ActionStateAttribute.cs" />
     <Compile Include="Attributes\KeyBindingAttribute.cs" />
     <Compile Include="Buffers\BufferSegment.cs" />
+    <Compile Include="Buffers\CachedLine.cs" />
     <Compile Include="Buffers\CachedLineIndicatorBuffer.cs" />
     <Compile Include="Buffers\CachedLineLayoutBuffer.cs" />
+    <Compile Include="Buffers\CachedWindow.cs" />
     <Compile Include="Buffers\EnglishWordSplitter.cs" />
     <Compile Include="Buffers\LineBufferProxy.cs" />
     <Compile Include="Buffers\LineIndicatorBufferProxy.cs" />

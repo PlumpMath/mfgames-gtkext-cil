@@ -117,6 +117,24 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		private readonly int windowSize;
 
 		/// <summary>
+		/// Gets the list of allocated lines.
+		/// </summary>
+		/// <value>The allocated lines.</value>
+		internal ArrayList<CachedLine[]> AllocatedLines
+		{
+			get { return allocatedLines; }
+		}
+
+		/// <summary>
+		/// Gets the size of a window cache.
+		/// </summary>
+		/// <value>The size of the window.</value>
+		public int WindowSize
+		{
+			get { return windowSize; }
+		}
+
+		/// <summary>
 		/// Goes through and makes sure all the windows are allocated for the
 		/// underlying buffer.
 		/// </summary>
@@ -193,7 +211,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Clears the least recently used window that has lines.
 		/// </summary>
-		private void ClearLeastRecentlyUsedWindow()
+		internal void ClearLeastRecentlyUsedWindow()
 		{
 			// Go through the windows and find the cache window that has the
 			// oldest data.
@@ -262,57 +280,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		private int? lineHeight;
 
-		public override void GetWrappedLineIndexes(IDisplayContext displayContext, int lineIndex, out int startWrappedLineIndex, out int endWrappedLineIndex)
-		{
-			// Make sure we have all the windows allocated.
-			AllocateWindows();
-
-			// Figure out which window we need to stop on.
-			int windowIndex = GetWindowIndex(lineIndex);
-
-			// Go through the windows and find the one that contains the
-			// wrapped line index.
-			int currentWrappedIndex = 0;
-
-			for (int currentWindowIndex = 0; currentWindowIndex < windows.Count; currentWindowIndex++)
-			{
-				// Get the window and populate it if we don't have a wrapped
-				// line count.
-				CachedWindow window = windows[currentWindowIndex];
-
-				if (window.WrappedLineCount <= 0)
-				{
-					window.Populate(displayContext);
-				}
-
-				// If this window is before the one we need, just add to the
-				// count and continue.
-				if (currentWindowIndex != windowIndex)
-				{
-					currentWrappedIndex += window.WrappedLineCount;
-					continue;
-				}
-
-				// We are in the window we need, go through all the lines before
-				// the line that we actually need.
-				for (int windowLineIndex = window.WindowStartLine; windowLineIndex < lineIndex; windowLineIndex++)
-				{
-					currentWrappedIndex += window.GetLineLayout(displayContext, windowLineIndex).LineCount;
-				}
-
-				// Finally, get the window we requested.
-				Layout lineLayout = window.GetLineLayout(displayContext, lineIndex);
-				startWrappedLineIndex = currentWrappedIndex;
-				endWrappedLineIndex = currentWindowIndex + lineLayout.LineCount - 1;
-
-				// We are done, so break out.
-				return;
-			}
-
-			// If we got this far, we can't find it.
-			throw new Exception("Cannot find wrapped line index in buffer");
-		}
-
 		/// <summary>
 		/// Sets the width on the underlying buffer and resets the cache windows
 		/// if the width changes.
@@ -346,7 +313,10 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
 		/// <param name="layoutLineIndex">Index of the layout line.</param>
 		/// <returns></returns>
-		public override int GetLineIndex(IDisplayContext displayContext, int wrappedLineIndex, out int layoutLineIndex)
+		public override int GetLineIndex(
+			IDisplayContext displayContext,
+			int wrappedLineIndex,
+			out int layoutLineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
@@ -593,6 +563,66 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			return style;
 		}
 
+		public override void GetWrappedLineIndexes(
+			IDisplayContext displayContext,
+			int lineIndex,
+			out int startWrappedLineIndex,
+			out int endWrappedLineIndex)
+		{
+			// Make sure we have all the windows allocated.
+			AllocateWindows();
+
+			// Figure out which window we need to stop on.
+			int windowIndex = GetWindowIndex(lineIndex);
+
+			// Go through the windows and find the one that contains the
+			// wrapped line index.
+			int currentWrappedIndex = 0;
+
+			for (int currentWindowIndex = 0;
+			     currentWindowIndex < windows.Count;
+			     currentWindowIndex++)
+			{
+				// Get the window and populate it if we don't have a wrapped
+				// line count.
+				CachedWindow window = windows[currentWindowIndex];
+
+				if (window.WrappedLineCount <= 0)
+				{
+					window.Populate(displayContext);
+				}
+
+				// If this window is before the one we need, just add to the
+				// count and continue.
+				if (currentWindowIndex != windowIndex)
+				{
+					currentWrappedIndex += window.WrappedLineCount;
+					continue;
+				}
+
+				// We are in the window we need, go through all the lines before
+				// the line that we actually need.
+				for (int windowLineIndex = window.WindowStartLine;
+				     windowLineIndex < lineIndex;
+				     windowLineIndex++)
+				{
+					currentWrappedIndex +=
+						window.GetLineLayout(displayContext, windowLineIndex).LineCount;
+				}
+
+				// Finally, get the window we requested.
+				Layout lineLayout = window.GetLineLayout(displayContext, lineIndex);
+				startWrappedLineIndex = currentWrappedIndex;
+				endWrappedLineIndex = currentWindowIndex + lineLayout.LineCount - 1;
+
+				// We are done, so break out.
+				return;
+			}
+
+			// If we got this far, we can't find it.
+			throw new Exception("Cannot find wrapped line index in buffer");
+		}
+
 		#endregion
 
 		#region Buffer Editing
@@ -643,442 +673,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			Clear();
 			AllocateWindows();
 			base.OnLinesInserted(sender, args);
-		}
-
-		#endregion
-
-		#region Nested type: CachedLine
-
-		/// <summary>
-		/// Contains information about a single cached line in memory. This
-		/// contains information about the height and style for a given line.
-		/// </summary>
-		internal class CachedLine
-		{
-			#region Properties
-
-			/// <summary>
-			/// Gets or sets the height of the line.
-			/// </summary>
-			/// <value>The height.</value>
-			public int Height { get; set; }
-
-			/// <summary>
-			/// Gets or sets the Pango layout for the line.
-			/// </summary>
-			/// <value>The layout.</value>
-			public Layout Layout { get; set; }
-
-			/// <summary>
-			/// Gets or sets the style for the line.
-			/// </summary>
-			/// <value>The style.</value>
-			public BlockStyle Style { get; set; }
-
-			/// <summary>
-			/// Resets the cached line.
-			/// </summary>
-			public void Reset()
-			{
-				Height = 0;
-				Style = null;
-				Layout = null;
-			}
-
-			#endregion
-
-			#region Conversion
-
-			/// <summary>
-			/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-			/// </summary>
-			/// <returns>
-			/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-			/// </returns>
-			public override string ToString()
-			{
-				return string.Format("CachedLine: Height={0}", Height);
-			}
-
-			#endregion
-		}
-
-		#endregion
-
-		#region Nested type: CachedWindow
-
-		/// <summary>
-		/// Implements a cache window that keeps track of a range of lines and
-		/// their heights and allows for the individual lines to be unloaded
-		/// but the overall height and bulk properties to be retained.
-		/// </summary>
-		internal class CachedWindow
-		{
-			#region Constructors
-
-			/// <summary>
-			/// Initializes a new instance of the <see cref="CachedWindow"/> class.
-			/// </summary>
-			/// <param name="buffer">The buffer.</param>
-			/// <param name="windowIndex">Index of the cache window.</param>
-			public CachedWindow(
-				CachedLineLayoutBuffer buffer,
-				int windowIndex)
-			{
-				ParentBuffer = buffer;
-				WindowIndex = windowIndex;
-			}
-
-			#endregion
-
-			#region Properties
-
-			/// <summary>
-			/// Gets or sets the height of the entire cache window.
-			/// </summary>
-			/// <value>The height.</value>
-			internal int? Height { get; set; }
-
-			/// <summary>
-			/// Gets or sets the last accessed timestamp.
-			/// </summary>
-			/// <value>The last accessed.</value>
-			internal DateTime LastAccessed { get; set; }
-
-			/// <summary>
-			/// Gets or sets an array of lines within the buffer.
-			/// </summary>
-			/// <value>The lines.</value>
-			internal CachedLine[] Lines { get; set; }
-
-			/// <summary>
-			/// Gets or sets the buffer.
-			/// </summary>
-			/// <value>The buffer.</value>
-			internal CachedLineLayoutBuffer ParentBuffer { get; private set; }
-
-			/// <summary>
-			/// Gets the end line inside the window.
-			/// </summary>
-			/// <value>The end line.</value>
-			internal int WindowEndLine
-			{
-				get { return WindowStartLine + ParentBuffer.windowSize - 1; }
-			}
-
-			/// <summary>
-			/// Gets or sets the index of the window.
-			/// </summary>
-			/// <value>The index of the window.</value>
-			internal int WindowIndex { get; private set; }
-
-			/// <summary>
-			/// Gets the starting line inside the window..
-			/// </summary>
-			/// <value>The start line.</value>
-			internal int WindowStartLine
-			{
-				get { return WindowIndex * ParentBuffer.windowSize; }
-			}
-
-			/// <summary>
-			/// Gets the start index for wrapped lines.
-			/// </summary>
-			/// <value>The window start wrapped line.</value>
-			internal int WrappedLineCount
-			{
-				get; private set;
-			}
-
-			#endregion
-
-			#region Caching
-
-			private bool needPopulate;
-
-			/// <summary>
-			/// Gets the line layout for a given line.
-			/// </summary>
-			/// <param name="displayContext">The display context.</param>
-			/// <param name="line">The line index which may not be in the window.</param>
-			/// <returns></returns>
-			public Layout GetLineLayout(
-				IDisplayContext displayContext,
-				int line)
-			{
-				// Make sure we are asking for lines in the range of the cache
-				// window. If we ask for something outside of that, return 0.
-				if (line > WindowEndLine)
-				{
-					return null;
-				}
-
-				if (line < WindowStartLine)
-				{
-					return null;
-				}
-
-				// We have to have this window populated.
-				Populate(displayContext);
-
-				// Get the line index inside the window.
-				int windowLineIndex = line - WindowStartLine;
-
-				return Lines[windowLineIndex].Layout;
-			}
-
-			/// <summary>
-			/// Gets the line layout containing the Y coordinate relative to the
-			/// cache window.
-			/// </summary>
-			/// <param name="displayContext">The text editor.</param>
-			/// <param name="y">The window-relative Y pixels.</param>
-			/// <returns></returns>
-			public int GetLineLayoutContaining(
-				IDisplayContext displayContext,
-				int y)
-			{
-				// We need to have this window populated.
-				Populate(displayContext);
-
-				// Go through the lines in the cache and find the line.
-				int height = 0;
-
-				for (int lineIndex = 0; lineIndex < Lines.Length; lineIndex++)
-				{
-					// Determine if the Y coordinate is inside the line.
-					CachedLine cachedLine = Lines[lineIndex];
-
-					if (y >= height && y <= height + cachedLine.Height)
-					{
-						return WindowStartLine + lineIndex;
-					}
-
-					// Add the height to the line.
-					height += cachedLine.Height;
-				}
-
-				// We can't find it, so throw an exception.
-				throw new Exception("Cannot find line at y coordinate: " + y);
-			}
-
-			/// <summary>
-			/// Gets the line layout height for the entire cache window.
-			/// </summary>
-			/// <param name="displayContext">The text editor.</param>
-			/// <returns></returns>
-			internal int GetLineLayoutHeight(IDisplayContext displayContext)
-			{
-				// Check to see if we already have it populated.
-				if (Height.HasValue)
-				{
-					return Height.Value;
-				}
-
-				// Use the text editor to populate the height.
-				Height = ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
-					displayContext, WindowStartLine, WindowEndLine);
-				return Height.Value;
-			}
-
-			/// <summary>
-			/// Gets the height of the text for individual lines
-			/// </summary>
-			/// <param name="displayContext">The text editor.</param>
-			/// <param name="startLine">The start line which may not be in the window.</param>
-			/// <param name="endLine">The end line which may not be in the window.</param>
-			/// <returns></returns>
-			internal int GetLineLayoutHeight(
-				IDisplayContext displayContext,
-				int startLine,
-				int endLine)
-			{
-				// Make sure we are asking for lines in the range of the cache
-				// window. If we ask for something outside of that, return 0.
-				if (startLine > WindowEndLine)
-				{
-					return 0;
-				}
-
-				if (endLine < WindowStartLine)
-				{
-					return 0;
-				}
-
-				// Check to see if we are getting the entire height. This is to
-				// optimize some requests and to avoid populating the lines if
-				// we don't need to.
-				if (startLine == WindowStartLine && endLine == WindowEndLine)
-				{
-					// Entire buffer request so optimize it.
-					return GetLineLayoutHeight(displayContext);
-				}
-
-				// Make sure we're populated since we are getting individual
-				// lines.
-				Populate(displayContext);
-
-				// Clamp the lines based on the limits of the cache window.
-				startLine = Math.Max(startLine, WindowStartLine);
-				endLine = Math.Min(endLine, WindowEndLine);
-
-				// Figure out the index of the lines inside the window.
-				int startLineIndex = startLine - WindowStartLine;
-				int endLineIndex = endLine - WindowStartLine;
-
-				// Add up the height of all the lines.
-				int height = 0;
-
-				for (int lineIndex = startLineIndex; lineIndex <= endLineIndex; lineIndex++)
-				{
-					height += Lines[lineIndex].Height;
-				}
-
-				return height;
-			}
-
-			/// <summary>
-			/// Gets the line style for a given line.
-			/// </summary>
-			/// <param name="displayContext">The text editor.</param>
-			/// <param name="line">The line index which may not be in the window.</param>
-			/// <returns></returns>
-			public BlockStyle GetLineStyle(
-				IDisplayContext displayContext,
-				int line)
-			{
-				// Make sure we are asking for lines in the range of the cache
-				// window. If we ask for something outside of that, return 0.
-				if (line > WindowEndLine)
-				{
-					return null;
-				}
-
-				if (line < WindowStartLine)
-				{
-					return null;
-				}
-
-				// We have to have this window populated.
-				Populate(displayContext);
-
-				// Get the line index inside the window.
-				int windowLineIndex = line - WindowStartLine;
-
-				return Lines[windowLineIndex].Style;
-			}
-
-			/// <summary>
-			/// Populates the individual lines within a cache window.
-			/// </summary>
-			/// <param name="displayContext">The text editor.</param>
-			internal void Populate(IDisplayContext displayContext)
-			{
-				// Update our access time.
-				LastAccessed = DateTime.UtcNow;
-
-				// If the window already has lines or if we don't have a specific
-				// request to repopulate it, then don't do anything.
-				if (Lines != null && !needPopulate)
-				{
-					return;
-				}
-
-				// Only allocate lines if we don't have one.
-				if (Lines == null)
-				{
-					// Get an array of lines from the list.
-					if (ParentBuffer.allocatedLines.Count <= 0)
-					{
-						// We don't have any allocated lines, so free the last.
-						ParentBuffer.ClearLeastRecentlyUsedWindow();
-					}
-
-					Lines = ParentBuffer.allocatedLines.Pop();
-				}
-
-				// Go through all the lines in the window and populate them.
-				int height = 0;
-				int wrappedLineCount = 0;
-
-				for (int lineIndex = 0; lineIndex < ParentBuffer.windowSize; lineIndex++)
-				{
-					// Make sure we aren't going past the top line.
-					int line = WindowStartLine + lineIndex;
-					CachedLine cachedLine = Lines[lineIndex];
-
-					if (line >= ParentBuffer.LineCount)
-					{
-						// Just reset the line.
-						cachedLine.Reset();
-						continue;
-					}
-
-					// If we have a height, then don't process it.
-					if (cachedLine.Height > 0)
-					{
-						continue;
-					}
-
-					// Get the height of this line.
-					cachedLine.Height =
-						ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
-							displayContext, line, line);
-					cachedLine.Style =
-						ParentBuffer.LineLayoutBuffer.GetLineStyle(displayContext, line);
-					cachedLine.Layout =
-						ParentBuffer.LineLayoutBuffer.GetLineLayout(displayContext, line);
-
-					height += cachedLine.Height;
-					wrappedLineCount += cachedLine.Layout.LineCount;
-				}
-
-				// Set the height of the window.
-				WrappedLineCount = wrappedLineCount;
-				Height = height;
-			}
-
-			/// <summary>
-			/// Clears out any cached values inside the window.
-			/// </summary>
-			public void Reset()
-			{
-				// Reset the cached values in the window.
-				Height = null;
-				WrappedLineCount = -1;
-			}
-
-			/// <summary>
-			/// Clears out any cached values inside the window along with
-			/// a specific line.
-			/// </summary>
-			public void Reset(int windowLineIndex)
-			{
-				Reset();
-				needPopulate = true;
-				Lines[windowLineIndex].Reset();
-			}
-
-			#endregion
-
-			#region Conversion
-
-			/// <summary>
-			/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-			/// </summary>
-			/// <returns>
-			/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-			/// </returns>
-			public override string ToString()
-			{
-				return string.Format(
-					"CachedWindow #{0}: Height={1}, HasLines={2}",
-					WindowIndex,
-					Height,
-					Lines != null);
-			}
-
-			#endregion
 		}
 
 		#endregion
