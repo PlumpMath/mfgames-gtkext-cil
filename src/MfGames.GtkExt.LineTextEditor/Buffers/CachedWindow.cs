@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -92,6 +93,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <value>The end line.</value>
 		internal int WindowEndLine
 		{
+			[DebuggerStepThrough]
 			get { return WindowStartLine + ParentBuffer.WindowSize - 1; }
 		}
 
@@ -107,6 +109,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <value>The start line.</value>
 		internal int WindowStartLine
 		{
+			[DebuggerStepThrough]
 			get { return WindowIndex * ParentBuffer.WindowSize; }
 		}
 
@@ -198,6 +201,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Use the text editor to populate the height.
 			Height = ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
 				displayContext, WindowStartLine, WindowEndLine);
+
 			return Height.Value;
 		}
 
@@ -307,14 +311,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Only allocate lines if we don't have one.
 			if (Lines == null)
 			{
-				// Get an array of lines from the list.
-				if (ParentBuffer.AllocatedLines.Count <= 0)
-				{
-					// We don't have any allocated lines, so free the last.
-					ParentBuffer.ClearLeastRecentlyUsedWindow();
-				}
-
-				Lines = ParentBuffer.AllocatedLines.Pop();
+				Lines = ParentBuffer.GetAllocatedCachedLines();
+				Console.WriteLine(DateTime.UtcNow + "   Alloc lines " + this);
 			}
 
 			// Go through all the lines in the window and populate them.
@@ -336,6 +334,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				// If we have a height, then don't process it.
 				if (cachedLine.Height > 0)
 				{
+					height += cachedLine.Height;
 					continue;
 				}
 
@@ -371,9 +370,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		public void Reset(int windowLineIndex)
 		{
+			// Reset the entire window.
 			Reset();
-			needPopulate = true;
-			Lines[windowLineIndex].Reset();
+
+			// If we don't have lines, we don't do anything.
+			if (Lines != null)
+			{
+				needPopulate = true;
+				Lines[windowLineIndex].Reset();
+			}
 		}
 
 		#endregion

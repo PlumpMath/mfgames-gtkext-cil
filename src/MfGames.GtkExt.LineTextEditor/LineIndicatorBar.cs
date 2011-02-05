@@ -140,8 +140,8 @@ namespace MfGames.GtkExt.LineTextEditor
 					indicatorLine.Reset();
 					indicatorLine.StartLineIndex = indicatorLineIndex *
 					                               bufferLinesPerIndicatorLine;
-					indicatorLine.EndLineIndex = (indicatorLineIndex + 1) *
-					                             bufferLinesPerIndicatorLine - 1;
+					indicatorLine.EndLineIndex = Math.Min(
+						lineCount - 1, (indicatorLineIndex + 1) * bufferLinesPerIndicatorLine - 1);
 				}
 				else
 				{
@@ -270,7 +270,13 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <value>The wrapped lines per indicator line.</value>
 		protected int BufferLinesPerIndicatorLine
 		{
-			get { return Math.Max(1, lineIndicatorBuffer.LineCount / visibleLineCount); }
+			get
+			{
+				return Math.Max(
+					1,
+					(int)
+					Math.Ceiling((double) lineIndicatorBuffer.LineCount / visibleLineCount));
+			}
 		}
 
 		#endregion

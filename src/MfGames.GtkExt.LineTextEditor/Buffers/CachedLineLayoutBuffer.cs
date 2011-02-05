@@ -117,15 +117,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		private readonly int windowSize;
 
 		/// <summary>
-		/// Gets the list of allocated lines.
-		/// </summary>
-		/// <value>The allocated lines.</value>
-		internal ArrayList<CachedLine[]> AllocatedLines
-		{
-			get { return allocatedLines; }
-		}
-
-		/// <summary>
 		/// Gets the size of a window cache.
 		/// </summary>
 		/// <value>The size of the window.</value>
@@ -195,6 +186,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			if (window.Lines != null)
 			{
+				Console.WriteLine(DateTime.UtcNow + " Release lines " + window);
+
 				// Clear out the lines to make sure the garbage collection can
 				// release them as needed.
 				foreach (CachedLine line in window.Lines)
@@ -211,7 +204,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Clears the least recently used window that has lines.
 		/// </summary>
-		internal void ClearLeastRecentlyUsedWindow()
+		private void ClearLeastRecentlyUsedWindow()
 		{
 			// Go through the windows and find the cache window that has the
 			// oldest data.
@@ -244,6 +237,23 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Clear this window.
 			Clear(windows[lruWindowIndex]);
+		}
+
+		/// <summary>
+		/// Gets a set of allocated cached lines, releasing any as needed.
+		/// </summary>
+		/// <returns></returns>
+		internal CachedLine[] GetAllocatedCachedLines()
+		{
+			// Get an array of lines from the list.
+			if (allocatedLines.Count == 0)
+			{
+				// We don't have any allocated lines, so free the last.
+				ClearLeastRecentlyUsedWindow();
+			}
+
+			// Return the first set of allocated lines in the array.
+			return allocatedLines.Pop();
 		}
 
 		/// <summary>
@@ -513,12 +523,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			object sender,
 			LineChangedArgs args)
 		{
-			// Get the window for the line change and reset that window.
+			// Get the window for the line change and reset that line.
 			int cachedWindowIndex = GetWindowIndex(args.LineIndex);
 			CachedWindow cachedWindow = windows[cachedWindowIndex];
 
-			cachedWindow.Reset();
-			Clear(cachedWindow);
+			cachedWindow.Reset(args.LineIndex - cachedWindow.WindowStartLine);
+			//Clear(cachedWindow);
 
 			// Call the base implementation to cascade the events up.
 			base.OnLineChanged(sender, args);
@@ -565,34 +575,38 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			IDisplayContext displayContext,
 			BufferSegment previousSelection)
 		{
-			// Clear out the cache for all the lines in the new and old selections.
+			// Only update the caches if one of the current or previous
+			// selections was actually selecting something.
 			BufferSegment currentSelection = displayContext.Caret.Selection;
-			int endLineIndex =
-				displayContext.LineLayoutBuffer.NormalizeLineIndex(
-					currentSelection.EndPosition.LineIndex);
 
-			for (int lineIndex = currentSelection.StartPosition.LineIndex;
-			     lineIndex <= endLineIndex;
-			     lineIndex++)
+			if (!previousSelection.IsEmpty || !currentSelection.IsEmpty)
 			{
-				// Get the window for the line change and reset that window.
-				int cachedWindowIndex = GetWindowIndex(lineIndex);
-				CachedWindow cachedWindow = windows[cachedWindowIndex];
+				// Clear out the cache for all the lines in the new and old selections.
+				int endLineIndex =
+					displayContext.LineLayoutBuffer.NormalizeLineIndex(
+						currentSelection.EndPosition.LineIndex);
 
-				cachedWindow.Reset();
-				Clear(cachedWindow);
-			}
+				for (int lineIndex = currentSelection.StartPosition.LineIndex;
+				     lineIndex <= endLineIndex;
+				     lineIndex++)
+				{
+					// Get the window for the line change and reset that window.
+					int cachedWindowIndex = GetWindowIndex(lineIndex);
+					CachedWindow cachedWindow = windows[cachedWindowIndex];
 
-			for (int lineIndex = previousSelection.StartPosition.LineIndex;
-			     lineIndex <= endLineIndex;
-			     lineIndex++)
-			{
-				// Get the window for the line change and reset that window.
-				int cachedWindowIndex = GetWindowIndex(lineIndex);
-				CachedWindow cachedWindow = windows[cachedWindowIndex];
+					cachedWindow.Reset(lineIndex - cachedWindow.WindowStartLine);
+				}
 
-				cachedWindow.Reset();
-				Clear(cachedWindow);
+				for (int lineIndex = previousSelection.StartPosition.LineIndex;
+				     lineIndex <= endLineIndex;
+				     lineIndex++)
+				{
+					// Get the window for the line change and reset that window.
+					int cachedWindowIndex = GetWindowIndex(lineIndex);
+					CachedWindow cachedWindow = windows[cachedWindowIndex];
+
+					cachedWindow.Reset(lineIndex - cachedWindow.WindowStartLine);
+				}
 			}
 
 			// Call the base implementation.
