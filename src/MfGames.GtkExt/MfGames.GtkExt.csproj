@@ -49,6 +49,7 @@
     <Compile Include="CairoUtility.cs" />
     <Compile Include="EnumComboBox.cs" />
     <Compile Include="Extensions\Cairo\CairoRectangleExtensions.cs" />
+    <Compile Include="Extensions\Pango\PangoLayoutExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutLineExtensions.cs" />
     <Compile Include="GdkUtility.cs" />
     <Compile Include="LabelWidgetTable.cs" />

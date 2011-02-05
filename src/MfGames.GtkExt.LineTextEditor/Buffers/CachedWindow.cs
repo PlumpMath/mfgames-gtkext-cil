@@ -26,6 +26,7 @@
 
 using System;
 
+using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -339,13 +340,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				}
 
 				// Get the height of this line.
-				cachedLine.Height =
-					ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
-						displayContext, line, line);
-				cachedLine.Style = ParentBuffer.LineLayoutBuffer.GetLineStyle(
+				Layout layout = ParentBuffer.LineLayoutBuffer.GetLineLayout(
 					displayContext, line);
-				cachedLine.Layout =
-					ParentBuffer.LineLayoutBuffer.GetLineLayout(displayContext, line);
+				BlockStyle style = ParentBuffer.LineLayoutBuffer.GetLineStyle(
+					displayContext, line);
+
+				cachedLine.Style = style;
+				cachedLine.Layout = layout;
+				cachedLine.Height = (int) (layout.GetPixelHeight() + style.Height);
 
 				height += cachedLine.Height;
 			}
