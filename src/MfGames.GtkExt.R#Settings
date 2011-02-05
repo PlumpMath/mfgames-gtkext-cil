@@ -13,7 +13,7 @@
               <CustomDictionary>
                 <Name>en-US</Name>
                 <CaseSensitive>false</CaseSensitive>
-                <UserWords />
+                <UserWords>Pango</UserWords>
               </CustomDictionary>
             </Dictionaries>
           </CustomDictionaries>
@@ -758,6 +758,7 @@
           <FORCE_WHILE_BRACES_STYLE>ALWAYS_ADD</FORCE_WHILE_BRACES_STYLE>
           <INDENT_SIZE>4</INDENT_SIZE>
           <INITIALIZER_BRACES>NEXT_LINE</INITIALIZER_BRACES>
+          <INSERT_TABS>True</INSERT_TABS>
           <KEEP_BLANK_LINES_IN_CODE>1</KEEP_BLANK_LINES_IN_CODE>
           <KEEP_BLANK_LINES_IN_DECLARATIONS>1</KEEP_BLANK_LINES_IN_DECLARATIONS>
           <KEEP_USER_LINEBREAKS>False</KEEP_USER_LINEBREAKS>
@@ -1048,12 +1049,12 @@ THE SOFTWARE.]]></FileHeader>
         <ForStatementConditionIsTrue>WARNING</ForStatementConditionIsTrue>
         <RedundantUnsafeContext>WARNING</RedundantUnsafeContext>
         <EnumUnderlyingTypeIsInt>WARNING</EnumUnderlyingTypeIsInt>
-        <SuggestUseVarKeywordEverywhere>HINT</SuggestUseVarKeywordEverywhere>
+        <SuggestUseVarKeywordEverywhere>DO_NOT_SHOW</SuggestUseVarKeywordEverywhere>
         <SuggestUseVarKeywordEvident>SUGGESTION</SuggestUseVarKeywordEvident>
         <RedundantEmptyObjectCreationArgumentList>WARNING</RedundantEmptyObjectCreationArgumentList>
         <RedundantEmptyObjectOrCollectionInitializer>WARNING</RedundantEmptyObjectOrCollectionInitializer>
         <RedundantCollectionInitializerElementBraces>WARNING</RedundantCollectionInitializerElementBraces>
-        <UseObjectOrCollectionInitializer>SUGGESTION</UseObjectOrCollectionInitializer>
+        <UseObjectOrCollectionInitializer>DO_NOT_SHOW</UseObjectOrCollectionInitializer>
         <InvokeAsExtensionMethod>SUGGESTION</InvokeAsExtensionMethod>
         <RedundantExplicitArrayCreation>WARNING</RedundantExplicitArrayCreation>
         <RedundantExplicitArraySize>WARNING</RedundantExplicitArraySize>
@@ -1105,7 +1106,7 @@ THE SOFTWARE.]]></FileHeader>
         <FieldCanBeMadeReadOnly.Global>SUGGESTION</FieldCanBeMadeReadOnly.Global>
         <UnaccessedField.Local>WARNING</UnaccessedField.Local>
         <UnaccessedField.Global>SUGGESTION</UnaccessedField.Global>
-        <SuggestBaseTypeForParameter>SUGGESTION</SuggestBaseTypeForParameter>
+        <SuggestBaseTypeForParameter>DO_NOT_SHOW</SuggestBaseTypeForParameter>
         <MemberCanBeMadeStatic.Local>SUGGESTION</MemberCanBeMadeStatic.Local>
         <MemberCanBeMadeStatic.Global>SUGGESTION</MemberCanBeMadeStatic.Global>
         <UnusedTypeParameter>WARNING</UnusedTypeParameter>
