@@ -218,24 +218,6 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		public IDisplayContext DisplayContext { get; private set; }
 
 		/// <summary>
-		/// Gets or sets the height of an individual indicator line. This will
-		/// determine how many actual wrapped lines will be combined into a
-		/// single displayed line.
-		/// </summary>
-		/// <value>The height of the indicator pixel.</value>
-		public int IndicatorPixelHeight { get; set; }
-
-		/// <summary>
-		/// Gets or sets the gap between multiple ratios in pixels.
-		/// </summary>
-		/// <value>The ratio pixel gap.</value>
-		public double RatioPixelGap
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
 		/// Gets the theme associated with this bar.
 		/// </summary>
 		/// <value>The theme.</value>
@@ -407,7 +389,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 				// Draw all the indicator lines on the display.
 				double y = 0.5;
 
-				cairoContext.LineWidth = IndicatorPixelHeight;
+				cairoContext.LineWidth = DisplayContext.Theme.IndicatorPixelHeight;
 				cairoContext.Antialias = Antialias.None;
 
 				for (int index = 0; index < VisibleLineCount; index++)
@@ -417,11 +399,11 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 					if (!indicatorLine.NeedIndicators && indicatorLine.Visible)
 					{
-						indicatorLine.Draw(this, cairoContext, y, Allocation.Width);
+						indicatorLine.Draw(DisplayContext, cairoContext, y, Allocation.Width);
 					}
 
 					// Shift the y-coordinate down.
-					y += IndicatorPixelHeight;
+					y += DisplayContext.Theme.IndicatorPixelHeight;
 				}
 			}
 
@@ -440,7 +422,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 			// Determine how many lines we can show on the widget. This is the 
 			// height divided by the height of each indicator line.
-			VisibleLineCount = Allocation.Height / IndicatorPixelHeight;
+			VisibleLineCount = Allocation.Height / DisplayContext.Theme.IndicatorPixelHeight;
 		}
 
 		#endregion

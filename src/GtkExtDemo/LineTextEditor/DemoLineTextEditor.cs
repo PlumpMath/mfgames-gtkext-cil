@@ -82,11 +82,15 @@ namespace GtkExtDemo.LineTextEditor
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
-			textEditor.Theme.IndicatorStyles["Error"] = new IndicatorStyle(
+			Theme theme = textEditor.Theme;
+
+			theme.IndicatorStyles["Error"] = new IndicatorStyle(
 				"Error", 100, new Color(1, 0, 0));
-			textEditor.Theme.IndicatorStyles["Warning"] = new IndicatorStyle(
+			theme.IndicatorStyles["Warning"] = new IndicatorStyle(
 				"Warning", 10, new Color(1, 165 / 255.0, 0));
-			textEditor.Theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
+			theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
+			theme.IndicatorPixelHeight = 2;
+			theme.IndicatorRatioPixelGap = 1;
 
 			// Wrap the text editor in a scrollbar.
 			var scrolledWindow = new ScrolledWindow();
@@ -96,8 +100,6 @@ namespace GtkExtDemo.LineTextEditor
 			// Create the indicator bar that is 10 px wide.
 			var indicatorBar = new LineIndicatorBar(textEditor, cachedLineBuffer);
 			indicatorBar.SetSizeRequest(20, 1);
-			indicatorBar.IndicatorPixelHeight = 2;
-			indicatorBar.RatioPixelGap = 1;
 
 			// Add the editor and bar to the current tab.
 			var hbox = new HBox(false, 0);

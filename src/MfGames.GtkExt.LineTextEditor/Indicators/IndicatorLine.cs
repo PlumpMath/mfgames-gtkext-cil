@@ -253,12 +253,12 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		/// <summary>
 		/// Draws the specified indicator line to the context.
 		/// </summary>
-		/// <param name="indicatorBar">The indicator bar.</param>
+		/// <param name="displayContext">The display context.</param>
 		/// <param name="cairoContext">The cairo context.</param>
 		/// <param name="y">The y.</param>
 		/// <param name="width">The width.</param>
 		public void Draw(
-			LineIndicatorBar indicatorBar,
+			IDisplayContext displayContext,
 			Context cairoContext,
 			double y,
 			double width)
@@ -270,7 +270,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 			}
 
 			// Adjust the width to handle the gap.
-			width -= (ratios.Length - 1) * indicatorBar.RatioPixelGap;
+			width -= (ratios.Length - 1) * displayContext.Theme.IndicatorRatioPixelGap;
 
 			// Go through the the various colors/ratios and render each one.
 			double x = 0;
@@ -290,7 +290,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 				// Shift the X coordinate over.
 				x += currentWidth;
-				x += indicatorBar.RatioPixelGap;
+				x += displayContext.Theme.IndicatorRatioPixelGap;
 			}
 		}
 
