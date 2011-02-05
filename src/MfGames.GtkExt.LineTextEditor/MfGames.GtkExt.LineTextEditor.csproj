@@ -100,6 +100,7 @@
     <Compile Include="Events\LineChangedArgs.cs" />
     <Compile Include="Events\LineRangeEventArgs.cs" />
     <Compile Include="FontCache.cs" />
+    <Compile Include="Indicators\IndicatorLine.cs" />
     <Compile Include="Interfaces\IActionState.cs" />
     <Compile Include="Interfaces\IActionContext.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
@@ -114,7 +115,7 @@
     <Compile Include="Interfaces\LineBufferExtensions.cs" />
     <Compile Include="Interfaces\LineIndicatorBufferExtensions.cs" />
     <Compile Include="Interfaces\LineLayoutBufferExtensions.cs" />
-    <Compile Include="LineIndicatorBar.cs" />
+    <Compile Include="Indicators\LineIndicatorBar.cs" />
     <Compile Include="Margins\LineNumberMarginRenderer.cs" />
     <Compile Include="Margins\MarginRenderer.cs" />
     <Compile Include="Margins\MarginRendererCollection.cs" />

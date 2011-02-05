@@ -36,6 +36,7 @@ using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Events;
+using MfGames.GtkExt.LineTextEditor.Indicators;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 using Cairo;
@@ -85,7 +86,7 @@ namespace GtkExtDemo.LineTextEditor
 				"Error", 100, new Color(1, 0, 0));
 			textEditor.Theme.IndicatorStyles["Warning"] = new IndicatorStyle(
 				"Warning", 10, new Color(1, 165 / 255.0, 0));
-			//textEditor.Theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
+			textEditor.Theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
 
 			// Wrap the text editor in a scrollbar.
 			var scrolledWindow = new ScrolledWindow();
@@ -96,6 +97,7 @@ namespace GtkExtDemo.LineTextEditor
 			var indicatorBar = new LineIndicatorBar(textEditor, cachedLineBuffer);
 			indicatorBar.SetSizeRequest(20, 1);
 			indicatorBar.IndicatorPixelHeight = 2;
+			indicatorBar.RatioPixelGap = 1;
 
 			// Add the editor and bar to the current tab.
 			var hbox = new HBox(false, 0);
