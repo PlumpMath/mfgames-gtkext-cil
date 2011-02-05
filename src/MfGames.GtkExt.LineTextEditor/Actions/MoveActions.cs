@@ -539,6 +539,45 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		#region Coordinates
 
 		/// <summary>
+		/// Gets the buffer position from a given point.
+		/// </summary>
+		/// <param name="widgetPoint">The widget point.</param>
+		/// <param name="displayContext">The display context.</param>
+		/// <returns></returns>
+		public static BufferPosition GetBufferPosition(
+			PointD widgetPoint,
+			IDisplayContext displayContext)
+		{
+			double y = widgetPoint.Y + displayContext.BufferOffsetY;
+			int lineIndex =
+				displayContext.LineLayoutBuffer.GetLineLayoutRange(displayContext, y);
+			Layout layout = displayContext.LineLayoutBuffer.GetLineLayout(
+				displayContext, lineIndex);
+
+			// Shift the buffer-relative coordinates to layout-relative coordinates.
+			double layoutY = y;
+
+			if (lineIndex > 0)
+			{
+				layoutY -=
+					displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+						displayContext, 0, lineIndex - 1);
+			}
+
+			int pangoLayoutY = Units.FromPixels((int) layoutY);
+
+			// Determines where in the layout is the point.
+			int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
+			int characterIndex, trailing;
+
+			layout.XyToIndex(
+				pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
+
+			// Return the buffer position.
+			return new BufferPosition(lineIndex, characterIndex);
+		}
+
+		/// <summary>
 		/// Moves the caret to a specific widget-relative point on the screen.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
@@ -548,51 +587,14 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			PointD widgetPoint)
 		{
 			// Find the line layout that is closest to the point given.
-            displayContext.Caret.Position = GetBufferPosition(widgetPoint, displayContext);
+			displayContext.Caret.Position = GetBufferPosition(
+				widgetPoint, displayContext);
 
-		    // Move to and draw the caret.
+			// Move to and draw the caret.
 			displayContext.ScrollToCaret();
 		}
 
-        /// <summary>
-        /// Gets the buffer position from a given point.
-        /// </summary>
-        /// <param name="widgetPoint">The widget point.</param>
-        /// <param name="displayContext">The display context.</param>
-        /// <returns></returns>
-	    public static BufferPosition GetBufferPosition(PointD widgetPoint,
-	                                          IDisplayContext displayContext)
-	    {
-	        double y = widgetPoint.Y + displayContext.BufferOffsetY;
-	        int lineIndex =
-	            displayContext.LineLayoutBuffer.GetLineLayoutRange(displayContext, y);
-	        Layout layout = displayContext.LineLayoutBuffer.GetLineLayout(
-	            displayContext, lineIndex);
-
-	        // Shift the buffer-relative coordinates to layout-relative coordinates.
-	        double layoutY = y;
-
-	        if (lineIndex > 0)
-	        {
-	            layoutY -=
-	                displayContext.LineLayoutBuffer.GetLineLayoutHeight(
-	                    displayContext, 0, lineIndex - 1);
-	        }
-
-	        int pangoLayoutY = Units.FromPixels((int) layoutY);
-
-	        // Determines where in the layout is the point.
-	        int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
-	        int characterIndex, trailing;
-
-	        layout.XyToIndex(
-	            pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
-
-	        // Return the buffer position.
-	        return new BufferPosition(lineIndex, characterIndex);
-	    }
-
-	    #endregion
+		#endregion
 
 		#region Selection
 
@@ -616,6 +618,22 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Restore the anchor position which will extend the selection back.
 			caret.Selection.AnchorPosition = anchorPosition;
+		}
+
+		/// <summary>
+		/// Selects all the text in the buffer.
+		/// </summary>
+		/// <param name="actionContext">The action context.</param>
+		[Action]
+		[KeyBinding(Key.A, ModifierType.ControlMask)]
+		public static void SelectAll(IActionContext actionContext)
+		{
+			actionContext.DisplayContext.Caret.Selection.AnchorPosition =
+				new BufferPosition(0, 0);
+			actionContext.DisplayContext.Caret.Selection.TailPosition =
+				new BufferPosition(Int32.MaxValue, Int32.MaxValue);
+
+			actionContext.DisplayContext.RequestRedraw();
 		}
 
 		/// <summary>
@@ -772,22 +790,6 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		public static void SelectUp(IActionContext actionContext)
 		{
 			SelectAction(actionContext, Up);
-		}
-
-		/// <summary>
-		/// Selects all the text in the buffer.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		[Action]
-		[KeyBinding(Key.A, ModifierType.ControlMask)]
-		public static void SelectAll(IActionContext actionContext)
-		{
-			actionContext.DisplayContext.Caret.Selection.AnchorPosition =
-				new BufferPosition(0, 0);
-			actionContext.DisplayContext.Caret.Selection.TailPosition =
-				new BufferPosition(Int32.MaxValue, Int32.MaxValue);
-
-			actionContext.DisplayContext.RequestRedraw();
 		}
 
 		#endregion

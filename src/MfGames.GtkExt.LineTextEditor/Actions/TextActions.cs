@@ -219,8 +219,10 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Go through the selection and figure out if we have a single-line
 			// copy.
 			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-			int endLineIndex = lineLayoutBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
-			string firstLine = lineLayoutBuffer.GetLineText(selection.StartPosition.LineIndex);
+			int endLineIndex =
+				lineLayoutBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
+			string firstLine =
+				lineLayoutBuffer.GetLineText(selection.StartPosition.LineIndex);
 
 			if (endLineIndex == selection.StartPosition.LineIndex)
 			{
@@ -228,7 +230,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				string singleLineText =
 					firstLine.Substring(
 						selection.StartPosition.CharacterIndex,
-						selection.EndPosition.CharacterIndex - selection.StartPosition.CharacterIndex);
+						selection.EndPosition.CharacterIndex -
+						selection.StartPosition.CharacterIndex);
 
 				// Set the clipboard's text and return.
 				displayContext.Clipboard.Text = singleLineText;
@@ -238,13 +241,14 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// For multiple line copies, we need to copy every line from the first
 			// to the last. We already have the first, so just copy that.
 			StringBuilder buffer = new StringBuilder();
-			buffer.Append(
-				firstLine.Substring(selection.StartPosition.CharacterIndex));
+			buffer.Append(firstLine.Substring(selection.StartPosition.CharacterIndex));
 			buffer.Append("\n");
 
 			// Loop through the second to just shy of the last line, adding
 			// each one as a full line.
-			for (int lineIndex = selection.StartPosition.LineIndex + 1; lineIndex < endLineIndex; lineIndex++)
+			for (int lineIndex = selection.StartPosition.LineIndex + 1;
+			     lineIndex < endLineIndex;
+			     lineIndex++)
 			{
 				buffer.Append(lineLayoutBuffer.GetLineText(lineIndex));
 				buffer.Append("\n");
@@ -293,108 +297,106 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		[KeyBinding(Key.V, ModifierType.ControlMask)]
 		public static void Paste(IActionContext actionContext)
 		{
-            // Get the text from the clipboard.
-		    IDisplayContext displayContext = actionContext.DisplayContext;
-		    Clipboard clipboard = displayContext.Clipboard;
+			// Get the text from the clipboard.
+			IDisplayContext displayContext = actionContext.DisplayContext;
+			Clipboard clipboard = displayContext.Clipboard;
 
-		    clipboard.RequestText(null);
-		    
-            string clipboardText = clipboard.WaitForText();
+			clipboard.RequestText(null);
 
-            if (string.IsNullOrEmpty(clipboardText))
-            {
-                return;
-            }
+			string clipboardText = clipboard.WaitForText();
 
-		    // See if the last character ends in newlines. We need that to figure out how
-            // we'll be pasting the last line.
-		    bool lastIsEol = clipboardText[clipboardText.Length - 1] == '\n';
+			if (string.IsNullOrEmpty(clipboardText))
+			{
+				return;
+			}
 
-            // Split the clipboard text into different lines.
-		    string[] lines = clipboardText.Split('\n');
+			// See if the last character ends in newlines. We need that to figure out how
+			// we'll be pasting the last line.
+			bool lastIsEol = clipboardText[clipboardText.Length - 1] == '\n';
 
-            // If there is a selection, then we want to delete it using the common
-            // processing for selections.
-		    Caret caret = displayContext.Caret;
-            BufferPosition position = caret.Position;
-            var command = new Command();
-		    string lineText;
+			// Split the clipboard text into different lines.
+			string[] lines = clipboardText.Split('\n');
 
-		    bool deletedSelection = DeleteSelection(actionContext, command, ref position, out lineText);
+			// If there is a selection, then we want to delete it using the common
+			// processing for selections.
+			Caret caret = displayContext.Caret;
+			BufferPosition position = caret.Position;
+			var command = new Command();
+			string lineText;
 
-            if (!deletedSelection)
-            {
-                // There is no selection, so get the line text from the buffer.
-                lineText =
-                    displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
-            }
+			bool deletedSelection = DeleteSelection(
+				actionContext, command, ref position, out lineText);
 
-		    string nextLineText =
-		        displayContext.LineLayoutBuffer.GetLineText(
-		            caret.Position.LineIndex + 1);
+			if (!deletedSelection)
+			{
+				// There is no selection, so get the line text from the buffer.
+				lineText =
+					displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
+			}
 
-            // The paste will happen in the line, splitting the current line in half.
-		    string before = lineText.Substring(0, position.CharacterIndex);
-		    string after = lineText.Substring(position.CharacterIndex);
+			string nextLineText =
+				displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex + 1);
 
-            // Check to see if we only have one line and it doesn't end in a newline.
-            if (lines.Length == 1 && !lastIsEol)
-            {
-                // Just before a set text operation.
-                command.Operations.Add(
-                    new SetTextOperation(position.LineIndex, before + lines[0] + after));
+			// The paste will happen in the line, splitting the current line in half.
+			string before = lineText.Substring(0, position.CharacterIndex);
+			string after = lineText.Substring(position.CharacterIndex);
 
-                command.UndoOperations.Add(
-                    new SetTextOperation(position.LineIndex, lineText));
+			// Check to see if we only have one line and it doesn't end in a newline.
+			if (lines.Length == 1 && !lastIsEol)
+			{
+				// Just before a set text operation.
+				command.Operations.Add(
+					new SetTextOperation(position.LineIndex, before + lines[0] + after));
 
-                // Set the end of the command position.
-                position.CharacterIndex = (before + lines[0]).Length;
-                command.EndPosition = position;
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex, lineText));
 
-                // Perform the command.
-                actionContext.Do(command);
-                return;
-            }
+				// Set the end of the command position.
+				position.CharacterIndex = (before + lines[0]).Length;
+				command.EndPosition = position;
 
-		    // Insert the number of lines we'll need past the first.
-		    int linesNeeded = lines.Length - 1;
+				// Perform the command.
+				actionContext.Do(command);
+				return;
+			}
 
-		    command.Operations.Add(
-		        new InsertLinesOperation(position.LineIndex, linesNeeded));
+			// Insert the number of lines we'll need past the first.
+			int linesNeeded = lines.Length - 1;
 
-		    command.UndoOperations.Add(
-		        new DeleteLinesOperation(position.LineIndex + 1, linesNeeded));
-		    command.UndoOperations.Add(
-		        new SetTextOperation(position.LineIndex + 1, nextLineText));
+			command.Operations.Add(
+				new InsertLinesOperation(position.LineIndex, linesNeeded));
 
-            if (!deletedSelection)
-            {
-                command.UndoOperations.Add(
-                    new SetTextOperation(position.LineIndex, lineText));
-            }
+			command.UndoOperations.Add(
+				new DeleteLinesOperation(position.LineIndex + 1, linesNeeded));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex + 1, nextLineText));
 
-            // The first pasted line will combine with the before text.
-		    before += lines[0];
+			if (!deletedSelection)
+			{
+				command.UndoOperations.Add(
+					new SetTextOperation(position.LineIndex, lineText));
+			}
 
-		    command.Operations.Add(new SetTextOperation(position.LineIndex, before));
+			// The first pasted line will combine with the before text.
+			before += lines[0];
 
-            // Insert the lines between the first and the last one, exclusive.
-            for (int index = 1; index < linesNeeded; index++)
-            {
-                command.Operations.Add(
-                    new SetTextOperation(
-                        position.LineIndex + index, lines[index]));
-            }
+			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
 
-            // If the last does not end in an EOL, then we need to combine it.
-		    command.Operations.Add(
-		        new SetTextOperation(
-		            position.LineIndex + lines.Length - 1,
-		            lines[lines.Length - 1] + after));
+			// Insert the lines between the first and the last one, exclusive.
+			for (int index = 1; index < linesNeeded; index++)
+			{
+				command.Operations.Add(
+					new SetTextOperation(position.LineIndex + index, lines[index]));
+			}
 
-		    // Perform the command.
-		    actionContext.Do(command);
-        }
+			// If the last does not end in an EOL, then we need to combine it.
+			command.Operations.Add(
+				new SetTextOperation(
+					position.LineIndex + lines.Length - 1, lines[lines.Length - 1] + after));
+
+			// Perform the command.
+			actionContext.Do(command);
+		}
 
 		#endregion
 

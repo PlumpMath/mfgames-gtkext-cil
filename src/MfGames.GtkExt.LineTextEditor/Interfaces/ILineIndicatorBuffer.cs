@@ -22,7 +22,11 @@
 
 #endregion
 
+#region Namespaces
+
 using System.Collections.Generic;
+
+#endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Interfaces
 {

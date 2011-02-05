@@ -55,6 +55,12 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		ActionStateCollection States { get; }
 
 		/// <summary>
+		/// Creates the context menu for the caret position.
+		/// </summary>
+		/// <returns></returns>
+		Menu CreateContextMenu();
+
+		/// <summary>
 		/// Performs the given operation on the line buffer.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
@@ -65,11 +71,5 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <param name="command">The command.</param>
 		void Do(Command command);
-
-	    /// <summary>
-	    /// Creates the context menu for the caret position.
-	    /// </summary>
-	    /// <returns></returns>
-	    Menu CreateContextMenu();
 	}
 }

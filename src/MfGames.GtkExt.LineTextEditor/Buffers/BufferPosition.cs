@@ -434,7 +434,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// spacing and borders which we would have to calculate otherwise.
 			double y = bufferLineIndex == 0
 			           	? 0
-			           	: buffer.GetLineLayoutHeight(displayContext, 0, bufferLineIndex - 1);
+			           	: buffer.GetLineLayoutHeight(
+			           	  	displayContext, 0, bufferLineIndex - 1);
 
 			// Add the style offset for the top-padding.
 			y += style.Top;

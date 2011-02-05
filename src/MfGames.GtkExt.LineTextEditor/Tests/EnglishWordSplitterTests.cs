@@ -42,6 +42,22 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		#region Previous
 
 		[Test]
+		public void PreviousAtEndOfLine()
+		{
+			// Setup
+			EnglishWordSplitter splitter = new EnglishWordSplitter();
+			const string text = "One. Two.";
+			const int index = 9;
+
+			// Test
+			int boundary = splitter.GetPreviousWordBoundary(text, index);
+
+			// Assertion
+			Assert.AreEqual(".", text.Substring(boundary));
+			Assert.AreEqual(8, boundary);
+		}
+
+		[Test]
 		public void PreviousOneWord()
 		{
 			// Setup
@@ -54,22 +70,6 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 
 			// Assertion
 			Assert.AreEqual(0, boundary);
-		}
-
-		[Test]
-		public void PreviousPuncutationWithSpace()
-		{
-			// Setup
-			EnglishWordSplitter splitter = new EnglishWordSplitter();
-			const string text = "One. Two.";
-			const int index = 6;
-
-			// Test
-			int boundary = splitter.GetPreviousWordBoundary(text, index);
-
-			// Assertion
-			Assert.AreEqual("Two.", text.Substring(boundary));
-			Assert.AreEqual(5, boundary);
 		}
 
 		[Test]
@@ -105,19 +105,19 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		}
 
 		[Test]
-		public void PreviousAtEndOfLine()
+		public void PreviousPuncutationWithSpace()
 		{
 			// Setup
 			EnglishWordSplitter splitter = new EnglishWordSplitter();
 			const string text = "One. Two.";
-			const int index = 9;
+			const int index = 6;
 
 			// Test
 			int boundary = splitter.GetPreviousWordBoundary(text, index);
 
 			// Assertion
-			Assert.AreEqual(".", text.Substring(boundary));
-			Assert.AreEqual(8, boundary);
+			Assert.AreEqual("Two.", text.Substring(boundary));
+			Assert.AreEqual(5, boundary);
 		}
 
 		#endregion
@@ -140,22 +140,6 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		}
 
 		[Test]
-		public void NextPuncutationWithSpace()
-		{
-			// Setup
-			EnglishWordSplitter splitter = new EnglishWordSplitter();
-			const string text = "One. Two.";
-			const int index = 3;
-
-			// Test
-			int boundary = splitter.GetNextWordBoundary(text, index);
-
-			// Assertion
-			Assert.AreEqual("Two.", text.Substring(boundary));
-			Assert.AreEqual(5, boundary);
-		}
-
-		[Test]
 		public void NextPuncutationWithoutSpace()
 		{
 			// Setup
@@ -169,6 +153,22 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 			// Assertion
 			Assert.AreEqual("Two.", text.Substring(boundary));
 			Assert.AreEqual(4, boundary);
+		}
+
+		[Test]
+		public void NextPuncutationWithSpace()
+		{
+			// Setup
+			EnglishWordSplitter splitter = new EnglishWordSplitter();
+			const string text = "One. Two.";
+			const int index = 3;
+
+			// Test
+			int boundary = splitter.GetNextWordBoundary(text, index);
+
+			// Assertion
+			Assert.AreEqual("Two.", text.Substring(boundary));
+			Assert.AreEqual(5, boundary);
 		}
 
 		#endregion

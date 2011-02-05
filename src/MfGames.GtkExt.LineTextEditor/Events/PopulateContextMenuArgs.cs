@@ -39,18 +39,18 @@ namespace MfGames.GtkExt.LineTextEditor.Events
 	/// menu with contextual elements. Listeners are able to add elements based
 	/// on the current buffer position.
 	/// </summary>
-    public class PopulateContextMenuArgs : EventArgs
-    {
+	public class PopulateContextMenuArgs : EventArgs
+	{
 		/// <summary>
 		/// Gets or sets the action context for this context.
 		/// </summary>
 		/// <value>The action context.</value>
-        public IActionContext ActionContext { get; set; }
+		public IActionContext ActionContext { get; set; }
 
 		/// <summary>
 		/// Contains the menu that will be shown to the user. If this is set to 
 		/// <see langword="null"/>, then no menu will be shown.
 		/// </summary>
-        public Menu Menu { get; set; }
-    }
+		public Menu Menu { get; set; }
+	}
 }

@@ -68,7 +68,9 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="previousSelection">The previous selection.</param>
-		void UpdateSelection(IDisplayContext displayContext, BufferSegment previousSelection);
+		void UpdateSelection(
+			IDisplayContext displayContext,
+			BufferSegment previousSelection);
 
 		#endregion
 	}

@@ -28,6 +28,8 @@ using System;
 
 using C5;
 
+using Cairo;
+
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor;
@@ -38,9 +40,6 @@ using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Indicators;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-
-using Cairo;
-
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
@@ -66,16 +65,14 @@ namespace GtkExtDemo.LineTextEditor
 			ILineBuffer lineBuffer = new MemoryLineBuffer(patternLineBuffer);
 
 			// Create an unformatted markup buffer and simple layout with a cache.
-			ILineMarkupBuffer lineMarkupBuffer =
-				new KeywordLineMarkupBuffer(lineBuffer);
+			ILineMarkupBuffer lineMarkupBuffer = new KeywordLineMarkupBuffer(lineBuffer);
 			ILineMarkupBuffer selectionMarkupBuffer =
 				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
 			ILineLayoutBuffer lineLayoutBuffer =
 				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
 			ILineIndicatorBuffer lineIndicatorBuffer =
 				new KeywordLineIndicatorBuffer(lineLayoutBuffer);
-			var cachedLineBuffer =
-				new CachedLineIndicatorBuffer(lineIndicatorBuffer);
+			var cachedLineBuffer = new CachedLineIndicatorBuffer(lineIndicatorBuffer);
 
 			// Create the text editor with the resulting buffer.
 			textEditor = new TextEditor(cachedLineBuffer);
@@ -124,8 +121,9 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="args">The event arguments.</param>
-		private void OnPopulateContextMenu(object sender,
-		                                   PopulateContextMenuArgs args)
+		private void OnPopulateContextMenu(
+			object sender,
+			PopulateContextMenuArgs args)
 		{
 			// Add a separator and our custom "function".
 			var menuItem = new MenuItem("Reverse Line");
@@ -140,8 +138,9 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnReverseLine(object sender,
-								   EventArgs e)
+		private void OnReverseLine(
+			object sender,
+			EventArgs e)
 		{
 			// Go through all the lines in the selection or if there is no
 			// selection, then just the current line.
@@ -171,17 +170,19 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="command">The command.</param>
 		/// <param name="lineIndex">Index of the line.</param>
-		private void ReverseLine(Command command, int lineIndex)
+		private void ReverseLine(
+			Command command,
+			int lineIndex)
 		{
 			// Get the original line text.
 			string lineText = textEditor.LineLayoutBuffer.GetLineText(lineIndex);
 
 			// Create a reverse of the text.
 			var characters = new ArrayList<char>();
-			
+
 			characters.AddAll(lineText);
 			characters.Reverse();
-			
+
 			var reverseText = new string(characters.ToArray());
 
 			// Add the operations to the command.

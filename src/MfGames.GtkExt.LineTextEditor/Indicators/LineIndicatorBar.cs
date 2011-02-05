@@ -43,11 +43,6 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 using MfGames.Locking;
 
-using Pango;
-
-using CairoHelper=Gdk.CairoHelper;
-using Context=Cairo.Context;
-using Layout=Pango.Layout;
 using Rectangle=Gdk.Rectangle;
 
 #endregion
@@ -128,7 +123,9 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 			                         bufferLinesPerIndicatorLine;
 
 			// Reset the lines we're using and clear out the lines we aren't.
-			for (int indicatorLineIndex = 0; indicatorLineIndex < visibleLineCount; indicatorLineIndex++)
+			for (int indicatorLineIndex = 0;
+			     indicatorLineIndex < visibleLineCount;
+			     indicatorLineIndex++)
 			{
 				IndicatorLine indicatorLine = indicatorLines[indicatorLineIndex];
 
@@ -212,6 +209,21 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		private int visibleLineCount;
 
 		/// <summary>
+		/// Gets the lines per indicator line.
+		/// </summary>
+		/// <value>The wrapped lines per indicator line.</value>
+		protected int BufferLinesPerIndicatorLine
+		{
+			get
+			{
+				return Math.Max(
+					1,
+					(int)
+					Math.Ceiling((double) lineIndicatorBuffer.LineCount / visibleLineCount));
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the display context.
 		/// </summary>
 		/// <value>The display context.</value>
@@ -253,45 +265,58 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 			}
 		}
 
-		/// <summary>
-		/// Gets the lines per indicator line.
-		/// </summary>
-		/// <value>The wrapped lines per indicator line.</value>
-		protected int BufferLinesPerIndicatorLine
-		{
-			get
-			{
-				return Math.Max(
-					1,
-					(int)
-					Math.Ceiling((double) lineIndicatorBuffer.LineCount / visibleLineCount));
-			}
-		}
-
 		#endregion
 
 		#region Gtk
 
-		private bool idleRunning;
 		private readonly ReaderWriterLockSlim sync;
+		private bool idleRunning;
 
 		/// <summary>
-		/// Starts the background update of the elements if it isn't already
-		/// running.
+		/// Called when the bar is exposed (drawn).
 		/// </summary>
-		private void StartBackgroundUpdate()
+		/// <param name="exposeEvent">The drawing event..</param>
+		/// <returns></returns>
+		protected override bool OnExposeEvent(EventExpose exposeEvent)
 		{
-			using (new WriteLock(sync))
+			// Figure out the area we are rendering into.
+			Rectangle area = exposeEvent.Region.Clipbox;
+			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
+
+			using (Context cairoContext = CairoHelper.Create(exposeEvent.Window))
 			{
-				// If the idle is already running, then we don't need to worry
-				// about the idle. If it isn't, then set the flag and attach
-				// the idle function to the Gtk# loop.
-				if (!idleRunning)
+				// Create a render context.
+				var renderContext = new RenderContext(cairoContext);
+				renderContext.RenderRegion = cairoArea;
+
+				// Paint the background color of the window.
+				cairoContext.Color = Theme.IndicatorBackgroundColor;
+				cairoContext.Rectangle(cairoArea);
+				cairoContext.Fill();
+
+				// Draw all the indicator lines on the display.
+				double y = 0.5;
+
+				cairoContext.LineWidth = DisplayContext.Theme.IndicatorPixelHeight;
+				cairoContext.Antialias = Antialias.None;
+
+				for (int index = 0; index < VisibleLineCount; index++)
 				{
-					idleRunning = true;
-					Idle.Add(OnIdle);
+					// Make sure the line has been processed and it visible.
+					IndicatorLine indicatorLine = indicatorLines[index];
+
+					if (!indicatorLine.NeedIndicators && indicatorLine.Visible)
+					{
+						indicatorLine.Draw(DisplayContext, cairoContext, y, Allocation.Width);
+					}
+
+					// Shift the y-coordinate down.
+					y += DisplayContext.Theme.IndicatorPixelHeight;
 				}
 			}
+
+			// Return the render.
+			return base.OnExposeEvent(exposeEvent);
 		}
 
 		/// <summary>
@@ -365,53 +390,6 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		}
 
 		/// <summary>
-		/// Called when the bar is exposed (drawn).
-		/// </summary>
-		/// <param name="exposeEvent">The drawing event..</param>
-		/// <returns></returns>
-		protected override bool OnExposeEvent(EventExpose exposeEvent)
-		{
-			// Figure out the area we are rendering into.
-			Rectangle area = exposeEvent.Region.Clipbox;
-			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
-
-			using (Context cairoContext = CairoHelper.Create(exposeEvent.Window))
-			{
-				// Create a render context.
-				var renderContext = new RenderContext(cairoContext);
-				renderContext.RenderRegion = cairoArea;
-
-				// Paint the background color of the window.
-				cairoContext.Color = Theme.IndicatorBackgroundColor;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
-
-				// Draw all the indicator lines on the display.
-				double y = 0.5;
-
-				cairoContext.LineWidth = DisplayContext.Theme.IndicatorPixelHeight;
-				cairoContext.Antialias = Antialias.None;
-
-				for (int index = 0; index < VisibleLineCount; index++)
-				{
-					// Make sure the line has been processed and it visible.
-					IndicatorLine indicatorLine = indicatorLines[index];
-
-					if (!indicatorLine.NeedIndicators && indicatorLine.Visible)
-					{
-						indicatorLine.Draw(DisplayContext, cairoContext, y, Allocation.Width);
-					}
-
-					// Shift the y-coordinate down.
-					y += DisplayContext.Theme.IndicatorPixelHeight;
-				}
-			}
-
-			// Return the render.
-			return base.OnExposeEvent(exposeEvent);
-		}
-
-		/// <summary>
 		/// Called when the widget is resized.
 		/// </summary>
 		/// <param name="allocation">The allocation.</param>
@@ -422,7 +400,27 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 			// Determine how many lines we can show on the widget. This is the 
 			// height divided by the height of each indicator line.
-			VisibleLineCount = Allocation.Height / DisplayContext.Theme.IndicatorPixelHeight;
+			VisibleLineCount = Allocation.Height /
+			                   DisplayContext.Theme.IndicatorPixelHeight;
+		}
+
+		/// <summary>
+		/// Starts the background update of the elements if it isn't already
+		/// running.
+		/// </summary>
+		private void StartBackgroundUpdate()
+		{
+			using (new WriteLock(sync))
+			{
+				// If the idle is already running, then we don't need to worry
+				// about the idle. If it isn't, then set the flag and attach
+				// the idle function to the Gtk# loop.
+				if (!idleRunning)
+				{
+					idleRunning = true;
+					Idle.Add(OnIdle);
+				}
+			}
 		}
 
 		#endregion

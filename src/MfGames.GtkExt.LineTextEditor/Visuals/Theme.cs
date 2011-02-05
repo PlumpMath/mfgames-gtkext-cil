@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-using System;
-
 using C5;
 
 using MfGames.GtkExt.LineTextEditor.Enumerations;
@@ -184,6 +182,18 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		private readonly HashDictionary<string, IndicatorStyle> indicatorStyles;
 
 		/// <summary>
+		/// Gets or sets the pixel height of the indicator lines.
+		/// </summary>
+		/// <value>The height of the indicator pixel.</value>
+		public int IndicatorPixelHeight { get; set; }
+
+		/// <summary>
+		/// Gets or sets the pixel gap between multiple indicators.
+		/// </summary>
+		/// <value>The indicator ratio pixel gap.</value>
+		public int IndicatorRatioPixelGap { get; set; }
+
+		/// <summary>
 		/// Gets or sets the indicator render style.
 		/// </summary>
 		/// <value>The indicator render style.</value>
@@ -197,18 +207,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		{
 			get { return indicatorStyles; }
 		}
-
-		/// <summary>
-		/// Gets or sets the pixel height of the indicator lines.
-		/// </summary>
-		/// <value>The height of the indicator pixel.</value>
-		public int IndicatorPixelHeight { get; set; }
-
-		/// <summary>
-		/// Gets or sets the pixel gap between multiple indicators.
-		/// </summary>
-		/// <value>The indicator ratio pixel gap.</value>
-		public int IndicatorRatioPixelGap { get; set; }
 
 		#endregion
 	}

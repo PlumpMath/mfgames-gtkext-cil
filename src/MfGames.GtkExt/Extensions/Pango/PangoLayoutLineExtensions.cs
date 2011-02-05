@@ -38,19 +38,6 @@ namespace MfGames.GtkExt.Extensions.Pango
 	public static class PangoLayoutLineExtensions
 	{
 		/// <summary>
-		/// Determines whether this layout line is the last line in the layout.
-		/// </summary>
-		/// <param name="layoutLine">The layout line.</param>
-		/// <returns>
-		/// 	<c>true</c> if [is last line] [the specified layout line]; otherwise, <c>false</c>.
-		/// </returns>
-		public static bool IsLastLineInLayout(this LayoutLine layoutLine)
-		{
-			Layout layout = layoutLine.Layout;
-			return layout.Lines[layout.LineCount - 1].StartIndex == layoutLine.StartIndex;
-		}
-
-		/// <summary>
 		/// Gets the index of the layout line inside the layout.
 		/// </summary>
 		/// <param name="layoutLine">The layout line.</param>
@@ -75,7 +62,9 @@ namespace MfGames.GtkExt.Extensions.Pango
 		/// </summary>
 		/// <param name="layoutLine">The layout line.</param>
 		/// <param name="size">The size.</param>
-		public static void GetPixelExtents(this LayoutLine layoutLine, out Rectangle size)
+		public static void GetPixelExtents(
+			this LayoutLine layoutLine,
+			out Rectangle size)
 		{
 			// Go through and populate the size regions.
 			size = new Rectangle();
@@ -106,6 +95,19 @@ namespace MfGames.GtkExt.Extensions.Pango
 			layoutLine.GetPixelExtents(ref ink2, ref logical2);
 
 			size.Height = logical2.Height;
+		}
+
+		/// <summary>
+		/// Determines whether this layout line is the last line in the layout.
+		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
+		/// <returns>
+		/// 	<c>true</c> if [is last line] [the specified layout line]; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool IsLastLineInLayout(this LayoutLine layoutLine)
+		{
+			Layout layout = layoutLine.Layout;
+			return layout.Lines[layout.LineCount - 1].StartIndex == layoutLine.StartIndex;
 		}
 	}
 }

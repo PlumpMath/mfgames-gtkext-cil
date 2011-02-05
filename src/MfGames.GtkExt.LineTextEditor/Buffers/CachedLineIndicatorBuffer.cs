@@ -37,7 +37,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	/// Extends the <see cref="CachedLineLayoutBuffer"/> to also cache indicator
 	/// information from a given buffer.
 	/// </summary>
-	public class CachedLineIndicatorBuffer : CachedLineLayoutBuffer, ILineIndicatorBuffer
+	public class CachedLineIndicatorBuffer
+		: CachedLineLayoutBuffer, ILineIndicatorBuffer
 	{
 		#region Constructors
 
