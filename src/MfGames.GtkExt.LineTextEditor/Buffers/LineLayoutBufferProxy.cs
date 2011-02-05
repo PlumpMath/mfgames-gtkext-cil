@@ -96,23 +96,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		}
 
 		/// <summary>
-		/// Gets the index of the line from a given wrapped line index. This also
-		/// returns the relative line index inside the layout.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
-		/// <param name="layoutLineIndex">Index of the layout line.</param>
-		/// <returns></returns>
-		public virtual int GetLineIndex(
-			IDisplayContext displayContext,
-			int wrappedLineIndex,
-			out int layoutLineIndex)
-		{
-			return LineLayoutBuffer.GetLineIndex(
-				displayContext, wrappedLineIndex, out layoutLineIndex);
-		}
-
-		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="displayContext">The text editor.</param>
@@ -166,35 +149,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			LineLayoutBuffer.GetLineLayoutRange(
 				displayContext, viewArea, out startLine, out endLine);
-		}
-
-		/// <summary>
-		/// Gets the wrapped line count for all the lines in the buffer.
-		/// </summary>
-		/// <value>The wrapped line count.</value>
-		public virtual int GetWrappedLineCount(IDisplayContext displayContext)
-		{
-			return LineLayoutBuffer.GetWrappedLineCount(displayContext);
-		}
-
-		/// <summary>
-		/// Gets the wrapped line indexes for a given line index.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineIndex">The line index.</param>
-		/// <param name="startWrappedLineIndex">Start index of the wrapped line.</param>
-		/// <param name="endWrappedLineIndex">End index of the wrapped line.</param>
-		public virtual void GetWrappedLineIndexes(
-			IDisplayContext displayContext,
-			int lineIndex,
-			out int startWrappedLineIndex,
-			out int endWrappedLineIndex)
-		{
-			LineLayoutBuffer.GetWrappedLineIndexes(
-				displayContext,
-				lineIndex,
-				out startWrappedLineIndex,
-				out endWrappedLineIndex);
 		}
 
 		#endregion

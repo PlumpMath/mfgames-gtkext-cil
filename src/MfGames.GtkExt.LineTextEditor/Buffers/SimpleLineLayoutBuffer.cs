@@ -68,89 +68,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		#region Layout
 
 		/// <summary>
-		/// Gets the wrapped line indexes for a given line index.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineIndex">The line index.</param>
-		/// <param name="startWrappedLineIndex">Start index of the wrapped line.</param>
-		/// <param name="endWrappedLineIndex">End index of the wrapped line.</param>
-		public virtual void GetWrappedLineIndexes(
-			IDisplayContext displayContext,
-			int lineIndex,
-			out int startWrappedLineIndex,
-			out int endWrappedLineIndex)
-		{
-			// Go through the wrapped lines until we find the right one.
-			int count = 0;
-
-			for (int currentLineIndex = 0; lineIndex < LineCount; lineIndex++)
-			{
-				// Get the layout since we use it for both the the line and
-				// all the lines before it.
-				Layout layout = GetLineLayout(displayContext, lineIndex);
-
-				if (currentLineIndex == lineIndex)
-				{
-					startWrappedLineIndex = count;
-					endWrappedLineIndex = count + layout.LineCount;
-					return;
-				}
-
-				count += layout.LineCount;
-			}
-
-			// We got to the end of the buffer and didn't find it.
-			throw new Exception("Cannot find line index in buffer");
-		}
-
-		/// <summary>
 		/// Sets the pixel width of a layout in case the layout uses word
 		/// wrapping.
 		/// </summary>
 		/// <value>The width.</value>
 		public int Width { get; set; }
-
-		/// <summary>
-		/// Gets the index of the line from a given wrapped line index. This also
-		/// returns the relative line index inside the layout.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
-		/// <param name="layoutLineIndex">Index of the layout line.</param>
-		/// <returns></returns>
-		public int GetLineIndex(
-			IDisplayContext displayContext,
-			int wrappedLineIndex,
-			out int layoutLineIndex)
-		{
-			// Go through the wrapped lines until we find the right one.
-			int count = 0;
-
-			for (int lineIndex = 0; lineIndex < LineCount; lineIndex++)
-			{
-				// Get the layout and add the lines.
-				Layout layout = GetLineLayout(displayContext, lineIndex);
-
-				int newCount = count + layout.LineCount;
-
-				// If the count is greater than our index, we are in the right
-				// layout to return the values.
-				if (newCount > wrappedLineIndex)
-				{
-					// Figure out the relative wrapped line index.
-					layoutLineIndex = wrappedLineIndex - count;
-
-					// Return the line index.
-					return lineIndex;
-				}
-
-				// Update the count with the new value.
-				count = newCount;
-			}
-
-			// We got to the end of the buffer and didn't find it.
-			throw new Exception("Cannot find wrapped line index in buffer");
-		}
 
 		/// <summary>
 		/// Gets the line layout for a given line.
@@ -309,24 +231,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// If we got this far, nothing is visible.
 			startLine = endLine = 0;
 			return;
-		}
-
-		/// <summary>
-		/// Gets the wrapped line count for all the lines in the buffer.
-		/// </summary>
-		/// <value>The wrapped line count.</value>
-		public int GetWrappedLineCount(IDisplayContext displayContext)
-		{
-			int count = 0;
-
-			for (int lineIndex = 0; lineIndex < LineCount; lineIndex++)
-			{
-				Layout layout = GetLineLayout(displayContext, lineIndex);
-
-				count += layout.LineCount;
-			}
-
-			return count;
 		}
 
 		/// <summary>

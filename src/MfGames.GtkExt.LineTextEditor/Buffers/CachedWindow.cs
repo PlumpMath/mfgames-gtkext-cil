@@ -109,12 +109,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			get { return WindowIndex * ParentBuffer.WindowSize; }
 		}
 
-		/// <summary>
-		/// Gets the start index for wrapped lines.
-		/// </summary>
-		/// <value>The window start wrapped line.</value>
-		internal int WrappedLineCount { get; private set; }
-
 		#endregion
 
 		#region Caching
@@ -324,7 +318,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 			// Go through all the lines in the window and populate them.
 			int height = 0;
-			int wrappedLineCount = 0;
 
 			for (int lineIndex = 0; lineIndex < ParentBuffer.WindowSize; lineIndex++)
 			{
@@ -355,11 +348,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 					ParentBuffer.LineLayoutBuffer.GetLineLayout(displayContext, line);
 
 				height += cachedLine.Height;
-				wrappedLineCount += cachedLine.Layout.LineCount;
 			}
 
 			// Set the height of the window.
-			WrappedLineCount = wrappedLineCount;
 			Height = height;
 		}
 
@@ -370,7 +361,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			// Reset the cached values in the window.
 			Height = null;
-			WrappedLineCount = -1;
 		}
 
 		/// <summary>
