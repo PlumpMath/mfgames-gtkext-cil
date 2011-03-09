@@ -95,6 +95,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 			// Colors
 			BackgroundColor = new Color(1, 1, 1);
+			DisabledBackgroundColor = new Color(0.9, 0.9, 0.9);
 			IndicatorBackgroundColor = new Color(1, 1, 1);
 			CurrentLineBackgroundColor = new Color(255 / 255.0, 250 / 255.0, 205 / 255.0);
 			CurrentWrappedLineBackgroundColor = new Color(
@@ -126,6 +127,12 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// </summary>
 		/// <value>The color of the current wrapped line background.</value>
 		public Color? CurrentWrappedLineBackgroundColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets the color of the disabled background.
+		/// </summary>
+		/// <value>The color of the disabled background.</value>
+		public Color DisabledBackgroundColor { get; set; }
 
 		/// <summary>
 		/// Gets or sets the background color of an indicator bar.

@@ -95,9 +95,6 @@ namespace MfGames.GtkExt.LineTextEditor
 			theme = new Theme();
 			displaySettings = new DisplaySettings();
 
-			// Save the line buffer which configures a number of other elements.
-			LineLayoutBuffer = lineLayoutBuffer;
-
 			// Set up the caret, this must be done after the buffer is set.
 			caret = new Caret(this);
 
@@ -108,6 +105,9 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			controller.BeginAction += OnBeginAction;
 			controller.EndAction += OnEndAction;
+
+			// Save the line buffer which configures a number of other elements.
+			LineLayoutBuffer = lineLayoutBuffer;
 		}
 
 		protected TextEditor(IntPtr raw)
@@ -152,6 +152,13 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			set
 			{
+				// Detach events if we have one.
+				if (lineLayoutBuffer != null)
+				{
+					// Disconnect from the events.
+					lineLayoutBuffer.LineChanged -= OnLineChanged;
+				}
+
 				// Set the new buffer.
 				lineLayoutBuffer = value;
 
@@ -164,6 +171,11 @@ namespace MfGames.GtkExt.LineTextEditor
 					// Hook up to the events.
 					lineLayoutBuffer.LineChanged += OnLineChanged;
 				}
+
+				// Cause a complete redraw.
+				Caret.Position = new BufferPosition(0, 0);
+				ScrollToCaret();
+				QueueDraw();
 			}
 		}
 
@@ -398,6 +410,19 @@ namespace MfGames.GtkExt.LineTextEditor
 				var renderContext = new RenderContext(cairoContext);
 				renderContext.RenderRegion = cairoArea;
 
+				// If we don't have a buffer at this point, render the entire
+				// area with the disabled background color and stop.
+				if (lineLayoutBuffer == null)
+				{
+					// Paint the background color of the window.
+					cairoContext.Color = theme.DisabledBackgroundColor;
+					cairoContext.Rectangle(cairoArea);
+					cairoContext.Fill();
+
+					// We are done processing.
+					return true;
+				}
+
 				// Paint the background color of the window.
 				cairoContext.Color = theme.BackgroundColor;
 				cairoContext.Rectangle(cairoArea);
@@ -623,6 +648,12 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// </summary>
 		public void ScrollToCaret()
 		{
+			// If we don't have adjustments, don't do anything.
+			if (verticalAdjustment == null)
+			{
+				return;
+			}
+
 			// Figure out if the caret is already in the visible area.
 			Rectangle caretRegion = caret.GetDrawRegion();
 

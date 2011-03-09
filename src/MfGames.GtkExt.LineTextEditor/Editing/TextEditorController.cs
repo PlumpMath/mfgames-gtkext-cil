@@ -472,6 +472,12 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			uint button,
 			ModifierType modifier)
 		{
+			// If we don't have a buffer, we don't do anything.
+			if (displayContext.LineLayoutBuffer == null)
+			{
+				return false;
+			}
+
 			// If we are pressing the left button (button 1) then we move the caret
 			// over. If we are pressing the right button, we only change the position
 			// if we don't already have a selection.

@@ -59,22 +59,9 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		public DemoLineTextEditor()
 		{
-			// Create a memory line buffer with random text so the user can
-			// edit the buffer.
-			ILineBuffer patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
-			ILineBuffer lineBuffer = new MemoryLineBuffer(patternLineBuffer);
-
-			// Create an unformatted markup buffer and simple layout with a cache.
-			ILineMarkupBuffer lineMarkupBuffer = new KeywordLineMarkupBuffer(lineBuffer);
-			ILineMarkupBuffer selectionMarkupBuffer =
-				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
-			ILineLayoutBuffer lineLayoutBuffer =
-				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
-			ILineIndicatorBuffer lineIndicatorBuffer =
-				new KeywordLineIndicatorBuffer(lineLayoutBuffer);
-			var cachedLineBuffer = new CachedLineIndicatorBuffer(lineIndicatorBuffer);
-
 			// Create the text editor with the resulting buffer.
+			CachedLineIndicatorBuffer cachedLineBuffer = CreateEditableBuffer();
+
 			textEditor = new TextEditor(cachedLineBuffer);
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
@@ -103,7 +90,39 @@ namespace GtkExtDemo.LineTextEditor
 			hbox.PackStart(scrolledWindow, true, true, 0);
 			hbox.PackStart(indicatorBar, false, false, 4);
 
-			PackStart(hbox, true, true, 2);
+			// Create the expander with the controls inside it.
+			var expander = CreateGuiExpander();
+
+			// Add the editor and the controls into a vertical box.
+			var vbox = new VBox(false, 0);
+			vbox.PackStart(hbox, true, true, 0);
+			vbox.PackStart(expander, false, false, 4);
+
+			PackStart(vbox, true, true, 2);
+		}
+
+		#endregion
+
+		#region Buffers
+
+		/// <summary>
+		/// Creates an editable buffer.
+		/// </summary>
+		/// <returns></returns>
+		private static CachedLineIndicatorBuffer CreateEditableBuffer()
+		{
+			ILineBuffer patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
+			ILineBuffer lineBuffer = new MemoryLineBuffer(patternLineBuffer);
+
+			// Create an unformatted markup buffer and simple layout with a cache.
+			ILineMarkupBuffer lineMarkupBuffer = new KeywordLineMarkupBuffer(lineBuffer);
+			ILineMarkupBuffer selectionMarkupBuffer =
+				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
+			ILineLayoutBuffer lineLayoutBuffer =
+				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
+			ILineIndicatorBuffer lineIndicatorBuffer =
+				new KeywordLineIndicatorBuffer(lineLayoutBuffer);
+			return new CachedLineIndicatorBuffer(lineIndicatorBuffer);
 		}
 
 		#endregion
@@ -111,6 +130,65 @@ namespace GtkExtDemo.LineTextEditor
 		#region Widgets
 
 		private readonly TextEditor textEditor;
+
+		#region Events
+
+		/// <summary>
+		/// Called when the Editable Buffer button is clicked.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnEditableBufferButtonClicked(object sender, EventArgs e)
+		{
+			textEditor.LineLayoutBuffer = CreateEditableBuffer();
+		}
+
+		/// <summary>
+		/// Called when the No Buffer button is clicked.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnNoBufferButtonClicked(object sender, EventArgs e)
+		{
+			textEditor.LineLayoutBuffer = null;
+		}
+
+		#endregion
+
+		#region Setup
+
+		private Expander CreateGuiExpander()
+		{
+			// Create the expander and label it.
+			var expander = new Expander("Demo Controls");
+			expander.Expanded = true;
+
+			var vbox = new VBox();
+			expander.Add(vbox);
+
+			// Create the buffer types dialog.
+			var editableBufferButton = new Button(new Label("Editable"));
+			editableBufferButton.Clicked += OnEditableBufferButtonClicked;
+
+			var noBufferButton = new Button(new Label("None"));
+			noBufferButton.Clicked += OnNoBufferButtonClicked;
+
+			var setBufferButtons = new HButtonBox();
+			setBufferButtons.PackStart(editableBufferButton);
+			setBufferButtons.PackStart(noBufferButton);
+
+			var setBufferButtonsPadding = new HBox();
+			setBufferButtonsPadding.PackStart(setBufferButtons, false, false, 0);
+			setBufferButtonsPadding.PackStart(new Label(String.Empty), true, true, 0);
+			vbox.PackStart(setBufferButtonsPadding);
+
+			// Return the resulting expander.
+			expander.ShowAll();
+
+			return expander;
+		}
+
+		#endregion
 
 		#endregion
 
