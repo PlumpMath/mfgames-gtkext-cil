@@ -60,6 +60,16 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		/// Initializes a new instance of the <see cref="LineIndicatorBar"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
+		public LineIndicatorBar(
+			IDisplayContext displayContext)
+			: this(displayContext, null)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LineIndicatorBar"/> class.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineIndicatorBuffer">The line indicator buffer.</param>
 		public LineIndicatorBar(
 			IDisplayContext displayContext,
@@ -89,15 +99,30 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		public ILineIndicatorBuffer LineIndicatorBuffer
 		{
 			get { return lineIndicatorBuffer; }
-			private set
+			set
 			{
+				// Check to see if we have a buffer already.
+				if (lineIndicatorBuffer != null)
+				{
+					lineIndicatorBuffer.LineChanged -= OnLineChanged;
+					lineIndicatorBuffer.LinesInserted -= OnBufferChanged;
+					lineIndicatorBuffer.LinesDeleted -= OnBufferChanged;
+				}
+
+				// Set the new indicator buffer.
 				lineIndicatorBuffer = value;
 
-				lineIndicatorBuffer.LineChanged += OnLineChanged;
-				lineIndicatorBuffer.LinesInserted += OnBufferChanged;
-				lineIndicatorBuffer.LinesDeleted += OnBufferChanged;
+				// If we have a new indicator buffer, attach events.
+				if (lineIndicatorBuffer != null)
+				{
+					lineIndicatorBuffer.LineChanged += OnLineChanged;
+					lineIndicatorBuffer.LinesInserted += OnBufferChanged;
+					lineIndicatorBuffer.LinesDeleted += OnBufferChanged;
+				}
 
+				// Rebuild the lines in the buffer.
 				AssignLines();
+				QueueDraw();
 			}
 		}
 
@@ -107,11 +132,31 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		/// </summary>
 		private void AssignLines()
 		{
+			// Go through all the lines and put them in a known and reset state.
+			// Reset the lines we're using and clear out the lines we aren't.
+			for (int indicatorLineIndex = 0;
+				 indicatorLineIndex < visibleLineCount;
+				 indicatorLineIndex++)
+			{
+				IndicatorLine indicatorLine = indicatorLines[indicatorLineIndex];
+				
+				indicatorLine.Visible = false;
+				indicatorLine.StartLineIndex = -1;
+				indicatorLine.EndLineIndex = -1;
+			}
+
 			// If we don't have any lines or if we have no height, then don't
+			// do anything.
+			if (visibleLineCount == 0 || lineIndicatorBuffer == null)
+			{
+				return;
+			}
+
+			// Check for lines in the buffer. If we have none, then we can't
 			// do anything.
 			int lineCount = lineIndicatorBuffer.LineCount;
 
-			if (visibleLineCount == 0 || lineIndicatorBuffer == null || lineCount == 0)
+			if (lineCount == 0)
 			{
 				return;
 			}
@@ -139,9 +184,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 				}
 				else
 				{
-					indicatorLine.Visible = false;
-					indicatorLine.StartLineIndex = -1;
-					indicatorLine.EndLineIndex = -1;
+					break;
 				}
 			}
 

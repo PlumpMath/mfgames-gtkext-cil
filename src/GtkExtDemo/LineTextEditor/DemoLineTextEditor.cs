@@ -60,9 +60,9 @@ namespace GtkExtDemo.LineTextEditor
 		public DemoLineTextEditor()
 		{
 			// Create the text editor with the resulting buffer.
-			CachedLineIndicatorBuffer cachedLineBuffer = CreateEditableBuffer();
+			ILineIndicatorBuffer lineIndicatorBuffer = CreateEditableBuffer();
 
-			textEditor = new TextEditor(cachedLineBuffer);
+			textEditor = new TextEditor(lineIndicatorBuffer);
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
@@ -82,7 +82,7 @@ namespace GtkExtDemo.LineTextEditor
 			scrolledWindow.Add(textEditor);
 
 			// Create the indicator bar that is 10 px wide.
-			var indicatorBar = new LineIndicatorBar(textEditor, cachedLineBuffer);
+			indicatorBar = new LineIndicatorBar(textEditor, lineIndicatorBuffer);
 			indicatorBar.SetSizeRequest(20, 1);
 
 			// Add the editor and bar to the current tab.
@@ -111,17 +111,25 @@ namespace GtkExtDemo.LineTextEditor
 		/// <returns></returns>
 		private static CachedLineIndicatorBuffer CreateEditableBuffer()
 		{
+			// Create a patterned line buffer and make it read-write.
 			ILineBuffer patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
 			ILineBuffer lineBuffer = new MemoryLineBuffer(patternLineBuffer);
 
-			// Create an unformatted markup buffer and simple layout with a cache.
+			// A markup buffer that highlights keywords and wrap it in one that
+			// handles simple mouse selections.
 			ILineMarkupBuffer lineMarkupBuffer = new KeywordLineMarkupBuffer(lineBuffer);
 			ILineMarkupBuffer selectionMarkupBuffer =
 				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
+
+			// Provide a simple layout buffer that doesn't do anything.
 			ILineLayoutBuffer lineLayoutBuffer =
 				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
+
+			// Add our local keyword-based markup.
 			ILineIndicatorBuffer lineIndicatorBuffer =
 				new KeywordLineIndicatorBuffer(lineLayoutBuffer);
+
+			// Finally, wrap it in a cached buffer.
 			return new CachedLineIndicatorBuffer(lineIndicatorBuffer);
 		}
 
@@ -130,6 +138,7 @@ namespace GtkExtDemo.LineTextEditor
 		#region Widgets
 
 		private readonly TextEditor textEditor;
+		private readonly LineIndicatorBar indicatorBar;
 
 		#region Events
 
@@ -140,7 +149,10 @@ namespace GtkExtDemo.LineTextEditor
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		private void OnEditableBufferButtonClicked(object sender, EventArgs e)
 		{
-			textEditor.LineLayoutBuffer = CreateEditableBuffer();
+			CachedLineIndicatorBuffer lineIndicatorBuffer = CreateEditableBuffer();
+
+			textEditor.LineLayoutBuffer = lineIndicatorBuffer;
+			indicatorBar.LineIndicatorBuffer = lineIndicatorBuffer;
 		}
 
 		/// <summary>
@@ -151,6 +163,7 @@ namespace GtkExtDemo.LineTextEditor
 		private void OnNoBufferButtonClicked(object sender, EventArgs e)
 		{
 			textEditor.LineLayoutBuffer = null;
+			indicatorBar.LineIndicatorBuffer = null;
 		}
 
 		#endregion

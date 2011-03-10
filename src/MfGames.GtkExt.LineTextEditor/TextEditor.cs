@@ -170,11 +170,23 @@ namespace MfGames.GtkExt.LineTextEditor
 
 					// Hook up to the events.
 					lineLayoutBuffer.LineChanged += OnLineChanged;
+
+					// Cause a complete redraw.
+					Caret.Position = new BufferPosition(0, 0);
+					ScrollToCaret();
+
+					// Reset the controller of any input states.
+					controller.Reset();
+				}
+				else
+				{
+					// Just scroll to the bottom.
+					if (verticalAdjustment != null)
+					{
+						verticalAdjustment.SetBounds(0, 0, 0, 0, 0);
+					}
 				}
 
-				// Cause a complete redraw.
-				Caret.Position = new BufferPosition(0, 0);
-				ScrollToCaret();
 				QueueDraw();
 			}
 		}
@@ -771,15 +783,18 @@ namespace MfGames.GtkExt.LineTextEditor
 				GdkWindow.MoveResize(allocation);
 			}
 
-			// We need to reset the buffer so it can recalculate all the widths
-			// and clear any caches.
-			LineLayoutBuffer.Reset();
+			if (lineLayoutBuffer != null)
+			{
+				// We need to reset the buffer so it can recalculate all the widths
+				// and clear any caches.
+				LineLayoutBuffer.Reset();
 
-			// Change the adjustments (scrollbars).
-			SetAdjustments();
+				// Change the adjustments (scrollbars).
+				SetAdjustments();
 
-			// Get rid of any input states.
-			controller.Reset();
+				// Get rid of any input states.
+				controller.Reset();
+			}
 
 			// Force the entire widget to draw.
 			QueueDraw();
