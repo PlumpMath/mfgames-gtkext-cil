@@ -9,22 +9,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.LineTextEdit
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
-		Release|x86 = Release|x86
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Debug|x86.ActiveCfg = Debug|x86
-		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Debug|x86.Build.0 = Debug|x86
-		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Release|x86.ActiveCfg = Release|x86
-		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Release|x86.Build.0 = Release|x86
-		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Debug|x86.ActiveCfg = Debug|x86
-		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Debug|x86.Build.0 = Debug|x86
-		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Release|x86.ActiveCfg = Release|x86
-		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Release|x86.Build.0 = Release|x86
-		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Debug|x86.ActiveCfg = Debug|x86
-		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Debug|x86.Build.0 = Debug|x86
-		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Release|x86.ActiveCfg = Release|x86
-		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Release|x86.Build.0 = Release|x86
+		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = GtkExtDemo\GtkExtDemo.csproj
