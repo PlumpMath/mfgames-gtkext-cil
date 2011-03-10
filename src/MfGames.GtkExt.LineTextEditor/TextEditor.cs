@@ -705,7 +705,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		private void SetAdjustments()
 		{
 			// We have to have a size and an adjustment.
-			if (verticalAdjustment == null)
+			if (verticalAdjustment == null || lineLayoutBuffer == null)
 			{
 				return;
 			}
