@@ -49,6 +49,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		public MemoryLineBuffer()
 		{
 			lines = new List<string>();
+			lines.Add(string.Empty);
 		}
 
 		/// <summary>
