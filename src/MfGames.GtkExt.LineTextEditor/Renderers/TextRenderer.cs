@@ -103,7 +103,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			var layout = new Layout(DisplayContext.PangoContext);
 
 			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextBlockStyle);
-			layout.SetMarkup(LineBuffer.GetLineMarkup(lineIndex));
+			layout.SetMarkup(GetSelectionMarkup(lineIndex));
 
 			return layout;
 		}

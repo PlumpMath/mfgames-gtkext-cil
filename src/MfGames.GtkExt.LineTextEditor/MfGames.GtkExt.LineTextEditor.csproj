@@ -89,7 +89,6 @@
     <Compile Include="Editing\EnglishWordSplitter.cs" />
     <Compile Include="Buffers\LineBufferDecorator.cs" />
     <Compile Include="Editing\OffsetWordSplitter.cs" />
-    <Compile Include="Renderers\CaretSelectionLineBuffer.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandCollection.cs" />
     <Compile Include="Commands\CommandManager.cs" />
