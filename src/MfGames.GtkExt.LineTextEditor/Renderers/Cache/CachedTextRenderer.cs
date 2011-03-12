@@ -496,7 +496,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// </summary>
 		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
-		public override BlockStyle GetLineStyle(int lineIndex)
+		public override LineStyle GetLineStyle(int lineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
@@ -507,7 +507,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			CachedWindow window = windows[windowIndex];
 
 			// Get the layout from the window.
-			BlockStyle style = window.GetLineStyle(DisplayContext, lineIndex);
+			LineStyle style = window.GetLineStyle(DisplayContext, lineIndex);
 			return style;
 		}
 

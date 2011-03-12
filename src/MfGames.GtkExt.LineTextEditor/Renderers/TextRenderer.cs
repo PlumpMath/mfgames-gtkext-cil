@@ -102,7 +102,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		{
 			var layout = new Layout(DisplayContext.PangoContext);
 
-			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextBlockStyle);
+			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextLineStyle);
 			layout.SetMarkup(GetSelectionMarkup(lineIndex));
 
 			return layout;
@@ -123,7 +123,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
 
 			// Get the style to include the style's height.
-			BlockStyle style = GetLineStyle(lineIndex);
+			LineStyle style = GetLineStyle(lineIndex);
 
 			lineHeight += (int) Math.Ceiling(style.Height);
 
@@ -178,7 +178,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			// Get a layout for the default text style.
 			var layout = new Layout(DisplayContext.PangoContext);
 
-			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextBlockStyle);
+			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextLineStyle);
 
 			// Set the layout to a simple string.
 			layout.SetText("W");
@@ -379,7 +379,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <returns></returns>
-		public virtual BlockStyle GetLineStyle(int lineIndex)
+		public virtual LineStyle GetLineStyle(int lineIndex)
 		{
 			// Get the style name and normalize it.
 			string styleName = LineBuffer.GetLineStyleName(lineIndex);
@@ -390,7 +390,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			}
 
 			// Retrieve the style.
-			return DisplayContext.Theme.BlockStyles[styleName];
+			return DisplayContext.Theme.LineStyles[styleName];
 		}
 
 		#endregion

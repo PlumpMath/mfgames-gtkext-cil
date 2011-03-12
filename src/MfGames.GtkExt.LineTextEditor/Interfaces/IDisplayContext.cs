@@ -102,7 +102,7 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		/// <param name="style">The style.</param>
 		void SetLayout(
 			Layout layout,
-			BlockStyle style);
+			LineStyle style);
 
 		#region Windows
 

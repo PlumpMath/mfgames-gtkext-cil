@@ -58,7 +58,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets or sets the style for the line.
 		/// </summary>
 		/// <value>The style.</value>
-		public BlockStyle Style { get; set; }
+		public LineStyle Style { get; set; }
 
 		/// <summary>
 		/// Resets the cached line.

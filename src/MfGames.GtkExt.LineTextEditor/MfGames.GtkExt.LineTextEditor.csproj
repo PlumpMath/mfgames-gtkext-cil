@@ -131,7 +131,7 @@
     <Compile Include="Visuals\IndicatorStyle.cs" />
     <Compile Include="Visuals\OptionalBorders.cs" />
     <Compile Include="Visuals\OptionalSpacing.cs" />
-    <Compile Include="Visuals\BlockStyle.cs" />
+    <Compile Include="Visuals\LineStyle.cs" />
     <Compile Include="Visuals\RenderContext.cs" />
     <Compile Include="Visuals\Spacing.cs" />
     <Compile Include="Visuals\StyleUsage.cs" />

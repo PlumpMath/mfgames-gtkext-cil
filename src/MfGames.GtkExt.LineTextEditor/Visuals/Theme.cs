@@ -61,13 +61,13 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		{
 			// Create the initial styles along with the styles used internally
 			// by the text editor.
-			blockStyles = new HashDictionary<string, BlockStyle>();
+			lineStyles = new HashDictionary<string, LineStyle>();
 
-			var baseStyle = new BlockStyle();
+			var baseStyle = new LineStyle();
 
-			var marginStyle = new BlockStyle(baseStyle);
+			var marginStyle = new LineStyle(baseStyle);
 
-			var lineNumberStyle = new BlockStyle(marginStyle);
+			var lineNumberStyle = new LineStyle(marginStyle);
 			lineNumberStyle.Alignment = Alignment.Right;
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			lineNumberStyle.ForegroundColor = new Color(0.5, 0.5, 0.5);
@@ -78,20 +78,20 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			lineNumberStyle.Margins.Top = 4;
 			lineNumberStyle.Margins.Bottom = 4;
 
-			var currentLineNumberStyle = new BlockStyle(lineNumberStyle);
+			var currentLineNumberStyle = new LineStyle(lineNumberStyle);
 			currentLineNumberStyle.BackgroundColor = new Color(0.8, 0.8, 0.8);
 			currentLineNumberStyle.ForegroundColor = new Color(0.0, 0.0, 0.0);
 
-			var textStyle = new BlockStyle(baseStyle);
+			var textStyle = new LineStyle(baseStyle);
 			textStyle.Margins.Top = 4;
 			textStyle.Margins.Bottom = 4;
 			textStyle.Margins.Left = 8;
 
-			blockStyles[BaseStyle] = baseStyle;
-			blockStyles[MarginStyle] = marginStyle;
-			blockStyles[LineNumberStyle] = lineNumberStyle;
-			blockStyles[CurrentLineNumberStyle] = currentLineNumberStyle;
-			blockStyles[TextStyle] = textStyle;
+			lineStyles[BaseStyle] = baseStyle;
+			lineStyles[MarginStyle] = marginStyle;
+			lineStyles[LineNumberStyle] = lineNumberStyle;
+			lineStyles[CurrentLineNumberStyle] = currentLineNumberStyle;
+			lineStyles[TextStyle] = textStyle;
 
 			// Colors
 			BackgroundColor = new Color(1, 1, 1);
@@ -142,44 +142,44 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 		#endregion
 
-		#region Block Styles
+		#region Line Styles
 
-		private readonly HashDictionary<string, BlockStyle> blockStyles;
+		private readonly HashDictionary<string, LineStyle> lineStyles;
 
 		/// <summary>
 		/// Gets the selector styles.
 		/// </summary>
 		/// <value>The selectors.</value>
-		public HashDictionary<string, BlockStyle> BlockStyles
+		public HashDictionary<string, LineStyle> LineStyles
 		{
-			get { return blockStyles; }
+			get { return lineStyles; }
 		}
 
 		/// <summary>
 		/// Gets the current line number block style.
 		/// </summary>
 		/// <value>The line number block style.</value>
-		public BlockStyle CurrentLineNumberBlockStyle
+		public LineStyle CurrentLineNumberLineStyle
 		{
-			get { return blockStyles[CurrentLineNumberStyle]; }
+			get { return lineStyles[CurrentLineNumberStyle]; }
 		}
 
 		/// <summary>
 		/// Gets the line number block style.
 		/// </summary>
 		/// <value>The line number block style.</value>
-		public BlockStyle LineNumberBlockStyle
+		public LineStyle LineNumberLineStyle
 		{
-			get { return blockStyles[LineNumberStyle]; }
+			get { return lineStyles[LineNumberStyle]; }
 		}
 
 		/// <summary>
 		/// Gets the text block style.
 		/// </summary>
 		/// <value>The text block style.</value>
-		public BlockStyle TextBlockStyle
+		public LineStyle TextLineStyle
 		{
-			get { return blockStyles[TextStyle]; }
+			get { return lineStyles[TextStyle]; }
 		}
 
 		#endregion

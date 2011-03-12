@@ -426,7 +426,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			TextRenderer buffer = displayContext.TextRenderer;
 			int bufferLineIndex = buffer.LineBuffer.NormalizeLineIndex(LineIndex);
 			Layout layout = buffer.GetLineLayout(bufferLineIndex);
-			BlockStyle style = buffer.GetLineStyle(bufferLineIndex);
+			LineStyle style = buffer.GetLineStyle(bufferLineIndex);
 
 			// Figure out the top of the current line in relation to the entire
 			// buffer and view. For lines beyond the first, we use
