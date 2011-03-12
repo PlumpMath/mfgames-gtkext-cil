@@ -139,8 +139,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;
-			x +=
-				displayContext.TextRenderer.GetLineStyle(Position.LineIndex).Left;
+			x += displayContext.TextRenderer.GetLineStyle(Position.LineIndex).Left;
 
 			// Return the resulting rectangle.
 			return new Rectangle(x, y, 1, lineHeight);

@@ -25,7 +25,6 @@
 #region Namespaces
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
@@ -70,16 +69,16 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		#region Buffer
 
 		/// <summary>
-		/// Gets the line buffer associated with this renderer.
-		/// </summary>
-		/// <value>The line buffer.</value>
-		public abstract LineBuffer LineBuffer { get; }
-
-		/// <summary>
 		/// Gets or sets the display context associated with this renderer.
 		/// </summary>
 		/// <value>The display context.</value>
 		public IDisplayContext DisplayContext { get; private set; }
+
+		/// <summary>
+		/// Gets the line buffer associated with this renderer.
+		/// </summary>
+		/// <value>The line buffer.</value>
+		public abstract LineBuffer LineBuffer { get; }
 
 		#endregion
 
@@ -97,8 +96,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public virtual Layout GetLineLayout(
-			int lineIndex)
+		public virtual Layout GetLineLayout(int lineIndex)
 		{
 			var layout = new Layout(DisplayContext.PangoContext);
 
@@ -113,8 +111,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		private int GetLineLayoutHeight(
-			int lineIndex)
+		private int GetLineLayoutHeight(int lineIndex)
 		{
 			// Get the extents for the line while rendered.
 			Layout lineLayout = GetLineLayout(lineIndex);
@@ -196,8 +193,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// </summary>
 		/// <param name="bufferY">The buffer Y.</param>
 		/// <returns></returns>
-		public int GetLineLayoutRange(
-			double bufferY)
+		public int GetLineLayoutRange(double bufferY)
 		{
 			var rectangle = new Rectangle(0, bufferY, 0.1, 0.1);
 			int startLineIndex, endLineIndex;
@@ -304,9 +300,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			// Get the line that contains the given Y coordinate.
 			int lineIndex, endLineIndex;
 			GetLineLayoutRange(
-				new Rectangle(0, bufferY, 0, bufferY),
-				out lineIndex,
-				out endLineIndex);
+				new Rectangle(0, bufferY, 0, bufferY), out lineIndex, out endLineIndex);
 
 			// Get the layout-relative Y coordinate.
 			double layoutY = bufferY - GetLineLayoutHeight(0, lineIndex);
@@ -461,17 +455,6 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		#region Selection
 
 		/// <summary>
-		/// Updates the selection inside the renderer.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="previousSelection">The previous selection.</param>
-		public virtual void UpdateSelection(
-			IDisplayContext displayContext,
-			BufferSegment previousSelection)
-		{
-		}
-
-		/// <summary>
 		/// Gets the Pango markup for a given line.
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
@@ -543,6 +526,17 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 
 			// Return the resulting markup.
 			return markup;
+		}
+
+		/// <summary>
+		/// Updates the selection inside the renderer.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="previousSelection">The previous selection.</param>
+		public virtual void UpdateSelection(
+			IDisplayContext displayContext,
+			BufferSegment previousSelection)
+		{
 		}
 
 		#endregion

@@ -41,7 +41,6 @@ using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
 using MfGames.GtkExt.LineTextEditor.Renderers;
-using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
@@ -145,7 +144,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		{
 			get { return textRenderer.LineBuffer; }
 		}
-		
+
 		/// <summary>
 		/// Gets or sets the line layout buffer.
 		/// </summary>
@@ -154,6 +153,19 @@ namespace MfGames.GtkExt.LineTextEditor
 		{
 			[DebuggerStepThrough]
 			get { return textRenderer; }
+		}
+
+		/// <summary>
+		/// Raises the text renderer changed event.
+		/// </summary>
+		protected virtual void RaiseTextRendererChanged()
+		{
+			var listeners = TextRendererChanged;
+
+			if (listeners != null)
+			{
+				listeners(this, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -209,19 +221,6 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// Occurs when the text renderer is replaced.
 		/// </summary>
 		public event EventHandler TextRendererChanged;
-
-		/// <summary>
-		/// Raises the text renderer changed event.
-		/// </summary>
-		protected virtual void RaiseTextRendererChanged()
-		{
-			var listeners = TextRendererChanged;
-
-			if (listeners != null)
-			{
-				listeners(this, EventArgs.Empty);
-			}
-		}
 
 		#endregion
 
@@ -488,8 +487,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				// Determine the line range visible in the given area.
 				int startLine, endLine;
-				textRenderer.GetLineLayoutRange(
-					viewArea, out startLine, out endLine);
+				textRenderer.GetLineLayoutRange(viewArea, out startLine, out endLine);
 
 				// Determine where the first line actually starts.
 				int startLineY = 0;

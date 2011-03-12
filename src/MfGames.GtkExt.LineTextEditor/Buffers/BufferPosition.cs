@@ -353,7 +353,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			int endLineIndex = buffer.LineBuffer.LineCount - 1;
 
-			return new BufferPosition(endLineIndex, buffer.LineBuffer.GetLineLength(endLineIndex));
+			return new BufferPosition(
+				endLineIndex, buffer.LineBuffer.GetLineLength(endLineIndex));
 		}
 
 		/// <summary>
@@ -371,7 +372,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="buffer">The buffer.</param>
 		public BufferPosition ToEndOfLine(TextRenderer buffer)
 		{
-			return new BufferPosition(lineIndex, buffer.LineBuffer.GetLineLength(lineIndex));
+			return new BufferPosition(
+				lineIndex, buffer.LineBuffer.GetLineLength(lineIndex));
 		}
 
 		/// <summary>

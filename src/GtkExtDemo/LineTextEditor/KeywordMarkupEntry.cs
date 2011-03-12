@@ -37,7 +37,8 @@ namespace GtkExtDemo.LineTextEditor
 	/// <summary>
 	/// Defines a single range of markup in a text buffer.
 	/// </summary>
-	public class KeywordMarkupEntry : IComparable<KeywordMarkupEntry>, ILineIndicator
+	public class KeywordMarkupEntry
+		: IComparable<KeywordMarkupEntry>, ILineIndicator
 	{
 		#region Properties
 

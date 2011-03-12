@@ -147,15 +147,6 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		private readonly HashDictionary<string, LineStyle> lineStyles;
 
 		/// <summary>
-		/// Gets the selector styles.
-		/// </summary>
-		/// <value>The selectors.</value>
-		public HashDictionary<string, LineStyle> LineStyles
-		{
-			get { return lineStyles; }
-		}
-
-		/// <summary>
 		/// Gets the current line number block style.
 		/// </summary>
 		/// <value>The line number block style.</value>
@@ -171,6 +162,15 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		public LineStyle LineNumberLineStyle
 		{
 			get { return lineStyles[LineNumberStyle]; }
+		}
+
+		/// <summary>
+		/// Gets the selector styles.
+		/// </summary>
+		/// <value>The selectors.</value>
+		public HashDictionary<string, LineStyle> LineStyles
+		{
+			get { return lineStyles; }
 		}
 
 		/// <summary>

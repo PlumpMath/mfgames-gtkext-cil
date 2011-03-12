@@ -142,7 +142,7 @@ namespace GtkExtDemo.LineTextEditor
 			EventArgs e)
 		{
 			TextRenderer textRenderer = CreateRenderer();
-			
+
 			textEditor.SetTextRenderer(textRenderer);
 		}
 

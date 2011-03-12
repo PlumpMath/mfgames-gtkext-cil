@@ -87,8 +87,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			// Get the width of the last line.
 			if (lineCount != 1)
 			{
-				string lastLineNumber =
-					textEditor.LineBuffer.GetLineNumber(lineCount - 1);
+				string lastLineNumber = textEditor.LineBuffer.GetLineNumber(lineCount - 1);
 
 				if (!string.IsNullOrEmpty(lastLineNumber))
 				{

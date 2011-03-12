@@ -36,7 +36,6 @@ using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Renderers;
 
 using Key=Gdk.Key;
 
@@ -62,8 +61,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Get the text of the current line.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			string lineText =
-				displayContext.LineBuffer.GetLineText(position.LineIndex);
+			string lineText = displayContext.LineBuffer.GetLineText(position.LineIndex);
 
 			// Split the line based on the character index.
 			string before = lineText.Substring(0, position.CharacterIndex).Trim();
@@ -118,8 +116,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			if (!deletedSelection)
 			{
 				// There is no selection, so get the line text from the buffer.
-				lineText =
-					displayContext.LineBuffer.GetLineText(caret.Position.LineIndex);
+				lineText = displayContext.LineBuffer.GetLineText(caret.Position.LineIndex);
 			}
 
 			// Make the changes in the line.
@@ -223,8 +220,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			int endLineIndex =
 				lineBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
-			string firstLine =
-				lineBuffer.GetLineText(selection.StartPosition.LineIndex);
+			string firstLine = lineBuffer.GetLineText(selection.StartPosition.LineIndex);
 
 			if (endLineIndex == selection.StartPosition.LineIndex)
 			{
@@ -332,8 +328,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			if (!deletedSelection)
 			{
 				// There is no selection, so get the line text from the buffer.
-				lineText =
-					displayContext.LineBuffer.GetLineText(caret.Position.LineIndex);
+				lineText = displayContext.LineBuffer.GetLineText(caret.Position.LineIndex);
 			}
 
 			string nextLineText =

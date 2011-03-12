@@ -549,8 +549,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			IDisplayContext displayContext)
 		{
 			double y = widgetPoint.Y + displayContext.BufferOffsetY;
-			int lineIndex =
-				displayContext.TextRenderer.GetLineLayoutRange(y);
+			int lineIndex = displayContext.TextRenderer.GetLineLayoutRange(y);
 			Layout layout = displayContext.TextRenderer.GetLineLayout(lineIndex);
 
 			// Shift the buffer-relative coordinates to layout-relative coordinates.

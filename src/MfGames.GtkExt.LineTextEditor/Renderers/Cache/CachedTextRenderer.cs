@@ -35,7 +35,7 @@ using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
-using Rectangle = Cairo.Rectangle;
+using Rectangle=Cairo.Rectangle;
 
 #endregion
 
@@ -54,8 +54,11 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineBuffer">The line buffer.</param>
-		public CachedTextRenderer(IDisplayContext displayContext, LineBuffer lineBuffer)
-			: this(displayContext, new LineBufferTextRenderer(displayContext, lineBuffer))
+		public CachedTextRenderer(
+			IDisplayContext displayContext,
+			LineBuffer lineBuffer)
+			: this(displayContext, new LineBufferTextRenderer(displayContext, lineBuffer)
+				)
 		{
 		}
 
@@ -331,8 +334,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public override Layout GetLineLayout(
-			int lineIndex)
+		public override Layout GetLineLayout(int lineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();

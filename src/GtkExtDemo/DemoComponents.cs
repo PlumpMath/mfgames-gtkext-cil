@@ -84,7 +84,8 @@ namespace GtkExtDemo
 		{
 			Demo.Statusbar.Push(
 				0,
-				"ExampleEnumeration: " + testEnumCombo.ActiveEnum + " (" + testEnumCombo.Active + ")");
+				"ExampleEnumeration: " + testEnumCombo.ActiveEnum + " (" +
+				testEnumCombo.Active + ")");
 		}
 
 		#endregion
