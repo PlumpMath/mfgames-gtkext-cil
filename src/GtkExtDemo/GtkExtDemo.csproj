@@ -28,8 +28,7 @@
     <Compile Include="Demo.cs" />
     <Compile Include="DemoComponents.cs" />
     <Compile Include="LineTextEditor\DemoLineTextEditor.cs" />
-    <Compile Include="LineTextEditor\KeywordLineIndicatorBuffer.cs" />
-    <Compile Include="LineTextEditor\KeywordLineMarkupBuffer.cs" />
+    <Compile Include="LineTextEditor\KeywordLineBuffer.cs" />
     <Compile Include="LineTextEditor\KeywordMarkupEntry.cs" />
     <Compile Include="LineTextEditor\KeywordMarkupType.cs" />
     <Compile Include="LineTextEditor\PatternLineBuffer.cs" />

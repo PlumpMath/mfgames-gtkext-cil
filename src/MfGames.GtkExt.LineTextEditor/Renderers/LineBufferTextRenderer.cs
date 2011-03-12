@@ -26,40 +26,56 @@
 
 using System;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
+
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Renderers
 {
 	/// <summary>
-	/// Contains extensions used with the ILineBuffer.
+	/// Implements a <see cref="TextRenderer"/> wrapped around a 
+	/// <see cref="LineBuffer"/>.
 	/// </summary>
-	public static class LineBufferExtensions
+	public class LineBufferTextRenderer : TextRenderer
 	{
-		/// <summary>
-		/// Gets the text for a specific line.
-		/// </summary>
-		/// <param name="lineBuffer">The line buffer.</param>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <returns></returns>
-		public static string GetLineText(
-			this ILineBuffer lineBuffer,
-			int lineIndex)
-		{
-			return lineBuffer.GetLineText(lineIndex, 0, Int32.MaxValue);
-		}
+		#region Constructors
 
 		/// <summary>
-		/// Normalizes the index of the line and makes sure nothing is beyond
-		/// the limits.
+		/// Initializes a new instance of the <see cref="TextRenderer"/> class.
 		/// </summary>
 		/// <param name="lineBuffer">The line buffer.</param>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <returns></returns>
-		public static int NormalizeLineIndex(
-			this ILineBuffer lineBuffer,
-			int lineIndex)
+		public LineBufferTextRenderer(LineBuffer lineBuffer)
 		{
-			return Math.Min(lineBuffer.LineCount - 1, lineIndex);
+			// Perform sanity checking on parameters.
+			if (lineBuffer == null)
+			{
+				throw new ArgumentNullException("lineBuffer");
+			}
+
+			// Save the buffer in a property.
+			this.lineBuffer = lineBuffer;
+
+			// Hook up the events for the buffer.
+			lineBuffer.LineChanged += OnLineChanged;
+			lineBuffer.LinesInserted += OnLinesInserted;
+			lineBuffer.LinesDeleted += OnLinesDeleted;
 		}
+
+		#endregion
+
+		#region Buffer
+
+		private readonly LineBuffer lineBuffer;
+
+		/// <summary>
+		/// Gets the line buffer associated with this renderer.
+		/// </summary>
+		/// <value>The line buffer.</value>
+		public override LineBuffer LineBuffer
+		{
+			get { return lineBuffer; }
+		}
+
+		#endregion
 	}
 }

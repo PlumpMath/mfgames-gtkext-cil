@@ -40,6 +40,8 @@ using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
+using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
@@ -69,14 +71,24 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// Initializes a new instance of the <see cref="TextEditor"/> class.
 		/// </summary>
 		public TextEditor()
-			: this(new SimpleLineLayoutBuffer(new MemoryLineBuffer()))
+			: this(new MemoryLineBuffer())
 		{
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextEditor"/> class.
 		/// </summary>
-		public TextEditor(ILineLayoutBuffer lineLayoutBuffer)
+		/// <param name="lineBuffer">The line buffer.</param>
+		public TextEditor(LineBuffer lineBuffer)
+			: this(new CachedTextRenderer(new LineBufferTextRenderer(lineBuffer)))
+		{
+
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextEditor"/> class.
+		/// </summary>
+		public TextEditor(TextRenderer textRenderer)
 		{
 			// Set up the basic characteristics of the widget.
 			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
@@ -107,9 +119,13 @@ namespace MfGames.GtkExt.LineTextEditor
 			controller.EndAction += OnEndAction;
 
 			// Save the line buffer which configures a number of other elements.
-			LineLayoutBuffer = lineLayoutBuffer;
+			TextRenderer = textRenderer;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextEditor"/> class.
+		/// </summary>
+		/// <param name="raw">The raw.</param>
 		protected TextEditor(IntPtr raw)
 			: base(raw)
 		{
@@ -139,37 +155,46 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		#region Line Buffer
 
-		private ILineLayoutBuffer lineLayoutBuffer;
+		private TextRenderer textRenderer;
 
+		/// <summary>
+		/// Gets the line buffer associated with the editor.
+		/// </summary>
+		/// <value>The line buffer.</value>
+		public LineBuffer LineBuffer
+		{
+			get { return textRenderer.LineBuffer; }
+		}
+		
 		/// <summary>
 		/// Gets or sets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
-		public ILineLayoutBuffer LineLayoutBuffer
+		public TextRenderer TextRenderer
 		{
 			[DebuggerStepThrough]
-			get { return lineLayoutBuffer; }
+			get { return textRenderer; }
 
 			set
 			{
 				// Detach events if we have one.
-				if (lineLayoutBuffer != null)
+				if (textRenderer != null)
 				{
 					// Disconnect from the events.
-					lineLayoutBuffer.LineChanged -= OnLineChanged;
+					textRenderer.LineChanged -= OnLineChanged;
 				}
 
 				// Set the new buffer.
-				lineLayoutBuffer = value;
+				textRenderer = value;
 
 				// Configure the new layout buffer.
-				if (lineLayoutBuffer != null)
+				if (textRenderer != null)
 				{
 					// Reset the margins and force them to resize themselves.
 					margins.Resize(this);
 
 					// Hook up to the events.
-					lineLayoutBuffer.LineChanged += OnLineChanged;
+					textRenderer.LineChanged += OnLineChanged;
 
 					// Cause a complete redraw.
 					Caret.Position = new BufferPosition(0, 0);
@@ -424,7 +449,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				// If we don't have a buffer at this point, render the entire
 				// area with the disabled background color and stop.
-				if (lineLayoutBuffer == null)
+				if (textRenderer == null)
 				{
 					// Paint the background color of the window.
 					cairoContext.Color = theme.DisabledBackgroundColor;
@@ -441,7 +466,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				cairoContext.Fill();
 
 				// Reset the layout and its properties.
-				lineLayoutBuffer.Width = area.Width - margins.Width;
+				textRenderer.Width = area.Width - margins.Width;
 
 				// Figure out the viewport area we'll be drawing.
 				int offsetY = 0;
@@ -456,7 +481,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				// Determine the line range visible in the given area.
 				int startLine, endLine;
-				lineLayoutBuffer.GetLineLayoutRange(
+				textRenderer.GetLineLayoutRange(
 					this, viewArea, out startLine, out endLine);
 
 				// Determine where the first line actually starts.
@@ -464,7 +489,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 				if (startLine > 0)
 				{
-					startLineY = lineLayoutBuffer.GetLineLayoutHeight(this, 0, startLine - 1);
+					startLineY = textRenderer.GetLineLayoutHeight(this, 0, startLine - 1);
 				}
 
 				// Go through the lines and draw each one in the correct position.
@@ -473,8 +498,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				for (int lineIndex = startLine; lineIndex <= endLine; lineIndex++)
 				{
 					// Pull out the layout and style since we'll use it.
-					Layout layout = lineLayoutBuffer.GetLineLayout(this, lineIndex);
-					BlockStyle style = lineLayoutBuffer.GetLineStyle(this, lineIndex);
+					Layout layout = textRenderer.GetLineLayout(this, lineIndex);
+					BlockStyle style = TextRenderer.GetLineStyle(this, lineIndex);
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
@@ -705,7 +730,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		private void SetAdjustments()
 		{
 			// We have to have a size and an adjustment.
-			if (verticalAdjustment == null || lineLayoutBuffer == null)
+			if (verticalAdjustment == null || textRenderer == null)
 			{
 				return;
 			}
@@ -718,11 +743,11 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			// Set the line buffer's width and then request the height for all
 			// the lines in the buffer.
-			lineLayoutBuffer.Width = TextWidth;
-			int height = lineLayoutBuffer.GetLineLayoutHeight(this, 0, Int32.MaxValue);
+			textRenderer.Width = TextWidth;
+			int height = textRenderer.GetLineLayoutHeight(this, 0, Int32.MaxValue);
 
 			// Set the adjustments based on those values.
-			int lineHeight = lineLayoutBuffer.GetLineLayoutHeight(this);
+			int lineHeight = textRenderer.GetLineLayoutHeight(this);
 
 			verticalAdjustment.SetBounds(
 				0.0, height, lineHeight, (int) (Allocation.Height / 2.0), Allocation.Height);
@@ -783,11 +808,11 @@ namespace MfGames.GtkExt.LineTextEditor
 				GdkWindow.MoveResize(allocation);
 			}
 
-			if (lineLayoutBuffer != null)
+			if (textRenderer != null)
 			{
 				// We need to reset the buffer so it can recalculate all the widths
 				// and clear any caches.
-				LineLayoutBuffer.Reset();
+				TextRenderer.Reset();
 
 				// Change the adjustments (scrollbars).
 				SetAdjustments();

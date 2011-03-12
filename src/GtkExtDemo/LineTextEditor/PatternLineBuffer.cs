@@ -27,7 +27,7 @@
 using System;
 using System.Text;
 
-using MfGames.GtkExt.LineTextEditor.Events;
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
@@ -38,7 +38,7 @@ namespace GtkExtDemo.LineTextEditor
 	/// Implements a line buffer that produces a pattern of text which is suitable
 	/// for debugging or displaying the results of the line buffer.
 	/// </summary>
-	public class PatternLineBuffer : ILineBuffer
+	public class PatternLineBuffer : LineBuffer
 	{
 		#region Constructors
 
@@ -74,32 +74,33 @@ namespace GtkExtDemo.LineTextEditor
 		/// Gets the line count.
 		/// </summary>
 		/// <value>The line count.</value>
-		public int LineCount
+		public override int LineCount
 		{
 			get { return lines; }
 		}
 
 		/// <summary>
-		/// If set to true, the buffer is read-only and the editing commands
-		/// should throw an InvalidOperationException.
+		/// If set to <see langword="true"/>, the buffer is read-only and the editing
+		/// commands should throw an <see cref="InvalidOperationException"/>.
 		/// </summary>
-		public bool ReadOnly
+		/// <value></value>
+		public override bool ReadOnly
 		{
 			get { return true; }
 		}
 
-		public int GetLineLength(int lineIndex)
+		public override int GetLineLength(int lineIndex)
 		{
 			return GetLineText(lineIndex, 0, Int32.MaxValue).Length;
 		}
 
-		public string GetLineNumber(int lineIndex)
+		public override string GetLineNumber(int lineIndex)
 		{
 			// Line numebers are given as 1-based instead of 0-based.
 			return (lineIndex + 1).ToString("N0");
 		}
 
-		public string GetLineText(
+		public override string GetLineText(
 			int lineIndex,
 			int startIndex,
 			int endIndex)
@@ -148,70 +149,10 @@ namespace GtkExtDemo.LineTextEditor
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
-		public virtual void Do(ILineBufferOperation operation)
+		public override void Do(ILineBufferOperation operation)
 		{
 			throw new InvalidOperationException();
 		}
-
-		/// <summary>
-		/// Fires the line changed event.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The args.</param>
-		private void FireLineChanged(
-			object sender,
-			LineChangedArgs args)
-		{
-			if (LineChanged != null)
-			{
-				LineChanged(sender, args);
-			}
-		}
-
-		/// <summary>
-		/// Fires the lines deleted event.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The args.</param>
-		private void FireLinesDeleted(
-			object sender,
-			LineRangeEventArgs args)
-		{
-			if (LinesDeleted != null)
-			{
-				LinesDeleted(sender, args);
-			}
-		}
-
-		/// <summary>
-		/// Fires the lines inserted event.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The args.</param>
-		private void FireLinesInserted(
-			object sender,
-			LineRangeEventArgs args)
-		{
-			if (LinesInserted != null)
-			{
-				LinesInserted(sender, args);
-			}
-		}
-
-		/// <summary>
-		/// Used to indicate that a line changed.
-		/// </summary>
-		public event EventHandler<LineChangedArgs> LineChanged;
-
-		/// <summary>
-		/// Occurs when lines are inserted into the buffer.
-		/// </summary>
-		public event EventHandler<LineRangeEventArgs> LinesDeleted;
-
-		/// <summary>
-		/// Occurs when lines are inserted into the buffer.
-		/// </summary>
-		public event EventHandler<LineRangeEventArgs> LinesInserted;
 
 		#endregion
 	}

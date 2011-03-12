@@ -27,6 +27,7 @@
 using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
@@ -127,7 +128,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			out int wrappedLineIndex)
 		{
 			// Get the layout associated with the line.
-			layout = displayContext.LineLayoutBuffer.GetLineLayout(
+			layout = displayContext.TextRenderer.GetLineLayout(
 				displayContext, LineIndex);
 
 			// Get the wrapped line associated with this character position.
@@ -158,7 +159,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <returns>
 		/// 	<c>true</c> if [is beginning of buffer] [the specified buffer]; otherwise, <c>false</c>.
 		/// </returns>
-		public bool IsBeginningOfBuffer(ILineLayoutBuffer buffer)
+		public bool IsBeginningOfBuffer(TextRenderer buffer)
 		{
 			return LineIndex == 0 && CharacterIndex == 0;
 		}
@@ -172,7 +173,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </returns>
 		public bool IsBeginningOfBuffer(IDisplayContext displayContext)
 		{
-			return IsBeginningOfBuffer(displayContext.LineLayoutBuffer);
+			return IsBeginningOfBuffer(displayContext.TextRenderer);
 		}
 
 		/// <summary>
@@ -182,7 +183,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <returns>
 		/// 	<c>true</c> if [is beginning of line] [the specified buffer]; otherwise, <c>false</c>.
 		/// </returns>
-		public bool IsBeginningOfLine(ILineLayoutBuffer buffer)
+		public bool IsBeginningOfLine(TextRenderer buffer)
 		{
 			return CharacterIndex == 0;
 		}
@@ -196,7 +197,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </returns>
 		public bool IsBeginningOfLine(IDisplayContext displayContext)
 		{
-			return IsBeginningOfLine(displayContext.LineLayoutBuffer);
+			return IsBeginningOfLine(displayContext.TextRenderer);
 		}
 
 		/// <summary>
@@ -206,9 +207,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <returns>
 		/// 	<c>true</c> if [is end of buffer] [the specified buffer]; otherwise, <c>false</c>.
 		/// </returns>
-		public bool IsEndOfBuffer(ILineLayoutBuffer buffer)
+		public bool IsEndOfBuffer(TextRenderer buffer)
 		{
-			return LineIndex == buffer.LineCount - 1 && IsEndOfLine(buffer);
+			return LineIndex == buffer.LineBuffer.LineCount - 1 && IsEndOfLine(buffer);
 		}
 
 		/// <summary>
@@ -220,7 +221,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </returns>
 		public bool IsEndOfBuffer(IDisplayContext displayContext)
 		{
-			return IsEndOfBuffer(displayContext.LineLayoutBuffer);
+			return IsEndOfBuffer(displayContext.TextRenderer);
 		}
 
 		/// <summary>
@@ -230,9 +231,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <returns>
 		/// 	<c>true</c> if [is end of line] [the specified buffer]; otherwise, <c>false</c>.
 		/// </returns>
-		public bool IsEndOfLine(ILineLayoutBuffer buffer)
+		public bool IsEndOfLine(TextRenderer buffer)
 		{
-			return CharacterIndex == buffer.GetLineLength(LineIndex);
+			return CharacterIndex == buffer.LineBuffer.GetLineLength(LineIndex);
 		}
 
 		/// <summary>
@@ -244,7 +245,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </returns>
 		public bool IsEndOfLine(IDisplayContext displayContext)
 		{
-			return IsEndOfLine(displayContext.LineLayoutBuffer);
+			return IsEndOfLine(displayContext.TextRenderer);
 		}
 
 		/// <summary>
@@ -282,9 +283,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <returns>
 		/// 	<c>true</c> if [is last line in buffer] [the specified line layout buffer]; otherwise, <c>false</c>.
 		/// </returns>
-		public bool IsLastLineInBuffer(ILineLayoutBuffer lineLayoutBuffer)
+		public bool IsLastLineInBuffer(TextRenderer lineLayoutBuffer)
 		{
-			return LineIndex == lineLayoutBuffer.LineCount - 1;
+			return LineIndex == lineLayoutBuffer.LineBuffer.LineCount - 1;
 		}
 
 		/// <summary>
@@ -296,14 +297,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </returns>
 		public bool IsLastLineInBuffer(IDisplayContext displayContext)
 		{
-			return IsLastLineInBuffer(displayContext.LineLayoutBuffer);
+			return IsLastLineInBuffer(displayContext.TextRenderer);
 		}
 
 		/// <summary>
 		/// Moves the position to end beginning of buffer.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public BufferPosition ToBeginningOfBuffer(ILineLayoutBuffer buffer)
+		public BufferPosition ToBeginningOfBuffer(TextRenderer buffer)
 		{
 			return new BufferPosition(0, 0);
 		}
@@ -314,14 +315,14 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		public BufferPosition ToBeginningOfBuffer(IDisplayContext displayContext)
 		{
-			return ToBeginningOfBuffer(displayContext.LineLayoutBuffer);
+			return ToBeginningOfBuffer(displayContext.TextRenderer);
 		}
 
 		/// <summary>
 		/// Moves the position to the beginning of line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public BufferPosition ToBeginningOfLine(ILineLayoutBuffer buffer)
+		public BufferPosition ToBeginningOfLine(TextRenderer buffer)
 		{
 			return new BufferPosition(lineIndex, 0);
 		}
@@ -332,7 +333,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		public BufferPosition ToBeginningOfLine(IDisplayContext displayContext)
 		{
-			return ToBeginningOfLine(displayContext.LineLayoutBuffer);
+			return ToBeginningOfLine(displayContext.TextRenderer);
 		}
 
 		/// <summary>
@@ -349,11 +350,11 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Moves the position to the end of buffer.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public BufferPosition ToEndOfBuffer(ILineLayoutBuffer buffer)
+		public BufferPosition ToEndOfBuffer(TextRenderer buffer)
 		{
-			int endLineIndex = buffer.LineCount - 1;
+			int endLineIndex = buffer.LineBuffer.LineCount - 1;
 
-			return new BufferPosition(endLineIndex, buffer.GetLineLength(endLineIndex));
+			return new BufferPosition(endLineIndex, buffer.LineBuffer.GetLineLength(endLineIndex));
 		}
 
 		/// <summary>
@@ -362,16 +363,16 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		public BufferPosition ToEndOfBuffer(IDisplayContext displayContext)
 		{
-			return ToEndOfBuffer(displayContext.LineLayoutBuffer);
+			return ToEndOfBuffer(displayContext.TextRenderer);
 		}
 
 		/// <summary>
 		/// Moves the position to the end of line.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public BufferPosition ToEndOfLine(ILineLayoutBuffer buffer)
+		public BufferPosition ToEndOfLine(TextRenderer buffer)
 		{
-			return new BufferPosition(lineIndex, buffer.GetLineLength(lineIndex));
+			return new BufferPosition(lineIndex, buffer.LineBuffer.GetLineLength(lineIndex));
 		}
 
 		/// <summary>
@@ -380,7 +381,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="displayContext">The display context.</param>
 		public BufferPosition ToEndOfLine(IDisplayContext displayContext)
 		{
-			return ToEndOfLine(displayContext.LineLayoutBuffer);
+			return ToEndOfLine(displayContext.TextRenderer);
 		}
 
 		/// <summary>
@@ -423,8 +424,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			out int lineHeight)
 		{
 			// Pull out some of the common things we'll be using in this method.
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
-			int bufferLineIndex = buffer.NormalizeLineIndex(LineIndex);
+			TextRenderer buffer = displayContext.TextRenderer;
+			int bufferLineIndex = buffer.LineBuffer.NormalizeLineIndex(LineIndex);
 			Layout layout = buffer.GetLineLayout(displayContext, bufferLineIndex);
 			BlockStyle style = buffer.GetLineStyle(displayContext, bufferLineIndex);
 
@@ -447,7 +448,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			bool trailing = false;
 			int character = CharacterIndex;
 
-			if (character == buffer.GetLineLength(bufferLineIndex))
+			if (character == buffer.LineBuffer.GetLineLength(bufferLineIndex))
 			{
 				// Shift back one character to calculate the position and put
 				// the cursor at the end of the character.

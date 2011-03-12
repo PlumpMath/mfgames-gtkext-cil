@@ -39,7 +39,8 @@ using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Indicators;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
@@ -60,7 +61,7 @@ namespace GtkExtDemo.LineTextEditor
 		public DemoLineTextEditor()
 		{
 			// Create the text editor with the resulting buffer.
-			ILineIndicatorBuffer lineIndicatorBuffer = CreateEditableBuffer();
+			TextRenderer lineIndicatorBuffer = CreateEditableBuffer();
 
 			textEditor = new TextEditor(lineIndicatorBuffer);
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
@@ -109,36 +110,26 @@ namespace GtkExtDemo.LineTextEditor
 		/// Creates an editable buffer.
 		/// </summary>
 		/// <returns></returns>
-		private static CachedLineIndicatorBuffer CreateEditableBuffer()
+		private static CachedTextRenderer CreateEditableBuffer()
 		{
 			// Create a patterned line buffer and make it read-write.
-			ILineBuffer patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
-			ILineBuffer lineBuffer = new MemoryLineBuffer(patternLineBuffer);
-
-			// A markup buffer that highlights keywords and wrap it in one that
-			// handles simple mouse selections.
-			ILineMarkupBuffer lineMarkupBuffer = new KeywordLineMarkupBuffer(lineBuffer);
-			ILineMarkupBuffer selectionMarkupBuffer =
-				new SimpleSelectionLineMarkupBuffer(lineMarkupBuffer);
+			var patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
+			var lineBuffer = new MemoryLineBuffer(patternLineBuffer);
+			var keywordBuffer = new KeywordLineBuffer(lineBuffer);
 
 			// Provide a simple layout buffer that doesn't do anything.
-			ILineLayoutBuffer lineLayoutBuffer =
-				new SimpleLineLayoutBuffer(selectionMarkupBuffer);
-
-			// Add our local keyword-based markup.
-			ILineIndicatorBuffer lineIndicatorBuffer =
-				new KeywordLineIndicatorBuffer(lineLayoutBuffer);
+			var textRenderer = new LineBufferTextRenderer(keywordBuffer);
 
 			// Finally, wrap it in a cached buffer.
-			return new CachedLineIndicatorBuffer(lineIndicatorBuffer);
+			return new CachedTextRenderer(textRenderer);
 		}
 
 		#endregion
 
 		#region Widgets
 
-		private readonly TextEditor textEditor;
 		private readonly LineIndicatorBar indicatorBar;
+		private readonly TextEditor textEditor;
 
 		#region Events
 
@@ -147,11 +138,13 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnEditableBufferButtonClicked(object sender, EventArgs e)
+		private void OnEditableBufferButtonClicked(
+			object sender,
+			EventArgs e)
 		{
-			CachedLineIndicatorBuffer lineIndicatorBuffer = CreateEditableBuffer();
+			CachedTextRenderer lineIndicatorBuffer = CreateEditableBuffer();
 
-			textEditor.LineLayoutBuffer = lineIndicatorBuffer;
+			textEditor.TextRenderer = lineIndicatorBuffer;
 			indicatorBar.LineIndicatorBuffer = lineIndicatorBuffer;
 		}
 
@@ -160,9 +153,11 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnNoBufferButtonClicked(object sender, EventArgs e)
+		private void OnNoBufferButtonClicked(
+			object sender,
+			EventArgs e)
 		{
-			textEditor.LineLayoutBuffer = null;
+			textEditor.TextRenderer = null;
 			indicatorBar.LineIndicatorBuffer = null;
 		}
 
@@ -266,7 +261,7 @@ namespace GtkExtDemo.LineTextEditor
 			int lineIndex)
 		{
 			// Get the original line text.
-			string lineText = textEditor.LineLayoutBuffer.GetLineText(lineIndex);
+			string lineText = textEditor.LineBuffer.GetLineText(lineIndex);
 
 			// Create a reverse of the text.
 			var characters = new ArrayList<char>();

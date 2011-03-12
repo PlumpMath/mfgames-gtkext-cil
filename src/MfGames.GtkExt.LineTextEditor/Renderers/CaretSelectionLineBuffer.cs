@@ -24,30 +24,47 @@
 
 #region Namespaces
 
+using System;
 using System.Text;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.LineTextEditor.Renderers
 {
 	/// <summary>
 	/// Defines a line markup buffer that displays the selection with a
 	/// background, otherwise shows the text normal.
 	/// </summary>
-	public class SimpleSelectionLineMarkupBuffer : LineMarkupBufferProxy
+	public class CaretSelectionLineBuffer : LineBufferDecorator
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SimpleSelectionLineMarkupBuffer"/> class.
+		/// Initializes a new instance of the <see cref="CaretSelectionLineBuffer"/> class.
 		/// </summary>
+		/// <param name="displayContext">The display context.</param>
 		/// <param name="buffer">The buffer.</param>
-		public SimpleSelectionLineMarkupBuffer(ILineMarkupBuffer buffer)
+		public CaretSelectionLineBuffer(
+			IDisplayContext displayContext,
+			LineBuffer buffer)
 			: base(buffer)
 		{
+			if (displayContext == null)
+			{
+				throw new ArgumentNullException("displayContext");
+			}
+
+			this.displayContext = displayContext;
 		}
+
+		#endregion
+
+		#region Display
+
+		private readonly IDisplayContext displayContext;
 
 		#endregion
 
@@ -56,15 +73,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <summary>
 		/// Gets the Pango markup for a given line.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public override string GetLineMarkup(
-			IDisplayContext displayContext,
-			int lineIndex)
+		public override string GetLineMarkup(int lineIndex)
 		{
 			// Get the line markup from the underlying buffer.
-			string markup = base.GetLineMarkup(displayContext, lineIndex);
+			string markup = base.GetLineMarkup(lineIndex);
 
 			// Check to see if we are in the selection.
 			int startCharacterIndex, endCharacterIndex;

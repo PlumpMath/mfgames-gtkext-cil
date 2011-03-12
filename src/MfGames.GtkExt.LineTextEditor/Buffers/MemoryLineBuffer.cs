@@ -39,7 +39,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 	/// <summary>
 	/// Implements a line buffer that keeps all the lines in memory.
 	/// </summary>
-	public class MemoryLineBuffer : ILineBuffer
+	public class MemoryLineBuffer : LineBuffer
 	{
 		#region Constructors
 
@@ -56,7 +56,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Copies the given buffer into a memory buffer.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public MemoryLineBuffer(ILineBuffer buffer)
+		public MemoryLineBuffer(LineBuffer buffer)
 		{
 			int lineCount = buffer.LineCount;
 
@@ -74,33 +74,38 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 
 		private readonly List<string> lines;
 
+		private bool readOnly;
+
 		/// <summary>
 		/// Gets the line count.
 		/// </summary>
 		/// <value>The line count.</value>
-		public int LineCount
+		public override int LineCount
 		{
 			get { return lines.Count; }
 		}
 
 		/// <summary>
-		/// If set to true, the buffer is read-only and the editing commands
-		/// should throw an InvalidOperationException.
+		/// If set to <see langword="true"/>, the buffer is read-only and the editing commands
+		/// should throw an <see cref="InvalidOperationException"/>.
 		/// </summary>
-		public bool ReadOnly { get; set; }
+		public override bool ReadOnly
+		{
+			get { return readOnly; }
+		}
 
-		public int GetLineLength(int lineIndex)
+		public override int GetLineLength(int lineIndex)
 		{
 			return lines[lineIndex].Length;
 		}
 
-		public string GetLineNumber(int lineIndex)
+		public override string GetLineNumber(int lineIndex)
 		{
 			// Line numbers are given as 1-based instead of 0-based.
 			return (lineIndex + 1).ToString("N0");
 		}
 
-		public string GetLineText(
+		public override string GetLineText(
 			int lineIndex,
 			int startIndex,
 			int endIndex)
@@ -138,6 +143,15 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			return text.Substring(startIndex, length);
 		}
 
+		/// <summary>
+		/// Sets the read only flag on the buffer.
+		/// </summary>
+		/// <param name="newReadOnly">if set to <c>true</c> [read only].</param>
+		public void SetReadOnly(bool newReadOnly)
+		{
+			readOnly = newReadOnly;
+		}
+
 		#endregion
 
 		#region Buffer Operations
@@ -146,7 +160,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
-		public virtual void Do(ILineBufferOperation operation)
+		public override void Do(ILineBufferOperation operation)
 		{
 			// Figure out what to do based on the operation.
 			switch (operation.LineBufferOperationType)
@@ -159,7 +173,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 					lines[setTextOperation.LineIndex] = setTextOperation.Text;
 
 					// Fire a line changed operation.
-					FireLineChanged(this, new LineChangedArgs(setTextOperation.LineIndex));
+					RaiseLineChanged(new LineChangedArgs(setTextOperation.LineIndex));
 					break;
 
 				case LineBufferOperationType.InsertLines:
@@ -173,8 +187,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 					}
 
 					// Fire an insert line change.
-					FireLinesInserted(
-						this,
+					RaiseLinesInserted(
 						new LineRangeEventArgs(
 							insertLinesOperation.LineIndex, insertLinesOperation.Count));
 					break;
@@ -188,73 +201,12 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 						deleteLinesOperation.LineIndex, deleteLinesOperation.Count);
 
 					// Fire an delete line change.
-					FireLinesDeleted(
-						this,
+					RaiseLinesDeleted(
 						new LineRangeEventArgs(
 							deleteLinesOperation.LineIndex, deleteLinesOperation.Count));
 					break;
 			}
 		}
-
-		/// <summary>
-		/// Fires the line changed event.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The args.</param>
-		private void FireLineChanged(
-			object sender,
-			LineChangedArgs args)
-		{
-			if (LineChanged != null)
-			{
-				LineChanged(sender, args);
-			}
-		}
-
-		/// <summary>
-		/// Fires the lines deleted event.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The args.</param>
-		private void FireLinesDeleted(
-			object sender,
-			LineRangeEventArgs args)
-		{
-			if (LinesDeleted != null)
-			{
-				LinesDeleted(sender, args);
-			}
-		}
-
-		/// <summary>
-		/// Fires the lines inserted event.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The args.</param>
-		private void FireLinesInserted(
-			object sender,
-			LineRangeEventArgs args)
-		{
-			if (LinesInserted != null)
-			{
-				LinesInserted(sender, args);
-			}
-		}
-
-		/// <summary>
-		/// Used to indicate that a line changed.
-		/// </summary>
-		public event EventHandler<LineChangedArgs> LineChanged;
-
-		/// <summary>
-		/// Occurs when lines are inserted into the buffer.
-		/// </summary>
-		public event EventHandler<LineRangeEventArgs> LinesDeleted;
-
-		/// <summary>
-		/// Occurs when lines are inserted into the buffer.
-		/// </summary>
-		public event EventHandler<LineRangeEventArgs> LinesInserted;
 
 		#endregion
 	}

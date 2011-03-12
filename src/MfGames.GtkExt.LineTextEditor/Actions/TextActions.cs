@@ -36,6 +36,7 @@ using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 
 using Key=Gdk.Key;
 
@@ -62,7 +63,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			string lineText =
-				displayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
+				displayContext.LineBuffer.GetLineText(position.LineIndex);
 
 			// Split the line based on the character index.
 			string before = lineText.Substring(0, position.CharacterIndex).Trim();
@@ -118,7 +119,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			{
 				// There is no selection, so get the line text from the buffer.
 				lineText =
-					displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
+					displayContext.LineBuffer.GetLineText(caret.Position.LineIndex);
 			}
 
 			// Make the changes in the line.
@@ -218,11 +219,12 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// Go through the selection and figure out if we have a single-line
 			// copy.
-			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+
 			int endLineIndex =
-				lineLayoutBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
+				lineBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
 			string firstLine =
-				lineLayoutBuffer.GetLineText(selection.StartPosition.LineIndex);
+				lineBuffer.GetLineText(selection.StartPosition.LineIndex);
 
 			if (endLineIndex == selection.StartPosition.LineIndex)
 			{
@@ -240,7 +242,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 			// For multiple line copies, we need to copy every line from the first
 			// to the last. We already have the first, so just copy that.
-			StringBuilder buffer = new StringBuilder();
+			var buffer = new StringBuilder();
 			buffer.Append(firstLine.Substring(selection.StartPosition.CharacterIndex));
 			buffer.Append("\n");
 
@@ -250,14 +252,14 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			     lineIndex < endLineIndex;
 			     lineIndex++)
 			{
-				buffer.Append(lineLayoutBuffer.GetLineText(lineIndex));
+				buffer.Append(lineBuffer.GetLineText(lineIndex));
 				buffer.Append("\n");
 			}
 
 			// Add the last line, which is a substring, but we don't add a
 			// newline to the end of this one.
 			buffer.Append(
-				lineLayoutBuffer.GetLineText(endLineIndex).Substring(
+				lineBuffer.GetLineText(endLineIndex).Substring(
 					0, selection.EndPosition.CharacterIndex));
 
 			// Set the clipboard value.
@@ -331,11 +333,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			{
 				// There is no selection, so get the line text from the buffer.
 				lineText =
-					displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex);
+					displayContext.LineBuffer.GetLineText(caret.Position.LineIndex);
 			}
 
 			string nextLineText =
-				displayContext.LineLayoutBuffer.GetLineText(caret.Position.LineIndex + 1);
+				displayContext.LineBuffer.GetLineText(caret.Position.LineIndex + 1);
 
 			// The paste will happen in the line, splitting the current line in half.
 			string before = lineText.Substring(0, position.CharacterIndex);
@@ -430,15 +432,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// If we are at the beginning of the line, then we are combining paragraphs.
-			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(position.LineIndex);
 
 			if (position.CharacterIndex == 0)
 			{
 				// This is the beginning of a paragraph and not the first one in
 				// the buffer. This operation combines the text of the two paragraphs
 				// together.
-				string previousText = lineLayoutBuffer.GetLineText(position.LineIndex - 1);
+				string previousText = lineBuffer.GetLineText(position.LineIndex - 1);
 				string newText = previousText + lineText;
 
 				// Set up the operations in the command.
@@ -507,8 +509,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Get the index of the previous word.
-			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(position.LineIndex);
 			int leftBoundary =
 				displayContext.WordSplitter.GetPreviousWordBoundary(
 					lineText, position.CharacterIndex);
@@ -559,15 +561,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// If we are at the beginning of the line, then we are combining paragraphs.
-			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(position.LineIndex);
 
 			if (position.CharacterIndex == lineText.Length)
 			{
 				// This is the end of a paragraph and not the first one in
 				// the buffer. This operation combines the text of the two paragraphs
 				// together.
-				string nextText = lineLayoutBuffer.GetLineText(position.LineIndex + 1);
+				string nextText = lineBuffer.GetLineText(position.LineIndex + 1);
 				string newText = lineText + nextText;
 
 				// Set up the operations and add them to the command.
@@ -627,8 +629,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			}
 
 			// Get the index of the previous word.
-			ILineLayoutBuffer lineLayoutBuffer = displayContext.LineLayoutBuffer;
-			string lineText = lineLayoutBuffer.GetLineText(position.LineIndex);
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(position.LineIndex);
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
 				lineText, position.CharacterIndex);
 
@@ -692,15 +694,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			int startLineIndex = startPosition.LineIndex;
 			BufferPosition endPosition = selection.EndPosition;
 			int endLineIndex =
-				displayContext.LineLayoutBuffer.NormalizeLineIndex(endPosition.LineIndex);
+				displayContext.LineBuffer.NormalizeLineIndex(endPosition.LineIndex);
 
 			command.EndPosition = startPosition;
 			position = startPosition;
 
 			// If we have a single-line selection, then we have a simplier path
 			// for these operations.
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
-			string startLine = buffer.GetLineText(startLineIndex);
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string startLine = lineBuffer.GetLineText(startLineIndex);
 
 			if (selection.IsSameLine)
 			{
@@ -720,7 +722,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Multi-line deletes are more complicated. Our new text will be
 			// the beginning of the first line and end of the last. We put this
 			// into the first line we are editing.
-			string endLine = buffer.GetLineText(endLineIndex);
+			string endLine = lineBuffer.GetLineText(endLineIndex);
 			int endCharacterIndex = Math.Min(endLine.Length, endPosition.CharacterIndex);
 
 			lineText = startLine.Substring(0, startPosition.CharacterIndex) +
@@ -747,7 +749,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				// Get the line text. When we delete, we just delete one above
 				// the start index because the lines will be shifting up. When
 				// we are undoing it, we are moving down so we have to use the index.
-				string deletedLineText = buffer.GetLineText(lineIndex);
+				string deletedLineText = lineBuffer.GetLineText(lineIndex);
 
 				command.UndoOperations.Add(new SetTextOperation(lineIndex, deletedLineText));
 			}

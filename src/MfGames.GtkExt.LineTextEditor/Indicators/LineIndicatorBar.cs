@@ -40,6 +40,7 @@ using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 using MfGames.Locking;
 
@@ -73,7 +74,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		/// <param name="lineIndicatorBuffer">The line indicator buffer.</param>
 		public LineIndicatorBar(
 			IDisplayContext displayContext,
-			ILineIndicatorBuffer lineIndicatorBuffer)
+			TextRenderer lineIndicatorBuffer)
 		{
 			// Save the control variables.
 			DisplayContext = displayContext;
@@ -90,13 +91,13 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 		private ArrayList<IndicatorLine> indicatorLines;
 
-		private ILineIndicatorBuffer lineIndicatorBuffer;
+		private TextRenderer lineIndicatorBuffer;
 
 		/// <summary>
 		/// Gets or sets the line indicator buffer associated with this view.
 		/// </summary>
 		/// <value>The line indicator buffer.</value>
-		public ILineIndicatorBuffer LineIndicatorBuffer
+		public TextRenderer LineIndicatorBuffer
 		{
 			get { return lineIndicatorBuffer; }
 			set
@@ -154,7 +155,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 			// Check for lines in the buffer. If we have none, then we can't
 			// do anything.
-			int lineCount = lineIndicatorBuffer.LineCount;
+			int lineCount = DisplayContext.LineBuffer.LineCount;
 
 			if (lineCount == 0)
 			{
@@ -164,7 +165,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 			// Figure out how many indicator lines we'll be using.
 			int bufferLinesPerIndicatorLine = BufferLinesPerIndicatorLine;
 			int indicatorLinesUsed = 1 +
-			                         lineIndicatorBuffer.LineCount /
+									 DisplayContext.LineBuffer.LineCount /
 			                         bufferLinesPerIndicatorLine;
 
 			// Reset the lines we're using and clear out the lines we aren't.
@@ -262,7 +263,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 				return Math.Max(
 					1,
 					(int)
-					Math.Ceiling((double) lineIndicatorBuffer.LineCount / visibleLineCount));
+					Math.Ceiling((double) DisplayContext.LineBuffer.LineCount / visibleLineCount));
 			}
 		}
 

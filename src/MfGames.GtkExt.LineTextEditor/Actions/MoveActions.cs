@@ -35,6 +35,7 @@ using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 
 using Pango;
 
@@ -110,7 +111,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Extract a number of useful variable for this method.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			TextRenderer buffer = displayContext.TextRenderer;
 
 			// Queue a draw of the old caret position.
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
@@ -259,7 +260,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				{
 					position.LineIndex--;
 					position.CharacterIndex =
-						displayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
+						displayContext.LineBuffer.GetLineLength(position.LineIndex);
 				}
 			}
 			else
@@ -285,7 +286,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Get the text and line for the position in question.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			string text = displayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
+			string text = displayContext.LineBuffer.GetLineText(position.LineIndex);
 
 			// If there is no left boundary, we move up a line.
 			int leftBoundary = displayContext.WordSplitter.GetPreviousWordBoundary(
@@ -298,7 +299,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 				{
 					position.LineIndex--;
 					position.CharacterIndex =
-						displayContext.LineLayoutBuffer.GetLineLength(position.LineIndex);
+						displayContext.LineBuffer.GetLineLength(position.LineIndex);
 				}
 			}
 			else
@@ -345,7 +346,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			double bufferY =
 				Math.Min(
 					point.Y + displayContext.VerticalAdjustment.PageSize,
-					displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+					displayContext.TextRenderer.GetLineLayoutHeight(
 						displayContext, 0, Int32.MaxValue));
 
 			// Figure out the X coordinate of the line. If there is an action context,
@@ -411,11 +412,11 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Move the character position.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			LineBuffer lineBuffer = displayContext.LineBuffer;
 
-			if (position.CharacterIndex == buffer.GetLineLength(position.LineIndex))
+			if (position.CharacterIndex == lineBuffer.GetLineLength(position.LineIndex))
 			{
-				if (position.LineIndex < buffer.LineCount - 1)
+				if (position.LineIndex < lineBuffer.LineCount - 1)
 				{
 					position.LineIndex++;
 					position.CharacterIndex = 0;
@@ -444,7 +445,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Get the text and line for the position in question.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			string text = displayContext.LineLayoutBuffer.GetLineText(position.LineIndex);
+			string text = displayContext.LineBuffer.GetLineText(position.LineIndex);
 
 			// If there is no right boundary, we move down a line.
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
@@ -453,7 +454,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			if (rightBoundary == -1)
 			{
 				// Check to see if we are at the top of the line or not.
-				if (position.LineIndex <= displayContext.LineLayoutBuffer.LineCount)
+				if (position.LineIndex <= displayContext.LineBuffer.LineCount)
 				{
 					position.LineIndex++;
 					position.CharacterIndex = 0;
@@ -483,7 +484,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			// Extract a number of useful variable for this method.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			ILineLayoutBuffer buffer = displayContext.LineLayoutBuffer;
+			TextRenderer buffer = displayContext.TextRenderer;
 
 			// Queue a draw of the old caret position.
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
@@ -550,8 +551,8 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			double y = widgetPoint.Y + displayContext.BufferOffsetY;
 			int lineIndex =
-				displayContext.LineLayoutBuffer.GetLineLayoutRange(displayContext, y);
-			Layout layout = displayContext.LineLayoutBuffer.GetLineLayout(
+				displayContext.TextRenderer.GetLineLayoutRange(displayContext, y);
+			Layout layout = displayContext.TextRenderer.GetLineLayout(
 				displayContext, lineIndex);
 
 			// Shift the buffer-relative coordinates to layout-relative coordinates.
@@ -560,7 +561,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			if (lineIndex > 0)
 			{
 				layoutY -=
-					displayContext.LineLayoutBuffer.GetLineLayoutHeight(
+					displayContext.TextRenderer.GetLineLayoutHeight(
 						displayContext, 0, lineIndex - 1);
 			}
 

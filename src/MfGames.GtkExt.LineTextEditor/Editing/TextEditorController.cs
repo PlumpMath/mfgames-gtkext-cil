@@ -288,7 +288,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				throw new ArgumentNullException("operation");
 			}
 
-			displayContext.LineLayoutBuffer.Do(operation);
+			displayContext.LineBuffer.Do(operation);
 		}
 
 		/// <summary>
@@ -401,7 +401,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				// Check to see if the selection changed.
 				if (previousSelection != displayContext.Caret.Selection)
 				{
-					displayContext.LineLayoutBuffer.UpdateSelection(
+					displayContext.TextRenderer.UpdateSelection(
 						displayContext, previousSelection);
 				}
 
@@ -442,7 +442,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 						MoveActions.GetBufferPosition(textPoint, displayContext);
 
 					// Update the display.
-					displayContext.LineLayoutBuffer.UpdateSelection(
+					displayContext.TextRenderer.UpdateSelection(
 						displayContext, previousSelection);
 					displayContext.RequestRedraw();
 
@@ -473,7 +473,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 			ModifierType modifier)
 		{
 			// If we don't have a buffer, we don't do anything.
-			if (displayContext.LineLayoutBuffer == null)
+			if (displayContext.TextRenderer == null)
 			{
 				return false;
 			}
@@ -526,13 +526,13 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 						// Check to see if the selection changed.
 						if (previousSelection != displayContext.Caret.Selection)
 						{
-							displayContext.LineLayoutBuffer.UpdateSelection(
+							displayContext.TextRenderer.UpdateSelection(
 								displayContext, previousSelection);
 						}
 					}
 					else if (!previousSelection.IsEmpty)
 					{
-						displayContext.LineLayoutBuffer.UpdateSelection(
+						displayContext.TextRenderer.UpdateSelection(
 							displayContext, previousSelection);
 					}
 
@@ -584,7 +584,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 					BufferSegment currentSelection = displayContext.Caret.Selection;
 
 					displayContext.Caret.Selection = previousTextSelection;
-					displayContext.LineLayoutBuffer.UpdateSelection(
+					displayContext.TextRenderer.UpdateSelection(
 						displayContext, currentSelection);
 				}
 			}

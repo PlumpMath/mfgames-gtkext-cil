@@ -55,7 +55,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		public override void Resize(TextEditor textEditor)
 		{
 			// If we don't have any lines, we don't do anything.
-			int lineCount = textEditor.LineLayoutBuffer.LineCount;
+			int lineCount = textEditor.LineBuffer.LineCount;
 
 			if (lineCount == 0)
 			{
@@ -72,7 +72,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			// Get the width of the first line.
 			int width = 0;
 			int newWidth, newHeight;
-			string firstLineNumber = textEditor.LineLayoutBuffer.GetLineNumber(0);
+			string firstLineNumber = textEditor.LineBuffer.GetLineNumber(0);
 
 			if (!string.IsNullOrEmpty(firstLineNumber))
 			{
@@ -88,7 +88,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			if (lineCount != 1)
 			{
 				string lastLineNumber =
-					textEditor.LineLayoutBuffer.GetLineNumber(lineCount - 1);
+					textEditor.LineBuffer.GetLineNumber(lineCount - 1);
 
 				if (!string.IsNullOrEmpty(lastLineNumber))
 				{
@@ -154,7 +154,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			}
 
 			// Figure out the line number.
-			string lineNumber = displayContext.LineLayoutBuffer.GetLineNumber(lineIndex);
+			string lineNumber = displayContext.LineBuffer.GetLineNumber(lineIndex);
 
 			if (string.IsNullOrEmpty(lineNumber))
 			{

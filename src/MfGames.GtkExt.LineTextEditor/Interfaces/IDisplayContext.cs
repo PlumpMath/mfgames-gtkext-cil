@@ -26,7 +26,9 @@
 
 using Gtk;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Editing;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
@@ -58,10 +60,16 @@ namespace MfGames.GtkExt.LineTextEditor.Interfaces
 		Clipboard Clipboard { get; }
 
 		/// <summary>
+		/// Gets the line buffer associated with the context.
+		/// </summary>
+		/// <value>The line buffer.</value>
+		LineBuffer LineBuffer { get; }
+
+		/// <summary>
 		/// Gets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
-		ILineLayoutBuffer LineLayoutBuffer { get; }
+		TextRenderer TextRenderer { get; }
 
 		/// <summary>
 		/// Gets the width of the area that can be used for rendering text.

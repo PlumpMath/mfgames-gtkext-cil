@@ -25,30 +25,58 @@
 #region Namespaces
 
 using System;
-using System.Collections.Generic;
+
+using MfGames.GtkExt.LineTextEditor.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Renderers
 {
 	/// <summary>
-	/// Extends the interface to include common methods.
+	/// Wraps around a <see cref="TextRenderer"/> and allows for extending classes
+	/// to override various methods and properties. This implementation simply
+	/// calls the underlying <see cref="TextRenderer"/> for everything.
 	/// </summary>
-	public static class LineIndicatorBufferExtensions
+	public abstract class TextRendererDecorator : TextRenderer
 	{
+		#region Constructors
+
 		/// <summary>
-		/// Gets the line indicators for the entire line.
+		/// Initializes a new instance of the <see cref="TextRendererDecorator"/> class.
 		/// </summary>
-		/// <param name="buffer">The buffer.</param>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <returns></returns>
-		public static IEnumerable<ILineIndicator> GetLineIndicators(
-			this ILineIndicatorBuffer buffer,
-			IDisplayContext displayContext,
-			int lineIndex)
+		protected TextRendererDecorator(TextRenderer textRenderer)
 		{
-			return buffer.GetLineIndicators(displayContext, lineIndex, 0, Int32.MaxValue);
+			TextRenderer = textRenderer;
+
+			if (textRenderer == null)
+			{
+				throw new ArgumentNullException("textRenderer");
+			}
 		}
+
+		#endregion
+
+		#region Renderer
+
+		/// <summary>
+		/// Gets or sets the underlying TextRenderer.
+		/// </summary>
+		/// <value>The text renderer.</value>
+		private TextRenderer TextRenderer { get; set; }
+
+		#endregion
+
+		#region Buffer
+
+		/// <summary>
+		/// Gets the line buffer associated with this renderer.
+		/// </summary>
+		/// <value>The line buffer.</value>
+		public override LineBuffer LineBuffer
+		{
+			get { return TextRenderer.LineBuffer; }
+		}
+
+		#endregion
 	}
 }

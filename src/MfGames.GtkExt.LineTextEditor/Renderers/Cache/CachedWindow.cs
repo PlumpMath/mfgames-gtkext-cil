@@ -28,6 +28,7 @@ using System;
 using System.Diagnostics;
 
 using MfGames.GtkExt.Extensions.Pango;
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
@@ -35,7 +36,7 @@ using Pango;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 {
 	/// <summary>
 	/// Implements a cache window that keeps track of a range of lines and
@@ -52,10 +53,10 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="buffer">The buffer.</param>
 		/// <param name="windowIndex">Index of the cache window.</param>
 		public CachedWindow(
-			CachedLineLayoutBuffer buffer,
+			CachedTextRenderer buffer,
 			int windowIndex)
 		{
-			ParentBuffer = buffer;
+			Renderer = buffer;
 			WindowIndex = windowIndex;
 		}
 
@@ -85,7 +86,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// Gets or sets the buffer.
 		/// </summary>
 		/// <value>The buffer.</value>
-		internal CachedLineLayoutBuffer ParentBuffer { get; private set; }
+		internal CachedTextRenderer Renderer { get; private set; }
 
 		/// <summary>
 		/// Gets the end line inside the window.
@@ -94,7 +95,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		internal int WindowEndLine
 		{
 			[DebuggerStepThrough]
-			get { return WindowStartLine + ParentBuffer.WindowSize - 1; }
+			get { return WindowStartLine + Renderer.WindowSize - 1; }
 		}
 
 		/// <summary>
@@ -110,7 +111,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		internal int WindowStartLine
 		{
 			[DebuggerStepThrough]
-			get { return WindowIndex * ParentBuffer.WindowSize; }
+			get { return WindowIndex * Renderer.WindowSize; }
 		}
 
 		#endregion
@@ -199,7 +200,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 
 			// Use the text editor to populate the height.
-			Height = ParentBuffer.LineLayoutBuffer.GetLineLayoutHeight(
+			Height = Renderer.GetLineLayoutHeight(
 				displayContext, WindowStartLine, WindowEndLine);
 
 			return Height.Value;
@@ -311,20 +312,20 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Only allocate lines if we don't have one.
 			if (Lines == null)
 			{
-				Lines = ParentBuffer.GetAllocatedCachedLines();
+				Lines = Renderer.GetAllocatedCachedLines();
 				Console.WriteLine(DateTime.UtcNow + "   Alloc lines " + this);
 			}
 
 			// Go through all the lines in the window and populate them.
 			int height = 0;
 
-			for (int lineIndex = 0; lineIndex < ParentBuffer.WindowSize; lineIndex++)
+			for (int lineIndex = 0; lineIndex < Renderer.WindowSize; lineIndex++)
 			{
 				// Make sure we aren't going past the top line.
 				int line = WindowStartLine + lineIndex;
 				CachedLine cachedLine = Lines[lineIndex];
 
-				if (line >= ParentBuffer.LineCount)
+				if (line >= displayContext.LineBuffer.LineCount)
 				{
 					// Just reset the line.
 					cachedLine.Reset();
@@ -339,9 +340,9 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 				}
 
 				// Get the height of this line.
-				Layout layout = ParentBuffer.LineLayoutBuffer.GetLineLayout(
+				Layout layout = Renderer.GetLineLayout(
 					displayContext, line);
-				BlockStyle style = ParentBuffer.LineLayoutBuffer.GetLineStyle(
+				BlockStyle style = Renderer.GetLineStyle(
 					displayContext, line);
 
 				cachedLine.Style = style;

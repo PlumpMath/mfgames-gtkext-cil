@@ -33,6 +33,7 @@ using Cairo;
 
 using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
@@ -199,7 +200,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		/// <param name="buffer">The buffer.</param>
 		public void Update(
 			IDisplayContext displayContext,
-			ILineIndicatorBuffer buffer)
+			TextRenderer buffer)
 		{
 			// Clear out our indicators and reset our fields.
 			Reset();

@@ -25,52 +25,51 @@
 #region Namespaces
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 using C5;
 
+using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
-using Rectangle=Cairo.Rectangle;
-
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 {
 	/// <summary>
-	/// Implements a simple cache <see cref="ILineLayoutBuffer"/> that keeps the
-	/// various heights in memory to allow for rapid retrieval of line heights.
-	/// This uses the idea of cache windows to keep track of individual lines while
-	/// allow a window to be unloaded but the height of a line range to be
-	/// retained.
+	/// Implements a dyanmic cache around a TextRenderer to reduce processing
+	/// overhead at the expense of larger memory usage.
 	/// </summary>
-	public class CachedLineLayoutBuffer : LineLayoutBufferProxy
+	public class CachedTextRenderer
+		: TextRendererDecorator
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CachedLineLayoutBuffer"/> class.
+		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
 		/// </summary>
-		/// <param name="buffer">The buffer.</param>
-		public CachedLineLayoutBuffer(ILineLayoutBuffer buffer)
-			: this(buffer, 8, 16)
+		/// <param name="textRenderer"></param>
+		public CachedTextRenderer(TextRenderer textRenderer)
+			: this(textRenderer, 8, 16)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CachedLineLayoutBuffer"/> class.
+		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
 		/// </summary>
-		/// <param name="buffer">The buffer.</param>
+		/// <param name="textRenderer">The text renderer.</param>
 		/// <param name="maximumLoadedWindows">The maximum loaded windows.</param>
 		/// <param name="windowSize">Size of the window.</param>
-		public CachedLineLayoutBuffer(
-			ILineLayoutBuffer buffer,
+		public CachedTextRenderer(
+			TextRenderer textRenderer,
 			int maximumLoadedWindows,
 			int windowSize)
-			: base(buffer)
+			: base(textRenderer)
 		{
 			// Set the cache window properties.
 			this.windowSize = windowSize;
@@ -132,7 +131,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		private void AllocateWindows()
 		{
 			// If we have no lines, then we don't need any buffers.
-			int lineCount = LineMarkupBuffer.LineCount;
+			int lineCount = LineBuffer.LineCount;
 
 			if (lineCount == 0)
 			{
@@ -186,8 +185,6 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		{
 			if (window.Lines != null)
 			{
-				Console.WriteLine(DateTime.UtcNow + " Release lines " + window);
-
 				// Clear out the lines to make sure the garbage collection can
 				// release them as needed.
 				foreach (CachedLine line in window.Lines)
@@ -415,7 +412,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public override void GetLineLayoutRange(
+		public void GetLineLayoutRange(
 			IDisplayContext displayContext,
 			Rectangle viewArea,
 			out int startLine,
@@ -466,7 +463,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// a starting line, then just show the last one.
 			if (startWindowIndex == -1)
 			{
-				startLine = endLine = LineCount - 1;
+				startLine = endLine = LineBuffer.LineCount - 1;
 				return;
 			}
 
@@ -478,7 +475,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Get the ending line from the ending cache.
 			if (endWindowIndex == -1)
 			{
-				endLine = LineCount - 1;
+				endLine = LineBuffer.LineCount - 1;
 				return;
 			}
 
@@ -519,7 +516,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="args">The args.</param>
-		public override void OnLineChanged(
+		protected override void OnLineChanged(
 			object sender,
 			LineChangedArgs args)
 		{
@@ -539,7 +536,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="args">The args.</param>
-		public override void OnLinesDeleted(
+		protected override void OnLinesDeleted(
 			object sender,
 			LineRangeEventArgs args)
 		{
@@ -553,7 +550,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="args">The args.</param>
-		public override void OnLinesInserted(
+		protected override void OnLinesInserted(
 			object sender,
 			LineRangeEventArgs args)
 		{
@@ -583,7 +580,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			{
 				// Clear out the cache for all the lines in the new and old selections.
 				int endLineIndex =
-					displayContext.LineLayoutBuffer.NormalizeLineIndex(
+					displayContext.LineBuffer.NormalizeLineIndex(
 						currentSelection.EndPosition.LineIndex);
 
 				for (int lineIndex = currentSelection.StartPosition.LineIndex;
@@ -610,7 +607,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			}
 
 			// Call the base implementation.
-			base.UpdateSelection(displayContext, previousSelection);
+			// TODO base.UpdateSelection(displayContext, previousSelection);
 		}
 
 		#endregion

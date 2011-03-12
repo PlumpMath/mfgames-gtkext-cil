@@ -37,21 +37,69 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 namespace GtkExtDemo.LineTextEditor
 {
 	/// <summary>
-	/// Implements an <see cref="ILineIndicatorBuffer"/> that identifies errors and
-	/// warnings.
+	/// Wraps around a line buffer and marks up anything with a number of keywords
+	/// with Pango markup.
 	/// </summary>
-	public class KeywordLineIndicatorBuffer
-		: LineLayoutBufferProxy, ILineIndicatorBuffer
+	public class KeywordLineBuffer : LineBufferDecorator
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="KeywordLineIndicatorBuffer"/> class.
+		/// Initializes a new instance of the <see cref="KeywordLineBuffer"/> class.
 		/// </summary>
 		/// <param name="buffer">The buffer.</param>
-		public KeywordLineIndicatorBuffer(ILineLayoutBuffer buffer)
+		public KeywordLineBuffer(LineBuffer buffer)
 			: base(buffer)
 		{
+		}
+
+		#endregion
+
+		#region Markup
+
+		/// <summary>
+		/// Gets the Pango markup for a given line.
+		/// </summary>
+		/// <param name="lineIndex">The line.</param>
+		/// <returns></returns>
+		public override string GetLineMarkup(int lineIndex)
+		{
+			// Get the escaped line markup.
+			string markup = base.GetLineMarkup(lineIndex);
+
+			// Parse through the markup and get a list of entries. We go through
+			// the list in reverse so we can use the character entries without
+			// adjusting for the text we're adding.
+			ArrayList<KeywordMarkupEntry> entries = KeywordMarkupEntry.ParseText(markup);
+
+			entries.Reverse();
+
+			foreach (var entry in entries)
+			{
+				// Insert the final span at the end.
+				markup = markup.Insert(entry.EndCharacterIndex, "</span>");
+
+				// Figure out the attributes.
+				string attributes = string.Empty;
+
+				switch (entry.Markup)
+				{
+					case KeywordMarkupType.Error:
+						attributes = "underline='error' underline_color='red' color='red'";
+						break;
+
+					case KeywordMarkupType.Warning:
+						attributes = "underline='error' underline_color='orange' color='orange'";
+						break;
+				}
+
+				// Add in the attributes for the start index.
+				markup = markup.Insert(
+					entry.StartCharacterIndex, "<span " + attributes + ">");
+			}
+
+			// Return the resulting markup.
+			return markup;
 		}
 
 		#endregion
@@ -76,7 +124,7 @@ namespace GtkExtDemo.LineTextEditor
 			int endCharacterIndex)
 		{
 			// Get the escaped line markup.
-			string text = this.GetLineText(lineIndex);
+			string text = GetLineText(lineIndex);
 
 			endCharacterIndex = Math.Min(endCharacterIndex, text.Length);
 
