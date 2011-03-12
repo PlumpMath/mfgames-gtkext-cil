@@ -82,7 +82,7 @@ namespace GtkExtDemo.LineTextEditor
 			scrolledWindow.Add(textEditor);
 
 			// Create the indicator bar that is 10 px wide.
-			indicatorBar = new LineIndicatorBar(textEditor);
+			indicatorBar = new TextIndicatorBar(textEditor);
 			indicatorBar.SetSizeRequest(20, 1);
 
 			// Add the editor and bar to the current tab.
@@ -127,7 +127,7 @@ namespace GtkExtDemo.LineTextEditor
 
 		#region Widgets
 
-		private readonly LineIndicatorBar indicatorBar;
+		private readonly TextIndicatorBar indicatorBar;
 		private readonly TextEditor textEditor;
 
 		#region Events

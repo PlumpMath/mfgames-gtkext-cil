@@ -94,7 +94,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			caret = new Caret(this);
 
 			// Set up the text editor controller.
-			controller = new TextEditorController(this);
+			controller = new TextController(this);
 			wordSplitter = new EnglishWordSplitter();
 			Clipboard = Clipboard.Get(Atom.Intern("CLIPBOARD", true));
 
@@ -288,7 +288,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		#region Editing
 
 		private readonly Caret caret;
-		private readonly TextEditorController controller;
+		private readonly TextController controller;
 
 		/// <summary>
 		/// Gets the caret used to indicate where the user is editing.
@@ -309,7 +309,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// Gets the controller associated with this editor.
 		/// </summary>
 		/// <value>The controller.</value>
-		public TextEditorController Controller
+		public TextController Controller
 		{
 			get { return controller; }
 		}

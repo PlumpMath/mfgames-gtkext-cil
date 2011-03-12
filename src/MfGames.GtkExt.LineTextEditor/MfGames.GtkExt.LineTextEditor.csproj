@@ -101,7 +101,7 @@
     <Compile Include="Editing\Caret.cs" />
     <Compile Include="Enumerations\IndicatorRenderStyle.cs" />
     <Compile Include="Events\PopulateContextMenuArgs.cs" />
-    <Compile Include="Editing\TextEditorController.cs" />
+    <Compile Include="Editing\TextController.cs" />
     <Compile Include="Enumerations\LineBufferOperationType.cs" />
     <Compile Include="Events\LineChangedArgs.cs" />
     <Compile Include="Events\LineRangeEventArgs.cs" />
@@ -117,7 +117,7 @@
     <Compile Include="Renderers\TextRenderer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
-    <Compile Include="Indicators\LineIndicatorBar.cs" />
+    <Compile Include="Indicators\TextIndicatorBar.cs" />
     <Compile Include="Renderers\LineNumberMarginRenderer.cs" />
     <Compile Include="Renderers\MarginRenderer.cs" />
     <Compile Include="Renderers\MarginRendererCollection.cs" />

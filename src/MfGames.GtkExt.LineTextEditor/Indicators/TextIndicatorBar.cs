@@ -52,15 +52,15 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 	/// <summary>
 	/// Implements a visual bar of indicators from a given line buffer.
 	/// </summary>
-	public class LineIndicatorBar : DrawingArea
+	public class TextIndicatorBar : DrawingArea
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LineIndicatorBar"/> class.
+		/// Initializes a new instance of the <see cref="TextIndicatorBar"/> class.
 		/// </summary>
 		/// <param name="textEditor">The text editor.</param>
-		public LineIndicatorBar(TextEditor textEditor)
+		public TextIndicatorBar(TextEditor textEditor)
 		{
 			// Save the control variables.
 			if (textEditor == null)
