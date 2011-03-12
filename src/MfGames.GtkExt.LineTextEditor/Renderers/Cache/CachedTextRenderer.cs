@@ -25,8 +25,6 @@
 #region Namespaces
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 using C5;
 
@@ -42,34 +40,38 @@ using Pango;
 namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 {
 	/// <summary>
-	/// Implements a dyanmic cache around a TextRenderer to reduce processing
-	/// overhead at the expense of larger memory usage.
+	/// Implements a dynamic cache around a <see cref="TextRenderer"/> to reduce
+	/// processing overhead at the expense of larger memory usage.
 	/// </summary>
-	public class CachedTextRenderer
-		: TextRendererDecorator
+	public class CachedTextRenderer : TextRendererDecorator
 	{
 		#region Constructors
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
 		/// </summary>
-		/// <param name="textRenderer"></param>
-		public CachedTextRenderer(TextRenderer textRenderer)
-			: this(textRenderer, 8, 16)
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="textRenderer">The text renderer.</param>
+		public CachedTextRenderer(
+			IDisplayContext displayContext,
+			TextRenderer textRenderer)
+			: this(displayContext, textRenderer, 8, 16)
 		{
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
 		/// </summary>
+		/// <param name="displayContext">The display context.</param>
 		/// <param name="textRenderer">The text renderer.</param>
 		/// <param name="maximumLoadedWindows">The maximum loaded windows.</param>
 		/// <param name="windowSize">Size of the window.</param>
 		public CachedTextRenderer(
+			IDisplayContext displayContext,
 			TextRenderer textRenderer,
 			int maximumLoadedWindows,
 			int windowSize)
-			: base(textRenderer)
+			: base(displayContext, textRenderer)
 		{
 			// Set the cache window properties.
 			this.windowSize = windowSize;
@@ -315,11 +317,9 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
 		public override Layout GetLineLayout(
-			IDisplayContext displayContext,
 			int lineIndex)
 		{
 			// Make sure we have all the windows allocated.
@@ -331,19 +331,17 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			CachedWindow window = windows[windowIndex];
 
 			// Get the layout from the window.
-			Layout layout = window.GetLineLayout(displayContext, lineIndex);
+			Layout layout = window.GetLineLayout(DisplayContext, lineIndex);
 			return layout;
 		}
 
 		/// <summary>
 		/// Uses the cache to retrieve the heights of the individual lines.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="startLineIndex">The start line.</param>
 		/// <param name="endLineIndex">The end line.</param>
 		/// <returns></returns>
 		public override int GetLineLayoutHeight(
-			IDisplayContext displayContext,
 			int startLineIndex,
 			int endLineIndex)
 		{
@@ -363,18 +361,18 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			// Make sure that both the starting and ending windows are populated.
 			// This handles if the windows are the same since Populate() checks
 			// the loaded status.
-			startingWindow.Populate(displayContext);
-			endingWindow.Populate(displayContext);
+			startingWindow.Populate(DisplayContext);
+			endingWindow.Populate(DisplayContext);
 
 			// Get the height of the lines inside the starting window.
 			int height = startingWindow.GetLineLayoutHeight(
-				displayContext, startLineIndex, endLineIndex);
+				DisplayContext, startLineIndex, endLineIndex);
 
 			// If the end window is different, get those line heights also.
 			if (startingWindowIndex != endingWindowIndex)
 			{
 				height += endingWindow.GetLineLayoutHeight(
-					displayContext, startLineIndex, endLineIndex);
+					DisplayContext, startLineIndex, endLineIndex);
 			}
 
 			// Retrieve all the cache windows between the two ranges.
@@ -383,7 +381,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			     windowIndex++)
 			{
 				CachedWindow window = windows[windowIndex];
-				height += window.GetLineLayoutHeight(displayContext);
+				height += window.GetLineLayoutHeight(DisplayContext);
 			}
 
 			// Return the resulting height of the region.
@@ -393,13 +391,12 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// <summary>
 		/// Gets the height of a single line of "normal" text.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <returns></returns>
-		public override int GetLineLayoutHeight(IDisplayContext displayContext)
+		public override int GetLineLayoutHeight()
 		{
 			if (!lineHeight.HasValue)
 			{
-				lineHeight = base.GetLineLayoutHeight(displayContext);
+				lineHeight = base.GetLineLayoutHeight();
 			}
 
 			return lineHeight.Value;
@@ -487,12 +484,9 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// <summary>
 		/// Gets the line style for a given line.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="lineIndex">The line number.</param>
 		/// <returns></returns>
-		public override BlockStyle GetLineStyle(
-			IDisplayContext displayContext,
-			int lineIndex)
+		public override BlockStyle GetLineStyle(int lineIndex)
 		{
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
@@ -503,7 +497,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			CachedWindow window = windows[windowIndex];
 
 			// Get the layout from the window.
-			BlockStyle style = window.GetLineStyle(displayContext, lineIndex);
+			BlockStyle style = window.GetLineStyle(DisplayContext, lineIndex);
 			return style;
 		}
 

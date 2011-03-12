@@ -71,24 +71,6 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// Initializes a new instance of the <see cref="TextEditor"/> class.
 		/// </summary>
 		public TextEditor()
-			: this(new MemoryLineBuffer())
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditor"/> class.
-		/// </summary>
-		/// <param name="lineBuffer">The line buffer.</param>
-		public TextEditor(LineBuffer lineBuffer)
-			: this(new CachedTextRenderer(new LineBufferTextRenderer(lineBuffer)))
-		{
-
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditor"/> class.
-		/// </summary>
-		public TextEditor(TextRenderer textRenderer)
 		{
 			// Set up the basic characteristics of the widget.
 			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
@@ -117,9 +99,6 @@ namespace MfGames.GtkExt.LineTextEditor
 
 			controller.BeginAction += OnBeginAction;
 			controller.EndAction += OnEndAction;
-
-			// Save the line buffer which configures a number of other elements.
-			TextRenderer = textRenderer;
 		}
 
 		/// <summary>
@@ -482,14 +461,14 @@ namespace MfGames.GtkExt.LineTextEditor
 				// Determine the line range visible in the given area.
 				int startLine, endLine;
 				textRenderer.GetLineLayoutRange(
-					this, viewArea, out startLine, out endLine);
+					viewArea, out startLine, out endLine);
 
 				// Determine where the first line actually starts.
 				int startLineY = 0;
 
 				if (startLine > 0)
 				{
-					startLineY = textRenderer.GetLineLayoutHeight(this, 0, startLine - 1);
+					startLineY = textRenderer.GetLineLayoutHeight(0, startLine - 1);
 				}
 
 				// Go through the lines and draw each one in the correct position.
@@ -498,8 +477,8 @@ namespace MfGames.GtkExt.LineTextEditor
 				for (int lineIndex = startLine; lineIndex <= endLine; lineIndex++)
 				{
 					// Pull out the layout and style since we'll use it.
-					Layout layout = textRenderer.GetLineLayout(this, lineIndex);
-					BlockStyle style = TextRenderer.GetLineStyle(this, lineIndex);
+					Layout layout = textRenderer.GetLineLayout(lineIndex);
+					BlockStyle style = TextRenderer.GetLineStyle(lineIndex);
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
@@ -744,10 +723,10 @@ namespace MfGames.GtkExt.LineTextEditor
 			// Set the line buffer's width and then request the height for all
 			// the lines in the buffer.
 			textRenderer.Width = TextWidth;
-			int height = textRenderer.GetLineLayoutHeight(this, 0, Int32.MaxValue);
+			int height = textRenderer.GetLineLayoutHeight(0, Int32.MaxValue);
 
 			// Set the adjustments based on those values.
-			int lineHeight = textRenderer.GetLineLayoutHeight(this);
+			int lineHeight = textRenderer.GetLineLayoutHeight();
 
 			verticalAdjustment.SetBounds(
 				0.0, height, lineHeight, (int) (Allocation.Height / 2.0), Allocation.Height);

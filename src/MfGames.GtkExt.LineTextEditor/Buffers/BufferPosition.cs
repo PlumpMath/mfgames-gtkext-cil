@@ -128,8 +128,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			out int wrappedLineIndex)
 		{
 			// Get the layout associated with the line.
-			layout = displayContext.TextRenderer.GetLineLayout(
-				displayContext, LineIndex);
+			layout = displayContext.TextRenderer.GetLineLayout(LineIndex);
 
 			// Get the wrapped line associated with this character position.
 			int x;
@@ -426,8 +425,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// Pull out some of the common things we'll be using in this method.
 			TextRenderer buffer = displayContext.TextRenderer;
 			int bufferLineIndex = buffer.LineBuffer.NormalizeLineIndex(LineIndex);
-			Layout layout = buffer.GetLineLayout(displayContext, bufferLineIndex);
-			BlockStyle style = buffer.GetLineStyle(displayContext, bufferLineIndex);
+			Layout layout = buffer.GetLineLayout(bufferLineIndex);
+			BlockStyle style = buffer.GetLineStyle(bufferLineIndex);
 
 			// Figure out the top of the current line in relation to the entire
 			// buffer and view. For lines beyond the first, we use
@@ -435,8 +434,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// spacing and borders which we would have to calculate otherwise.
 			double y = bufferLineIndex == 0
 			           	? 0
-			           	: buffer.GetLineLayoutHeight(
-			           	  	displayContext, 0, bufferLineIndex - 1);
+			           	: buffer.GetLineLayoutHeight(0, bufferLineIndex - 1);
 
 			// Add the style offset for the top-padding.
 			y += style.Top;

@@ -200,8 +200,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			}
 
 			// Use the text editor to populate the height.
-			Height = Renderer.GetLineLayoutHeight(
-				displayContext, WindowStartLine, WindowEndLine);
+			Height = Renderer.GetLineLayoutHeight(WindowStartLine, WindowEndLine);
 
 			return Height.Value;
 		}
@@ -340,10 +339,8 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 				}
 
 				// Get the height of this line.
-				Layout layout = Renderer.GetLineLayout(
-					displayContext, line);
-				BlockStyle style = Renderer.GetLineStyle(
-					displayContext, line);
+				Layout layout = Renderer.TextRenderer.GetLineLayout(line);
+				BlockStyle style = Renderer.TextRenderer.GetLineStyle(line);
 
 				cachedLine.Style = style;
 				cachedLine.Layout = layout;

@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Events;
@@ -47,6 +48,25 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 	/// </summary>
 	public abstract class TextRenderer
 	{
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextRenderer"/> class.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		protected TextRenderer(IDisplayContext displayContext)
+		{
+			// Set the properties in the renderer.
+			if (displayContext == null)
+			{
+				throw new ArgumentNullException("displayContext");
+			}
+
+			DisplayContext = displayContext;
+		}
+
+		#endregion
+
 		#region Buffer
 
 		/// <summary>
@@ -54,6 +74,12 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// </summary>
 		/// <value>The line buffer.</value>
 		public abstract LineBuffer LineBuffer { get; }
+
+		/// <summary>
+		/// Gets or sets the display context associated with this renderer.
+		/// </summary>
+		/// <value>The display context.</value>
+		public IDisplayContext DisplayContext { get; private set; }
 
 		#endregion
 
@@ -69,16 +95,14 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Gets the line layout for a given line.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
 		public virtual Layout GetLineLayout(
-			IDisplayContext displayContext,
 			int lineIndex)
 		{
-			var layout = new Layout(displayContext.PangoContext);
+			var layout = new Layout(DisplayContext.PangoContext);
 
-			displayContext.SetLayout(layout, displayContext.Theme.TextBlockStyle);
+			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextBlockStyle);
 			layout.SetMarkup(LineBuffer.GetLineMarkup(lineIndex));
 
 			return layout;
@@ -88,20 +112,18 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// Gets the height of a single line layout.
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
-		/// <param name="displayContext">The text editor.</param>
 		/// <returns></returns>
 		private int GetLineLayoutHeight(
-			IDisplayContext displayContext,
 			int lineIndex)
 		{
 			// Get the extents for the line while rendered.
-			Layout lineLayout = GetLineLayout(displayContext, lineIndex);
+			Layout lineLayout = GetLineLayout(lineIndex);
 			int lineWidth, lineHeight;
 
 			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
 
 			// Get the style to include the style's height.
-			BlockStyle style = GetLineStyle(displayContext, lineIndex);
+			BlockStyle style = GetLineStyle(lineIndex);
 
 			lineHeight += (int) Math.Ceiling(style.Height);
 
@@ -112,12 +134,10 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Gets the pixel height of the lines in the buffer.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="startLineIndex">The start line.</param>
 		/// <param name="endLineIndex">The end line.</param>
 		/// <returns></returns>
 		public virtual int GetLineLayoutHeight(
-			IDisplayContext displayContext,
 			int startLineIndex,
 			int endLineIndex)
 		{
@@ -139,7 +159,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			for (int line = startLineIndex; line <= endLineIndex; line++)
 			{
 				// Get the height for this line.
-				int lineHeight = GetLineLayoutHeight(displayContext, line);
+				int lineHeight = GetLineLayoutHeight(line);
 
 				// Add the height to the total.
 				height += lineHeight;
@@ -152,14 +172,13 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Gets the height of a single line of "normal" text.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <returns></returns>
-		public virtual int GetLineLayoutHeight(IDisplayContext displayContext)
+		public virtual int GetLineLayoutHeight()
 		{
 			// Get a layout for the default text style.
-			var layout = new Layout(displayContext.PangoContext);
+			var layout = new Layout(DisplayContext.PangoContext);
 
-			displayContext.SetLayout(layout, displayContext.Theme.TextBlockStyle);
+			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextBlockStyle);
 
 			// Set the layout to a simple string.
 			layout.SetText("W");
@@ -175,18 +194,15 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Gets the line at a specific point and returns it.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <param name="bufferY">The buffer Y.</param>
 		/// <returns></returns>
 		public int GetLineLayoutRange(
-			IDisplayContext displayContext,
 			double bufferY)
 		{
 			var rectangle = new Rectangle(0, bufferY, 0.1, 0.1);
 			int startLineIndex, endLineIndex;
 
-			GetLineLayoutRange(
-				displayContext, rectangle, out startLineIndex, out endLineIndex);
+			GetLineLayoutRange(rectangle, out startLineIndex, out endLineIndex);
 
 			return startLineIndex;
 		}
@@ -194,12 +210,10 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
 		public void GetLineLayoutRange(
-			IDisplayContext displayContext,
 			Rectangle viewArea,
 			out int startLine,
 			out int endLine)
@@ -215,7 +229,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			for (int line = 0; line < lineCount; line++)
 			{
 				// Get the height for this line.
-				int height = GetLineLayoutHeight(displayContext, line);
+				int height = GetLineLayoutHeight(line);
 
 				// If we don't have a starting line, then check to see if this
 				// line is visible.
@@ -290,16 +304,15 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			// Get the line that contains the given Y coordinate.
 			int lineIndex, endLineIndex;
 			GetLineLayoutRange(
-				displayContext,
 				new Rectangle(0, bufferY, 0, bufferY),
 				out lineIndex,
 				out endLineIndex);
 
 			// Get the layout-relative Y coordinate.
-			double layoutY = bufferY - GetLineLayoutHeight(displayContext, 0, lineIndex);
+			double layoutY = bufferY - GetLineLayoutHeight(0, lineIndex);
 
 			// Figure out which line inside the layout.
-			Layout layout = GetLineLayout(displayContext, lineIndex);
+			Layout layout = GetLineLayout(lineIndex);
 			int trailing;
 
 			layout.XyToIndex(0, (int) layoutY, out wrappedLineIndex, out trailing);
@@ -364,12 +377,9 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Gets the line style associated with a line.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <returns></returns>
-		public virtual BlockStyle GetLineStyle(
-			IDisplayContext displayContext,
-			int lineIndex)
+		public virtual BlockStyle GetLineStyle(int lineIndex)
 		{
 			// Get the style name and normalize it.
 			string styleName = LineBuffer.GetLineStyleName(lineIndex);
@@ -380,7 +390,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			}
 
 			// Retrieve the style.
-			return displayContext.Theme.BlockStyles[styleName];
+			return DisplayContext.Theme.BlockStyles[styleName];
 		}
 
 		#endregion
@@ -493,6 +503,80 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			IDisplayContext displayContext,
 			BufferSegment previousSelection)
 		{
+		}
+
+		/// <summary>
+		/// Gets the Pango markup for a given line.
+		/// </summary>
+		/// <param name="lineIndex">The line.</param>
+		/// <returns></returns>
+		public string GetSelectionMarkup(int lineIndex)
+		{
+			// Get the line markup from the underlying buffer.
+			string markup = LineBuffer.GetLineMarkup(lineIndex);
+
+			// Check to see if we are in the selection.
+			int startCharacterIndex, endCharacterIndex;
+			bool containsLine = DisplayContext.Caret.Selection.ContainsLine(
+				lineIndex, out startCharacterIndex, out endCharacterIndex);
+
+			if (containsLine)
+			{
+				// Loop through the markup and strip off the existing markup
+				// for the selection area.
+				var buffer = new StringBuilder();
+				bool inSelection = false;
+
+				for (int characterIndex = 0;
+				     characterIndex < markup.Length;
+				     characterIndex++)
+				{
+					// Pull out the character we are processing.
+					char c = markup[characterIndex];
+
+					// See if we are at the beginning of the selection.
+					if (characterIndex == startCharacterIndex)
+					{
+						// We are now in a selection buffer. First remove any
+						// spans that we are currently using.
+
+						// Add the text to format our selection.
+						buffer.Append("<span background='#CCCCFF'>");
+
+						// Mark that we are in the selection.
+						inSelection = true;
+					}
+
+					// Check to see if we are at the end of the selection.
+					if (characterIndex == endCharacterIndex)
+					{
+						// We are finishing up the selection, so remove any
+						// selection-specific spans we are using.
+						buffer.Append("</span>");
+
+						// Apply the spans that should have existed here.
+
+						// Leave the selection so we don't close it twice.
+						inSelection = false;
+					}
+
+					// Add the character to the buffer.
+					buffer.Append(c);
+				}
+
+				// If the end index is -1, then we finish up the spans at the end.
+				if (inSelection)
+				{
+					// Remove any spans currently in effect for the selection.
+					buffer.Append("</span>");
+				}
+
+				// Replace the markup with the modified one.
+				markup = buffer.ToString();
+			}
+
+			// Return the resulting markup.
+			return markup;
 		}
 
 		#endregion

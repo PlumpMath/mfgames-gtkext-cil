@@ -137,7 +137,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 				// Move to the next line.
 				position.LineIndex++;
-				layout = buffer.GetLineLayout(displayContext, position.LineIndex);
+				layout = buffer.GetLineLayout(position.LineIndex);
 				wrappedLine = layout.Lines[0];
 			}
 			else
@@ -346,8 +346,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 			double bufferY =
 				Math.Min(
 					point.Y + displayContext.VerticalAdjustment.PageSize,
-					displayContext.TextRenderer.GetLineLayoutHeight(
-						displayContext, 0, Int32.MaxValue));
+					displayContext.TextRenderer.GetLineLayoutHeight(0, Int32.MaxValue));
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
@@ -510,7 +509,7 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 
 				// Move to the next line.
 				position.LineIndex--;
-				layout = buffer.GetLineLayout(displayContext, position.LineIndex);
+				layout = buffer.GetLineLayout(position.LineIndex);
 				wrappedLineIndex = layout.LineCount - 1;
 				wrappedLine = layout.Lines[wrappedLineIndex];
 			}
@@ -551,18 +550,15 @@ namespace MfGames.GtkExt.LineTextEditor.Actions
 		{
 			double y = widgetPoint.Y + displayContext.BufferOffsetY;
 			int lineIndex =
-				displayContext.TextRenderer.GetLineLayoutRange(displayContext, y);
-			Layout layout = displayContext.TextRenderer.GetLineLayout(
-				displayContext, lineIndex);
+				displayContext.TextRenderer.GetLineLayoutRange(y);
+			Layout layout = displayContext.TextRenderer.GetLineLayout(lineIndex);
 
 			// Shift the buffer-relative coordinates to layout-relative coordinates.
 			double layoutY = y;
 
 			if (lineIndex > 0)
 			{
-				layoutY -=
-					displayContext.TextRenderer.GetLineLayoutHeight(
-						displayContext, 0, lineIndex - 1);
+				layoutY -= displayContext.TextRenderer.GetLineLayoutHeight(0, lineIndex - 1);
 			}
 
 			int pangoLayoutY = Units.FromPixels((int) layoutY);

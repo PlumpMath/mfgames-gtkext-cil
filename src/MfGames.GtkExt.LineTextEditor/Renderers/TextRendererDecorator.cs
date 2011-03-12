@@ -27,6 +27,7 @@
 using System;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
@@ -44,7 +45,12 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextRendererDecorator"/> class.
 		/// </summary>
-		protected TextRendererDecorator(TextRenderer textRenderer)
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="textRenderer">The text renderer.</param>
+		protected TextRendererDecorator(
+			IDisplayContext displayContext,
+			TextRenderer textRenderer)
+			: base(displayContext)
 		{
 			TextRenderer = textRenderer;
 
@@ -62,7 +68,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// Gets or sets the underlying TextRenderer.
 		/// </summary>
 		/// <value>The text renderer.</value>
-		private TextRenderer TextRenderer { get; set; }
+		public TextRenderer TextRenderer { get; private set; }
 
 		#endregion
 

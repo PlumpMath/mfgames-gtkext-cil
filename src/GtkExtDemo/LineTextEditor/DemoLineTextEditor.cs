@@ -61,9 +61,8 @@ namespace GtkExtDemo.LineTextEditor
 		public DemoLineTextEditor()
 		{
 			// Create the text editor with the resulting buffer.
-			TextRenderer lineIndicatorBuffer = CreateEditableBuffer();
-
-			textEditor = new TextEditor(lineIndicatorBuffer);
+			textEditor = new TextEditor();
+			textEditor.TextRenderer = CreateEditableBuffer();
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
@@ -83,7 +82,7 @@ namespace GtkExtDemo.LineTextEditor
 			scrolledWindow.Add(textEditor);
 
 			// Create the indicator bar that is 10 px wide.
-			indicatorBar = new LineIndicatorBar(textEditor, lineIndicatorBuffer);
+			indicatorBar = new LineIndicatorBar(textEditor);
 			indicatorBar.SetSizeRequest(20, 1);
 
 			// Add the editor and bar to the current tab.
@@ -110,7 +109,7 @@ namespace GtkExtDemo.LineTextEditor
 		/// Creates an editable buffer.
 		/// </summary>
 		/// <returns></returns>
-		private static CachedTextRenderer CreateEditableBuffer()
+		private CachedTextRenderer CreateEditableBuffer()
 		{
 			// Create a patterned line buffer and make it read-write.
 			var patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
@@ -118,10 +117,10 @@ namespace GtkExtDemo.LineTextEditor
 			var keywordBuffer = new KeywordLineBuffer(lineBuffer);
 
 			// Provide a simple layout buffer that doesn't do anything.
-			var textRenderer = new LineBufferTextRenderer(keywordBuffer);
+			var textRenderer = new LineBufferTextRenderer(textEditor, keywordBuffer);
 
 			// Finally, wrap it in a cached buffer.
-			return new CachedTextRenderer(textRenderer);
+			return new CachedTextRenderer(textEditor, textRenderer);
 		}
 
 		#endregion

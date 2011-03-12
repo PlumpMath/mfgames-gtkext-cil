@@ -27,6 +27,7 @@
 using System;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 #endregion
 
@@ -43,8 +44,12 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextRenderer"/> class.
 		/// </summary>
+		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineBuffer">The line buffer.</param>
-		public LineBufferTextRenderer(LineBuffer lineBuffer)
+		public LineBufferTextRenderer(
+			IDisplayContext displayContext,
+			LineBuffer lineBuffer)
+			: base(displayContext)
 		{
 			// Perform sanity checking on parameters.
 			if (lineBuffer == null)
