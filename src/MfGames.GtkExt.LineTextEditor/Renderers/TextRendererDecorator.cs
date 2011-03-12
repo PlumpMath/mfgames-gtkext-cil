@@ -64,11 +64,37 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 
 		#region Renderer
 
+		private TextRenderer textRenderer;
+
 		/// <summary>
 		/// Gets or sets the underlying TextRenderer.
 		/// </summary>
 		/// <value>The text renderer.</value>
-		public TextRenderer TextRenderer { get; private set; }
+		public TextRenderer TextRenderer
+		{
+			get { return textRenderer; }
+			private set
+			{
+				// Disconnect any events if we previously had a renderer.
+				if (textRenderer != null)
+				{
+					textRenderer.LineChanged -= OnLineChanged;
+					textRenderer.LinesDeleted -= OnLinesDeleted;
+					textRenderer.LinesInserted -= OnLinesInserted;
+				}
+
+				// Set the value for the underlying data.
+				textRenderer = value;
+
+				// Connect the events if we have a new value.
+				if (textRenderer != null)
+				{
+					textRenderer.LineChanged += OnLineChanged;
+					textRenderer.LinesDeleted += OnLinesDeleted;
+					textRenderer.LinesInserted += OnLinesInserted;
+				}
+			}
+		}
 
 		#endregion
 
