@@ -213,7 +213,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public void GetLineLayoutRange(
+		public virtual void GetLineLayoutRange(
 			Rectangle viewArea,
 			out int startLine,
 			out int endLine)

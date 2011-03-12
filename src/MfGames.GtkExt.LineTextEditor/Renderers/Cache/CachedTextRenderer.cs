@@ -35,6 +35,8 @@ using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
 
+using Rectangle = Cairo.Rectangle;
+
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
@@ -46,6 +48,16 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 	public class CachedTextRenderer : TextRendererDecorator
 	{
 		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="lineBuffer">The line buffer.</param>
+		public CachedTextRenderer(IDisplayContext displayContext, LineBuffer lineBuffer)
+			: this(displayContext, new LineBufferTextRenderer(displayContext, lineBuffer))
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
@@ -405,12 +417,10 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// <summary>
 		/// Gets the lines that are visible in the given view area.
 		/// </summary>
-		/// <param name="displayContext">The text editor.</param>
 		/// <param name="viewArea">The view area.</param>
 		/// <param name="startLine">The start line.</param>
 		/// <param name="endLine">The end line.</param>
-		public void GetLineLayoutRange(
-			IDisplayContext displayContext,
+		public override void GetLineLayoutRange(
 			Rectangle viewArea,
 			out int startLine,
 			out int endLine)
@@ -427,7 +437,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			foreach (CachedWindow window in windows)
 			{
 				// Get the window height.
-				int windowHeight = window.GetLineLayoutHeight(displayContext);
+				int windowHeight = window.GetLineLayoutHeight(DisplayContext);
 
 				// Check for starting line.
 				if (viewArea.Y >= height && viewArea.Y <= height + windowHeight)
@@ -467,7 +477,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 			// Determine what the start line is inside the starting cache.
 			var startWindowOffset = (int) (viewArea.Y - startWindowHeight);
 			startLine = windows[startWindowIndex].GetLineLayoutContaining(
-				displayContext, startWindowOffset);
+				DisplayContext, startWindowOffset);
 
 			// Get the ending line from the ending cache.
 			if (endWindowIndex == -1)
@@ -478,7 +488,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 
 			var endWindowOffset = (int) (viewArea.Y + viewArea.Height - endWindowHeight);
 			endLine = windows[endWindowIndex].GetLineLayoutContaining(
-				displayContext, endWindowOffset);
+				DisplayContext, endWindowOffset);
 		}
 
 		/// <summary>
