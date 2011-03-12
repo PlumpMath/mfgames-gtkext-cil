@@ -170,6 +170,14 @@ namespace GtkExtDemo
 			return uiManager.GetWidget("/MenuBar");
 		}
 
+		/// <summary>
+		/// Sets the initial focus on the current tab.
+		/// </summary>
+		public void SetInitialFocus()
+		{
+			notebook.CurrentPageWidget.ChildFocus(DirectionType.Down);
+		}
+
 		#endregion
 
 		#region Events
@@ -233,6 +241,8 @@ namespace GtkExtDemo
 				int page = Int32.Parse(args[0]);
 				demo.CurrentPage = page;
 			}
+
+			demo.SetInitialFocus();
 
 			// Start everything running
 			Application.Run();
