@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Collections.Generic;
 
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -133,6 +134,38 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 		public virtual string GetLineStyleName(int lineIndex)
 		{
 			return null;
+		}
+
+		#endregion
+
+		#region Indicators
+
+		/// <summary>
+		/// Gets the line indicators for a given character range.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="startCharacterIndex">Start character in the line text.</param>
+		/// <param name="endCharacterIndex">End character in the line text.</param>
+		/// <returns></returns>
+		public virtual IEnumerable<ILineIndicator> GetLineIndicators(
+			int lineIndex,
+			int startCharacterIndex,
+			int endCharacterIndex)
+		{
+			return new List<ILineIndicator>();
+		}
+
+		/// <summary>
+		/// Gets the line indicators for the entire line.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <returns></returns>
+		public IEnumerable<ILineIndicator> GetLineIndicators(
+			IDisplayContext displayContext,
+			int lineIndex)
+		{
+			return GetLineIndicators(lineIndex, 0, Int32.MaxValue);
 		}
 
 		#endregion

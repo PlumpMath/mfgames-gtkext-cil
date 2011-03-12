@@ -338,40 +338,6 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 
 		#endregion
 
-		#region Indicators
-
-		/// <summary>
-		/// Gets the line indicators for a given character range.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <param name="startCharacterIndex">Start character in the line text.</param>
-		/// <param name="endCharacterIndex">End character in the line text.</param>
-		/// <returns></returns>
-		public IEnumerable<ILineIndicator> GetLineIndicators(
-			IDisplayContext displayContext,
-			int lineIndex,
-			int startCharacterIndex,
-			int endCharacterIndex)
-		{
-			return new List<ILineIndicator>();
-		}
-
-		/// <summary>
-		/// Gets the line indicators for the entire line.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <returns></returns>
-		public IEnumerable<ILineIndicator> GetLineIndicators(
-			IDisplayContext displayContext,
-			int lineIndex)
-		{
-			return GetLineIndicators(displayContext, lineIndex, 0, Int32.MaxValue);
-		}
-
-		#endregion
-
 		#region Styles
 
 		/// <summary>

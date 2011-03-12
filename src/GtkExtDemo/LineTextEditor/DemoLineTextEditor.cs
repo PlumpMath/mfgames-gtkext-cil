@@ -62,7 +62,7 @@ namespace GtkExtDemo.LineTextEditor
 		{
 			// Create the text editor with the resulting buffer.
 			textEditor = new TextEditor();
-			textEditor.TextRenderer = CreateRenderer();
+			textEditor.SetTextRenderer(CreateRenderer());
 			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
@@ -142,9 +142,8 @@ namespace GtkExtDemo.LineTextEditor
 			EventArgs e)
 		{
 			TextRenderer textRenderer = CreateRenderer();
-
-			textEditor.TextRenderer = textRenderer;
-			indicatorBar.LineIndicatorBuffer = textRenderer;
+			
+			textEditor.SetTextRenderer(textRenderer);
 		}
 
 		/// <summary>
@@ -156,8 +155,7 @@ namespace GtkExtDemo.LineTextEditor
 			object sender,
 			EventArgs e)
 		{
-			textEditor.TextRenderer = null;
-			indicatorBar.LineIndicatorBuffer = null;
+			textEditor.SetTextRenderer(null);
 		}
 
 		#endregion

@@ -109,7 +109,6 @@ namespace GtkExtDemo.LineTextEditor
 		/// <summary>
 		/// Gets the line indicators for a given character range.
 		/// </summary>
-		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="startCharacterIndex">Start character in the line text.</param>
 		/// <param name="endCharacterIndex">End character in the line text.</param>
@@ -117,8 +116,7 @@ namespace GtkExtDemo.LineTextEditor
 		/// An enumerable with the indicators or <see langword="null"/> for
 		/// none.
 		/// </returns>
-		public IEnumerable<ILineIndicator> GetLineIndicators(
-			IDisplayContext displayContext,
+		public override IEnumerable<ILineIndicator> GetLineIndicators(
 			int lineIndex,
 			int startCharacterIndex,
 			int endCharacterIndex)

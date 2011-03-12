@@ -218,7 +218,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 				// Get the line indicators for that character range and add
 				// them to the current range of indicators.
 				IEnumerable<ILineIndicator> lineIndicators =
-					buffer.GetLineIndicators(displayContext, lineIndex);
+					buffer.LineBuffer.GetLineIndicators(displayContext, lineIndex);
 
 				if (lineIndicators != null)
 				{

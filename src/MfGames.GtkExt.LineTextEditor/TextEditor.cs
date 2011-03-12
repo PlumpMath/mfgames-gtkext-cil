@@ -154,45 +154,72 @@ namespace MfGames.GtkExt.LineTextEditor
 		{
 			[DebuggerStepThrough]
 			get { return textRenderer; }
+		}
 
-			set
+		/// <summary>
+		/// Sets the text renderer.
+		/// </summary>
+		/// <param name="value">The new <see cref="TextEditor"/>, which can be null.
+		/// <param>
+		public void SetTextRenderer(TextRenderer value)
+		{
+			// Detach events if we previously had a renderer.
+			if (textRenderer != null)
 			{
-				// Detach events if we have one.
-				if (textRenderer != null)
+				// Disconnect from the events.
+				textRenderer.LineChanged -= OnLineChanged;
+			}
+
+			// Set the new buffer.
+			textRenderer = value;
+
+			// Configure the new layout buffer.
+			if (textRenderer != null)
+			{
+				// Reset the margins and force them to resize themselves.
+				margins.Resize(this);
+
+				// Hook up to the events.
+				textRenderer.LineChanged += OnLineChanged;
+
+				// Cause a complete redraw.
+				Caret.Position = new BufferPosition(0, 0);
+				ScrollToCaret();
+
+				// Reset the controller of any input states.
+				controller.Reset();
+			}
+			else
+			{
+				// Just scroll to the bottom.
+				if (verticalAdjustment != null)
 				{
-					// Disconnect from the events.
-					textRenderer.LineChanged -= OnLineChanged;
+					verticalAdjustment.SetBounds(0, 0, 0, 0, 0);
 				}
+			}
 
-				// Set the new buffer.
-				textRenderer = value;
+			// Raise an event to indicate we changed our renderer.
+			RaiseTextRendererChanged();
 
-				// Configure the new layout buffer.
-				if (textRenderer != null)
-				{
-					// Reset the margins and force them to resize themselves.
-					margins.Resize(this);
+			// Queue a redraw of the entire text editor.
+			QueueDraw();
+		}
 
-					// Hook up to the events.
-					textRenderer.LineChanged += OnLineChanged;
+		/// <summary>
+		/// Occurs when the text renderer is replaced.
+		/// </summary>
+		public event EventHandler TextRendererChanged;
 
-					// Cause a complete redraw.
-					Caret.Position = new BufferPosition(0, 0);
-					ScrollToCaret();
+		/// <summary>
+		/// Raises the text renderer changed event.
+		/// </summary>
+		protected virtual void RaiseTextRendererChanged()
+		{
+			var listeners = TextRendererChanged;
 
-					// Reset the controller of any input states.
-					controller.Reset();
-				}
-				else
-				{
-					// Just scroll to the bottom.
-					if (verticalAdjustment != null)
-					{
-						verticalAdjustment.SetBounds(0, 0, 0, 0, 0);
-					}
-				}
-
-				QueueDraw();
+			if (listeners != null)
+			{
+				listeners(this, EventArgs.Empty);
 			}
 		}
 
