@@ -142,7 +142,8 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <value>The line buffer.</value>
 		public LineBuffer LineBuffer
 		{
-			get { return textRenderer.LineBuffer; }
+			[DebuggerStepThrough]
+			get { return textRenderer == null ? null : textRenderer.LineBuffer; }
 		}
 
 		/// <summary>
@@ -375,6 +376,12 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <returns></returns>
 		protected override bool OnKeyPressEvent(EventKey eventKey)
 		{
+			// If we don't have a line buffer, don't do anything.
+			if (LineBuffer == null)
+			{
+				return false;
+			}
+
 			// Decompose the key into its components.
 			ModifierType modifier;
 			Key key;

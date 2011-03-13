@@ -35,11 +35,23 @@ namespace MfGames.GtkExt.LineTextEditor.Events
 	/// </summary>
 	public class LineChangedArgs : EventArgs
 	{
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LineChangedArgs"/> class.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
 		public LineChangedArgs(int lineIndex)
 		{
 			LineIndex = lineIndex;
 		}
 
+		#endregion
+
+		/// <summary>
+		/// Gets or sets the index of the line for the arguments.
+		/// </summary>
+		/// <value>The index of the line.</value>
 		public int LineIndex { get; set; }
 	}
 }

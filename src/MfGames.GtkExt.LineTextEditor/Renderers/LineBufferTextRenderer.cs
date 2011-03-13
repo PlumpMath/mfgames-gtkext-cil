@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
@@ -78,6 +79,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <value>The line buffer.</value>
 		public override LineBuffer LineBuffer
 		{
+			[DebuggerStepThrough]
 			get { return lineBuffer; }
 		}
 
