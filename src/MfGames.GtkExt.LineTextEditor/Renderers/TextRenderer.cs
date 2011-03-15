@@ -98,9 +98,15 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <returns></returns>
 		public virtual Layout GetLineLayout(int lineIndex)
 		{
+			// Get the layout.
 			var layout = new Layout(DisplayContext.PangoContext);
 
-			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextLineStyle);
+			// Assign the given style to the layout.
+			LineStyle style = GetLineStyle(lineIndex);
+
+			DisplayContext.SetLayout(layout, style);
+
+			// Set the markup and return.
 			layout.SetMarkup(GetSelectionMarkup(lineIndex));
 
 			return layout;
