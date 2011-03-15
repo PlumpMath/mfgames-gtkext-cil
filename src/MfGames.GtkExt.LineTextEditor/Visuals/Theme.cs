@@ -31,6 +31,7 @@ using MfGames.GtkExt.LineTextEditor.Enumerations;
 using Pango;
 
 using Color=Cairo.Color;
+using IDictionary=System.Collections.Generic;
 
 #endregion
 
@@ -168,7 +169,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the selector styles.
 		/// </summary>
 		/// <value>The selectors.</value>
-		public HashDictionary<string, LineStyle> LineStyles
+		public IDictionary<string, LineStyle> LineStyles
 		{
 			get { return lineStyles; }
 		}
@@ -210,7 +211,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the indicator styles in this theme.
 		/// </summary>
 		/// <value>The indicator styles.</value>
-		public HashDictionary<string, IndicatorStyle> IndicatorStyles
+		public IDictionary<string, IndicatorStyle> IndicatorStyles
 		{
 			get { return indicatorStyles; }
 		}
