@@ -436,7 +436,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			}
 
 			// Otherwise, return a sane default.
-			return FontCache.GetFontDescription("Sans 12");
+			return FontDescriptionCache.GetFontDescription("Sans 12");
 		}
 
 		/// <summary>

@@ -64,6 +64,7 @@
     <Compile Include="Extensions\Cairo\CairoRectangleExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutLineExtensions.cs" />
+    <Compile Include="FontDescriptionCache.cs" />
     <Compile Include="GdkUtility.cs" />
     <Compile Include="LabelWidgetTable.cs" />
     <Compile Include="PangoUtility.cs" />

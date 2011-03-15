@@ -24,34 +24,34 @@
 
 #region Namespaces
 
-using C5;
+using System.Collections.Generic;
 
 using Pango;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt
 {
 	/// <summary>
 	/// Implements a basic font change for Pango fonts.
 	/// </summary>
-	internal static class FontCache
+	public static class FontDescriptionCache
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes the <see cref="FontCache"/> class.
+		/// Initializes the <see cref="FontDescriptionCache"/> class.
 		/// </summary>
-		static FontCache()
+		static FontDescriptionCache()
 		{
-			fonts = new HashDictionary<string, FontDescription>();
+			fonts = new Dictionary<string, FontDescription>();
 		}
 
 		#endregion
 
 		#region Caching
 
-		private static readonly HashDictionary<string, FontDescription> fonts;
+		private static readonly Dictionary<string, FontDescription> fonts;
 
 		/// <summary>
 		/// Loads and caches a font description from the given name.
@@ -61,7 +61,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		public static FontDescription GetFontDescription(string fontName)
 		{
 			// Check to see if the cache already has it.
-			if (!fonts.Contains(fontName))
+			if (!fonts.ContainsKey(fontName))
 			{
 				fonts[fontName] = FontDescription.FromString(fontName);
 			}
