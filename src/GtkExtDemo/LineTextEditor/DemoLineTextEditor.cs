@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Text;
 
 using C5;
 
@@ -43,6 +44,8 @@ using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
+using ActionEntry=Gtk.ActionEntry;
+
 #endregion
 
 namespace GtkExtDemo.LineTextEditor
@@ -51,7 +54,7 @@ namespace GtkExtDemo.LineTextEditor
 	/// Contains the basic control for showing off the features of the line
 	/// text editor.
 	/// </summary>
-	public class DemoLineTextEditor : VBox
+	public class DemoLineTextEditor : DemoTab
 	{
 		#region Constructors
 
@@ -90,15 +93,8 @@ namespace GtkExtDemo.LineTextEditor
 			hbox.PackStart(scrolledWindow, true, true, 0);
 			hbox.PackStart(indicatorBar, false, false, 4);
 
-			// Create the expander with the controls inside it.
-			var expander = CreateGuiExpander();
-
 			// Add the editor and the controls into a vertical box.
-			var vbox = new VBox(false, 0);
-			vbox.PackStart(hbox, true, true, 0);
-			vbox.PackStart(expander, false, false, 4);
-
-			PackStart(vbox, true, true, 2);
+			PackStart(hbox, true, true, 2);
 		}
 
 		#endregion
@@ -137,7 +133,7 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnEditableBufferButtonClicked(
+		private void OnSetStyledBuffer(
 			object sender,
 			EventArgs e)
 		{
@@ -151,7 +147,7 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnNoBufferButtonClicked(
+		private void OnClearBuffer(
 			object sender,
 			EventArgs e)
 		{
@@ -162,38 +158,73 @@ namespace GtkExtDemo.LineTextEditor
 
 		#region Setup
 
-		private Expander CreateGuiExpander()
-		{
-			// Create the expander and label it.
-			var expander = new Expander("Demo Controls");
-			expander.Expanded = true;
+        /// <summary>
+        /// Configures the GUI and allows a demo to add menu and widgets.
+        /// </summary>
+        /// <param name="demo">The demo.</param>
+        /// <param name="uiManager">The UI manager.</param>
+        public override void ConfigureGui(Demo demo, UIManager uiManager)
+        {
+            // Create the overlay menu items for this demo.
+            var uiInfo = new StringBuilder();
 
-			var vbox = new VBox();
-			expander.Add(vbox);
+            uiInfo.Append("<ui>");
+            uiInfo.Append("<menubar name='MenuBar'>");
+            uiInfo.Append("<menu action='DlteMenu'>");
+            uiInfo.Append("<menuitem action='DlteSetStyledBuffer'/>");
+            uiInfo.Append("<menuitem action='DlteSetLargeBuffer'/>");
+            uiInfo.Append("<menuitem action='DlteClearBuffer'/>");
+            uiInfo.Append("</menu>");
+            uiInfo.Append("</menubar>");
+            uiInfo.Append("</ui>");
 
-			// Create the buffer types dialog.
-			var editableBufferButton = new Button(new Label("Editable"));
-			editableBufferButton.Clicked += OnEditableBufferButtonClicked;
+            // Set up the action items for the menu.
+            var entries = new[]
+                          {
+                              // "File" Menu
+                              new ActionEntry(
+                                  "DlteMenu",
+                                  null,
+                                  "_Text Editor",
+                                  null,
+                                  null,
+                                  null),
+                              new ActionEntry(
+                                  "DlteSetStyledBuffer",
+                                  null,
+                                  "Set _Styled Buffer",
+                                  null,
+                                  null,
+                                  OnSetStyledBuffer), 
+                              new ActionEntry(
+                                  "DlteSetLargeBuffer",
+                                  null,
+                                  "Set _Large Buffer",
+                                  null,
+                                  null,
+                                  null), 
+                              new ActionEntry(
+                                  "DlteClearBuffer",
+                                  null,
+                                  "_Clear Buffer",
+                                  null,
+                                  null,
+                                  OnClearBuffer), 
+                          };
 
-			var noBufferButton = new Button(new Label("None"));
-			noBufferButton.Clicked += OnNoBufferButtonClicked;
+            // Append the elements to the UI.
+            // Build up the actions
+            var actions = new ActionGroup("group");
+            actions.Add(entries);
 
-			var setBufferButtons = new HButtonBox();
-			setBufferButtons.PackStart(editableBufferButton);
-			setBufferButtons.PackStart(noBufferButton);
+            uiManager.InsertActionGroup(actions, 0);
+            demo.AddAccelGroup(uiManager.AccelGroup);
 
-			var setBufferButtonsPadding = new HBox();
-			setBufferButtonsPadding.PackStart(setBufferButtons, false, false, 0);
-			setBufferButtonsPadding.PackStart(new Label(String.Empty), true, true, 0);
-			vbox.PackStart(setBufferButtonsPadding);
+            // Set up the interfaces from XML
+            uiManager.AddUiFromString(uiInfo.ToString());
+        }
 
-			// Return the resulting expander.
-			expander.ShowAll();
-
-			return expander;
-		}
-
-		#endregion
+	    #endregion
 
 		#endregion
 

@@ -27,6 +27,7 @@
   <ItemGroup>
     <Compile Include="Demo.cs" />
     <Compile Include="DemoComponents.cs" />
+    <Compile Include="DemoTab.cs" />
     <Compile Include="LineTextEditor\DemoLineTextEditor.cs" />
     <Compile Include="LineTextEditor\KeywordLineBuffer.cs" />
     <Compile Include="LineTextEditor\KeywordMarkupEntry.cs" />
