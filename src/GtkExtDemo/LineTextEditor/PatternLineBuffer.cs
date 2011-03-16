@@ -34,126 +34,128 @@ using MfGames.GtkExt.LineTextEditor.Interfaces;
 
 namespace GtkExtDemo.LineTextEditor
 {
-	/// <summary>
-	/// Implements a line buffer that produces a pattern of text which is suitable
-	/// for debugging or displaying the results of the line buffer.
-	/// </summary>
-	public class PatternLineBuffer : LineBuffer
-	{
-		#region Constructors
+    /// <summary>
+    /// Implements a line buffer that produces a pattern of text which is suitable
+    /// for debugging or displaying the results of the line buffer.
+    /// </summary>
+    public class PatternLineBuffer : LineBuffer
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PatternLineBuffer"/> class.
-		/// </summary>
-		/// <param name="lines">The lines.</param>
-		/// <param name="width">The width.</param>
-		/// <param name="divisor">The divisor which is used to create different lengths of lines.</param>
-		public PatternLineBuffer(
-			int lines,
-			int width,
-			int divisor)
-		{
-			this.lines = lines;
-			this.width = width;
-			this.divisor = divisor;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PatternLineBuffer"/> class.
+        /// </summary>
+        /// <param name="lines">The lines.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="divisor">The divisor which is used to create different lengths of lines.</param>
+        public PatternLineBuffer(
+            int lines,
+            int width,
+            int divisor)
+        {
+            this.lines = lines;
+            this.width = width;
+            this.divisor = divisor;
+        }
 
-		#endregion
+        #endregion
 
-		#region Buffer Viewing
+        #region Buffer Viewing
 
-		private static readonly string[] Words = new[]
-		                                         { "one", "two", "three", "four", };
+        private static readonly string[] Words = new[]
+                                                 {
+                                                     "one", "two", "three", "four"
+                                                     ,
+                                                 };
 
-		private readonly int divisor;
+        private readonly int divisor;
 
-		private readonly int lines;
-		private readonly int width;
+        private readonly int lines;
+        private readonly int width;
 
-		/// <summary>
-		/// Gets the line count.
-		/// </summary>
-		/// <value>The line count.</value>
-		public override int LineCount
-		{
-			get { return lines; }
-		}
+        /// <summary>
+        /// Gets the line count.
+        /// </summary>
+        /// <value>The line count.</value>
+        public override int LineCount
+        {
+            get { return lines; }
+        }
 
-		/// <summary>
-		/// If set to <see langword="true"/>, the buffer is read-only and the editing
-		/// commands should throw an <see cref="InvalidOperationException"/>.
-		/// </summary>
-		/// <value></value>
-		public override bool ReadOnly
-		{
-			get { return true; }
-		}
+        /// <summary>
+        /// If set to <see langword="true"/>, the buffer is read-only and the editing
+        /// commands should throw an <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <value></value>
+        public override bool ReadOnly
+        {
+            get { return true; }
+        }
 
-		public override int GetLineLength(int lineIndex)
-		{
-			return GetLineText(lineIndex, 0, Int32.MaxValue).Length;
-		}
+        public override int GetLineLength(int lineIndex)
+        {
+            return GetLineText(lineIndex, null).Length;
+        }
 
-		public override string GetLineNumber(int lineIndex)
-		{
-			// Line numebers are given as 1-based instead of 0-based.
-			return (lineIndex + 1).ToString("N0");
-		}
+        public override string GetLineNumber(int lineIndex)
+        {
+            // Line numebers are given as 1-based instead of 0-based.
+            return (lineIndex + 1).ToString("N0");
+        }
 
-		public override string GetLineText(
-			int lineIndex,
-			int startIndex,
-			int endIndex)
-		{
-			// Build up a string buffer with the line text. This will always
-			// be no more than the width of the line.
-			var buffer = new StringBuilder();
+        public override string GetLineText(
+            int lineIndex,
+            CharacterRange characters)
+        {
+            // Build up a string buffer with the line text. This will always
+            // be no more than the width of the line.
+            var buffer = new StringBuilder();
 
-			buffer.AppendFormat("Line {0:N0}: ", lineIndex + 1);
+            buffer.AppendFormat("Line {0:N0}: ", lineIndex + 1);
 
-			// Create a patterned line with a varying length.
-			int index = lineIndex % Words.Length;
-			int lineWidth = width / (1 + lineIndex % divisor);
+            // Create a patterned line with a varying length.
+            int index = lineIndex % Words.Length;
+            int lineWidth = width / (1 + lineIndex % divisor);
 
-			while (buffer.Length < lineWidth)
-			{
-				// Get the next word we'll be adding to the line.
-				string nextWord = Words[index];
-				index = (index + 1) % Words.Length;
+            while (buffer.Length < lineWidth)
+            {
+                // Get the next word we'll be adding to the line.
+                string nextWord = Words[index];
+                index = (index + 1) % Words.Length;
 
-				// Scatter in some warnings and errors.
-				if (index == 0 && (lineIndex % 229) == 0)
-				{
-					nextWord = "error";
-				}
+                // Scatter in some warnings and errors.
+                if (index == 0 && (lineIndex % 229) == 0)
+                {
+                    nextWord = "error";
+                }
 
-				if (index == 0 && (lineIndex % 113) == 0)
-				{
-					nextWord = "warning";
-				}
+                if (index == 0 && (lineIndex % 113) == 0)
+                {
+                    nextWord = "warning";
+                }
 
-				// Append the word to the string along with a space.
-				buffer.Append(nextWord);
-				buffer.Append(" ");
-			}
+                // Append the word to the string along with a space.
+                buffer.Append(nextWord);
+                buffer.Append(" ");
+            }
 
-			// Trim off the trailing space and return it.
-			return buffer.ToString().Trim();
-		}
+            // Trim off the trailing space and return it.
+            return characters.Substring(buffer.ToString().Trim());
+        }
 
-		#endregion
+        #endregion
 
-		#region Buffer Operations
+        #region Buffer Operations
 
-		/// <summary>
-		/// Performs the given operation, raising any events for changing.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public override void Do(ILineBufferOperation operation)
-		{
-			throw new InvalidOperationException();
-		}
+        /// <summary>
+        /// Performs the given operation, raising any events for changing.
+        /// </summary>
+        /// <param name="operation">The operation.</param>
+        public override void Do(ILineBufferOperation operation)
+        {
+            throw new InvalidOperationException();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

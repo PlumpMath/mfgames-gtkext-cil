@@ -83,6 +83,7 @@
     <Compile Include="Attributes\ActionStateAttribute.cs" />
     <Compile Include="Attributes\KeyBindingAttribute.cs" />
     <Compile Include="Buffers\BufferSegment.cs" />
+    <Compile Include="Buffers\CharacterRange.cs" />
     <Compile Include="Renderers\Cache\CachedLine.cs" />
     <Compile Include="Renderers\Cache\CachedTextRenderer.cs" />
     <Compile Include="Renderers\Cache\CachedWindow.cs" />
