@@ -42,7 +42,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 	/// parent elements are checked. This allows for simple changes at higher
 	/// levels to cascade down to child elements.
 	/// </summary>
-	public class LineStyle
+	public class LineStyle : BlockStyle
 	{
 		#region Constructors
 

@@ -90,7 +90,7 @@ namespace GtkExtDemo.LineTextEditor
 			indicatorBar.SetSizeRequest(20, 1);
 
             // Create the drop down list with the enumerations.
-            var lineStyleCombo = new EnumComboBox(typeof(LineStyle));
+            var lineStyleCombo = new EnumComboBox(typeof(LineStyleType));
 
 			// Add the editor and bar to the current tab.
 			var editorBand = new HBox(false, 0);

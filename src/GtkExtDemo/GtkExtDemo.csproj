@@ -32,7 +32,7 @@
     <Compile Include="LineTextEditor\KeywordLineBuffer.cs" />
     <Compile Include="LineTextEditor\KeywordMarkupEntry.cs" />
     <Compile Include="LineTextEditor\KeywordMarkupType.cs" />
-    <Compile Include="LineTextEditor\LineStyle.cs" />
+    <Compile Include="LineTextEditor\LineStyleType.cs" />
     <Compile Include="LineTextEditor\PatternLineBuffer.cs" />
     <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>

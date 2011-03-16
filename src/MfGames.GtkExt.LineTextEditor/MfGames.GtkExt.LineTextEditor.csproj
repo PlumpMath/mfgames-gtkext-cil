@@ -126,6 +126,7 @@
     <Compile Include="DisplaySettings.cs" />
     <Compile Include="Renderers\TextRendererDecorator.cs" />
     <Compile Include="Tests\EnglishWordSplitterTests.cs" />
+    <Compile Include="Visuals\BlockStyle.cs" />
     <Compile Include="Visuals\Border.cs" />
     <Compile Include="Visuals\Borders.cs" />
     <Compile Include="Visuals\IndicatorStyle.cs" />
