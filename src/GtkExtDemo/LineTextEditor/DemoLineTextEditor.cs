@@ -33,6 +33,7 @@ using Cairo;
 
 using Gtk;
 
+using MfGames.GtkExt;
 using MfGames.GtkExt.LineTextEditor;
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Commands;
@@ -88,13 +89,27 @@ namespace GtkExtDemo.LineTextEditor
 			indicatorBar = new TextIndicatorBar(textEditor);
 			indicatorBar.SetSizeRequest(20, 1);
 
+            // Create the drop down list with the enumerations.
+            var lineStyleCombo = new EnumComboBox(typeof(LineStyle));
+
 			// Add the editor and bar to the current tab.
-			var hbox = new HBox(false, 0);
-			hbox.PackStart(scrolledWindow, true, true, 0);
-			hbox.PackStart(indicatorBar, false, false, 4);
+			var editorBand = new HBox(false, 0);
+			editorBand.PackStart(scrolledWindow, true, true, 0);
+			editorBand.PackStart(indicatorBar, false, false, 4);
+
+            // Controls band
+            var controlsBand = new HBox(false, 0);
+            controlsBand.PackStart(lineStyleCombo, false, false, 0);
+            controlsBand.PackStart(new Label(), true, true, 0);
+
+            // Create a vbox and use it to add the combo boxes.
+            var verticalLayout = new VBox(false, 4);
+            verticalLayout.BorderWidth = 4;
+            verticalLayout.PackStart(controlsBand, false, false, 0);
+            verticalLayout.PackStart(editorBand, true, true, 4);
 
 			// Add the editor and the controls into a vertical box.
-			PackStart(hbox, true, true, 2);
+			PackStart(verticalLayout, true, true, 2);
 		}
 
 		#endregion
