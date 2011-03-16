@@ -128,8 +128,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// If the positions are equal, then no.
 			if (startPosition == endPosition)
 			{
-				startCharacterIndex = -1;
-				endCharacterIndex = -1;
+				startCharacterIndex = 0;
+				endCharacterIndex = 0;
 				return false;
 			}
 
@@ -137,8 +137,8 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			// isn't in the range.
 			if (lineIndex < startPosition.LineIndex || lineIndex > endPosition.LineIndex)
 			{
-				startCharacterIndex = -1;
-				endCharacterIndex = -1;
+				startCharacterIndex = 0;
+				endCharacterIndex = 0;
 				return false;
 			}
 
@@ -163,7 +163,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			if (lineIndex == startPosition.LineIndex)
 			{
 				startCharacterIndex = startPosition.CharacterIndex;
-				endCharacterIndex = -1;
+				endCharacterIndex = Int32.MaxValue;
 				return true;
 			}
 

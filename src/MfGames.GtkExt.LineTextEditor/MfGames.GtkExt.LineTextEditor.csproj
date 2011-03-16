@@ -114,6 +114,7 @@
     <Compile Include="Interfaces\ILineBufferOperation.cs" />
     <Compile Include="Interfaces\ILineIndicator.cs" />
     <Compile Include="Renderers\LineBufferTextRenderer.cs" />
+    <Compile Include="Renderers\SelectionHelper.cs" />
     <Compile Include="Renderers\TextRenderer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="DisplaySettings.cs" />
     <Compile Include="Renderers\TextRendererDecorator.cs" />
     <Compile Include="Tests\EnglishWordSplitterTests.cs" />
+    <Compile Include="Tests\SelectionHelperTests.cs" />
     <Compile Include="Visuals\BlockStyle.cs" />
     <Compile Include="Visuals\Border.cs" />
     <Compile Include="Visuals\Borders.cs" />
