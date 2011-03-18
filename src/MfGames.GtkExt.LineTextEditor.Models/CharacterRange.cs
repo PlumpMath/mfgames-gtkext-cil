@@ -33,17 +33,17 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 	/// <summary>
 	/// Defines a range of characters from the start to the end.
 	/// </summary>
-	public class CharacterRange
+	public struct CharacterRange
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CharacterRange"/> class.
+		/// Initializes a new instance of the <see cref="CharacterRange"/> struct.
 		/// </summary>
-		public CharacterRange()
+		/// <param name="startIndex">The start index.</param>
+		public CharacterRange(int startIndex)
+			: this(startIndex, Int32.MaxValue)
 		{
-			startIndex = 0;
-			endIndex = Int32.MaxValue;
 		}
 
 		/// <summary>

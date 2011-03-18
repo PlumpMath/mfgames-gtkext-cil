@@ -89,9 +89,14 @@ namespace GtkExtDemo.LineTextEditor
 			get { return true; }
 		}
 
+		/// <summary>
+		/// Gets the length of the entire line.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer.</param>
+		/// <returns>The length of the line.</returns>
 		public override int GetLineLength(int lineIndex)
 		{
-			return GetLineText(lineIndex, null).Length;
+			return GetLineText(lineIndex, new CharacterRange(0)).Length;
 		}
 
 		public override string GetLineNumber(int lineIndex)

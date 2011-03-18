@@ -61,7 +61,7 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 
 			for (int line = 0; line < lineCount; line++)
 			{
-				lines.Add(buffer.GetLineText(line, new CharacterRange()));
+				lines.Add(buffer.GetLineText(line, new CharacterRange(0)));
 			}
 		}
 

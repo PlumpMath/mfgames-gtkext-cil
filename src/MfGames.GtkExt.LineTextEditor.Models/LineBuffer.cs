@@ -78,7 +78,7 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 		/// <returns></returns>
 		public string GetLineText(int lineIndex)
 		{
-			return GetLineText(lineIndex, new CharacterRange());
+			return GetLineText(lineIndex, new CharacterRange(0));
 		}
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 		/// <returns></returns>
 		public virtual string GetLineMarkup(int lineIndex)
 		{
-			string text = GetLineText(lineIndex, new CharacterRange());
+			string text = GetLineText(lineIndex, new CharacterRange(0));
 
 			return PangoUtility.Escape(text);
 		}
