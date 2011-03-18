@@ -30,15 +30,15 @@ using System.ComponentModel;
 
 namespace GtkExtDemo.LineTextEditor
 {
-    /// <summary>
-    /// Contains the various line styles used by the demo.
-    /// </summary>
-    public enum DemoLineStyleType
-    {
-        /// <summary>
-        /// Represents the default font style.
-        /// </summary>
-        [Description("Default (D:)")]
-        Default,
-    }
+	/// <summary>
+	/// Contains the various line styles used by the demo.
+	/// </summary>
+	public enum DemoLineStyleType
+	{
+		/// <summary>
+		/// Represents the default font style.
+		/// </summary>
+		[Description("Default (D:)")]
+		Default,
+	}
 }

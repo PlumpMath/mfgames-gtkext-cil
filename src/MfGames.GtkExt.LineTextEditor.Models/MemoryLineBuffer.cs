@@ -147,8 +147,7 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 					lines[setTextOperation.LineIndex] = setTextOperation.Text;
 
 					// Fire a line changed operation.
-					RaiseLineChanged(
-						new LineChangedArgs(setTextOperation.LineIndex));
+					RaiseLineChanged(new LineChangedArgs(setTextOperation.LineIndex));
 					break;
 
 				case LineBufferOperationType.InsertLines:
@@ -156,19 +155,15 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 					var insertLinesOperation = (InsertLinesOperation) operation;
 
 					// Insert the new lines into the buffer.
-					for (int index = 0;
-					     index < insertLinesOperation.Count;
-					     index++)
+					for (int index = 0; index < insertLinesOperation.Count; index++)
 					{
-						lines.Insert(
-							insertLinesOperation.LineIndex, string.Empty);
+						lines.Insert(insertLinesOperation.LineIndex, string.Empty);
 					}
 
 					// Fire an insert line change.
 					RaiseLinesInserted(
 						new LineRangeEventArgs(
-							insertLinesOperation.LineIndex,
-							insertLinesOperation.Count));
+							insertLinesOperation.LineIndex, insertLinesOperation.Count));
 					break;
 
 				case LineBufferOperationType.DeleteLines:
@@ -177,14 +172,12 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 
 					// Delete the lines from the buffer.
 					lines.RemoveRange(
-						deleteLinesOperation.LineIndex,
-						deleteLinesOperation.Count);
+						deleteLinesOperation.LineIndex, deleteLinesOperation.Count);
 
 					// Fire an delete line change.
 					RaiseLinesDeleted(
 						new LineRangeEventArgs(
-							deleteLinesOperation.LineIndex,
-							deleteLinesOperation.Count));
+							deleteLinesOperation.LineIndex, deleteLinesOperation.Count));
 					break;
 			}
 		}

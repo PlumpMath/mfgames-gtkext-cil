@@ -421,7 +421,8 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			}
 
 			// Add in the text inside the selection.
-			string innerSelectionMarkup = markup.Substring(startIndex, endIndex - startIndex);
+			string innerSelectionMarkup = markup.Substring(
+				startIndex, endIndex - startIndex);
 
 			buffer.Append(innerSelectionMarkup);
 
@@ -446,7 +447,12 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 				}
 
 				// Get all the tags in the leading markup.
-				GetOpenTags(innerSelectionMarkup, 0, endIndex - startIndex, leadingXmlDepth, ref trailingTags);
+				GetOpenTags(
+					innerSelectionMarkup,
+					0,
+					endIndex - startIndex,
+					leadingXmlDepth,
+					ref trailingTags);
 
 				// Close all the leading tags in reverse order.
 				for (int index = trailingXmlDepth - 1; index >= 0; index--)

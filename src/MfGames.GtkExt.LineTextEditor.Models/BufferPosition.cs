@@ -24,12 +24,6 @@
 
 #region Namespaces
 
-using Cairo;
-
-using Pango;
-
-using Rectangle=Pango.Rectangle;
-
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Models

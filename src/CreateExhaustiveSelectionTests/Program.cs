@@ -1,4 +1,4 @@
-﻿#region Copyright and License
+#region Copyright and License
 
 // Copyright (c) 2009-2011, Moonfire Games
 // 
@@ -45,87 +45,16 @@ namespace PatternBuilder
 		private const int Length = 7;
 
 		/// <summary>
-		/// Main entry point into the generator.
+		/// Writes out the final boilerplate for the writers.
 		/// </summary>
-		private static void Main()
+		/// <param name="writers">The writers.</param>
+		private static void CloseWriter(params TextWriter[] writers)
 		{
-			// Create the output file and write to it.
-			using (TextWriter simple24 = CreateWriter("SimpleCenterSelectionExhaustiveTests"))
-			using (TextWriter attr24 = CreateWriter("AttributeCenterSelectionExhaustiveTests"))
-			using (TextWriter entity24 = CreateWriter("EntityCenterSelectionExhaustiveTests"))
-			using (TextWriter simple04 = CreateWriter("SimpleStartSelectionExhaustiveTests"))
-			using (TextWriter attr04 = CreateWriter("AttributeStartSelectionExhaustiveTests"))
-			using (TextWriter entity04 = CreateWriter("EntityStartSelectionExhaustiveTests"))
-			using (TextWriter simple27 = CreateWriter("SimpleEndSelectionExhaustiveTests"))
-			using (TextWriter attr27 = CreateWriter("AttributeEndSelectionExhaustiveTests"))
-			using (TextWriter entity27 = CreateWriter("EntityEndSelectionExhaustiveTests"))
+			foreach (TextWriter writer in writers)
 			{
-				{
-					// Start by looping through the first level tags.
-					for (int a0 = -1; a0 < Length; a0++)
-					{
-						for (int a1 = a0 + 1; a1 < Length; a1++)
-						{
-							// Generate a test that only uses a single attribute.
-							GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1);
-							GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1);
-							GenerateTest(simple27, attr27, entity27, 2, Length, a0, a1);
-
-							// If we are less than zero, we already have the empty
-							// pattern and we don't need to recurse.
-							if (a0 < 0)
-							{
-								break;
-							}
-
-							// Create tests for two tags, one inside the other.
-							for (int b0 = a0; b0 <= a1; b0++)
-							{
-								for (int b1 = b0 + 1; b1 <= a1; b1++)
-								{
-									// Generate the test.
-									GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1, b0, b1);
-									GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1, b0, b1);
-									GenerateTest(simple27, attr27, entity27, 2, Length, a0, a1, b0, b1);
-
-									// Add a third tag on the same level as the one
-									// above it, but not overlapping with the b tags.
-									for (int c0 = b1; c0 <= a1; c0++)
-									{
-										for (int c1 = c0 + 1; c1 <= a1; c1++)
-										{
-											GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1, b0, b1, c0, c1);
-											GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1, b0, b1, c0, c1);
-											GenerateTest(simple27, attr27, entity27, 2, Length, a0, a1, b0, b1, c0, c1);
-										}
-									}
-								}
-							}
-
-							// Create a test where A and B are non-overlapping tests.
-							for (int b0 = a1; b0 < Length; b0++)
-							{
-								for (int b1 = b0 + 1; b1 < Length; b1++)
-								{
-									// Create the non-overlapping tests.
-									GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1, b0, b1);
-									GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1, b0, b1);
-									GenerateTest(simple27, attr27, entity27, 2, Length, a0, a1, b0, b1);
-								}
-							}
-						}
-					}
-				}
-				
-				// Close all the writers.
-				CloseWriter(simple24, attr24, entity24);
-				CloseWriter(simple04, attr04, entity04);
-				CloseWriter(simple27, attr27, entity27);
+				writer.WriteLine("\t}");
+				writer.WriteLine("}");
 			}
-
-			// We are done, show something to the user.
-			Console.WriteLine("Press ENTER to quit.");
-			Console.ReadLine();
 		}
 
 		/// <summary>
@@ -136,9 +65,10 @@ namespace PatternBuilder
 		private static TextWriter CreateWriter(string basename)
 		{
 			// Create a text writer out of the stream.
-			FileStream stream = File.Open(basename + ".cs", FileMode.Create, FileAccess.Write);
+			FileStream stream = File.Open(
+				basename + ".cs", FileMode.Create, FileAccess.Write);
 			var writer = new StreamWriter(stream);
-			
+
 			// Add the boilerplate for the beginning of the file.
 			writer.WriteLine("#region Namespaces");
 			writer.WriteLine("");
@@ -154,30 +84,151 @@ namespace PatternBuilder
 			writer.WriteLine("namespace MfGames.GtkExt.LineTextEditor.Tests");
 			writer.WriteLine("{");
 			writer.WriteLine("\t/// <summary>");
-			writer.WriteLine("\t/// Performs a series of exhaustive tests on the selection using data generated");
+			writer.WriteLine(
+				"\t/// Performs a series of exhaustive tests on the selection using data generated");
 			writer.WriteLine("\t/// by the CreateExhaustiveSelectionTests project.");
 			writer.WriteLine("\t/// </summary>");
 			writer.WriteLine("\t[TestFixture]");
-			writer.WriteLine("\tpublic class " + basename + " : SelectionHelperExhaustiveTests");
+			writer.WriteLine(
+				"\tpublic class " + basename + " : SelectionHelperExhaustiveTests");
 			writer.WriteLine("\t{");
 
 			// Return the resulting writer.
 			return writer;
 		}
-		
+
 		/// <summary>
-		/// Writes out the final boilerplate for the writers.
+		/// Main entry point into the generator.
 		/// </summary>
-		/// <param name="writers">The writers.</param>
-		private static void CloseWriter(params TextWriter[] writers)
+		private static void Main()
 		{
-			foreach (TextWriter writer in writers)
+			// Create the output file and write to it.
+			using (
+				TextWriter simple24 = CreateWriter("SimpleCenterSelectionExhaustiveTests"))
 			{
-				writer.WriteLine("\t}");
-				writer.WriteLine("}");
+				using (
+					TextWriter attr24 = CreateWriter("AttributeCenterSelectionExhaustiveTests")
+					)
+				{
+					using (
+						TextWriter entity24 = CreateWriter("EntityCenterSelectionExhaustiveTests")
+						)
+					{
+						using (
+							TextWriter simple04 = CreateWriter("SimpleStartSelectionExhaustiveTests")
+							)
+						{
+							using (
+								TextWriter attr04 =
+									CreateWriter("AttributeStartSelectionExhaustiveTests"))
+							{
+								using (
+									TextWriter entity04 =
+										CreateWriter("EntityStartSelectionExhaustiveTests"))
+								{
+									using (
+										TextWriter simple27 = CreateWriter(
+											"SimpleEndSelectionExhaustiveTests"))
+									{
+										using (
+											TextWriter attr27 =
+												CreateWriter("AttributeEndSelectionExhaustiveTests"))
+										{
+											using (
+												TextWriter entity27 =
+													CreateWriter("EntityEndSelectionExhaustiveTests"))
+											{
+												{
+													// Start by looping through the first level tags.
+													for (int a0 = -1; a0 < Length; a0++)
+													{
+														for (int a1 = a0 + 1; a1 < Length; a1++)
+														{
+															// Generate a test that only uses a single attribute.
+															GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1);
+															GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1);
+															GenerateTest(simple27, attr27, entity27, 2, Length, a0, a1);
+
+															// If we are less than zero, we already have the empty
+															// pattern and we don't need to recurse.
+															if (a0 < 0)
+															{
+																break;
+															}
+
+															// Create tests for two tags, one inside the other.
+															for (int b0 = a0; b0 <= a1; b0++)
+															{
+																for (int b1 = b0 + 1; b1 <= a1; b1++)
+																{
+																	// Generate the test.
+																	GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1, b0, b1);
+																	GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1, b0, b1);
+																	GenerateTest(
+																		simple27, attr27, entity27, 2, Length, a0, a1, b0, b1);
+
+																	// Add a third tag on the same level as the one
+																	// above it, but not overlapping with the b tags.
+																	for (int c0 = b1; c0 <= a1; c0++)
+																	{
+																		for (int c1 = c0 + 1; c1 <= a1; c1++)
+																		{
+																			GenerateTest(
+																				simple24, attr24, entity24, 2, 4, a0, a1, b0, b1, c0, c1);
+																			GenerateTest(
+																				simple04, attr04, entity04, 0, 4, a0, a1, b0, b1, c0, c1);
+																			GenerateTest(
+																				simple27,
+																				attr27,
+																				entity27,
+																				2,
+																				Length,
+																				a0,
+																				a1,
+																				b0,
+																				b1,
+																				c0,
+																				c1);
+																		}
+																	}
+																}
+															}
+
+															// Create a test where A and B are non-overlapping tests.
+															for (int b0 = a1; b0 < Length; b0++)
+															{
+																for (int b1 = b0 + 1; b1 < Length; b1++)
+																{
+																	// Create the non-overlapping tests.
+																	GenerateTest(simple24, attr24, entity24, 2, 4, a0, a1, b0, b1);
+																	GenerateTest(simple04, attr04, entity04, 0, 4, a0, a1, b0, b1);
+																	GenerateTest(
+																		simple27, attr27, entity27, 2, Length, a0, a1, b0, b1);
+																}
+															}
+														}
+													}
+												}
+
+												// Close all the writers.
+												CloseWriter(simple24, attr24, entity24);
+												CloseWriter(simple04, attr04, entity04);
+												CloseWriter(simple27, attr27, entity27);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
+
+			// We are done, show something to the user.
+			Console.WriteLine("Press ENTER to quit.");
+			Console.ReadLine();
 		}
-		
+
 		#region Pattern Generation
 
 		/// <summary>
@@ -291,7 +342,8 @@ namespace PatternBuilder
 			int a0,
 			int a1)
 		{
-			GenerateTest(simpleWriter, attributeWriter, entityWriter, s0, s1, a0, a1, -1, -1);
+			GenerateTest(
+				simpleWriter, attributeWriter, entityWriter, s0, s1, a0, a1, -1, -1);
 		}
 
 		/// <summary>
@@ -309,7 +361,8 @@ namespace PatternBuilder
 			int b0,
 			int b1)
 		{
-			GenerateTest(simpleWriter, attributeWriter, entityWriter, s0, s1, a0, a1, b0, b1, -1, -1);
+			GenerateTest(
+				simpleWriter, attributeWriter, entityWriter, s0, s1, a0, a1, b0, b1, -1, -1);
 		}
 
 		/// <summary>

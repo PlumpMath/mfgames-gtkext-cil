@@ -34,9 +34,9 @@ using MfGames.GtkExt;
 
 namespace GtkExtDemo
 {
-    /// <summary>
-    /// Shows off the various GtkExt components.
-    /// </summary>
+	/// <summary>
+	/// Shows off the various GtkExt components.
+	/// </summary>
 	public class DemoComponents : DemoTab
 	{
 		private readonly EnumComboBox testEnumCombo;

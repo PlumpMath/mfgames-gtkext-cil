@@ -35,8 +35,7 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 	/// by the CreateExhaustiveSelectionTests project.
 	/// </summary>
 	[TestFixture]
-	public class AttributeCenterSelectionExhaustiveTests
-		: ExhaustiveSelectionTests
+	public class AttributeCenterSelectionExhaustiveTests : ExhaustiveSelectionTests
 	{
 		/// <summary/>
 		[Test]

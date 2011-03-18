@@ -173,6 +173,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				textRenderer.LineBuffer = value;
 			}
 		}
+
 		/// <summary>
 		/// Gets or sets the line layout buffer.
 		/// </summary>

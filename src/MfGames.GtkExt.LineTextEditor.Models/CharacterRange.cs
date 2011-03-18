@@ -22,7 +22,11 @@
 
 #endregion
 
+#region Namespaces
+
 using System;
+
+#endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Models
 {
@@ -59,7 +63,8 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 
 			if (endIndex < startIndex)
 			{
-				throw new ArgumentOutOfRangeException("endIndex", "End index cannot be less than start index.");
+				throw new ArgumentOutOfRangeException(
+					"endIndex", "End index cannot be less than start index.");
 			}
 
 			this.startIndex = startIndex;
@@ -131,6 +136,5 @@ namespace MfGames.GtkExt.LineTextEditor.Models
 		}
 
 		#endregion
-
 	}
 }

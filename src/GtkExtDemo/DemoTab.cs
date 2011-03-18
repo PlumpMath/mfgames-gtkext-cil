@@ -30,22 +30,24 @@ using Gtk;
 
 namespace GtkExtDemo
 {
-    /// <summary>
-    /// Represents the common functionality of all the demo notebook tab.
-    /// </summary>
-    public abstract class DemoTab : VBox
-    {
-        #region GUI
+	/// <summary>
+	/// Represents the common functionality of all the demo notebook tab.
+	/// </summary>
+	public abstract class DemoTab : VBox
+	{
+		#region GUI
 
-        /// <summary>
-        /// Configures the GUI and allows a demo to add menu and widgets.
-        /// </summary>
-        /// <param name="demo">The demo.</param>
-        /// <param name="uiManager">The UI manager.</param>
-        public virtual void ConfigureGui(Demo demo, UIManager uiManager)
-        {
-        }
+		/// <summary>
+		/// Configures the GUI and allows a demo to add menu and widgets.
+		/// </summary>
+		/// <param name="demo">The demo.</param>
+		/// <param name="uiManager">The UI manager.</param>
+		public virtual void ConfigureGui(
+			Demo demo,
+			UIManager uiManager)
+		{
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

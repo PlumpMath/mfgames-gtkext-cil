@@ -25,7 +25,6 @@
 #region Namespaces
 
 using System;
-using System.Text;
 
 using C5;
 
@@ -43,8 +42,6 @@ using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 using MfGames.GtkExt.LineTextEditor.Models.Styles;
 using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
-
-using ActionEntry=Gtk.ActionEntry;
 
 #endregion
 
@@ -88,8 +85,8 @@ namespace GtkExtDemo.LineTextEditor
 			indicatorBar = new TextIndicatorBar(textEditor);
 			indicatorBar.SetSizeRequest(20, 1);
 
-            // Create the drop down list with the enumerations.
-            var lineStyleCombo = new EnumComboBox(typeof(DemoLineStyleType));
+			// Create the drop down list with the enumerations.
+			var lineStyleCombo = new EnumComboBox(typeof(DemoLineStyleType));
 			lineStyleCombo.Sensitive = false;
 
 			// Add the editor and bar to the current tab.
@@ -97,15 +94,15 @@ namespace GtkExtDemo.LineTextEditor
 			editorBand.PackStart(scrolledWindow, true, true, 0);
 			editorBand.PackStart(indicatorBar, false, false, 4);
 
-            // Controls band
-            var controlsBand = new HBox(false, 0);
-            controlsBand.PackStart(lineStyleCombo, false, false, 0);
-            controlsBand.PackStart(new Label(), true, true, 0);
+			// Controls band
+			var controlsBand = new HBox(false, 0);
+			controlsBand.PackStart(lineStyleCombo, false, false, 0);
+			controlsBand.PackStart(new Label(), true, true, 0);
 
-            // Create a vbox and use it to add the combo boxes.
-            var verticalLayout = new VBox(false, 4);
-            verticalLayout.BorderWidth = 4;
-            verticalLayout.PackStart(editorBand, true, true, 0);
+			// Create a vbox and use it to add the combo boxes.
+			var verticalLayout = new VBox(false, 4);
+			verticalLayout.BorderWidth = 4;
+			verticalLayout.PackStart(editorBand, true, true, 0);
 			verticalLayout.PackStart(controlsBand, false, false, 4);
 
 			// Add the editor and the controls into a vertical box.
@@ -144,6 +141,22 @@ namespace GtkExtDemo.LineTextEditor
 		#region Events
 
 		/// <summary>
+		/// Called when the No Buffer button is clicked.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnClearBuffer(
+			object sender,
+			EventArgs e)
+		{
+			// Clear the buffer.
+			textEditor.SetTextRenderer(null);
+
+			// Set the menu item toggle states.
+			SetBufferMenuStates(false, false, true);
+		}
+
+		/// <summary>
 		/// Called when the Editable Buffer button is clicked.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
@@ -179,27 +192,14 @@ namespace GtkExtDemo.LineTextEditor
 			SetBufferMenuStates(false, true, false);
 		}
 
-		/// <summary>
-		/// Called when the No Buffer button is clicked.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnClearBuffer(
-			object sender,
-			EventArgs e)
-		{
-			// Clear the buffer.
-			textEditor.SetTextRenderer(null);
-
-			// Set the menu item toggle states.
-			SetBufferMenuStates(false, false, true);
-		}
-
 		#endregion
 
 		#region Menus
 
-		private void SetBufferMenuStates(bool checkEditable, bool checkReadOnly, bool checkClear)
+		private void SetBufferMenuStates(
+			bool checkEditable,
+			bool checkReadOnly,
+			bool checkClear)
 		{
 			// Remove the events from the items to avoid callbacks on the items.
 			editableBufferMenuItem.Activated -= OnEditableBufferActivated;
@@ -221,16 +221,18 @@ namespace GtkExtDemo.LineTextEditor
 
 		#region Setup
 
+		private CheckMenuItem clearBufferMenuItem;
 		private CheckMenuItem editableBufferMenuItem;
 		private CheckMenuItem readOnlyBufferMenuItem;
-		private CheckMenuItem clearBufferMenuItem;
 
 		/// <summary>
 		/// Configures the GUI and allows a demo to add menu and widgets.
 		/// </summary>
 		/// <param name="demo">The demo.</param>
 		/// <param name="uiManager">The UI manager.</param>
-		public override void ConfigureGui(Demo demo, UIManager uiManager)
+		public override void ConfigureGui(
+			Demo demo,
+			UIManager uiManager)
 		{
 			// Get the menu and manually add the items.
 			var menubar = (MenuBar) uiManager.GetWidget("/MenuBar");

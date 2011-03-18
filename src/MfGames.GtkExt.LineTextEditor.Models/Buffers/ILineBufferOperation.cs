@@ -24,8 +24,6 @@
 
 #region Namespaces
 
-
-
 #endregion
 
 namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
