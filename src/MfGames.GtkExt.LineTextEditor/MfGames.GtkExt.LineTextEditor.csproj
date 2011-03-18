@@ -114,7 +114,7 @@
     <Compile Include="Interfaces\ILineBufferOperation.cs" />
     <Compile Include="Interfaces\ILineIndicator.cs" />
     <Compile Include="Renderers\LineBufferTextRenderer.cs" />
-    <Compile Include="Renderers\SelectionHelper.cs" />
+    <Compile Include="Renderers\SelectionRenderer.cs" />
     <Compile Include="Renderers\TextRenderer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
@@ -133,8 +133,8 @@
     <Compile Include="Tests\EntityCenterSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\EntityEndSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\EntityStartSelectionExhaustiveTests.cs" />
-    <Compile Include="Tests\SelectionHelperExhaustiveTests.cs" />
-    <Compile Include="Tests\SelectionHelperTests.cs" />
+    <Compile Include="Tests\ExhaustiveSelectionTests.cs" />
+    <Compile Include="Tests\SelectionRendererTests.cs" />
     <Compile Include="Tests\SimpleCenterSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\SimpleEndSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\SimpleStartSelectionExhaustiveTests.cs" />

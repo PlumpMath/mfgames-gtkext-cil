@@ -39,10 +39,8 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 	/// Performs a series of exhaustive tests on the selection using data generated
 	/// by the CreateExhaustiveSelectionTests project.
 	/// </summary>
-	public class SelectionHelperExhaustiveTests
+	public class ExhaustiveSelectionTests
 	{
-		#region Runner
-
 		/// <summary>
 		/// Performs one of the exhaustive tests by taking the input and applying
 		/// the selection to characters 3-4.
@@ -58,16 +56,15 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 			string desiredOutput)
 		{
 			// Setup
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(startIndex, endIndex);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(
+			string output = selectionRenderer.GetSelectionMarkup(
 				input, characters, "s", String.Empty);
 
 			// Verification
 			Assert.AreEqual(desiredOutput, output);
 		}
-
-		#endregion
 	}
 }

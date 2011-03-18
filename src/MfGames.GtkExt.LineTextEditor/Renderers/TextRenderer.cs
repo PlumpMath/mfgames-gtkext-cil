@@ -25,7 +25,6 @@
 #region Namespaces
 
 using System;
-using System.Text;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Events;
@@ -62,6 +61,8 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			}
 
 			DisplayContext = displayContext;
+			
+			selectionRenderer = new SelectionRenderer();
 		}
 
 		#endregion
@@ -460,6 +461,8 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 
 		#region Selection
 
+		private SelectionRenderer selectionRenderer;
+
 		/// <summary>
 		/// Gets the Pango markup for a given line.
 		/// </summary>
@@ -478,7 +481,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			if (containsLine)
 			{
 				// Apply the markup to the line.
-				return SelectionHelper.GetSelectionMarkup(
+				return selectionRenderer.GetSelectionMarkup(
 					markup, 
 					new CharacterRange(startCharacterIndex, endCharacterIndex));
 			}

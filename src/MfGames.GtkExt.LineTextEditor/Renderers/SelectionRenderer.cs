@@ -36,7 +36,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 	/// <summary>
 	/// Utility class for taking Pango markup and applying a selection to it.
 	/// </summary>
-	public static class SelectionHelper
+	public class SelectionRenderer
 	{
 		/// <summary>
 		/// Gets the indexes in the markup string for the given character range. This
@@ -310,7 +310,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <param name="pangoMarkup">The Pango markup to apply the selection.</param>
 		/// <param name="characters">The range of character to select.</param>
 		/// <returns>A Pango markup string with the selection applied.</returns>
-		public static string GetSelectionMarkup(
+		public string GetSelectionMarkup(
 			string pangoMarkup,
 			CharacterRange characters)
 		{
@@ -329,7 +329,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// <returns>
 		/// A Pango markup string with the selection applied.
 		/// </returns>
-		public static string GetSelectionMarkup(
+		public string GetSelectionMarkup(
 			string markup,
 			CharacterRange characters,
 			string selectionTag,

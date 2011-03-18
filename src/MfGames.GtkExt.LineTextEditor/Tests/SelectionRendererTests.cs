@@ -37,7 +37,7 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 	/// Tests the various functionality and markup of the selection helper.
 	/// </summary>
 	[TestFixture]
-	public class SelectionHelperTests
+	public class SelectionRendererTests
 	{
 		#region Simple Tests
 
@@ -49,10 +49,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			string markup = string.Empty;
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(1, 2);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(string.Empty, output);
@@ -66,10 +67,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = null;
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(1, 2);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.IsNull(output);
@@ -84,10 +86,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this is a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(0, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual("<span background='#CCCCFF'>this is a</span> string", output);
@@ -98,10 +101,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this is a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(1, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual("t<span background='#CCCCFF'>his is a</span> string", output);
@@ -112,10 +116,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this is a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, markup.Length);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual("this <span background='#CCCCFF'>is a string</span>", output);
@@ -126,10 +131,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this &#0069;s a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -141,10 +147,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this is &#0061; string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -156,10 +163,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this i&#0073; a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -171,10 +179,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this i&amp; a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -186,10 +195,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this is a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual("this <span background='#CCCCFF'>is a</span> string", output);
@@ -204,10 +214,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this i<span>s</span> a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -219,10 +230,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this <span>is a</span> string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -234,10 +246,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "thi<span>s is</span> a string";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -250,10 +263,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "thi<span>s is a str</span>ing";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
@@ -266,10 +280,11 @@ namespace MfGames.GtkExt.LineTextEditor.Tests
 		{
 			// Setup
 			const string markup = "this i<span>s a str</span>ing";
+			var selectionRenderer = new SelectionRenderer();
 			var characters = new CharacterRange(5, 9);
 
 			// Operation
-			string output = SelectionHelper.GetSelectionMarkup(markup, characters);
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
 			Assert.AreEqual(
