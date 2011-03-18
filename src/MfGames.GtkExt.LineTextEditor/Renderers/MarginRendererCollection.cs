@@ -90,14 +90,14 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		/// <summary>
 		/// Resizes the margins to fit the new line buffer.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		public void Resize(TextEditor textEditor)
+		/// <param name="editorView">The text editor.</param>
+		public void Resize(EditorView editorView)
 		{
 			Reset();
 
 			foreach (MarginRenderer marginRenderer in this)
 			{
-				marginRenderer.Resize(textEditor);
+				marginRenderer.Resize(editorView);
 			}
 		}
 

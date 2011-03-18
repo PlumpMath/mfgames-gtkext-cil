@@ -36,7 +36,6 @@ using MfGames.GtkExt;
 using MfGames.GtkExt.LineTextEditor;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Events;
-using MfGames.GtkExt.LineTextEditor.Indicators;
 using MfGames.GtkExt.LineTextEditor.Models;
 using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 using MfGames.GtkExt.LineTextEditor.Models.Styles;
@@ -61,12 +60,12 @@ namespace GtkExtDemo.LineTextEditor
 		public DemoLineTextEditor()
 		{
 			// Create the text editor with the resulting buffer.
-			textEditor = new TextEditor();
-			textEditor.SetTextRenderer(CreateRenderer());
-			textEditor.Controller.PopulateContextMenu += OnPopulateContextMenu;
+			editorView = new EditorView();
+			editorView.SetTextRenderer(CreateRenderer());
+			editorView.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
-			Theme theme = textEditor.Theme;
+			Theme theme = editorView.Theme;
 
 			theme.IndicatorStyles["Error"] = new IndicatorStyle(
 				"Error", 100, new Color(1, 0, 0));
@@ -79,11 +78,11 @@ namespace GtkExtDemo.LineTextEditor
 			// Wrap the text editor in a scrollbar.
 			var scrolledWindow = new ScrolledWindow();
 			scrolledWindow.VscrollbarPolicy = PolicyType.Always;
-			scrolledWindow.Add(textEditor);
+			scrolledWindow.Add(editorView);
 
 			// Create the indicator bar that is 10 px wide.
-			indicatorBar = new TextIndicatorBar(textEditor);
-			indicatorBar.SetSizeRequest(20, 1);
+			indicatorView = new IndicatorView(editorView);
+			indicatorView.SetSizeRequest(20, 1);
 
 			// Create the drop down list with the enumerations.
 			var lineStyleCombo = new EnumComboBox(typeof(DemoLineStyleType));
@@ -92,7 +91,7 @@ namespace GtkExtDemo.LineTextEditor
 			// Add the editor and bar to the current tab.
 			var editorBand = new HBox(false, 0);
 			editorBand.PackStart(scrolledWindow, true, true, 0);
-			editorBand.PackStart(indicatorBar, false, false, 4);
+			editorBand.PackStart(indicatorView, false, false, 4);
 
 			// Controls band
 			var controlsBand = new HBox(false, 0);
@@ -128,15 +127,15 @@ namespace GtkExtDemo.LineTextEditor
 			var keywordBuffer = new KeywordLineBuffer(lineBuffer);
 
 			// Finally, wrap it in a cached buffer.
-			return new CachedTextRenderer(textEditor, keywordBuffer);
+			return new CachedTextRenderer(editorView, keywordBuffer);
 		}
 
 		#endregion
 
 		#region Widgets
 
-		private readonly TextIndicatorBar indicatorBar;
-		private readonly TextEditor textEditor;
+		private readonly IndicatorView indicatorView;
+		private readonly EditorView editorView;
 
 		#region Events
 
@@ -150,7 +149,7 @@ namespace GtkExtDemo.LineTextEditor
 			EventArgs e)
 		{
 			// Clear the buffer.
-			textEditor.SetTextRenderer(null);
+			editorView.SetTextRenderer(null);
 
 			// Set the menu item toggle states.
 			SetBufferMenuStates(false, false, true);
@@ -168,7 +167,7 @@ namespace GtkExtDemo.LineTextEditor
 			// Create the buffer and set it.
 			TextRenderer textRenderer = CreateRenderer();
 
-			textEditor.SetTextRenderer(textRenderer);
+			editorView.SetTextRenderer(textRenderer);
 
 			// Set the menu item toggle states.
 			SetBufferMenuStates(true, false, false);
@@ -186,7 +185,7 @@ namespace GtkExtDemo.LineTextEditor
 			// Create the buffer and set it.
 			TextRenderer textRenderer = CreateRenderer();
 
-			textEditor.SetTextRenderer(textRenderer);
+			editorView.SetTextRenderer(textRenderer);
 
 			// Set the menu item toggle states.
 			SetBufferMenuStates(false, true, false);
@@ -298,7 +297,7 @@ namespace GtkExtDemo.LineTextEditor
 		{
 			// Go through all the lines in the selection or if there is no
 			// selection, then just the current line.
-			Caret caret = textEditor.Caret;
+			Caret caret = editorView.Caret;
 			var command = new Command(caret.Position);
 
 			if (caret.Selection.IsEmpty || caret.Selection.IsSameLine)
@@ -316,7 +315,7 @@ namespace GtkExtDemo.LineTextEditor
 			}
 
 			// Perform the command.
-			textEditor.Controller.Do(command);
+			editorView.Controller.Do(command);
 		}
 
 		/// <summary>
@@ -329,7 +328,7 @@ namespace GtkExtDemo.LineTextEditor
 			int lineIndex)
 		{
 			// Get the original line text.
-			string lineText = textEditor.LineBuffer.GetLineText(lineIndex);
+			string lineText = editorView.LineBuffer.GetLineText(lineIndex);
 
 			// Create a reverse of the text.
 			var characters = new ArrayList<char>();

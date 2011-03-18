@@ -38,6 +38,7 @@ using GLib;
 
 using Gtk;
 
+using MfGames.GtkExt.LineTextEditor.Indicators;
 using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 using MfGames.GtkExt.LineTextEditor.Models.Styles;
 using MfGames.GtkExt.LineTextEditor.Renderers;
@@ -48,32 +49,32 @@ using Rectangle=Gdk.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Indicators
+namespace MfGames.GtkExt.LineTextEditor
 {
 	/// <summary>
 	/// Implements a visual bar of indicators from a given line buffer.
 	/// </summary>
-	public class TextIndicatorBar : DrawingArea
+	public class IndicatorView : DrawingArea
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextIndicatorBar"/> class.
+		/// Initializes a new instance of the <see cref="IndicatorView"/> class.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		public TextIndicatorBar(TextEditor textEditor)
+		/// <param name="editorView">The text editor.</param>
+		public IndicatorView(EditorView editorView)
 		{
 			// Save the control variables.
-			if (textEditor == null)
+			if (editorView == null)
 			{
-				throw new ArgumentNullException("textEditor");
+				throw new ArgumentNullException("editorView");
 			}
 
-			TextEditor = textEditor;
+			EditorView = editorView;
 
 			// Hoop up to the text editor event.
-			textEditor.TextRendererChanged += OnTextRendererChanged;
-			SetTextRenderer(textEditor.TextRenderer);
+			editorView.TextRendererChanged += OnTextRendererChanged;
+			SetTextRenderer(editorView.TextRenderer);
 
 			// Start the background update.
 			sync = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
@@ -115,7 +116,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 			// Check for lines in the buffer. If we have none, then we can't
 			// do anything.
-			int lineCount = TextEditor.LineBuffer.LineCount;
+			int lineCount = EditorView.LineBuffer.LineCount;
 
 			if (lineCount == 0)
 			{
@@ -125,7 +126,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 			// Figure out how many indicator lines we'll be using.
 			int bufferLinesPerIndicatorLine = BufferLinesPerIndicatorLine;
 			int indicatorLinesUsed = 1 +
-			                         TextEditor.LineBuffer.LineCount /
+			                         EditorView.LineBuffer.LineCount /
 			                         bufferLinesPerIndicatorLine;
 
 			// Reset the lines we're using and clear out the lines we aren't.
@@ -192,7 +193,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 			object sender,
 			EventArgs e)
 		{
-			SetTextRenderer(TextEditor.TextRenderer);
+			SetTextRenderer(EditorView.TextRenderer);
 		}
 
 		/// <summary>
@@ -265,7 +266,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 				return Math.Max(
 					1,
 					(int)
-					Math.Ceiling((double) TextEditor.LineBuffer.LineCount / visibleLineCount));
+					Math.Ceiling((double) EditorView.LineBuffer.LineCount / visibleLineCount));
 			}
 		}
 
@@ -273,7 +274,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		/// Gets or sets the display context.
 		/// </summary>
 		/// <value>The display context.</value>
-		private TextEditor TextEditor { get; set; }
+		private EditorView EditorView { get; set; }
 
 		/// <summary>
 		/// Gets the theme associated with this bar.
@@ -282,7 +283,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 		private Theme Theme
 		{
 			[DebuggerStepThrough]
-			get { return TextEditor.Theme; }
+			get { return EditorView.Theme; }
 		}
 
 		/// <summary>
@@ -343,7 +344,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 				// Draw all the indicator lines on the display.
 				double y = 0.5;
 
-				cairoContext.LineWidth = TextEditor.Theme.IndicatorPixelHeight;
+				cairoContext.LineWidth = EditorView.Theme.IndicatorPixelHeight;
 				cairoContext.Antialias = Antialias.None;
 
 				for (int index = 0; index < VisibleLineCount; index++)
@@ -353,11 +354,11 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 					if (!indicatorLine.NeedIndicators && indicatorLine.Visible)
 					{
-						indicatorLine.Draw(TextEditor, cairoContext, y, Allocation.Width);
+						indicatorLine.Draw(EditorView, cairoContext, y, Allocation.Width);
 					}
 
 					// Shift the y-coordinate down.
-					y += TextEditor.Theme.IndicatorPixelHeight;
+					y += EditorView.Theme.IndicatorPixelHeight;
 				}
 			}
 
@@ -393,7 +394,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 					if (indicatorLine.NeedIndicators)
 					{
 						// We need to update this indicator.
-						indicatorLine.Update(TextEditor, textRenderer);
+						indicatorLine.Update(EditorView, textRenderer);
 					}
 
 					// Update the last indicator update.
@@ -446,7 +447,7 @@ namespace MfGames.GtkExt.LineTextEditor.Indicators
 
 			// Determine how many lines we can show on the widget. This is the 
 			// height divided by the height of each indicator line.
-			VisibleLineCount = Allocation.Height / TextEditor.Theme.IndicatorPixelHeight;
+			VisibleLineCount = Allocation.Height / EditorView.Theme.IndicatorPixelHeight;
 		}
 
 		/// <summary>

@@ -51,11 +51,11 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		/// Resizes the specified margin to fit the width of the line numbers
 		/// from the top and bottom lines.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		public override void Resize(TextEditor textEditor)
+		/// <param name="editorView">The text editor.</param>
+		public override void Resize(EditorView editorView)
 		{
 			// If we don't have any lines, we don't do anything.
-			int lineCount = textEditor.LineBuffer.LineCount;
+			int lineCount = editorView.LineBuffer.LineCount;
 
 			if (lineCount == 0)
 			{
@@ -64,15 +64,15 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			}
 
 			// Create a layout object and set its values.
-			layout = new Layout(textEditor.PangoContext);
-			LineBlockStyle style = textEditor.Theme.LineNumberLineStyle;
+			layout = new Layout(editorView.PangoContext);
+			LineBlockStyle style = editorView.Theme.LineNumberLineStyle;
 
-			textEditor.SetLayout(layout, style);
+			editorView.SetLayout(layout, style);
 
 			// Get the width of the first line.
 			int width = 0;
 			int newWidth, newHeight;
-			string firstLineNumber = textEditor.LineBuffer.GetLineNumber(0);
+			string firstLineNumber = editorView.LineBuffer.GetLineNumber(0);
 
 			if (!string.IsNullOrEmpty(firstLineNumber))
 			{
@@ -87,7 +87,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			// Get the width of the last line.
 			if (lineCount != 1)
 			{
-				string lastLineNumber = textEditor.LineBuffer.GetLineNumber(lineCount - 1);
+				string lastLineNumber = editorView.LineBuffer.GetLineNumber(lineCount - 1);
 
 				if (!string.IsNullOrEmpty(lastLineNumber))
 				{

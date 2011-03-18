@@ -113,8 +113,8 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 		/// <summary>
 		/// Resizes the specified margin based on the context.
 		/// </summary>
-		/// <param name="textEditor">The text editor.</param>
-		public virtual void Resize(TextEditor textEditor)
+		/// <param name="editorView">The text editor.</param>
+		public virtual void Resize(EditorView editorView)
 		{
 			// The default implementation is to do nothing.
 		}

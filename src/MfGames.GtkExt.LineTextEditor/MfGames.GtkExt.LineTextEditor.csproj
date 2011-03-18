@@ -103,7 +103,7 @@
     <Compile Include="Renderers\TextRenderer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
-    <Compile Include="Indicators\TextIndicatorBar.cs" />
+    <Compile Include="IndicatorView.cs" />
     <Compile Include="Renderers\LineNumberMarginRenderer.cs" />
     <Compile Include="Renderers\MarginRenderer.cs" />
     <Compile Include="Renderers\MarginRendererCollection.cs" />
@@ -122,7 +122,7 @@
     <Compile Include="Tests\SimpleCenterSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\SimpleEndSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\SimpleStartSelectionExhaustiveTests.cs" />
-    <Compile Include="TextEditor.cs" />
+    <Compile Include="EditorView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor.Models\MfGames.GtkExt.LineTextEditor.Models.csproj">

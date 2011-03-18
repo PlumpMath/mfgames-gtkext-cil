@@ -64,16 +64,16 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextController"/> class.
 		/// </summary>
-		/// <param name="textEditor">The text editor associated with this controller.</param>
-		public TextController(TextEditor textEditor)
+		/// <param name="editorView">The text editor associated with this controller.</param>
+		public TextController(EditorView editorView)
 		{
 			// Saves the display context for performing actions.
-			if (textEditor == null)
+			if (editorView == null)
 			{
-				throw new ArgumentNullException("textEditor");
+				throw new ArgumentNullException("editorView");
 			}
 
-			displayContext = textEditor;
+			displayContext = editorView;
 
 			// Bind the initial keybindings.
 			keyBindings = new HashDictionary<int, ActionEntry>();
@@ -550,7 +550,7 @@ namespace MfGames.GtkExt.LineTextEditor.Editing
 				// Attach the menu and show it to the user.
 				if (contextMenu != null)
 				{
-					contextMenu.AttachToWidget((TextEditor) displayContext, null);
+					contextMenu.AttachToWidget((EditorView) displayContext, null);
 					contextMenu.Popup();
 					contextMenu.ShowAll();
 				}

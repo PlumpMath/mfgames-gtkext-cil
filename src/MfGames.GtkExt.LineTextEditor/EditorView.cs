@@ -65,14 +65,14 @@ namespace MfGames.GtkExt.LineTextEditor
 	/// <summary>
 	/// The primary editor control for the virtualized line text editor.
 	/// </summary>
-	public class TextEditor : Widget, IDisplayContext
+	public class EditorView : Widget, IDisplayContext
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditor"/> class.
+		/// Initializes a new instance of the <see cref="EditorView"/> class.
 		/// </summary>
-		public TextEditor()
+		public EditorView()
 		{
 			// Set up the basic characteristics of the widget.
 			Events = EventMask.PointerMotionMask | EventMask.ButtonPressMask |
@@ -104,10 +104,10 @@ namespace MfGames.GtkExt.LineTextEditor
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextEditor"/> class.
+		/// Initializes a new instance of the <see cref="EditorView"/> class.
 		/// </summary>
 		/// <param name="raw">The raw.</param>
-		protected TextEditor(IntPtr raw)
+		protected EditorView(IntPtr raw)
 			: base(raw)
 		{
 		}
@@ -200,7 +200,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <summary>
 		/// Sets the text renderer.
 		/// </summary>
-		/// <param name="value">The new <see cref="TextEditor"/>, which can be null.
+		/// <param name="value">The new <see cref="EditorView"/>, which can be null.
 		/// <param>
 		public void SetTextRenderer(TextRenderer value)
 		{
