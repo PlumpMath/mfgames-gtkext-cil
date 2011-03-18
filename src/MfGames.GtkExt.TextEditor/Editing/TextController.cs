@@ -38,18 +38,18 @@ using Gtk;
 
 using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
-using MfGames.GtkExt.LineTextEditor.Actions;
-using MfGames.GtkExt.LineTextEditor.Attributes;
-using MfGames.GtkExt.LineTextEditor.Events;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Actions;
+using MfGames.GtkExt.TextEditor.Attributes;
+using MfGames.GtkExt.TextEditor.Events;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 using Key=Gdk.Key;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Editing
+namespace MfGames.GtkExt.TextEditor.Editing
 {
 	/// <summary>
 	/// Contains the functionality of processing input for the text editor

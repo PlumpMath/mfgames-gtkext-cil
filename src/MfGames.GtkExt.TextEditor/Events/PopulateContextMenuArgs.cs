@@ -28,11 +28,11 @@ using System;
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Events
+namespace MfGames.GtkExt.TextEditor.Events
 {
 	/// <summary>
 	/// Arguments for when the text editor needs to populate the context

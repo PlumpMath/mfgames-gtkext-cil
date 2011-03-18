@@ -24,13 +24,13 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.TextEditor.Buffers;
 
 using NUnit.Framework;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Tests
+namespace MfGames.GtkExt.TextEditor.Tests
 {
 	/// <summary>
 	/// Defines tests that explore the functionality of the 

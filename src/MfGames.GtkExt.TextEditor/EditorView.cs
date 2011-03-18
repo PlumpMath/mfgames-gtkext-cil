@@ -35,16 +35,16 @@ using Gtk;
 
 using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.Extensions.Pango;
-using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Editing;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Margins;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
-using MfGames.GtkExt.LineTextEditor.Renderers;
-using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.TextEditor.Buffers;
+using MfGames.GtkExt.TextEditor.Editing;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Margins;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Renderers.Cache;
+using MfGames.GtkExt.TextEditor.Visuals;
 
 using Pango;
 
@@ -60,7 +60,7 @@ using WindowType=Gdk.WindowType;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.TextEditor
 {
 	/// <summary>
 	/// The primary editor control for the virtualized line text editor.
@@ -89,7 +89,7 @@ namespace MfGames.GtkExt.LineTextEditor
 			margins = new MarginRendererCollection();
 			margins.Add(new LineNumberMarginRenderer());
 			theme = new Theme();
-			displaySettings = new DisplaySettings();
+			editorViewSettings = new EditorViewSettings();
 
 			// Set up the caret, this must be done after the buffer is set.
 			caret = new Caret(this);
@@ -118,7 +118,7 @@ namespace MfGames.GtkExt.LineTextEditor
 
 		private readonly DateTime createdTimestamp = DateTime.Now;
 
-		private DisplaySettings displaySettings;
+		private EditorViewSettings editorViewSettings;
 
 		/// <summary>
 		/// Gets or sets the settings for the text editor.
@@ -126,10 +126,10 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <value>
 		/// The text editor settings.
 		/// </value>
-		private DisplaySettings DisplaySettings
+		private EditorViewSettings EditorViewSettings
 		{
-			get { return displaySettings; }
-			set { displaySettings = value ?? new DisplaySettings(); }
+			get { return editorViewSettings; }
+			set { editorViewSettings = value ?? new EditorViewSettings(); }
 		}
 
 		#endregion
@@ -619,7 +619,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				}
 
 				// Show the scroll region, if requested.
-				if (displaySettings.ShowScrollPadding)
+				if (editorViewSettings.ShowScrollPadding)
 				{
 					cairoContext.Color = new Color(1, 0.5, 0.5);
 					cairoContext.Rectangle(scrollPaddingRegion);
@@ -793,7 +793,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				0.0, height, lineHeight, (int) (Allocation.Height / 2.0), Allocation.Height);
 
 			// Figure out the scroll padding.
-			int scrollPaddingHeight = lineHeight * displaySettings.CaretScrollPad;
+			int scrollPaddingHeight = lineHeight * editorViewSettings.CaretScrollPad;
 
 			scrollPaddingRegion = new Rectangle(
 				0,

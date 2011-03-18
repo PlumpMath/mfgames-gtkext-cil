@@ -26,12 +26,12 @@
 
 using System.Diagnostics;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Renderers
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// Implements a <see cref="TextRenderer"/> wrapped around a 

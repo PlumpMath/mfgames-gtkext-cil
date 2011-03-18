@@ -28,11 +28,11 @@ using System;
 
 using C5;
 
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace GtkExtDemo.LineTextEditor
+namespace GtkExtDemo.TextEditor
 {
 	/// <summary>
 	/// Defines a single range of markup in a text buffer.

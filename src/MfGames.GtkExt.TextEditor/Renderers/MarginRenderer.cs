@@ -28,11 +28,11 @@ using System;
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Margins
+namespace MfGames.GtkExt.TextEditor.Margins
 {
 	/// <summary>
 	/// The abstract base class for margin renderers. These can be used to show

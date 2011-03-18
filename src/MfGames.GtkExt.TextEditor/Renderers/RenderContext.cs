@@ -26,11 +26,11 @@
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Visuals
+namespace MfGames.GtkExt.TextEditor.Visuals
 {
 	/// <summary>
 	/// Implements a basic render context used for rendering various elements

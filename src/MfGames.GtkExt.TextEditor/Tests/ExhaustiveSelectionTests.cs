@@ -26,14 +26,14 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 using NUnit.Framework;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Tests
+namespace MfGames.GtkExt.TextEditor.Tests
 {
 	/// <summary>
 	/// Performs a series of exhaustive tests on the selection using data generated

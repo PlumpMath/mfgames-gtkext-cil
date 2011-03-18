@@ -22,19 +22,19 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.TextEditor
 {
 	/// <summary>
 	/// Contains the settings for the text editor.
 	/// </summary>
-	public class DisplaySettings
+	public class EditorViewSettings
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DisplaySettings"/> class.
+		/// Initializes a new instance of the <see cref="EditorViewSettings"/> class.
 		/// </summary>
-		public DisplaySettings()
+		public EditorViewSettings()
 		{
 			ShowLineNumbers = true;
 			CaretScrollPad = 3;

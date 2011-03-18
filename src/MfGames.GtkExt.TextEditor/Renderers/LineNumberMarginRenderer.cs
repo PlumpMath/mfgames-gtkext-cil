@@ -28,8 +28,8 @@ using System;
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
 
@@ -37,7 +37,7 @@ using Rectangle=Cairo.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Margins
+namespace MfGames.GtkExt.TextEditor.Margins
 {
 	/// <summary>
 	/// Implements a margin renderer which displays the line number, if there is

@@ -33,7 +33,7 @@ using IDictionary=System.Collections.Generic;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Styles
+namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
 	/// <summary>
 	/// Contains the screen style used for rendering the various elements of the

@@ -26,7 +26,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
+namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Indicates an operation that inserts lines into a line buffer.

@@ -26,11 +26,11 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.TextEditor.Buffers
 {
 	/// <summary>
 	/// Implements a word splitter that uses a standard "word" length of 5

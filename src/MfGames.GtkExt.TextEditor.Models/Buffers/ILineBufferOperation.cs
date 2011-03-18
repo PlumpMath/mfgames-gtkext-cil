@@ -26,7 +26,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
+namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	public interface ILineBufferOperation
 	{

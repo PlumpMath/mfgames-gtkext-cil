@@ -24,11 +24,11 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.TextEditor.Buffers
 {
 	/// <summary>
 	/// Implements a word splitter that looks for typical English boundaries.

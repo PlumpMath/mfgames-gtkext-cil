@@ -30,16 +30,16 @@ using Gdk;
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Attributes;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Attributes;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 using Global=Gtk.Global;
 using Key=Gdk.Key;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Actions
 {
 	/// <summary>
 	/// Contains the various actions used for moving the caret (cursor) around

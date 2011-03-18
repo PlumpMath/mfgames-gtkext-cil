@@ -26,7 +26,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Styles
+namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
 	/// <summary>
 	/// Contains spacing values used for margins and padding. Each of them

@@ -30,11 +30,11 @@ using C5;
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Margins
+namespace MfGames.GtkExt.TextEditor.Margins
 {
 	/// <summary>
 	/// Encapsulates a list of margin renderers. This handles the packing code

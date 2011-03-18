@@ -26,13 +26,13 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.TextEditor.Buffers
 {
 	/// <summary>
 	/// Contains information about a single cached line in memory. This

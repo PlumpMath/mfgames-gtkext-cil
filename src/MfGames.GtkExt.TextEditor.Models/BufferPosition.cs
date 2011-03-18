@@ -26,7 +26,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models
+namespace MfGames.GtkExt.TextEditor.Models
 {
 	/// <summary>
 	/// Represents a position within the text buffer using the line as a primary

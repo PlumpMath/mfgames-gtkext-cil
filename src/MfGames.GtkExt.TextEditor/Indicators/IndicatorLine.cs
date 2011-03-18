@@ -31,14 +31,14 @@ using C5;
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
-using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Indicators
+namespace MfGames.GtkExt.TextEditor.Indicators
 {
 	/// <summary>
 	/// Represents a single visible line on the indicator.

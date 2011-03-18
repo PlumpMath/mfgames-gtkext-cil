@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace GtkExtDemo.LineTextEditor
+namespace GtkExtDemo.TextEditor
 {
 	/// <summary>
 	/// Defines the types of markups that can show up on the editor.

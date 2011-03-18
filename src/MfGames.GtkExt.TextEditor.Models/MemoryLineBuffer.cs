@@ -27,11 +27,11 @@
 using System;
 using System.Collections.Generic;
 
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models
+namespace MfGames.GtkExt.TextEditor.Models
 {
 	/// <summary>
 	/// Implements a line buffer that keeps all the lines in memory.

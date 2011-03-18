@@ -27,11 +27,11 @@
 using System;
 using System.Text;
 
-using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Renderers
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// Utility class for taking Pango markup and applying a selection to it.

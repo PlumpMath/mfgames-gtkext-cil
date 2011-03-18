@@ -28,15 +28,15 @@ using System;
 using System.Diagnostics;
 
 using MfGames.GtkExt.Extensions.Pango;
-using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Buffers;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
+namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 {
 	/// <summary>
 	/// Implements a cache window that keeps track of a range of lines and

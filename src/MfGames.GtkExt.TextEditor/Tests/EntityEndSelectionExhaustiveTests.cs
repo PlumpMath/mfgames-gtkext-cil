@@ -28,7 +28,7 @@ using NUnit.Framework;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Tests
+namespace MfGames.GtkExt.TextEditor.Tests
 {
 	/// <summary>
 	/// Performs a series of exhaustive tests on the selection using data generated

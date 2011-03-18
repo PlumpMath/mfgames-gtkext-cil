@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.TextEditor.Interfaces
 {
 	/// <summary>
 	/// Interface that defines the properties and methods that are common

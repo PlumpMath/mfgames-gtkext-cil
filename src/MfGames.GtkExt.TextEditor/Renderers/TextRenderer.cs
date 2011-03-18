@@ -26,10 +26,10 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
 
@@ -37,7 +37,7 @@ using Rectangle=Cairo.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Renderers
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// Functions as an adapter between the <see cref="LineBuffer"/> and the text

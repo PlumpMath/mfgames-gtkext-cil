@@ -38,18 +38,18 @@ using GLib;
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Indicators;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
-using MfGames.GtkExt.LineTextEditor.Renderers;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.TextEditor.Indicators;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Visuals;
 using MfGames.Locking;
 
 using Rectangle=Gdk.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.TextEditor
 {
 	/// <summary>
 	/// Implements a visual bar of indicators from a given line buffer.

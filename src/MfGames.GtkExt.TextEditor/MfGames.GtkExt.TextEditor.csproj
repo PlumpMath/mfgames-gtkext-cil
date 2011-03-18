@@ -88,7 +88,7 @@
     <Compile Include="Renderers\Cache\CachedWindow.cs" />
     <Compile Include="Editing\EnglishWordSplitter.cs" />
     <Compile Include="Editing\OffsetWordSplitter.cs" />
-    <Compile Include="DrawingUtility.cs" />
+    <Compile Include="Renderers\DrawingUtility.cs" />
     <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Editing\Caret.cs" />
     <Compile Include="Events\PopulateContextMenuArgs.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="Renderers\MarginRenderer.cs" />
     <Compile Include="Renderers\MarginRendererCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DisplaySettings.cs" />
+    <Compile Include="EditorViewSettings.cs" />
     <Compile Include="Renderers\TextRendererDecorator.cs" />
     <Compile Include="Tests\AttributeCenterSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\AttributeEndSelectionExhaustiveTests.cs" />

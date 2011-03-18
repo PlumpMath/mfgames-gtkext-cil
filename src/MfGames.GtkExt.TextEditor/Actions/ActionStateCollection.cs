@@ -29,11 +29,11 @@ using System.Collections.Generic;
 
 using C5;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Actions
 {
 	/// <summary>
 	/// Contains a collection of action states that can be conditionally

@@ -30,8 +30,8 @@ using Cairo;
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Alignment=Pango.Alignment;
 using Color=Cairo.Color;
@@ -41,7 +41,7 @@ using Rectangle=Cairo.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor
+namespace MfGames.GtkExt.TextEditor
 {
 	/// <summary>
 	/// Common and useful methods for working with Cairo and Pango.

@@ -33,31 +33,31 @@ using Cairo;
 using Gtk;
 
 using MfGames.GtkExt;
-using MfGames.GtkExt.LineTextEditor;
-using MfGames.GtkExt.LineTextEditor.Editing;
-using MfGames.GtkExt.LineTextEditor.Events;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
-using MfGames.GtkExt.LineTextEditor.Renderers;
-using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
+using MfGames.GtkExt.TextEditor;
+using MfGames.GtkExt.TextEditor.Editing;
+using MfGames.GtkExt.TextEditor.Events;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Renderers.Cache;
 
 #endregion
 
-namespace GtkExtDemo.LineTextEditor
+namespace GtkExtDemo.TextEditor
 {
 	/// <summary>
 	/// Contains the basic control for showing off the features of the line
 	/// text editor.
 	/// </summary>
-	public class DemoLineTextEditor : DemoTab
+	public class DemoTextEditor : DemoTab
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DemoLineTextEditor"/> class.
+		/// Initializes a new instance of the <see cref="DemoTextEditor"/> class.
 		/// </summary>
-		public DemoLineTextEditor()
+		public DemoTextEditor()
 		{
 			// Create the text editor with the resulting buffer.
 			editorView = new EditorView();
@@ -134,8 +134,8 @@ namespace GtkExtDemo.LineTextEditor
 
 		#region Widgets
 
-		private readonly IndicatorView indicatorView;
 		private readonly EditorView editorView;
+		private readonly IndicatorView indicatorView;
 
 		#region Events
 

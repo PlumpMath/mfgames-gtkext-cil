@@ -28,7 +28,7 @@ using Cairo;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.TextEditor.Interfaces
 {
 	/// <summary>
 	/// Contains information a rendering context including the elements needed

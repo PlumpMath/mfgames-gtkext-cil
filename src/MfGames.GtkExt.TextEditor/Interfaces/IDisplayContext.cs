@@ -26,10 +26,10 @@
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Editing;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
-using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Editing;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 using Pango;
 
@@ -40,7 +40,7 @@ using Window=Gdk.Window;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.TextEditor.Interfaces
 {
 	/// <summary>
 	/// Contains information about the display and its appearance.

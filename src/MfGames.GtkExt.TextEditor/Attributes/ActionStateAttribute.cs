@@ -26,11 +26,11 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Attributes
 {
 	/// <summary>
 	/// Attribute that indicates the types of objects that are used to maintain

@@ -24,14 +24,14 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 using NUnit.Framework;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Tests
+namespace MfGames.GtkExt.TextEditor.Tests
 {
 	/// <summary>
 	/// Tests the various functionality and markup of the selection helper.

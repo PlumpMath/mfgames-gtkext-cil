@@ -26,13 +26,13 @@
 
 using Gdk;
 
-using MfGames.GtkExt.LineTextEditor.Attributes;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Attributes;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Actions
 {
 	/// <summary>
 	/// Contains actions used for undoing and redoing commands.

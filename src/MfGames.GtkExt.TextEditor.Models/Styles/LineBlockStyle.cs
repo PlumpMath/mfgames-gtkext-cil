@@ -34,7 +34,7 @@ using Color=Cairo.Color;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Styles
+namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
 	/// <summary>
 	/// Represents the various style elements of the text editor. This is based

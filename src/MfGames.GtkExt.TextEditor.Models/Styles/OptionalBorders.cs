@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Styles
+namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
 	/// <summary>
 	/// Represents the borders of all four sides.

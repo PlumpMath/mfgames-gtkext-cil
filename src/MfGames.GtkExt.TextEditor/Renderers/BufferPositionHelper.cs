@@ -26,9 +26,9 @@
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
 
@@ -36,7 +36,7 @@ using Rectangle=Pango.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Renderers
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// Contains various extensions to <see cref="BufferPosition"/> for working

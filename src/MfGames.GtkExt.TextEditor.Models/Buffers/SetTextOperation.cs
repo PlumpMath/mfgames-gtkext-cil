@@ -28,7 +28,7 @@ using System.Diagnostics;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
+namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Defines an operation that changes text of a single line.

@@ -28,7 +28,7 @@ using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models
+namespace MfGames.GtkExt.TextEditor.Models
 {
 	/// <summary>
 	/// Represents a range inside a buffer.

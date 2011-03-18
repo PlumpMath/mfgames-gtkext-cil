@@ -24,13 +24,13 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Actions
 {
 	/// <summary>
 	/// Represents an action state that combines multiple text inserts

@@ -29,12 +29,12 @@ using System.Collections.Generic;
 
 using C5;
 
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace GtkExtDemo.LineTextEditor
+namespace GtkExtDemo.TextEditor
 {
 	/// <summary>
 	/// Wraps around a line buffer and marks up anything with a number of keywords

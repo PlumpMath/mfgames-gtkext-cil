@@ -29,13 +29,13 @@ using System.Diagnostics;
 using Cairo;
 
 using MfGames.GtkExt.Extensions.Cairo;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Editing
+namespace MfGames.GtkExt.TextEditor.Editing
 {
 	/// <summary>
 	/// Represents the elements needed for displaying and rendering the caret.

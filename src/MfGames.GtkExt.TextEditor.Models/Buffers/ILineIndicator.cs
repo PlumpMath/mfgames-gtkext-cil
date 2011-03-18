@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
+namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Defines the functionality of a line indicator.

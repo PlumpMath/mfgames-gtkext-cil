@@ -28,7 +28,7 @@ using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models
+namespace MfGames.GtkExt.TextEditor.Models
 {
 	/// <summary>
 	/// Defines a range of characters from the start to the end.

@@ -30,7 +30,7 @@ using Gdk;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Attributes
 {
 	/// <summary>
 	/// Defines a default key binding into the text editor.

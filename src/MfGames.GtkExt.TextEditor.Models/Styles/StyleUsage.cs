@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Styles
+namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
 	/// <summary>
 	/// Determines the usage of a style and can be used for filtering or

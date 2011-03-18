@@ -29,7 +29,7 @@ using System.Diagnostics;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
+namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Abstract class which wraps around a <see cref="LineBuffer"/> and allows for

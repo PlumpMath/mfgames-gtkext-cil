@@ -26,12 +26,12 @@
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Actions;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Actions;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.TextEditor.Interfaces
 {
 	/// <summary>
 	/// Defines the interface to the context for a specific action.

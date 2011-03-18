@@ -74,14 +74,14 @@ namespace PatternBuilder
 			writer.WriteLine("");
 			writer.WriteLine("using System;");
 			writer.WriteLine("");
-			writer.WriteLine("using MfGames.GtkExt.LineTextEditor.Buffers;");
-			writer.WriteLine("using MfGames.GtkExt.LineTextEditor.Renderers;");
+			writer.WriteLine("using MfGames.GtkExt.TextEditor.Buffers;");
+			writer.WriteLine("using MfGames.GtkExt.TextEditor.Renderers;");
 			writer.WriteLine("");
 			writer.WriteLine("using NUnit.Framework;");
 			writer.WriteLine("");
 			writer.WriteLine("#endregion");
 			writer.WriteLine("");
-			writer.WriteLine("namespace MfGames.GtkExt.LineTextEditor.Tests");
+			writer.WriteLine("namespace MfGames.GtkExt.TextEditor.Tests");
 			writer.WriteLine("{");
 			writer.WriteLine("\t/// <summary>");
 			writer.WriteLine(

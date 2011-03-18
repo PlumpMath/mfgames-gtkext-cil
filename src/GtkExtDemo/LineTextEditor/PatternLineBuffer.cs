@@ -27,12 +27,12 @@
 using System;
 using System.Text;
 
-using MfGames.GtkExt.LineTextEditor.Models;
-using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace GtkExtDemo.LineTextEditor
+namespace GtkExtDemo.TextEditor
 {
 	/// <summary>
 	/// Implements a line buffer that produces a pattern of text which is suitable

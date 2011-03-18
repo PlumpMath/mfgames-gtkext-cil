@@ -33,11 +33,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly:AssemblyTitle("MfGames.GtkExt.LineTextEditor.Models")]
+[assembly:AssemblyTitle("MfGames.GtkExt.TextEditor.Models")]
 [assembly:AssemblyDescription("")]
 [assembly:AssemblyConfiguration("")]
 [assembly:AssemblyCompany("")]
-[assembly:AssemblyProduct("MfGames.GtkExt.LineTextEditor.Models")]
+[assembly:AssemblyProduct("MfGames.GtkExt.TextEditor.Models")]
 [assembly:AssemblyCopyright("Copyright ©  2011")]
 [assembly:AssemblyTrademark("")]
 [assembly:AssemblyCulture("")]

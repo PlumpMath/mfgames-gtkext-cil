@@ -28,7 +28,7 @@ using System.ComponentModel;
 
 #endregion
 
-namespace GtkExtDemo.LineTextEditor
+namespace GtkExtDemo.TextEditor
 {
 	/// <summary>
 	/// Contains the various line styles used by the demo.

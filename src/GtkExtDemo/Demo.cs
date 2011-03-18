@@ -29,7 +29,7 @@ using System.Text;
 
 using Gtk;
 
-using GtkExtDemo.LineTextEditor;
+using GtkExtDemo.TextEditor;
 
 #endregion
 
@@ -53,8 +53,7 @@ namespace GtkExtDemo
 		private static Statusbar statusbar;
 		private readonly DemoComponents demoComponents = new DemoComponents();
 
-		private readonly DemoLineTextEditor demoLineTextEditor =
-			new DemoLineTextEditor();
+		private readonly DemoTextEditor demoTextEditor = new DemoTextEditor();
 
 		private readonly UIManager uiManager;
 		private Notebook notebook;
@@ -93,7 +92,7 @@ namespace GtkExtDemo
 			box.PackStart(CreateGuiMenu(), false, false, 0);
 
 			// Set up the demo components.
-			demoLineTextEditor.ConfigureGui(this, uiManager);
+			demoTextEditor.ConfigureGui(this, uiManager);
 
 			// Create a notebook
 			notebook = new Notebook();
@@ -101,7 +100,7 @@ namespace GtkExtDemo
 			box.PackStart(notebook, true, true, 0);
 
 			notebook.AppendPage(demoComponents, new Label("Components"));
-			notebook.AppendPage(demoLineTextEditor, new Label("Line Text Editor"));
+			notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
 
 			// Add the status bar
 			statusbar = new Statusbar();
@@ -125,7 +124,7 @@ namespace GtkExtDemo
 			uiInfo.Append("</menu>");
 			uiInfo.Append("<menu action='ViewMenu'>");
 			uiInfo.Append("<menuitem action='Components'/>");
-			uiInfo.Append("<menuitem action='LineTextEditor'/>");
+			uiInfo.Append("<menuitem action='TextEditor'/>");
 			uiInfo.Append("</menu>");
 			uiInfo.Append("</menubar>");
 			uiInfo.Append("</ui>");
@@ -153,12 +152,12 @@ namespace GtkExtDemo
 			              		null,
 			              		OnSwitchComponents),
 			              	new ActionEntry(
-			              		"LineTextEditor",
+			              		"TextEditor",
 			              		null,
 			              		"_Line Text Editor",
 			              		"<control>2",
 			              		null,
-			              		OnSwitchLineTextEditor),
+			              		OnSwitchTextEditor),
 			              };
 
 			// Build up the actions
@@ -208,7 +207,7 @@ namespace GtkExtDemo
 		/// <summary>
 		/// Called to switch to the editor.
 		/// </summary>
-		private void OnSwitchLineTextEditor(
+		private void OnSwitchTextEditor(
 			object obj,
 			EventArgs args)
 		{

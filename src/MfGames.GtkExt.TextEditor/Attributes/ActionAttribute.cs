@@ -28,7 +28,7 @@ using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Attributes
 {
 	/// <summary>
 	/// Attribute used to mark a method has being an action the text editor

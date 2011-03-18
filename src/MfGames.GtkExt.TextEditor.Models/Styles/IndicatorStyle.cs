@@ -30,7 +30,7 @@ using Cairo;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Models.Styles
+namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
 	/// <summary>
 	/// Encapsulates a style of drawing indicators.

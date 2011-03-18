@@ -28,11 +28,11 @@ using System;
 
 using C5;
 
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Editing
+namespace MfGames.GtkExt.TextEditor.Editing
 {
 	/// <summary>
 	/// Contains a single action entry object.
