@@ -24,7 +24,6 @@
 
 #region Namespaces
 
-using System;
 using System.Diagnostics;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
@@ -52,12 +51,6 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			LineBuffer lineBuffer)
 			: base(displayContext)
 		{
-			// Perform sanity checking on parameters.
-			if (lineBuffer == null)
-			{
-				throw new ArgumentNullException("lineBuffer");
-			}
-
 			// Save the buffer in a property.
 			this.lineBuffer = lineBuffer;
 
@@ -65,13 +58,16 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			lineBuffer.LineChanged += OnLineChanged;
 			lineBuffer.LinesInserted += OnLinesInserted;
 			lineBuffer.LinesDeleted += OnLinesDeleted;
+
+			// Set up the selection.
+			selectionRenderer = new SelectionRenderer();
 		}
 
 		#endregion
 
 		#region Buffer
 
-		private readonly LineBuffer lineBuffer;
+		private LineBuffer lineBuffer;
 
 		/// <summary>
 		/// Gets the line buffer associated with this renderer.
@@ -81,6 +77,27 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		{
 			[DebuggerStepThrough]
 			get { return lineBuffer; }
+
+			[DebuggerStepThrough]
+			set { lineBuffer = value; }
+		}
+
+		#endregion
+
+		#region Selection
+
+		private SelectionRenderer selectionRenderer;
+
+		/// <summary>
+		/// Gets or sets the selection renderer.
+		/// </summary>
+		/// <value>The selection renderer.</value>
+		public override SelectionRenderer SelectionRenderer
+		{
+			[DebuggerStepThrough]
+			get { return selectionRenderer; }
+			[DebuggerStepThrough]
+			set { selectionRenderer = value; }
 		}
 
 		#endregion

@@ -61,8 +61,6 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			}
 
 			DisplayContext = displayContext;
-			
-			selectionRenderer = new SelectionRenderer();
 		}
 
 		#endregion
@@ -79,7 +77,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// Gets the line buffer associated with this renderer.
 		/// </summary>
 		/// <value>The line buffer.</value>
-		public abstract LineBuffer LineBuffer { get; }
+		public abstract LineBuffer LineBuffer { get; set; }
 
 		#endregion
 
@@ -461,7 +459,11 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 
 		#region Selection
 
-		private SelectionRenderer selectionRenderer;
+		/// <summary>
+		/// Gets or sets the selection renderer.
+		/// </summary>
+		/// <value>The selection renderer.</value>
+		public abstract SelectionRenderer SelectionRenderer { get; set; }
 
 		/// <summary>
 		/// Gets the Pango markup for a given line.
@@ -481,9 +483,8 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			if (containsLine)
 			{
 				// Apply the markup to the line.
-				return selectionRenderer.GetSelectionMarkup(
-					markup, 
-					new CharacterRange(startCharacterIndex, endCharacterIndex));
+				return SelectionRenderer.GetSelectionMarkup(
+					markup, new CharacterRange(startCharacterIndex, endCharacterIndex));
 			}
 
 			// Return the resulting markup.

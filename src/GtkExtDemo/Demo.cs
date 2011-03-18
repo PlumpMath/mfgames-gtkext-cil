@@ -89,13 +89,13 @@ namespace GtkExtDemo
 			var box = new VBox();
 			Add(box);
 
-            // Add the menu
+			// Add the menu
 			box.PackStart(CreateGuiMenu(), false, false, 0);
 
-            // Set up the demo components.
-            demoLineTextEditor.ConfigureGui(this, uiManager);
+			// Set up the demo components.
+			demoLineTextEditor.ConfigureGui(this, uiManager);
 
-            // Create a notebook
+			// Create a notebook
 			notebook = new Notebook();
 			notebook.BorderWidth = 5;
 			box.PackStart(notebook, true, true, 0);
@@ -127,11 +127,11 @@ namespace GtkExtDemo
 			uiInfo.Append("<menuitem action='Components'/>");
 			uiInfo.Append("<menuitem action='LineTextEditor'/>");
 			uiInfo.Append("</menu>");
-            uiInfo.Append("</menubar>");
+			uiInfo.Append("</menubar>");
 			uiInfo.Append("</ui>");
 
 			// Set up the actions
-            var entries = new[]
+			var entries = new[]
 			              {
 			              	// "File" Menu
 			              	new ActionEntry(
@@ -142,9 +142,7 @@ namespace GtkExtDemo
 			              		"_Quit",
 			              		"<control>Q",
 			              		"Quit",
-			              		OnQuitAction),
-                                
-                            // "View" Menu
+			              		OnQuitAction), // "View" Menu
 			              	new ActionEntry(
 			              		"ViewMenu", null, "_View", null, null, null),
 			              	new ActionEntry(

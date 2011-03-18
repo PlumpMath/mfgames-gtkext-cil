@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using C5;
 
@@ -108,6 +109,27 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 				{
 					lines[line] = new CachedLine();
 				}
+			}
+		}
+
+		#endregion
+
+		#region Buffer
+
+		/// <summary>
+		/// Gets the line buffer associated with this renderer.
+		/// </summary>
+		/// <value>The line buffer.</value>
+		public override LineBuffer LineBuffer
+		{
+			[DebuggerStepThrough]
+			get { return base.LineBuffer; }
+
+			[DebuggerStepThrough]
+			set
+			{
+				base.LineBuffer = value;
+				Reset();
 			}
 		}
 

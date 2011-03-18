@@ -90,7 +90,8 @@ namespace GtkExtDemo.LineTextEditor
 			indicatorBar.SetSizeRequest(20, 1);
 
             // Create the drop down list with the enumerations.
-            var lineStyleCombo = new EnumComboBox(typeof(LineStyleType));
+            var lineStyleCombo = new EnumComboBox(typeof(DemoLineStyleType));
+			lineStyleCombo.Sensitive = false;
 
 			// Add the editor and bar to the current tab.
 			var editorBand = new HBox(false, 0);
@@ -105,8 +106,8 @@ namespace GtkExtDemo.LineTextEditor
             // Create a vbox and use it to add the combo boxes.
             var verticalLayout = new VBox(false, 4);
             verticalLayout.BorderWidth = 4;
-            verticalLayout.PackStart(controlsBand, false, false, 0);
-            verticalLayout.PackStart(editorBand, true, true, 4);
+            verticalLayout.PackStart(editorBand, true, true, 0);
+			verticalLayout.PackStart(controlsBand, false, false, 4);
 
 			// Add the editor and the controls into a vertical box.
 			PackStart(verticalLayout, true, true, 2);
@@ -148,13 +149,35 @@ namespace GtkExtDemo.LineTextEditor
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnSetStyledBuffer(
+		private void OnEditableBufferActivated(
 			object sender,
 			EventArgs e)
 		{
+			// Create the buffer and set it.
 			TextRenderer textRenderer = CreateRenderer();
 
 			textEditor.SetTextRenderer(textRenderer);
+
+			// Set the menu item toggle states.
+			SetBufferMenuStates(true, false, false);
+		}
+
+		/// <summary>
+		/// Called when the Read-Only Buffer button is clicked.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnReadOnlyBufferActivated(
+			object sender,
+			EventArgs e)
+		{
+			// Create the buffer and set it.
+			TextRenderer textRenderer = CreateRenderer();
+
+			textEditor.SetTextRenderer(textRenderer);
+
+			// Set the menu item toggle states.
+			SetBufferMenuStates(false, true, false);
 		}
 
 		/// <summary>
@@ -166,80 +189,81 @@ namespace GtkExtDemo.LineTextEditor
 			object sender,
 			EventArgs e)
 		{
+			// Clear the buffer.
 			textEditor.SetTextRenderer(null);
+
+			// Set the menu item toggle states.
+			SetBufferMenuStates(false, false, true);
+		}
+
+		#endregion
+
+		#region Menus
+
+		private void SetBufferMenuStates(bool checkEditable, bool checkReadOnly, bool checkClear)
+		{
+			// Remove the events from the items to avoid callbacks on the items.
+			editableBufferMenuItem.Activated -= OnEditableBufferActivated;
+			readOnlyBufferMenuItem.Activated -= OnReadOnlyBufferActivated;
+			clearBufferMenuItem.Activated -= OnClearBuffer;
+
+			// Check the boxes.
+			editableBufferMenuItem.Active = checkEditable;
+			readOnlyBufferMenuItem.Active = checkReadOnly;
+			clearBufferMenuItem.Active = checkClear;
+
+			// Add the events back in.
+			editableBufferMenuItem.Activated += OnEditableBufferActivated;
+			readOnlyBufferMenuItem.Activated += OnReadOnlyBufferActivated;
+			clearBufferMenuItem.Activated += OnClearBuffer;
 		}
 
 		#endregion
 
 		#region Setup
 
-        /// <summary>
-        /// Configures the GUI and allows a demo to add menu and widgets.
-        /// </summary>
-        /// <param name="demo">The demo.</param>
-        /// <param name="uiManager">The UI manager.</param>
-        public override void ConfigureGui(Demo demo, UIManager uiManager)
-        {
-            // Create the overlay menu items for this demo.
-            var uiInfo = new StringBuilder();
+		private CheckMenuItem editableBufferMenuItem;
+		private CheckMenuItem readOnlyBufferMenuItem;
+		private CheckMenuItem clearBufferMenuItem;
 
-            uiInfo.Append("<ui>");
-            uiInfo.Append("<menubar name='MenuBar'>");
-            uiInfo.Append("<menu action='DlteMenu'>");
-            uiInfo.Append("<menuitem action='DlteSetStyledBuffer'/>");
-            uiInfo.Append("<menuitem action='DlteSetLargeBuffer'/>");
-            uiInfo.Append("<menuitem action='DlteClearBuffer'/>");
-            uiInfo.Append("</menu>");
-            uiInfo.Append("</menubar>");
-            uiInfo.Append("</ui>");
+		/// <summary>
+		/// Configures the GUI and allows a demo to add menu and widgets.
+		/// </summary>
+		/// <param name="demo">The demo.</param>
+		/// <param name="uiManager">The UI manager.</param>
+		public override void ConfigureGui(Demo demo, UIManager uiManager)
+		{
+			// Get the menu and manually add the items.
+			var menubar = (MenuBar) uiManager.GetWidget("/MenuBar");
 
-            // Set up the action items for the menu.
-            var entries = new[]
-                          {
-                              // "File" Menu
-                              new ActionEntry(
-                                  "DlteMenu",
-                                  null,
-                                  "_Text Editor",
-                                  null,
-                                  null,
-                                  null),
-                              new ActionEntry(
-                                  "DlteSetStyledBuffer",
-                                  null,
-                                  "Set _Styled Buffer",
-                                  null,
-                                  null,
-                                  OnSetStyledBuffer), 
-                              new ActionEntry(
-                                  "DlteSetLargeBuffer",
-                                  null,
-                                  "Set _Large Buffer",
-                                  null,
-                                  null,
-                                  null), 
-                              new ActionEntry(
-                                  "DlteClearBuffer",
-                                  null,
-                                  "_Clear Buffer",
-                                  null,
-                                  null,
-                                  OnClearBuffer), 
-                          };
+			var menu = new Menu();
 
-            // Append the elements to the UI.
-            // Build up the actions
-            var actions = new ActionGroup("group");
-            actions.Add(entries);
+			var menuItem = new MenuItem("_Text Editor");
+			menuItem.Submenu = menu;
 
-            uiManager.InsertActionGroup(actions, 0);
-            demo.AddAccelGroup(uiManager.AccelGroup);
+			menubar.Append(menuItem);
 
-            // Set up the interfaces from XML
-            uiManager.AddUiFromString(uiInfo.ToString());
-        }
+			// Create the styled buffers.
+			editableBufferMenuItem = new CheckMenuItem("_Editable Buffer");
+			editableBufferMenuItem.DrawAsRadio = true;
+			editableBufferMenuItem.Activated += OnEditableBufferActivated;
+			menu.Append(editableBufferMenuItem);
 
-	    #endregion
+			readOnlyBufferMenuItem = new CheckMenuItem("_Read-Only Buffer");
+			readOnlyBufferMenuItem.DrawAsRadio = true;
+			readOnlyBufferMenuItem.Activated += OnReadOnlyBufferActivated;
+			menu.Append(readOnlyBufferMenuItem);
+
+			clearBufferMenuItem = new CheckMenuItem("_Clear");
+			clearBufferMenuItem.DrawAsRadio = true;
+			clearBufferMenuItem.Activated += OnClearBuffer;
+			menu.Append(clearBufferMenuItem);
+
+			// Call the first callback.
+			OnEditableBufferActivated(this, EventArgs.Empty);
+		}
+
+		#endregion
 
 		#endregion
 

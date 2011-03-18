@@ -41,6 +41,7 @@ using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
 using MfGames.GtkExt.LineTextEditor.Margins;
 using MfGames.GtkExt.LineTextEditor.Renderers;
+using MfGames.GtkExt.LineTextEditor.Renderers.Cache;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 
 using Pango;
@@ -144,8 +145,33 @@ namespace MfGames.GtkExt.LineTextEditor
 		{
 			[DebuggerStepThrough]
 			get { return textRenderer == null ? null : textRenderer.LineBuffer; }
-		}
 
+			[DebuggerStepThrough]
+			set
+			{
+				// If it is null, then clear out the buffer but don't create a
+				// text renderer if we don't have to.
+				if (value == null)
+				{
+					if (textRenderer != null)
+					{
+						textRenderer.LineBuffer = null;
+					}
+
+					return;
+				}
+
+				// If we don't have a text renderer, use a "sane" default.
+				if (textRenderer == null)
+				{
+					var lineBufferRenderer = new LineBufferTextRenderer(this, value);
+					textRenderer = new CachedTextRenderer(this, lineBufferRenderer);
+				}
+
+				// Now set the line buffer.
+				textRenderer.LineBuffer = value;
+			}
+		}
 		/// <summary>
 		/// Gets or sets the line layout buffer.
 		/// </summary>

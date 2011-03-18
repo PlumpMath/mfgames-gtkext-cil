@@ -109,6 +109,25 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		{
 			[DebuggerStepThrough]
 			get { return TextRenderer.LineBuffer; }
+
+			[DebuggerStepThrough]
+			set { TextRenderer.LineBuffer = value; }
+		}
+
+		#endregion
+
+		#region Selection
+
+		/// <summary>
+		/// Gets or sets the selection renderer.
+		/// </summary>
+		/// <value>The selection renderer.</value>
+		public override SelectionRenderer SelectionRenderer
+		{
+			[DebuggerStepThrough]
+			get { return TextRenderer.SelectionRenderer; }
+			[DebuggerStepThrough]
+			set { textRenderer.SelectionRenderer = value; }
 		}
 
 		#endregion
