@@ -13,7 +13,8 @@
               <CustomDictionary>
                 <Name>en-US</Name>
                 <CaseSensitive>false</CaseSensitive>
-                <UserWords>Pango</UserWords>
+                <UserWords>Pango
+Renderers</UserWords>
               </CustomDictionary>
             </Dictionaries>
           </CustomDictionaries>
@@ -758,6 +759,7 @@
           <FORCE_WHILE_BRACES_STYLE>ALWAYS_ADD</FORCE_WHILE_BRACES_STYLE>
           <INDENT_SIZE>4</INDENT_SIZE>
           <INITIALIZER_BRACES>NEXT_LINE</INITIALIZER_BRACES>
+          <INSERT_TABS>True</INSERT_TABS>
           <KEEP_BLANK_LINES_IN_CODE>1</KEEP_BLANK_LINES_IN_CODE>
           <KEEP_BLANK_LINES_IN_DECLARATIONS>1</KEEP_BLANK_LINES_IN_DECLARATIONS>
           <KEEP_USER_LINEBREAKS>False</KEEP_USER_LINEBREAKS>
@@ -1011,6 +1013,7 @@ THE SOFTWARE.]]></FileHeader>
         <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PrivateConstants" />
         <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="PrivateStaticReadonly" />
         <Abbreviation Text="IO" />
+        <Abbreviation Text="LENGTH" />
       </Naming2>
     </CodeStyleSettings>
     <HighlightingSettings>
