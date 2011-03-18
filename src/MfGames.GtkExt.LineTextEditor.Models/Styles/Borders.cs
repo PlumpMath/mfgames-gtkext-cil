@@ -28,7 +28,7 @@ using System.Diagnostics;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Visuals
+namespace MfGames.GtkExt.LineTextEditor.Models.Styles
 {
 	/// <summary>
 	/// Represents the borders of all four sides.

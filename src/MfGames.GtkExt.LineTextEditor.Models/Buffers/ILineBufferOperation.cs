@@ -24,11 +24,11 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Enumerations;
+
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Interfaces
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	public interface ILineBufferOperation
 	{

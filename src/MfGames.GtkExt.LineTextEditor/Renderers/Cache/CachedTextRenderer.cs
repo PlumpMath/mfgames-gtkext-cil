@@ -30,9 +30,10 @@ using System.Diagnostics;
 using C5;
 
 using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 
 using Pango;
 

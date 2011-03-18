@@ -26,10 +26,10 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 
 using Pango;
 
@@ -393,7 +393,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// Called when lines are deleted from the underlying buffer.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="MfGames.GtkExt.LineTextEditor.Events.LineRangeEventArgs"/> instance containing the event data.</param>
+		/// <param name="e">The <see cref="LineRangeEventArgs"/> instance containing the event data.</param>
 		protected virtual void OnLinesDeleted(
 			object sender,
 			LineRangeEventArgs e)
@@ -405,7 +405,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// Called when lines are inserted into the underlying buffer.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="MfGames.GtkExt.LineTextEditor.Events.LineRangeEventArgs"/> instance containing the event data.</param>
+		/// <param name="e">The <see cref="LineRangeEventArgs"/> instance containing the event data.</param>
 		protected virtual void OnLinesInserted(
 			object sender,
 			LineRangeEventArgs e)

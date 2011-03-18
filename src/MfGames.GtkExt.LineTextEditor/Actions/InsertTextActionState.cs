@@ -24,9 +24,9 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 
 #endregion
 

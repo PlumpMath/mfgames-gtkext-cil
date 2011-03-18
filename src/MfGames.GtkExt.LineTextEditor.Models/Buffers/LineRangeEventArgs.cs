@@ -28,7 +28,7 @@ using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Events
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Used to indicate an event applying to a range of lines.

@@ -27,12 +27,11 @@
 using System;
 using System.Collections.Generic;
 
-using MfGames.GtkExt.LineTextEditor.Events;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.LineTextEditor.Models
 {
 	/// <summary>
 	/// Represents a virtual collection of lines for viewing and

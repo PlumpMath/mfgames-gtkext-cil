@@ -26,15 +26,13 @@
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Visuals;
-
 using Pango;
 
 using Rectangle=Pango.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.LineTextEditor.Models
 {
 	/// <summary>
 	/// Represents a position within the text buffer using the line as a primary

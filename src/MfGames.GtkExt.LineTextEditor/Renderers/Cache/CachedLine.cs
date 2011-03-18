@@ -26,7 +26,7 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 
 using Pango;
 

@@ -27,7 +27,7 @@
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Actions;
-using MfGames.GtkExt.LineTextEditor.Commands;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 
 #endregion
 

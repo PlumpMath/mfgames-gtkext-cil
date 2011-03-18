@@ -31,7 +31,7 @@ using Cairo;
 using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 
 using Alignment=Pango.Alignment;
 using Color=Cairo.Color;

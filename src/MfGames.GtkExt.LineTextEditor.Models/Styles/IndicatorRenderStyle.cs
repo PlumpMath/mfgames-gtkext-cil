@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Enumerations
+namespace MfGames.GtkExt.LineTextEditor.Models.Styles
 {
 	/// <summary>
 	/// Determines the ways indicators are drawn on the bar.

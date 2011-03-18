@@ -26,8 +26,6 @@
 
 using C5;
 
-using MfGames.GtkExt.LineTextEditor.Enumerations;
-
 using Pango;
 
 using Color=Cairo.Color;
@@ -35,7 +33,7 @@ using IDictionary=System.Collections.Generic;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Visuals
+namespace MfGames.GtkExt.LineTextEditor.Models.Styles
 {
 	/// <summary>
 	/// Contains the screen style used for rendering the various elements of the

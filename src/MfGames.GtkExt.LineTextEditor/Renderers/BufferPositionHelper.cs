@@ -26,9 +26,9 @@
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
-using MfGames.GtkExt.LineTextEditor.Visuals;
+using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 
 using Pango;
 

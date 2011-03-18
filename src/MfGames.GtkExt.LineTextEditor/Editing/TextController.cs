@@ -40,10 +40,10 @@ using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.LineTextEditor.Actions;
 using MfGames.GtkExt.LineTextEditor.Attributes;
-using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Commands;
 using MfGames.GtkExt.LineTextEditor.Events;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Models;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
 
 using Key=Gdk.Key;
 

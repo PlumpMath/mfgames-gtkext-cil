@@ -29,8 +29,8 @@ using System.Diagnostics;
 using Cairo;
 
 using MfGames.GtkExt.Extensions.Cairo;
-using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Models;
 using MfGames.GtkExt.LineTextEditor.Renderers;
 
 #endregion

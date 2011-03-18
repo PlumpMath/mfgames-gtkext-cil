@@ -24,11 +24,11 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.LineTextEditor.Commands;
+
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Enumerations
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Defines the various operations that a line buffer can receive.

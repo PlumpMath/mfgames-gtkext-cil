@@ -31,10 +31,10 @@ using C5;
 
 using Cairo;
 
-using MfGames.GtkExt.LineTextEditor.Enumerations;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 using MfGames.GtkExt.LineTextEditor.Renderers;
-using MfGames.GtkExt.LineTextEditor.Visuals;
 
 #endregion
 

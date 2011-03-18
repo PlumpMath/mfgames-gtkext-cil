@@ -28,7 +28,7 @@ using System;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Events
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Indicates a line changed.

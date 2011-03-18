@@ -32,9 +32,9 @@ using Gdk;
 
 using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.LineTextEditor.Attributes;
-using MfGames.GtkExt.LineTextEditor.Buffers;
 using MfGames.GtkExt.LineTextEditor.Editing;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Models;
 using MfGames.GtkExt.LineTextEditor.Renderers;
 
 using Pango;

@@ -26,12 +26,9 @@
 
 using C5;
 
-using MfGames.GtkExt.LineTextEditor.Buffers;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Commands
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Implements a command, which is a collection of operations both

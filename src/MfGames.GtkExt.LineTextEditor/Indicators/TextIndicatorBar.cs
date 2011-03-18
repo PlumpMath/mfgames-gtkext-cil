@@ -38,7 +38,8 @@ using GLib;
 
 using Gtk;
 
-using MfGames.GtkExt.LineTextEditor.Events;
+using MfGames.GtkExt.LineTextEditor.Models.Buffers;
+using MfGames.GtkExt.LineTextEditor.Models.Styles;
 using MfGames.GtkExt.LineTextEditor.Renderers;
 using MfGames.GtkExt.LineTextEditor.Visuals;
 using MfGames.Locking;

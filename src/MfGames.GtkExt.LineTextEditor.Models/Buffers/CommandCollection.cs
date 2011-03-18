@@ -28,7 +28,7 @@ using C5;
 
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Commands
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Implements an ordered command collection.

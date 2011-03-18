@@ -26,7 +26,7 @@
 
 using System;
 
-using MfGames.GtkExt.LineTextEditor.Buffers;
+using MfGames.GtkExt.LineTextEditor.Models;
 using MfGames.GtkExt.LineTextEditor.Renderers;
 
 using NUnit.Framework;

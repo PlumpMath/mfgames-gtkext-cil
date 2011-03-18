@@ -26,12 +26,9 @@
 
 using System.Diagnostics;
 
-using MfGames.GtkExt.LineTextEditor.Enumerations;
-using MfGames.GtkExt.LineTextEditor.Interfaces;
-
 #endregion
 
-namespace MfGames.GtkExt.LineTextEditor.Commands
+namespace MfGames.GtkExt.LineTextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Defines an operation that changes text of a single line.

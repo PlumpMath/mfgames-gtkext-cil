@@ -24,100 +24,100 @@
 
 using System;
 
-namespace MfGames.GtkExt.LineTextEditor.Buffers
+namespace MfGames.GtkExt.LineTextEditor.Models
 {
-    /// <summary>
-    /// Defines a range of characters from the start to the end.
-    /// </summary>
-    public class CharacterRange
-    {
-        #region Constructors
+	/// <summary>
+	/// Defines a range of characters from the start to the end.
+	/// </summary>
+	public class CharacterRange
+	{
+		#region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CharacterRange"/> class.
-        /// </summary>
-        public CharacterRange()
-        {
-            startIndex = 0;
-            endIndex = Int32.MaxValue;
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CharacterRange"/> class.
+		/// </summary>
+		public CharacterRange()
+		{
+			startIndex = 0;
+			endIndex = Int32.MaxValue;
+		}
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CharacterRange"/> struct.
-        /// </summary>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="endIndex">The end index.</param>
-        public CharacterRange(
-            int startIndex,
-            int endIndex)
-        {
-            if (startIndex < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    "startIndex", "Start index cannot be less than zero.");
-            }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CharacterRange"/> struct.
+		/// </summary>
+		/// <param name="startIndex">The start index.</param>
+		/// <param name="endIndex">The end index.</param>
+		public CharacterRange(
+			int startIndex,
+			int endIndex)
+		{
+			if (startIndex < 0)
+			{
+				throw new ArgumentOutOfRangeException(
+					"startIndex", "Start index cannot be less than zero.");
+			}
 
-            if (endIndex < startIndex)
-            {
-                throw new ArgumentOutOfRangeException("endIndex", "End index cannot be less than start index.");
-            }
+			if (endIndex < startIndex)
+			{
+				throw new ArgumentOutOfRangeException("endIndex", "End index cannot be less than start index.");
+			}
 
-            this.startIndex = startIndex;
-            this.endIndex = endIndex;
-        }
+			this.startIndex = startIndex;
+			this.endIndex = endIndex;
+		}
 
-        #endregion
+		#endregion
 
-        #region Ranges
+		#region Ranges
 
-        private readonly int endIndex;
-        private readonly int startIndex;
+		private readonly int endIndex;
+		private readonly int startIndex;
 
-        /// <summary>
-        /// Gets the end character index.
-        /// </summary>
-        public int EndIndex
-        {
-            get { return endIndex; }
-        }
+		/// <summary>
+		/// Gets the end character index.
+		/// </summary>
+		public int EndIndex
+		{
+			get { return endIndex; }
+		}
 
-        /// <summary>
-        /// Gets the start character index.
-        /// </summary>
-        public int StartIndex
-        {
-            get { return startIndex; }
-        }
+		/// <summary>
+		/// Gets the start character index.
+		/// </summary>
+		public int StartIndex
+		{
+			get { return startIndex; }
+		}
 
-        /// <summary>
-        /// Gets a substring of the given text, normalizing for length.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public string Substring(string value)
-        {
-            // If we have a null, then return a null.
-            if (value == null)
-            {
-                return null;
-            }
+		/// <summary>
+		/// Gets a substring of the given text, normalizing for length.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// <returns></returns>
+		public string Substring(string value)
+		{
+			// If we have a null, then return a null.
+			if (value == null)
+			{
+				return null;
+			}
 
-            // Check to see if we are trying to get the entire line.
-            if (startIndex == 0 && endIndex >= value.Length)
-            {
-                return value;
-            }
+			// Check to see if we are trying to get the entire line.
+			if (startIndex == 0 && endIndex >= value.Length)
+			{
+				return value;
+			}
 
-            // Figure out a safe substring from the given text and return it.
-            int textEndIndex = Math.Min(endIndex, value.Length);
-            int length = startIndex - textEndIndex;
+			// Figure out a safe substring from the given text and return it.
+			int textEndIndex = Math.Min(endIndex, value.Length);
+			int length = startIndex - textEndIndex;
 
-            return value.Substring(startIndex, length);
-        }
+			return value.Substring(startIndex, length);
+		}
 
-        #endregion
+		#endregion
 
-    	#region Conversion
+		#region Conversion
 
 		/// <summary>
 		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -130,7 +130,7 @@ namespace MfGames.GtkExt.LineTextEditor.Buffers
 			return string.Format("Characters {0}-{1}", startIndex, endIndex);
 		}
 
-    	#endregion
+		#endregion
 
-    }
+	}
 }
