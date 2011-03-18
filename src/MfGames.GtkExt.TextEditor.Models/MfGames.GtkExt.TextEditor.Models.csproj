@@ -8,8 +8,8 @@
     <ProjectGuid>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MfGames.GtkExt.LineTextEditor.Models</RootNamespace>
-    <AssemblyName>MfGames.GtkExt.LineTextEditor.Models</AssemblyName>
+    <RootNamespace>MfGames.GtkExt.TextEditor.Models</RootNamespace>
+    <AssemblyName>MfGames.GtkExt.TextEditor.Models</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

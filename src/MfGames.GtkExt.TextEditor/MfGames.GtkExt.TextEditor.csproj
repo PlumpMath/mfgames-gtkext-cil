@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MfGames.GtkExt.LineTextEditor</RootNamespace>
-    <AssemblyName>MfGames.GtkExt.LineTextEditor</AssemblyName>
+    <RootNamespace>MfGames.GtkExt.TextEditor</RootNamespace>
+    <AssemblyName>MfGames.GtkExt.TextEditor</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -125,9 +125,9 @@
     <Compile Include="EditorView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor.Models\MfGames.GtkExt.LineTextEditor.Models.csproj">
+    <ProjectReference Include="..\MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj">
       <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>
-      <Name>MfGames.GtkExt.LineTextEditor.Models</Name>
+      <Name>MfGames.GtkExt.TextEditor.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
       <Project>{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}</Project>

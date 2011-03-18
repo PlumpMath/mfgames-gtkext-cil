@@ -5,13 +5,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt", "MfGames.G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtkExtDemo", "GtkExtDemo\GtkExtDemo.csproj", "{B1823551-D11A-4C41-BD44-DD60BAA2ABF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.LineTextEditor", "MfGames.GtkExt.LineTextEditor\MfGames.GtkExt.LineTextEditor.csproj", "{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.TextEditor", "MfGames.GtkExt.TextEditor\MfGames.GtkExt.TextEditor.csproj", "{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateExhaustiveSelectionTests", "CreateExhaustiveSelectionTests\CreateExhaustiveSelectionTests.csproj", "{3FB956E6-40FB-4ED3-8047-1CCDC8DECE3B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{94993FB2-3AB7-4F80-9881-2F2D3CCA39B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.LineTextEditor.Models", "MfGames.GtkExt.LineTextEditor.Models\MfGames.GtkExt.LineTextEditor.Models.csproj", "{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.TextEditor.Models", "MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj", "{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
