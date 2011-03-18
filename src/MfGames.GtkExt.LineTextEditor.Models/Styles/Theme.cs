@@ -62,13 +62,13 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		{
 			// Create the initial styles along with the styles used internally
 			// by the text editor.
-			lineStyles = new HashDictionary<string, LineStyle>();
+			lineStyles = new HashDictionary<string, LineBlockStyle>();
 
-			var baseStyle = new LineStyle();
+			var baseStyle = new LineBlockStyle();
 
-			var marginStyle = new LineStyle(baseStyle);
+			var marginStyle = new LineBlockStyle(baseStyle);
 
-			var lineNumberStyle = new LineStyle(marginStyle);
+			var lineNumberStyle = new LineBlockStyle(marginStyle);
 			lineNumberStyle.Alignment = Alignment.Right;
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			lineNumberStyle.ForegroundColor = new Color(0.5, 0.5, 0.5);
@@ -79,11 +79,11 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 			lineNumberStyle.Margins.Top = 4;
 			lineNumberStyle.Margins.Bottom = 4;
 
-			var currentLineNumberStyle = new LineStyle(lineNumberStyle);
+			var currentLineNumberStyle = new LineBlockStyle(lineNumberStyle);
 			currentLineNumberStyle.BackgroundColor = new Color(0.8, 0.8, 0.8);
 			currentLineNumberStyle.ForegroundColor = new Color(0.0, 0.0, 0.0);
 
-			var textStyle = new LineStyle(baseStyle);
+			var textStyle = new LineBlockStyle(baseStyle);
 			textStyle.Margins.Top = 4;
 			textStyle.Margins.Bottom = 4;
 			textStyle.Margins.Left = 8;
@@ -145,13 +145,13 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 		#region Line Styles
 
-		private readonly HashDictionary<string, LineStyle> lineStyles;
+		private readonly HashDictionary<string, LineBlockStyle> lineStyles;
 
 		/// <summary>
 		/// Gets the current line number block style.
 		/// </summary>
 		/// <value>The line number block style.</value>
-		public LineStyle CurrentLineNumberLineStyle
+		public LineBlockStyle CurrentLineBlockNumberLineBlockStyle
 		{
 			get { return lineStyles[CurrentLineNumberStyle]; }
 		}
@@ -160,7 +160,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the line number block style.
 		/// </summary>
 		/// <value>The line number block style.</value>
-		public LineStyle LineNumberLineStyle
+		public LineBlockStyle LineNumberLineStyle
 		{
 			get { return lineStyles[LineNumberStyle]; }
 		}
@@ -169,7 +169,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the selector styles.
 		/// </summary>
 		/// <value>The selectors.</value>
-		public IDictionary<string, LineStyle> LineStyles
+		public IDictionary<string, LineBlockStyle> LineStyles
 		{
 			get { return lineStyles; }
 		}
@@ -178,7 +178,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// Gets the text block style.
 		/// </summary>
 		/// <value>The text block style.</value>
-		public LineStyle TextLineStyle
+		public LineBlockStyle TextLineStyle
 		{
 			get { return lineStyles[TextStyle]; }
 		}

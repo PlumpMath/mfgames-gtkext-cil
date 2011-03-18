@@ -101,7 +101,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			var layout = new Layout(DisplayContext.PangoContext);
 
 			// Assign the given style to the layout.
-			LineStyle style = GetLineStyle(lineIndex);
+			LineBlockStyle style = GetLineStyle(lineIndex);
 
 			DisplayContext.SetLayout(layout, style);
 
@@ -125,7 +125,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
 
 			// Get the style to include the style's height.
-			LineStyle style = GetLineStyle(lineIndex);
+			LineBlockStyle style = GetLineStyle(lineIndex);
 
 			lineHeight += (int) Math.Ceiling(style.Height);
 
@@ -344,7 +344,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <returns></returns>
-		public virtual LineStyle GetLineStyle(int lineIndex)
+		public virtual LineBlockStyle GetLineStyle(int lineIndex)
 		{
 			// Get the style name and normalize it.
 			string styleName = LineBuffer.GetLineStyleName(lineIndex);

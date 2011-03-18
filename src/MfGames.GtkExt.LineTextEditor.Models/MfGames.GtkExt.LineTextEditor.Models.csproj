@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MfGames.GtkExt.LineTextEditor.Models</RootNamespace>
+    <AssemblyName>MfGames.GtkExt.LineTextEditor.Models</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="C5, Version=1.1.1.0, Culture=neutral, PublicKeyToken=06a1b38866503b69, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\C5.dll</HintPath>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="Mono.Cairo, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BufferPosition.cs" />
+    <Compile Include="BufferSegment.cs" />
+    <Compile Include="Buffers\Command.cs" />
+    <Compile Include="Buffers\CommandCollection.cs" />
+    <Compile Include="Buffers\CommandManager.cs" />
+    <Compile Include="Buffers\DeleteLinesOperation.cs" />
+    <Compile Include="Buffers\ILineBufferOperation.cs" />
+    <Compile Include="Buffers\ILineIndicator.cs" />
+    <Compile Include="Buffers\InsertLinesOperation.cs" />
+    <Compile Include="Buffers\LineBufferDecorator.cs" />
+    <Compile Include="Buffers\LineBufferOperationType.cs" />
+    <Compile Include="Buffers\LineChangedArgs.cs" />
+    <Compile Include="Buffers\LineRangeEventArgs.cs" />
+    <Compile Include="Buffers\SetTextOperation.cs" />
+    <Compile Include="CharacterRange.cs" />
+    <Compile Include="LineBuffer.cs" />
+    <Compile Include="MemoryLineBuffer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Styles\BlockStyle.cs" />
+    <Compile Include="Styles\Border.cs" />
+    <Compile Include="Styles\Borders.cs" />
+    <Compile Include="Styles\IndicatorRenderStyle.cs" />
+    <Compile Include="Styles\IndicatorStyle.cs" />
+    <Compile Include="Styles\LineBlockStyle.cs" />
+    <Compile Include="Styles\OptionalBorders.cs" />
+    <Compile Include="Styles\OptionalSpacing.cs" />
+    <Compile Include="Styles\Spacing.cs" />
+    <Compile Include="Styles\StyleUsage.cs" />
+    <Compile Include="Styles\Theme.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
+      <Project>{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}</Project>
+      <Name>MfGames.GtkExt</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

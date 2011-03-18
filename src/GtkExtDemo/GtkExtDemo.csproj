@@ -37,6 +37,10 @@
     <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor.Models\MfGames.GtkExt.LineTextEditor.Models.csproj">
+      <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>
+      <Name>MfGames.GtkExt.LineTextEditor.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor\MfGames.GtkExt.LineTextEditor.csproj">
       <Project>{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}</Project>
       <Name>MfGames.GtkExt.LineTextEditor</Name>

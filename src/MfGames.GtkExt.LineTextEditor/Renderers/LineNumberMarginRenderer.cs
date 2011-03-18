@@ -65,7 +65,7 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 
 			// Create a layout object and set its values.
 			layout = new Layout(textEditor.PangoContext);
-			LineStyle style = textEditor.Theme.LineNumberLineStyle;
+			LineBlockStyle style = textEditor.Theme.LineNumberLineStyle;
 
 			textEditor.SetLayout(layout, style);
 
@@ -133,12 +133,12 @@ namespace MfGames.GtkExt.LineTextEditor.Margins
 			double height)
 		{
 			// Figure out the style we need to use.
-			LineStyle style;
+			LineBlockStyle style;
 
 			if (displayContext.Caret.Position.LineIndex == lineIndex)
 			{
 				// This is the current line.
-				style = displayContext.Theme.CurrentLineNumberLineStyle;
+				style = displayContext.Theme.CurrentLineBlockNumberLineBlockStyle;
 			}
 			else
 			{

@@ -32,6 +32,7 @@ using Gtk;
 
 using MfGames.GtkExt.LineTextEditor.Attributes;
 using MfGames.GtkExt.LineTextEditor.Interfaces;
+using MfGames.GtkExt.LineTextEditor.Renderers;
 
 using Global=Gtk.Global;
 using Key=Gdk.Key;

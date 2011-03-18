@@ -1013,9 +1013,4 @@ THE SOFTWARE.]]></FileHeader>
       <Abbreviation Text="LENGTH" />
     </Naming2>
   </CodeStyleSettings>
-  <Daemon.SolutionSettings>
-    <SkipFilesAndFolders>
-      <Item>C4AADFA8-6268-4D61-B44B-78F1A69D3EAF/d:Tests/f:SelectionHelperExhaustiveTests.cs</Item>
-    </SkipFilesAndFolders>
-  </Daemon.SolutionSettings>
 </Configuration>

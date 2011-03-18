@@ -42,26 +42,26 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 	/// parent elements are checked. This allows for simple changes at higher
 	/// levels to cascade down to child elements.
 	/// </summary>
-	public class LineStyle : BlockStyle
+	public class LineBlockStyle : BlockStyle
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LineStyle"/> class.
+		/// Initializes a new instance of the <see cref="LineBlockStyle"/> class.
 		/// </summary>
-		public LineStyle()
+		public LineBlockStyle()
 		{
-			children = new LinkedList<LineStyle>();
+			children = new LinkedList<LineBlockStyle>();
 			margins = new OptionalSpacing();
 			padding = new OptionalSpacing();
 			borders = new OptionalBorders();
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LineStyle"/> class.
+		/// Initializes a new instance of the <see cref="LineBlockStyle"/> class.
 		/// </summary>
 		/// <param name="parent">The parent.</param>
-		public LineStyle(LineStyle parent)
+		public LineBlockStyle(LineBlockStyle parent)
 			: this()
 		{
 			Parent = parent;
@@ -71,14 +71,14 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 
 		#region Cascading
 
-		private readonly LinkedList<LineStyle> children;
-		private LineStyle parent;
+		private readonly LinkedList<LineBlockStyle> children;
+		private LineBlockStyle parent;
 
 		/// <summary>
 		/// Gets the children styles associated with this one.
 		/// </summary>
 		/// <value>The children.</value>
-		public LinkedList<LineStyle> Children
+		public LinkedList<LineBlockStyle> Children
 		{
 			[DebuggerStepThrough]
 			get { return children; }
@@ -90,7 +90,7 @@ namespace MfGames.GtkExt.LineTextEditor.Visuals
 		/// into this one. Setting to null will remove any cascading.
 		/// </summary>
 		/// <value>The parent.</value>
-		public LineStyle Parent
+		public LineBlockStyle Parent
 		{
 			[DebuggerStepThrough]
 			get { return parent; }

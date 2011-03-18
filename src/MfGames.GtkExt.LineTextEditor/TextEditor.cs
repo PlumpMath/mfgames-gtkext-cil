@@ -51,7 +51,6 @@ using Color=Cairo.Color;
 using Context=Cairo.Context;
 using Key=Gdk.Key;
 using Layout=Pango.Layout;
-using LineStyle=MfGames.GtkExt.LineTextEditor.Visuals.LineStyle;
 using Rectangle=Cairo.Rectangle;
 using Style=Gtk.Style;
 using Window=Gdk.Window;
@@ -260,7 +259,7 @@ namespace MfGames.GtkExt.LineTextEditor
 		/// <param name="style">The style.</param>
 		public void SetLayout(
 			Layout layout,
-			LineStyle style)
+			LineBlockStyle style)
 		{
 			// Set the style elements.
 			layout.Wrap = style.GetWrap();
@@ -537,7 +536,7 @@ namespace MfGames.GtkExt.LineTextEditor
 				{
 					// Pull out the layout and style since we'll use it.
 					Layout layout = textRenderer.GetLineLayout(lineIndex);
-					LineStyle style = TextRenderer.GetLineStyle(lineIndex);
+					LineBlockStyle style = TextRenderer.GetLineStyle(lineIndex);
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;

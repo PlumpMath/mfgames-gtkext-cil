@@ -267,7 +267,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 		/// <param name="displayContext">The text editor.</param>
 		/// <param name="line">The line index which may not be in the window.</param>
 		/// <returns></returns>
-		public LineStyle GetLineStyle(
+		public LineBlockStyle GetLineStyle(
 			IDisplayContext displayContext,
 			int line)
 		{
@@ -340,7 +340,7 @@ namespace MfGames.GtkExt.LineTextEditor.Renderers.Cache
 
 				// Get the height of this line.
 				Layout layout = Renderer.TextRenderer.GetLineLayout(line);
-				LineStyle style = Renderer.TextRenderer.GetLineStyle(line);
+				LineBlockStyle style = Renderer.TextRenderer.GetLineStyle(line);
 
 				cachedLine.Style = style;
 				cachedLine.Layout = layout;

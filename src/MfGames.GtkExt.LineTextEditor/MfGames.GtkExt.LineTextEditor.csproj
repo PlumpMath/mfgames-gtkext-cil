@@ -82,38 +82,23 @@
     <Compile Include="Attributes\ActionFixtureAttribute.cs" />
     <Compile Include="Attributes\ActionStateAttribute.cs" />
     <Compile Include="Attributes\KeyBindingAttribute.cs" />
-    <Compile Include="Buffers\BufferSegment.cs" />
-    <Compile Include="Buffers\CharacterRange.cs" />
+    <Compile Include="Renderers\BufferPositionHelper.cs" />
     <Compile Include="Renderers\Cache\CachedLine.cs" />
     <Compile Include="Renderers\Cache\CachedTextRenderer.cs" />
     <Compile Include="Renderers\Cache\CachedWindow.cs" />
     <Compile Include="Editing\EnglishWordSplitter.cs" />
-    <Compile Include="Buffers\LineBufferDecorator.cs" />
     <Compile Include="Editing\OffsetWordSplitter.cs" />
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\CommandCollection.cs" />
-    <Compile Include="Commands\CommandManager.cs" />
-    <Compile Include="Commands\DeleteLinesOperation.cs" />
-    <Compile Include="Commands\InsertLinesOperation.cs" />
-    <Compile Include="Commands\SetTextOperation.cs" />
     <Compile Include="DrawingUtility.cs" />
     <Compile Include="Editing\ActionEntry.cs" />
-    <Compile Include="Buffers\BufferPosition.cs" />
     <Compile Include="Editing\Caret.cs" />
-    <Compile Include="Enumerations\IndicatorRenderStyle.cs" />
     <Compile Include="Events\PopulateContextMenuArgs.cs" />
     <Compile Include="Editing\TextController.cs" />
-    <Compile Include="Enumerations\LineBufferOperationType.cs" />
-    <Compile Include="Events\LineChangedArgs.cs" />
-    <Compile Include="Events\LineRangeEventArgs.cs" />
     <Compile Include="Indicators\IndicatorLine.cs" />
     <Compile Include="Interfaces\IActionState.cs" />
     <Compile Include="Interfaces\IActionContext.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
-    <Compile Include="Buffers\LineBuffer.cs" />
-    <Compile Include="Interfaces\ILineBufferOperation.cs" />
-    <Compile Include="Interfaces\ILineIndicator.cs" />
     <Compile Include="Renderers\LineBufferTextRenderer.cs" />
+    <Compile Include="Renderers\RenderContext.cs" />
     <Compile Include="Renderers\SelectionRenderer.cs" />
     <Compile Include="Renderers\TextRenderer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
@@ -123,7 +108,6 @@
     <Compile Include="Renderers\MarginRenderer.cs" />
     <Compile Include="Renderers\MarginRendererCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Buffers\MemoryLineBuffer.cs" />
     <Compile Include="DisplaySettings.cs" />
     <Compile Include="Renderers\TextRendererDecorator.cs" />
     <Compile Include="Tests\AttributeCenterSelectionExhaustiveTests.cs" />
@@ -138,20 +122,13 @@
     <Compile Include="Tests\SimpleCenterSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\SimpleEndSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\SimpleStartSelectionExhaustiveTests.cs" />
-    <Compile Include="Visuals\BlockStyle.cs" />
-    <Compile Include="Visuals\Border.cs" />
-    <Compile Include="Visuals\Borders.cs" />
-    <Compile Include="Visuals\IndicatorStyle.cs" />
-    <Compile Include="Visuals\OptionalBorders.cs" />
-    <Compile Include="Visuals\OptionalSpacing.cs" />
-    <Compile Include="Visuals\LineStyle.cs" />
-    <Compile Include="Visuals\RenderContext.cs" />
-    <Compile Include="Visuals\Spacing.cs" />
-    <Compile Include="Visuals\StyleUsage.cs" />
-    <Compile Include="Visuals\Theme.cs" />
     <Compile Include="TextEditor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MfGames.GtkExt.LineTextEditor.Models\MfGames.GtkExt.LineTextEditor.Models.csproj">
+      <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>
+      <Name>MfGames.GtkExt.LineTextEditor.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
       <Project>{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}</Project>
       <Name>MfGames.GtkExt</Name>
