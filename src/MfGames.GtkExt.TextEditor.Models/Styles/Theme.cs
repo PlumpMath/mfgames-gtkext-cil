@@ -80,9 +80,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 			lineNumberStyle.Borders.Right = new Border(1, new Color(0.5, 0.5, 0.5));
 			lineNumberStyle.Padding.Right = 4;
 			lineNumberStyle.Padding.Left = 4;
+			lineNumberStyle.Padding.Top = 4;
+			lineNumberStyle.Padding.Bottom = 4;
 			lineNumberStyle.Margins.Right = 0;
-			lineNumberStyle.Margins.Top = 4;
-			lineNumberStyle.Margins.Bottom = 4;
 
 			// Store the styles in the theme.
 			lineStyles[BaseStyle] = baseStyle;
