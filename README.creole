@@ -1,0 +1,15 @@
+= MfGames.GtkExt
+
+The MfGames.GtkExt library consists of various extension methods and composite widgets used to provide additional functionality for Gtk#.
+
+Features include:
+
+• Combo box for enumerations
+• A composite widget for providing string entry with add and remove buttons
+• A label/widget layout for arranging data so it lines up
+• Virtualized text editor
+• Extension methods on various Gtk, Pango, and Cairo classes to simplify code
+
+== Virtualized Text Editor
+
+One of the major components of this library is the text editor, in the <code>MfGames.GtkExt.TextEditor</code> namespace. Inspired by Gtk's built-in TextView and MonoDevelop, this provides an editor component for  abstract line data. There are no assumptions on the format of the line data, allowing it to be an abstract syntax tree, an array of strings, or whatever layout is appropriate for processing. It can also be used to create an editor for data sets exceeding the available memory.
