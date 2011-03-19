@@ -37,7 +37,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 	/// Implements a <see cref="EditorViewRenderer"/> wrapped around a 
 	/// <see cref="LineBuffer"/>.
 	/// </summary>
-	public class LineBufferTextRenderer : EditorViewRenderer
+	public class LineBufferRenderer : EditorViewRenderer
 	{
 		#region Constructors
 
@@ -45,7 +45,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		public LineBufferTextRenderer(IDisplayContext displayContext)
+		public LineBufferRenderer(IDisplayContext displayContext)
 			: this(displayContext, null)
 		{
 		}
@@ -55,18 +55,13 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineBuffer">The line buffer.</param>
-		public LineBufferTextRenderer(
+		public LineBufferRenderer(
 			IDisplayContext displayContext,
 			LineBuffer lineBuffer)
 			: base(displayContext)
 		{
 			// Save the buffer in a property.
-			this.lineBuffer = lineBuffer;
-
-			// Hook up the events for the buffer.
-			lineBuffer.LineChanged += OnLineChanged;
-			lineBuffer.LinesInserted += OnLinesInserted;
-			lineBuffer.LinesDeleted += OnLinesDeleted;
+			SetLineBuffer(lineBuffer);
 
 			// Set up the selection.
 			selectionRenderer = new SelectionRenderer();
@@ -86,9 +81,32 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		{
 			[DebuggerStepThrough]
 			get { return lineBuffer; }
+		}
 
-			[DebuggerStepThrough]
-			set { lineBuffer = value; }
+		/// <summary>
+		/// Sets the line buffer.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		public override void SetLineBuffer(LineBuffer value)
+		{
+			// Disconnect the events from the buffer.
+			if (lineBuffer != null)
+			{
+				lineBuffer.LineChanged -= OnLineChanged;
+				lineBuffer.LinesInserted -= OnLinesInserted;
+				lineBuffer.LinesDeleted -= OnLinesDeleted;
+			}
+
+			// Set the buffer and hook up the events.
+			lineBuffer = value;
+
+			// Hook up the events for the buffer.
+			if (lineBuffer != null)
+			{
+				lineBuffer.LineChanged += OnLineChanged;
+				lineBuffer.LinesInserted += OnLinesInserted;
+				lineBuffer.LinesDeleted += OnLinesDeleted;
+			}
 		}
 
 		#endregion

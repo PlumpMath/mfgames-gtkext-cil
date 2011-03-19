@@ -33,7 +33,6 @@ using Gtk;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 
-using Alignment=Pango.Alignment;
 using Color=Cairo.Color;
 using Context=Cairo.Context;
 using Layout=Pango.Layout;
@@ -41,7 +40,7 @@ using Rectangle=Cairo.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// Common and useful methods for working with Cairo and Pango.
@@ -50,15 +49,12 @@ namespace MfGames.GtkExt.TextEditor
 	{
 		#region Layout
 
-		#endregion
-
 		/// <summary>
 		/// Draws a layout with a given style to the render context.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="renderContext">The render context.</param>
 		/// <param name="region">The region for the various elements.</param>
-		/// <param name="layout">The layout to use for text.</param>
 		/// <param name="style">The style used for borders and padding.</param>
 		public static void DrawLayout(
 			IDisplayContext displayContext,
@@ -150,7 +146,7 @@ namespace MfGames.GtkExt.TextEditor
 			double marginLeftX = margins.Left + borders.Left.LineWidth;
 			double paddingLeftX = marginLeftX + padding.Left;
 
-			// Draw the layout with out the text.
+			// Draw the layout borders and background.
 			DrawLayout(displayContext, renderContext, region, style);
 
 			// Figure out the extents of the layout.
@@ -160,12 +156,6 @@ namespace MfGames.GtkExt.TextEditor
 			// Add the padding to the x coordinate since the only thing left is
 			// to render the text.
 			double textX = region.X + paddingLeftX;
-
-			// Figure out if we are right or left justified which changes the X.
-			if (style.GetAlignment() == Alignment.Right)
-			{
-				textX += region.Width;
-			}
 
 			// Shift down based on the top-spacing.
 			double textY = region.Y + style.Top;
@@ -192,5 +182,7 @@ namespace MfGames.GtkExt.TextEditor
 			return String.Format(
 				"<span color=\"#{1}\">{0}</span>", text, color.ToRgbHexString());
 		}
+
+		#endregion
 	}
 }

@@ -77,7 +77,21 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// Gets the line buffer associated with this renderer.
 		/// </summary>
 		/// <value>The line buffer.</value>
-		public abstract LineBuffer LineBuffer { get; set; }
+		public abstract LineBuffer LineBuffer { get; }
+
+		/// <summary>
+		/// Clears the line buffer from the renderer.
+		/// </summary>
+		public void ClearLineBuffer()
+		{
+			SetLineBuffer(null);
+		}
+
+		/// <summary>
+		/// Sets the line buffer since the renderer.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		public abstract void SetLineBuffer(LineBuffer value);
 
 		#endregion
 
@@ -103,7 +117,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			// Assign the given style to the layout.
 			LineBlockStyle style = GetLineStyle(lineIndex);
 
-			DisplayContext.SetLayout(layout, style);
+			DisplayContext.SetLayout(layout, style, DisplayContext.TextWidth);
 
 			// Set the markup and return.
 			layout.SetMarkup(GetSelectionMarkup(lineIndex));
@@ -180,7 +194,8 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			// Get a layout for the default text style.
 			var layout = new Layout(DisplayContext.PangoContext);
 
-			DisplayContext.SetLayout(layout, DisplayContext.Theme.TextLineStyle);
+			DisplayContext.SetLayout(
+				layout, DisplayContext.Theme.TextLineStyle, DisplayContext.TextWidth);
 
 			// Set the layout to a simple string.
 			layout.SetText("W");

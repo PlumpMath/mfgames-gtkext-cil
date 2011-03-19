@@ -59,8 +59,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 		public CachedTextRenderer(
 			IDisplayContext displayContext,
 			LineBuffer lineBuffer)
-			: this(displayContext, new LineBufferTextRenderer(displayContext, lineBuffer)
-				)
+			: this(displayContext, new LineBufferRenderer(displayContext, lineBuffer))
 		{
 		}
 
@@ -125,13 +124,16 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 		{
 			[DebuggerStepThrough]
 			get { return base.LineBuffer; }
+		}
 
-			[DebuggerStepThrough]
-			set
-			{
-				base.LineBuffer = value;
-				Reset();
-			}
+		/// <summary>
+		/// Sets the line buffer since the renderer.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		public override void SetLineBuffer(LineBuffer value)
+		{
+			base.SetLineBuffer(value);
+			Reset();
 		}
 
 		#endregion

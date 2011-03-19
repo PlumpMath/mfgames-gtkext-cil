@@ -61,7 +61,6 @@ namespace GtkExtDemo.TextEditor
 		{
 			// Create the text editor with the resulting buffer.
 			editorView = new EditorView();
-			editorView.SetRenderer(CreateRenderer());
 			editorView.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
@@ -113,21 +112,21 @@ namespace GtkExtDemo.TextEditor
 		#region Buffers
 
 		/// <summary>
-		/// Creates an editable buffer.
+		/// Creates the editable line buffer.
 		/// </summary>
 		/// <returns></returns>
-		private EditorViewRenderer CreateRenderer()
+		private LineBuffer CreateEditableLineBuffer()
 		{
 			// Create a patterned line buffer and make it read-write.
 			var patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
 			var lineBuffer = new MemoryLineBuffer(patternLineBuffer);
 
-			// Decorate the line buffer with something that will highligh the
+			// Decorate the line buffer with something that will highlight the
 			// error and warning keywords.
 			var keywordBuffer = new KeywordLineBuffer(lineBuffer);
 
-			// Finally, wrap it in a cached buffer.
-			return new CachedTextRenderer(editorView, keywordBuffer);
+			// Return the resulting buffer.
+			return keywordBuffer;
 		}
 
 		#endregion
@@ -165,9 +164,7 @@ namespace GtkExtDemo.TextEditor
 			EventArgs e)
 		{
 			// Create the buffer and set it.
-			EditorViewRenderer editorViewRenderer = CreateRenderer();
-
-			editorView.SetRenderer(editorViewRenderer);
+			editorView.SetLineBuffer(CreateEditableLineBuffer());
 
 			// Set the menu item toggle states.
 			SetBufferMenuStates(true, false, false);
@@ -183,9 +180,7 @@ namespace GtkExtDemo.TextEditor
 			EventArgs e)
 		{
 			// Create the buffer and set it.
-			EditorViewRenderer editorViewRenderer = CreateRenderer();
-
-			editorView.SetRenderer(editorViewRenderer);
+			editorView.SetLineBuffer(CreateEditableLineBuffer());
 
 			// Set the menu item toggle states.
 			SetBufferMenuStates(false, true, false);

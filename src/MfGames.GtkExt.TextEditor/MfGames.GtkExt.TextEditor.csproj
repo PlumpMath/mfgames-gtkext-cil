@@ -97,7 +97,7 @@
     <Compile Include="Interfaces\IActionState.cs" />
     <Compile Include="Interfaces\IActionContext.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
-    <Compile Include="Renderers\LineBufferTextRenderer.cs" />
+    <Compile Include="Renderers\LineBufferRenderer.cs" />
     <Compile Include="Renderers\RenderContext.cs" />
     <Compile Include="Renderers\SelectionRenderer.cs" />
     <Compile Include="Renderers\EditorViewRenderer.cs" />

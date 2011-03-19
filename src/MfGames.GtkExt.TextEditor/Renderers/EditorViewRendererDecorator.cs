@@ -73,7 +73,9 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// <value>The text renderer.</value>
 		public EditorViewRenderer EditorViewRenderer
 		{
+			[DebuggerStepThrough]
 			get { return editorViewRenderer; }
+
 			private set
 			{
 				// Disconnect any events if we previously had a renderer.
@@ -109,9 +111,15 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		{
 			[DebuggerStepThrough]
 			get { return EditorViewRenderer.LineBuffer; }
+		}
 
-			[DebuggerStepThrough]
-			set { EditorViewRenderer.LineBuffer = value; }
+		/// <summary>
+		/// Sets the line buffer since the renderer.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		public override void SetLineBuffer(LineBuffer value)
+		{
+			EditorViewRenderer.SetLineBuffer(value);
 		}
 
 		#endregion

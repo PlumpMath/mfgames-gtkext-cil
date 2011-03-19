@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using Cairo;
 
@@ -77,7 +78,9 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		/// <value>The width.</value>
 		public int Width
 		{
+			[DebuggerStepThrough]
 			get { return width; }
+
 			set
 			{
 				bool fireEvent = width != value;

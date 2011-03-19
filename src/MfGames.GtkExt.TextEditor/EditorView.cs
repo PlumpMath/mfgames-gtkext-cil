@@ -232,7 +232,7 @@ namespace MfGames.GtkExt.TextEditor
 			{
 				if (Renderer != null)
 				{
-					Renderer.LineBuffer = null;
+					Renderer.ClearLineBuffer();
 				}
 
 				// Handle the update to the view.
@@ -246,12 +246,12 @@ namespace MfGames.GtkExt.TextEditor
 			if (Renderer == null)
 			{
 				// We don't have a renderer, so create one.
-				var lineBufferRenderer = new LineBufferTextRenderer(this);
+				var lineBufferRenderer = new LineBufferRenderer(this);
 				Renderer = new CachedTextRenderer(this, lineBufferRenderer);
 			}
 
 			// Now set the line buffer and perform the preparation operations.
-			Renderer.LineBuffer = value;
+			Renderer.SetLineBuffer(value);
 			HandleChangedLineBuffer();
 		}
 
@@ -295,9 +295,11 @@ namespace MfGames.GtkExt.TextEditor
 		/// </summary>
 		/// <param name="layout">The layout.</param>
 		/// <param name="style">The style.</param>
+		/// <param name="width">The width.</param>
 		public void SetLayout(
 			Layout layout,
-			LineBlockStyle style)
+			LineBlockStyle style,
+			int width)
 		{
 			// Set the style elements.
 			layout.Wrap = style.GetWrap();
@@ -306,7 +308,7 @@ namespace MfGames.GtkExt.TextEditor
 
 			// Check to see if we are doing line wrapping and set the width,
 			// minus the padding, margins, and borders.
-			layout.Width = Units.FromPixels((int) Math.Ceiling(TextWidth - style.Width));
+			layout.Width = Units.FromPixels((int) Math.Ceiling(width - style.Width));
 		}
 
 		#endregion

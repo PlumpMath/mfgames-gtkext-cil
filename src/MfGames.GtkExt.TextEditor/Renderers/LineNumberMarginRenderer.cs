@@ -29,6 +29,7 @@ using System;
 using Cairo;
 
 using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Margins;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
@@ -37,7 +38,7 @@ using Rectangle=Cairo.Rectangle;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Margins
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// Implements a margin renderer which displays the line number, if there is
@@ -45,77 +46,10 @@ namespace MfGames.GtkExt.TextEditor.Margins
 	/// </summary>
 	public class LineNumberMarginRenderer : MarginRenderer
 	{
-		#region Size and Visibility
-
-		/// <summary>
-		/// Resizes the specified margin to fit the width of the line numbers
-		/// from the top and bottom lines.
-		/// </summary>
-		/// <param name="editorView">The text editor.</param>
-		public override void Resize(EditorView editorView)
-		{
-			// If we don't have any lines, we don't do anything.
-			int lineCount = editorView.LineBuffer.LineCount;
-
-			if (lineCount == 0)
-			{
-				Width = 0;
-				return;
-			}
-
-			// Create a layout object and set its values.
-			layout = new Layout(editorView.PangoContext);
-			LineBlockStyle style = editorView.Theme.LineNumberLineStyle;
-
-			editorView.SetLayout(layout, style);
-
-			// Get the width of the first line.
-			int width = 0;
-			int newWidth, newHeight;
-			string firstLineNumber = editorView.LineBuffer.GetLineNumber(0);
-
-			if (!string.IsNullOrEmpty(firstLineNumber))
-			{
-				// Set the text so it can be formatted.
-				layout.SetText(firstLineNumber);
-
-				// Determine if the width is greater and set it.
-				layout.GetPixelSize(out newWidth, out newHeight);
-				width = Math.Max(width, newWidth);
-			}
-
-			// Get the width of the last line.
-			if (lineCount != 1)
-			{
-				string lastLineNumber = editorView.LineBuffer.GetLineNumber(lineCount - 1);
-
-				if (!string.IsNullOrEmpty(lastLineNumber))
-				{
-					// Set the text so it can be formatted.
-					layout.SetText(lastLineNumber);
-
-					// Determine if the width is greater and set it.
-					layout.GetPixelSize(out newWidth, out newHeight);
-					width = Math.Max(width, newWidth);
-				}
-			}
-
-			// Add in the padding, borders, and margins.
-			width +=
-				(int)
-				Math.Ceiling(
-					style.GetMargins().Width + style.GetPadding().Width +
-					style.GetBorders().Width);
-
-			// Set the new width in the margin.
-			Width = width;
-		}
-
-		#endregion
-
 		#region Drawing
 
 		private Layout layout;
+		private int maximumCharactersRendered;
 
 		/// <summary>
 		/// Draws the margin at the given position.
@@ -149,7 +83,7 @@ namespace MfGames.GtkExt.TextEditor.Margins
 			if (layout == null)
 			{
 				layout = new Layout(displayContext.PangoContext);
-				displayContext.SetLayout(layout, style);
+				displayContext.SetLayout(layout, style, Width);
 			}
 
 			// Figure out the line number.
@@ -164,6 +98,31 @@ namespace MfGames.GtkExt.TextEditor.Margins
 			string markup = DrawingUtility.WrapColorMarkup(
 				lineNumber, style.GetForegroundColor());
 			layout.SetMarkup(markup);
+
+			// Figure out if the current width of the margin is wider than what
+			// we've already calculated.
+			if (lineNumber.Length > maximumCharactersRendered)
+			{
+				// Get the new width as if we don't have line-wrapping.
+				int layoutWidth, layoutHeight;
+
+				layout.Width = Int32.MaxValue;
+				layout.GetSize(out layoutWidth, out layoutHeight);
+
+				// Set the layout width so we don't have to redo the entire
+				// layout and update our margin width (including style).
+				layout.Width = layoutWidth;
+				Width = (int) (Units.ToPixels(layoutWidth) + style.Width);
+
+				// Since we are looking at a large length of line number, update
+				// it so we don't continually calculate the line width.
+				maximumCharactersRendered = lineNumber.Length;
+
+				// Request a full redraw since this will change even the lines
+				// we already drew. We draw the line anyways to avoid seeing a
+				// white block.
+				displayContext.RequestRedraw();
+			}
 
 			// Use the common drawing routine to handle the borders and padding.
 			DrawingUtility.DrawLayout(
@@ -184,6 +143,7 @@ namespace MfGames.GtkExt.TextEditor.Margins
 
 			// Get rid of our cached layout.
 			layout = null;
+			maximumCharactersRendered = 0;
 		}
 
 		#endregion
