@@ -22,23 +22,41 @@
 
 #endregion
 
-#region Namespaces
-
-#endregion
-
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
-	/// Represents an operation performed on the line buffer.
+	/// Contains the results from a line operation, including the new buffer
+	/// position after the operation.
 	/// </summary>
-	public interface ILineBufferOperation
+	public struct LineBufferOperationResults
 	{
+		#region Constructors
+
 		/// <summary>
-		/// Gets the type of the operation representing this object. The value
-		/// returned by this corresponds to a specific implementing class of
-		/// <see cref="ILineBufferOperation"/>.
+		/// Initializes a new instance of the <see cref="LineBufferOperationResults"/> struct.
 		/// </summary>
-		/// <value>The type of the operation.</value>
-		LineBufferOperationType OperationType { get; }
+		/// <param name="bufferPosition">The buffer position.</param>
+		public LineBufferOperationResults(BufferPosition bufferPosition)
+		{
+			this.bufferPosition = bufferPosition;
+		}
+
+		#endregion
+
+		#region Results
+
+		private BufferPosition bufferPosition;
+
+		/// <summary>
+		/// Gets or sets the buffer position after the operation.
+		/// </summary>
+		/// <value>The position.</value>
+		public BufferPosition BufferPosition
+		{
+			get { return bufferPosition; }
+			set { bufferPosition = value; }
+		}
+
+		#endregion
 	}
 }

@@ -69,33 +69,31 @@ namespace GtkExtDemo.TextEditor
 		#region Operations
 
 		/// <summary>
-		/// Performs the given operation, raising any events for changing.
+		/// Performs the set text operation on the buffer.
 		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public override void Do(ILineBufferOperation operation)
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(SetTextOperation operation)
 		{
-			// Figure out any changes to the operations before passing them
-			// to the memory buffer.
-			if (operation.OperationType == LineBufferOperationType.SetText)
+			// If the text is at least a given length, make additional changes.
+			if (operation.Text.Length >= 2 && operation.Text.Substring(1, 1) == ":")
 			{
-				var setText = (SetTextOperation) operation;
-
-				if (setText.Text.Length >= 2 && setText.Text.Substring(1, 1) == ":")
+				switch (Char.ToUpper(operation.Text[0]))
 				{
-					switch (Char.ToUpper(setText.Text[0]))
-					{
-						case 'D':
-							styles.Remove(setText.LineIndex);
-							break;
+					case 'D':
+						styles.Remove(operation.LineIndex);
+						break;
 
-						case 'H':
-							styles[setText.LineIndex] = DemoLineStyleType.Heading;
-							break;
-					}
+					case 'H':
+						styles[operation.LineIndex] = DemoLineStyleType.Heading;
+						break;
 				}
 			}
 
-			base.Do(operation);
+			// Return the results of the base set.
+			return base.Do(operation);
 		}
 
 		#endregion
@@ -118,12 +116,14 @@ namespace GtkExtDemo.TextEditor
 			// See if we have the line in the styles.
 			if (styles.Contains(lineIndex))
 			{
-				// If this is a heading line, we color it different if the
-				// user is not currently on the line.
+				// If this is a heading line, and it has no value, and it is
+				// not the current line, we color it differently to make it
+				// obvious we are adding dynamic data.
 				DemoLineStyleType lineType = styles[lineIndex];
 
 				if (lineType == DemoLineStyleType.Heading &&
-					(lineContexts & LineContexts.CurrentLine) == 0)
+				    (lineContexts & LineContexts.CurrentLine) == 0 &&
+				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
 				{
 					return "Inactive Heading";
 				}
@@ -133,6 +133,38 @@ namespace GtkExtDemo.TextEditor
 			}
 
 			return DemoLineStyleType.Default.ToString();
+		}
+
+		/// <summary>
+		/// Gets the text of a given line in the buffer.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
+		/// <param name="characters">The character range to pull the text.</param>
+		/// <param name="lineContexts">The line contexts.</param>
+		/// <returns></returns>
+		public override string GetLineText(
+			int lineIndex,
+			CharacterRange characters,
+			LineContexts lineContexts)
+		{
+			// See if we have the line in the styles.
+			if (styles.Contains(lineIndex))
+			{
+				// If this is a heading line, and it has no value, and it is
+				// not the current line, we put in different text for a
+				// placeholder.
+				DemoLineStyleType lineType = styles[lineIndex];
+
+				if (lineType == DemoLineStyleType.Heading &&
+				    (lineContexts & LineContexts.CurrentLine) == 0 &&
+				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
+				{
+					return "<Heading>";
+				}
+			}
+
+			// We don't have a special case, so just return the base.
+			return base.GetLineText(lineIndex, characters, lineContexts);
 		}
 
 		#endregion

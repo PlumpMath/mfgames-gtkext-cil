@@ -35,7 +35,6 @@
     <Compile Include="TextEditor\KeywordMarkupEntry.cs" />
     <Compile Include="TextEditor\KeywordMarkupType.cs" />
     <Compile Include="TextEditor\DemoLineStyleType.cs" />
-    <Compile Include="TextEditor\PatternLineBuffer.cs" />
     <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -169,12 +169,16 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		#region Operations
 
 		/// <summary>
-		/// Performs the given operation, raising any events for changing.
+		/// Performs the given operation on the line buffer. This will raise any
+		/// events that were appropriate for the operation.
 		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public override void Do(ILineBufferOperation operation)
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		public override LineBufferOperationResults Do(ILineBufferOperation operation)
 		{
-			LineBuffer.Do(operation);
+			return LineBuffer.Do(operation);
 		}
 
 		private void OnLineChanged(

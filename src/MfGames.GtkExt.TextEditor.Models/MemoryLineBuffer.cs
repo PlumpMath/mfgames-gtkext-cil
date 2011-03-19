@@ -36,7 +36,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 	/// <summary>
 	/// Implements a line buffer that keeps all the lines in memory.
 	/// </summary>
-	public class MemoryLineBuffer : LineBuffer
+	public class MemoryLineBuffer : MultiplexedOperationLineBuffer
 	{
 		#region Constructors
 
@@ -92,6 +92,12 @@ namespace MfGames.GtkExt.TextEditor.Models
 			get { return readOnly; }
 		}
 
+		/// <summary>
+		/// Gets the length of the line.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer.</param>
+		/// <param name="lineContexts">The line contexts.</param>
+		/// <returns>The length of the line.</returns>
 		public override int GetLineLength(
 			int lineIndex,
 			LineContexts lineContexts)
@@ -99,6 +105,11 @@ namespace MfGames.GtkExt.TextEditor.Models
 			return lines[lineIndex].Length;
 		}
 
+		/// <summary>
+		/// Gets the formatted line number for a given line.
+		/// </summary>
+		/// <param name="lineIndex">The line index in the buffer.</param>
+		/// <returns>A formatted line number.</returns>
 		public override string GetLineNumber(int lineIndex)
 		{
 			// Line numbers are given as 1-based instead of 0-based.
@@ -110,6 +121,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
 		/// <param name="characters">The character range to pull the text.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
 		public override string GetLineText(
 			int lineIndex,
@@ -135,55 +147,73 @@ namespace MfGames.GtkExt.TextEditor.Models
 		#region Buffer Operations
 
 		/// <summary>
-		/// Performs the given operation, raising any events for changing.
+		/// Performs the set text operation on the buffer.
 		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public override void Do(ILineBufferOperation operation)
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(SetTextOperation operation)
 		{
-			// Figure out what to do based on the operation.
-			switch (operation.OperationType)
+			// Set the text of the line.
+			lines[operation.LineIndex] = operation.Text;
+
+			// Fire a line changed operation.
+			RaiseLineChanged(new LineChangedArgs(operation.LineIndex));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(
+					new BufferPosition(operation.LineIndex, lines[operation.LineIndex].Length));
+		}
+
+		/// <summary>
+		/// Performs the delete lines operation on the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(
+			DeleteLinesOperation operation)
+		{
+			// Delete the lines from the buffer.
+			lines.RemoveRange(operation.LineIndex, operation.Count);
+
+			// Fire an delete line change.
+			RaiseLinesDeleted(
+				new LineRangeEventArgs(operation.LineIndex, operation.Count));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(
+					new BufferPosition(operation.LineIndex, 0));
+		}
+
+		/// <summary>
+		/// Performs the insert lines operation on the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(
+			InsertLinesOperation operation)
+		{
+			// Insert the new lines into the buffer.
+			for (int index = 0; index < operation.Count; index++)
 			{
-				case LineBufferOperationType.SetText:
-					// Pull out the text operation.
-					var setTextOperation = (SetTextOperation) operation;
-
-					// Set the text of the line.
-					lines[setTextOperation.LineIndex] = setTextOperation.Text;
-
-					// Fire a line changed operation.
-					RaiseLineChanged(new LineChangedArgs(setTextOperation.LineIndex));
-					break;
-
-				case LineBufferOperationType.InsertLines:
-					// Pull out the insert operation.
-					var insertLinesOperation = (InsertLinesOperation) operation;
-
-					// Insert the new lines into the buffer.
-					for (int index = 0; index < insertLinesOperation.Count; index++)
-					{
-						lines.Insert(insertLinesOperation.LineIndex, string.Empty);
-					}
-
-					// Fire an insert line change.
-					RaiseLinesInserted(
-						new LineRangeEventArgs(
-							insertLinesOperation.LineIndex, insertLinesOperation.Count));
-					break;
-
-				case LineBufferOperationType.DeleteLines:
-					// Pull out the delete operation.
-					var deleteLinesOperation = (DeleteLinesOperation) operation;
-
-					// Delete the lines from the buffer.
-					lines.RemoveRange(
-						deleteLinesOperation.LineIndex, deleteLinesOperation.Count);
-
-					// Fire an delete line change.
-					RaiseLinesDeleted(
-						new LineRangeEventArgs(
-							deleteLinesOperation.LineIndex, deleteLinesOperation.Count));
-					break;
+				lines.Insert(operation.LineIndex, string.Empty);
 			}
+
+			// Fire an insert line change.
+			RaiseLinesInserted(
+				new LineRangeEventArgs(operation.LineIndex, operation.Count));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(
+					new BufferPosition(operation.LineIndex + operation.Count, 0));
 		}
 
 		#endregion

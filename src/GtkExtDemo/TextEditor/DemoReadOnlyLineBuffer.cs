@@ -115,7 +115,7 @@ namespace GtkExtDemo.TextEditor
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
-		public override void Do(ILineBufferOperation operation)
+		public override LineBufferOperationResults Do(ILineBufferOperation operation)
 		{
 			throw new NotImplementedException();
 		}
