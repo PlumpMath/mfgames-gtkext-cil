@@ -58,10 +58,10 @@ namespace GtkExtDemo.TextEditor
 			// Set the text on the lines with the prefix so they can be styled
 			// as part of the set operation.
 			SetText(0, "H: Heading Line");
-			SetText(1, "D: Regular Text");
+			SetText(1, "T: Regular Text");
 			SetText(2, "H:");
-			SetText(3, "D: Regular Text");
-			SetText(4, "D: Regular Text");
+			SetText(3, "T: Regular Text");
+			SetText(4, "T: Regular Text");
 		}
 
 		#endregion
@@ -92,7 +92,7 @@ namespace GtkExtDemo.TextEditor
 
 			switch (Char.ToUpper(line[0]))
 			{
-				case 'D':
+				case 'T':
 					styles.Remove(lineIndex);
 					changed = true;
 					break;

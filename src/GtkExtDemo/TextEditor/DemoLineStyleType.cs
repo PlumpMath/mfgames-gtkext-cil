@@ -38,7 +38,7 @@ namespace GtkExtDemo.TextEditor
 		/// <summary>
 		/// Represents the default font style.
 		/// </summary>
-		[Description("Default (D:)")]
+		[Description("Text (T:)")]
 		Default,
 
 		/// <summary>
