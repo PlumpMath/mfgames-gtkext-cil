@@ -178,7 +178,8 @@ namespace MfGames.GtkExt.TextEditor
 				// Reset the margins and force them to resize themselves.
 				margins.Resize(this);
 
-				// Cause a complete redraw.
+				// Readjust the scroll bars and scroll to the top.
+				SetAdjustments();
 				Caret.Position = new BufferPosition(0, 0);
 				ScrollToCaret();
 
