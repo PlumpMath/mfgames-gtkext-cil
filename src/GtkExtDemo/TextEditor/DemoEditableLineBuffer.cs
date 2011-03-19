@@ -53,15 +53,19 @@ namespace GtkExtDemo.TextEditor
 
 			// Create the initial lines. There is already one in the buffer before
 			// this insert operates.
-			InsertLines(0, 4);
+			InsertLines(0, 6);
 
 			// Set the text on the lines with the prefix so they can be styled
 			// as part of the set operation.
-			SetText(0, "H: Heading Line");
-			SetText(1, "T: Regular Text");
-			SetText(2, "H:");
-			SetText(3, "T: Regular Text");
-			SetText(4, "T: Regular Text");
+			int lineIndex = 0;
+
+			SetText(lineIndex++, "C: Name of Chapter");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex++, "H: Heading Line");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex++, "H:");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex, "B: Regular Text");
 		}
 
 		#endregion
@@ -94,6 +98,16 @@ namespace GtkExtDemo.TextEditor
 			{
 				case 'T':
 					styles.Remove(lineIndex);
+					changed = true;
+					break;
+
+				case 'B':
+					styles[lineIndex] = DemoLineStyleType.Borders;
+					changed = true;
+					break;
+
+				case 'C':
+					styles[lineIndex] = DemoLineStyleType.Chapter;
 					changed = true;
 					break;
 

@@ -92,16 +92,48 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 					cairoContext.Fill();
 				}
 
+				// Figure out the width for rendering the horizontal borders so
+				// they line up a little bit nicer. We adjust for half the border
+				// width because Cairo draws in the middle and we have to shift by
+				// half that to get the side to line up with the end of the
+				// horizontal.
+				double topMarginY = region.Y + margins.Top;
+				double bottomMarginY = region.Y + region.Height - margins.Bottom;
+
+				double leftMarginX = region.X + margins.Left + (borders.Left.LineWidth / 2);
+				double rightMarginX = leftMarginX + region.Width - margins.Width;
+
 				// Draw the border lines.
 				cairoContext.Antialias = Antialias.None;
+
+				if (borders.Top.LineWidth > 0)
+				{
+					// Set up the line width and colors.
+					cairoContext.LineWidth = borders.Top.LineWidth;
+					cairoContext.Color = borders.Top.Color;
+
+					cairoContext.MoveTo(leftMarginX, topMarginY);
+					cairoContext.LineTo(rightMarginX, topMarginY);
+					cairoContext.Stroke();
+				}
+
+				if (borders.Bottom.LineWidth > 0)
+				{
+					cairoContext.LineWidth = borders.Bottom.LineWidth;
+					cairoContext.Color = borders.Bottom.Color;
+
+					cairoContext.MoveTo(leftMarginX, bottomMarginY);
+					cairoContext.LineTo(rightMarginX, bottomMarginY);
+					cairoContext.Stroke();
+				}
 
 				if (borders.Left.LineWidth > 0)
 				{
 					cairoContext.LineWidth = borders.Left.LineWidth;
 					cairoContext.Color = borders.Left.Color;
 
-					cairoContext.MoveTo(region.X + marginLeftX, region.Y);
-					cairoContext.LineTo(region.X + marginLeftX, region.Y + region.Height);
+					cairoContext.MoveTo(region.X + marginLeftX, topMarginY);
+					cairoContext.LineTo(region.X + marginLeftX, bottomMarginY);
 					cairoContext.Stroke();
 				}
 
@@ -110,9 +142,9 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 					cairoContext.LineWidth = borders.Right.LineWidth;
 					cairoContext.Color = borders.Right.Color;
 
-					cairoContext.MoveTo(region.X + region.Width - margins.Right, region.Y);
+					cairoContext.MoveTo(region.X + region.Width - margins.Right, topMarginY);
 					cairoContext.LineTo(
-						region.X + region.Width - margins.Right, region.Y + region.Height);
+						region.X + region.Width - margins.Right, bottomMarginY);
 					cairoContext.Stroke();
 				}
 			}

@@ -516,6 +516,7 @@ namespace MfGames.GtkExt.TextEditor
 		/// <value>The width of the text.</value>
 		public int TextWidth
 		{
+			[DebuggerStepThrough]
 			get { return Allocation.Width - margins.Width; }
 		}
 
@@ -525,6 +526,7 @@ namespace MfGames.GtkExt.TextEditor
 		/// <value>The text X.</value>
 		public int TextX
 		{
+			[DebuggerStepThrough]
 			get { return margins.Width; }
 		}
 

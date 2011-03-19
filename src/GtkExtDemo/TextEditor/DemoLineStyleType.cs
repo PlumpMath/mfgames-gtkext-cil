@@ -42,6 +42,18 @@ namespace GtkExtDemo.TextEditor
 		Default,
 
 		/// <summary>
+		/// Represents a bordered text.
+		/// </summary>
+		[Description("Bordered (B:)")]
+		Borders,
+
+		/// <summary>
+		/// Represents a chapter which has borders and non-editable text.
+		/// </summary>
+		[Description("Chapter (C:)")]
+		Chapter,
+
+		/// <summary>
 		/// Represents a heading line.
 		/// </summary>
 		[Description("Heading (H:)")]

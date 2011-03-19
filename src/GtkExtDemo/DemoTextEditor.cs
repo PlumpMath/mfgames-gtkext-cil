@@ -118,8 +118,8 @@ namespace GtkExtDemo
 
 			// Set up the editable text styles.
 			for (DemoLineStyleType type = DemoLineStyleType.Default;
-			     type <= DemoLineStyleType.Heading;
-			     type++)
+				 type <= DemoLineStyleType.Heading;
+				 type++)
 			{
 				// Create a line style for this type.
 				var lineStyle = new LineBlockStyle(theme.TextLineStyle);
@@ -129,9 +129,34 @@ namespace GtkExtDemo
 				// Custom the style based on type.
 				switch (type)
 				{
+					case DemoLineStyleType.Chapter:
+						lineStyle.FontDescription =
+							FontDescriptionCache.GetFontDescription("Serif Bold 24");
+						lineStyle.Borders.Bottom = new Border(2, new Color(0, 0, 0));
+						lineStyle.Margins.Bottom = 5;
+						break;
+
 					case DemoLineStyleType.Heading:
 						lineStyle.FontDescription =
-							FontDescriptionCache.GetFontDescription("Sans Bold 20");
+							FontDescriptionCache.GetFontDescription("Sans Bold 18");
+						lineStyle.Padding.Left = 25;
+						break;
+
+					case DemoLineStyleType.Borders:
+						lineStyle.Padding.Left = 15;
+						lineStyle.Padding.Right = 15;
+						lineStyle.Margins.Left = 10;
+						lineStyle.Margins.Right = 10;
+						lineStyle.Margins.Top = 10;
+						lineStyle.Margins.Bottom = 10;
+						lineStyle.Borders.Bottom = new Border(5, new Color(1, 0, 0));
+						lineStyle.Borders.Top = new Border(5, new Color(0, 1, 0));
+						lineStyle.Borders.Right = new Border(5, new Color(0, 0, 1));
+						lineStyle.Borders.Left = new Border(5, new Color(1, 0, 1));
+						break;
+
+					case DemoLineStyleType.Default:
+						lineStyle.Padding.Left = 50;
 						break;
 				}
 			}

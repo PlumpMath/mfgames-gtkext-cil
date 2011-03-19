@@ -156,7 +156,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer or Int32.MaxValue for
 		/// the last line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public override string GetLineStyleName(
 			int lineIndex,
 			LineContexts lineContexts)

@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Diagnostics;
 
 using C5;
 
@@ -55,6 +56,7 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		/// <value>The width.</value>
 		public int Width
 		{
+			[DebuggerStepThrough]
 			get { return width; }
 		}
 

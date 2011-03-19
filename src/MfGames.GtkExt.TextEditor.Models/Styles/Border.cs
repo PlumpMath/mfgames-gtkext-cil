@@ -74,5 +74,20 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		public double LineWidth { get; set; }
 
 		#endregion
+
+		#region Conversion
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+		/// </returns>
+		public override string ToString()
+		{
+			return string.Format("Border {0} {1}", LineWidth, Color.ToRgbHexString());
+		}
+
+		#endregion
 	}
 }
