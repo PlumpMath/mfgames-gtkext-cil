@@ -280,14 +280,14 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// Performs the given operation on the line buffer.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
-		public void Do(ILineBufferOperation operation)
+		public LineBufferOperationResults Do(ILineBufferOperation operation)
 		{
 			if (operation == null)
 			{
 				throw new ArgumentNullException("operation");
 			}
 
-			displayContext.LineBuffer.Do(operation);
+			return displayContext.LineBuffer.Do(operation);
 		}
 
 		/// <summary>
@@ -297,9 +297,17 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		public void Do(Command command)
 		{
 			// Perform the various operations for the initial command.
+			LineBufferOperationResults? results = null;
+
 			foreach (ILineBufferOperation operation in command.Operations)
 			{
-				Do(operation);
+				results = Do(operation);
+			}
+
+			// If we had a results, reset the buffer position.
+			if (results.HasValue)
+			{
+				command.EndPosition = results.Value.BufferPosition;
 			}
 
 			// Add the command to the manager.
@@ -307,7 +315,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 
 			// Scroll to the command's end position.
 			displayContext.Caret.Position = command.EndPosition;
-			displayContext.ScrollToCaret();
+			displayContext.RequestScrollToCaret();
 		}
 
 		/// <summary>

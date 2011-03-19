@@ -91,16 +91,16 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		}
 
 		/// <summary>
-		/// Gets the set text operation.
+		/// Gets the text operation.
 		/// </summary>
 		/// <value>The set text operation.</value>
-		public SetTextOperation SetTextOperation
+		public InsertTextOperation Operation
 		{
 			get
 			{
 				// Even with the delete selection, the final operation will
 				// be the set text operation.
-				return (SetTextOperation) Command.Operations.Last;
+				return (InsertTextOperation) Command.Operations.Last;
 			}
 		}
 

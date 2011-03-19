@@ -64,7 +64,7 @@ namespace MfGames.GtkExt.TextEditor.Interfaces
 		/// Performs the given operation on the line buffer.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
-		void Do(ILineBufferOperation operation);
+		LineBufferOperationResults Do(ILineBufferOperation operation);
 
 		/// <summary>
 		/// Performs the given command on the line buffer.

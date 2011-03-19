@@ -36,7 +36,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// </summary>
 	public class Command
 	{
-		#region Constuctors
+		#region Constructors
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Command"/> class.

@@ -43,6 +43,20 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InsertTextOperation"/> class.
 		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="characterIndex">Index of the character.</param>
+		/// <param name="text">The text.</param>
+		public InsertTextOperation(
+			int lineIndex,
+			int characterIndex,
+			string text)
+			: this(new BufferPosition(lineIndex, characterIndex), text)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="InsertTextOperation"/> class.
+		/// </summary>
 		/// <param name="bufferPosition">The buffer position.</param>
 		/// <param name="text">The text.</param>
 		public InsertTextOperation(

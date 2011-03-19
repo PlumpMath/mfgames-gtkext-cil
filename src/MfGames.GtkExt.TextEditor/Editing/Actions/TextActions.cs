@@ -83,8 +83,13 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			position.CharacterIndex = 0;
 
 			// Perform the operations in the command.
-			command.EndPosition = position;
 			actionContext.Do(command);
+
+			// Because we are inserting and changing the position beyond the
+			// normal operations, we manually set it.
+			command.EndPosition = position;
+			displayContext.Caret.Position = command.EndPosition;
+			displayContext.RequestScrollToCaret();
 		}
 
 		/// <summary>
@@ -120,9 +125,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 					caret.Position.LineIndex, LineContexts.None);
 			}
 
-			// Make the changes in the line.
-			string newText = lineText.Insert(position.CharacterIndex, unicode.ToString());
-			var setTextOperation = new SetTextOperation(position.LineIndex, newText);
+			// Create the operation to change the text.
+			var insertTextOperation = new InsertTextOperation(
+				position, unicode.ToString());
 
 			// Figure out if we are doing a new command or joining into the
 			// previous one. If we are joining, then we just perform the operations
@@ -145,7 +150,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 					// Change the redo operation to what would be the text
 					// after this and the previous operations. The undo operation
 					// doesn't change because it will be the same initial state.
-					actionState.SetTextOperation.Text = newText;
+					actionState.Operation.Text = stateText;
 
 					// After the insert completes, the state's end position would
 					// shift to the right one more for the new character.
@@ -154,9 +159,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 					// Perform the operation and do the various redraws.
 					// Scroll to the command's end position.
-					actionContext.Do(setTextOperation);
+					LineBufferOperationResults results = actionContext.Do(insertTextOperation);
 
-					displayContext.Caret.Position = position;
+					displayContext.Caret.Position = results.BufferPosition;
 					displayContext.ScrollToCaret();
 
 					// We are done.
@@ -167,7 +172,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// We either don't have a previous state we can append to or there
 			// was no state to start with. So, create a new command with both
 			// the redo and undo operations.
-			command.Operations.Add(setTextOperation);
+			command.Operations.Add(insertTextOperation);
 
 			if (!deletedSelection)
 			{
@@ -462,12 +467,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 			else
 			{
-				// This is a single-line manipulation, so delete the character.
-				string newText = lineText.Substring(0, position.CharacterIndex - 1) +
-				                 lineText.Substring(position.CharacterIndex);
-
 				// Create the set text operation.
-				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+				command.Operations.Add(
+					new DeleteTextOperation(
+						position.LineIndex, position.CharacterIndex - 1, position.CharacterIndex));
 
 				command.UndoOperations.Add(
 					new SetTextOperation(position.LineIndex, lineText));
@@ -676,7 +679,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="actionContext">The action context.</param>
 		/// <param name="command">The command.</param>
-		/// <returns>True if operations were added to delete the selection.</returns>
+		/// <param name="position">The position.</param>
+		/// <param name="lineText">The line text.</param>
+		/// <returns>
+		/// True if operations were added to delete the selection.
+		/// </returns>
 		private static bool DeleteSelection(
 			IActionContext actionContext,
 			Command command,

@@ -69,6 +69,63 @@ namespace GtkExtDemo.TextEditor
 		#region Operations
 
 		/// <summary>
+		/// Checks to see if a line operation caused a style to change.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="results">The results.</param>
+		/// <returns></returns>
+		private LineBufferOperationResults CheckForStyleChanged(
+			int lineIndex,
+			LineBufferOperationResults results)
+		{
+			// Look to see if the line starts with a style change keyword.
+			string line = GetLineText(lineIndex);
+
+			if (line.Length < 2 || line.Substring(1, 1) != ":")
+			{
+				// We don't have a style change, so just return the results.
+				return results;
+			}
+
+			// Check to see if we have a style change prefix.
+			bool changed = false;
+
+			switch (Char.ToUpper(line[0]))
+			{
+				case 'D':
+					styles.Remove(lineIndex);
+					changed = true;
+					break;
+
+				case 'H':
+					styles[lineIndex] = DemoLineStyleType.Heading;
+					changed = true;
+					break;
+			}
+
+			// If we didn't change anything, then just return the unaltered
+			// results.
+			if (!changed)
+			{
+				return results;
+			}
+
+			// Figure out what the line would look like without the prefix.
+			string newLine = line.Substring(2).TrimStart(' ');
+			int difference = line.Length - newLine.Length;
+
+			// Set the line text.
+			SetText(lineIndex, newLine);
+
+			// Adjust the buffer position and return it.
+			results.BufferPosition = new BufferPosition(
+				results.BufferPosition.LineIndex,
+				Math.Max(0, results.BufferPosition.CharacterIndex - difference));
+
+			return results;
+		}
+
+		/// <summary>
 		/// Performs the set text operation on the buffer.
 		/// </summary>
 		/// <param name="operation">The operation to perform.</param>
@@ -77,22 +134,90 @@ namespace GtkExtDemo.TextEditor
 		/// </returns>
 		protected override LineBufferOperationResults Do(SetTextOperation operation)
 		{
-			// If the text is at least a given length, make additional changes.
-			if (operation.Text.Length >= 2 && operation.Text.Substring(1, 1) == ":")
-			{
-				switch (Char.ToUpper(operation.Text[0]))
-				{
-					case 'D':
-						styles.Remove(operation.LineIndex);
-						break;
+			LineBufferOperationResults results = base.Do(operation);
 
-					case 'H':
-						styles[operation.LineIndex] = DemoLineStyleType.Heading;
-						break;
+			return CheckForStyleChanged(operation.LineIndex, results);
+		}
+
+		/// <summary>
+		/// Performs the given operation on the line buffer. This will raise any
+		/// events that were appropriate for the operation.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(
+			InsertTextOperation operation)
+		{
+			LineBufferOperationResults results = base.Do(operation);
+
+			return CheckForStyleChanged(operation.BufferPosition.LineIndex, results);
+		}
+
+		/// <summary>
+		/// Deletes text from the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(
+			DeleteTextOperation operation)
+		{
+			LineBufferOperationResults results = base.Do(operation);
+
+			return CheckForStyleChanged(operation.LineIndex, results);
+		}
+
+		/// <summary>
+		/// Performs the insert lines operation on the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(
+			InsertLinesOperation operation)
+		{
+			// First shift the style lines up for the new ones. We go from the
+			// bottom to avoid overlapping the line numbers.
+			for (int lineIndex = LineCount - 1; lineIndex >= 0; lineIndex--)
+			{
+				// If we have a key, shift it.
+				if (lineIndex >= operation.LineIndex && styles.Contains(lineIndex))
+				{
+					styles[lineIndex + operation.Count] = styles[lineIndex];
+					styles.Remove(lineIndex);
 				}
 			}
 
-			// Return the results of the base set.
+			// Now, perform the operation on the buffer.
+			return base.Do(operation);
+		}
+
+		/// <summary>
+		/// Performs the delete lines operation on the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(
+			DeleteLinesOperation operation)
+		{
+			// Shift the styles down for the deleted lines.
+			for (int lineIndex = 0; lineIndex < LineCount; lineIndex++)
+			{
+				// If we have a key, shift it.
+				if (lineIndex >= operation.LineIndex && styles.Contains(lineIndex))
+				{
+					styles[lineIndex - operation.Count] = styles[lineIndex];
+					styles.Remove(lineIndex);
+				}
+			}
+
+			// Now, perform the operation on the buffer.
 			return base.Do(operation);
 		}
 
@@ -122,7 +247,6 @@ namespace GtkExtDemo.TextEditor
 				DemoLineStyleType lineType = styles[lineIndex];
 
 				if (lineType == DemoLineStyleType.Heading &&
-				    (lineContexts & LineContexts.CurrentLine) == 0 &&
 				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
 				{
 					return "Inactive Heading";
@@ -156,7 +280,6 @@ namespace GtkExtDemo.TextEditor
 				DemoLineStyleType lineType = styles[lineIndex];
 
 				if (lineType == DemoLineStyleType.Heading &&
-				    (lineContexts & LineContexts.CurrentLine) == 0 &&
 				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
 				{
 					return "<Heading>";

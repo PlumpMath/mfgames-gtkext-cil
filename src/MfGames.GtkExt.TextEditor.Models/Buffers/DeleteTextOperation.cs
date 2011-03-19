@@ -44,6 +44,20 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// Initializes a new instance of the <see cref="DeleteTextOperation"/> class.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="startCharacterIndex">Start index of the character.</param>
+		/// <param name="endCharacterIndex">End index of the character.</param>
+		public DeleteTextOperation(
+			int lineIndex,
+			int startCharacterIndex,
+			int endCharacterIndex)
+			: this(lineIndex, new CharacterRange(startCharacterIndex, endCharacterIndex))
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DeleteTextOperation"/> class.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="characterRange">The character range.</param>
 		public DeleteTextOperation(
 			int lineIndex,

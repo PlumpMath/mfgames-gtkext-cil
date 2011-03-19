@@ -117,6 +117,16 @@ namespace MfGames.GtkExt.TextEditor.Models
 		}
 
 		/// <summary>
+		/// Gets the line without any manipulations.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <returns></returns>
+		protected string GetLineText(int lineIndex)
+		{
+			return lines[lineIndex];
+		}
+
+		/// <summary>
 		/// Gets the text of a given line in the buffer.
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
@@ -154,7 +164,8 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// <returns>
 		/// The results to the changes to the buffer.
 		/// </returns>
-		protected override LineBufferOperationResults Do(InsertTextOperation operation)
+		protected override LineBufferOperationResults Do(
+			InsertTextOperation operation)
 		{
 			// Get the text from the buffer, insert the text, and put it back.
 			int lineIndex = operation.BufferPosition.LineIndex;
@@ -182,7 +193,8 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// <returns>
 		/// The results to the changes to the buffer.
 		/// </returns>
-		protected override LineBufferOperationResults Do(DeleteTextOperation operation)
+		protected override LineBufferOperationResults Do(
+			DeleteTextOperation operation)
 		{
 			// Get the text from the buffer, insert the text, and put it back.
 			int lineIndex = operation.LineIndex;
@@ -245,8 +257,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 
 			// Return the appropriate results.
 			return
-				new LineBufferOperationResults(
-					new BufferPosition(operation.LineIndex, 0));
+				new LineBufferOperationResults(new BufferPosition(operation.LineIndex, 0));
 		}
 
 		/// <summary>
