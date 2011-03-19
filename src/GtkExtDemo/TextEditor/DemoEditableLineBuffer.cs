@@ -1,8 +1,37 @@
+#region Copyright and License
+
+// Copyright (c) 2009-2011, Moonfire Games
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+#region Namespaces
+
+using System;
+
 using C5;
 
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
-using MfGames.GtkExt.TextEditor.Models.Styles;
+
+#endregion
 
 namespace GtkExtDemo.TextEditor
 {
@@ -51,10 +80,9 @@ namespace GtkExtDemo.TextEditor
 			{
 				var setText = (SetTextOperation) operation;
 
-				if (setText.Text.Length >= 2 &&
-					setText.Text.Substring(1, 1) == ":")
+				if (setText.Text.Length >= 2 && setText.Text.Substring(1, 1) == ":")
 				{
-					switch (setText.Text[0])
+					switch (Char.ToUpper(setText.Text[0]))
 					{
 						case 'D':
 							styles.Remove(setText.LineIndex);
@@ -74,7 +102,7 @@ namespace GtkExtDemo.TextEditor
 
 		#region Buffers
 
-		private HashDictionary<int, DemoLineStyleType> styles;
+		private readonly HashDictionary<int, DemoLineStyleType> styles;
 
 		/// <summary>
 		/// Gets the name of the line style based on the settings.
