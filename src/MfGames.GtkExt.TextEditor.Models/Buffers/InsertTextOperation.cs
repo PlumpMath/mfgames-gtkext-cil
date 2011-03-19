@@ -24,34 +24,66 @@
 
 #region Namespaces
 
+using System;
+using System.Diagnostics;
+
 #endregion
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
-	/// Defines the various operations that a line buffer can receive.
+	/// Represents an operation to insert text into the buffer. Unlike
+	/// <see cref="SetTextOperation"/>, this inserts text into a specific position
+	/// and returns the buffer position for the end of the insert.
 	/// </summary>
-	public enum LineBufferOperationType : byte
+	public class InsertTextOperation : ILineBufferOperation
 	{
-		/// <summary>
-		/// Indicates that the associated operation extends <see cref="SetTextOperation"/>.
-		/// </summary>
-		SetText,
+		#region Constructors
 
 		/// <summary>
-		/// Indicates that the associated operation extends 
-		/// <see cref="InsertTextOperation"/>.
+		/// Initializes a new instance of the <see cref="InsertTextOperation"/> class.
 		/// </summary>
-		InsertText,
+		/// <param name="bufferPosition">The buffer position.</param>
+		/// <param name="text">The text.</param>
+		public InsertTextOperation(
+			BufferPosition bufferPosition,
+			string text)
+		{
+			if (text == null)
+			{
+				throw new ArgumentNullException("text");
+			}
+
+			BufferPosition = bufferPosition;
+			Text = text;
+		}
+
+		#endregion
+
+		#region Operation
 
 		/// <summary>
-		/// Indicates that the associated operation extends <see cref="InsertLinesOperation"/>.
+		/// Gets or sets the buffer position for the insert operation.
 		/// </summary>
-		InsertLines,
+		/// <value>The buffer position.</value>
+		public BufferPosition BufferPosition { get; private set; }
 
 		/// <summary>
-		/// Indicates that the associated operation extends <see cref="DeleteLinesOperation"/>.
+		/// Gets the type of the operation representing this object.
 		/// </summary>
-		DeleteLines,
+		/// <value>The type of the operation.</value>
+		public LineBufferOperationType OperationType
+		{
+			[DebuggerStepThrough]
+			get { return LineBufferOperationType.InsertText; }
+		}
+
+		/// <summary>
+		/// Gets the text for this operation.
+		/// </summary>
+		/// <value>The text.</value>
+		public string Text { get; set; }
+
+		#endregion
 	}
 }

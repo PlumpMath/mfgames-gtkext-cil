@@ -190,11 +190,11 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="count">The count.</param>
-		public void DeleteLines(
+		public LineBufferOperationResults DeleteLines(
 			int lineIndex,
 			int count)
 		{
-			Do(new DeleteLinesOperation(lineIndex, count));
+			return Do(new DeleteLinesOperation(lineIndex, count));
 		}
 
 		/// <summary>
@@ -210,11 +210,37 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="count">The count.</param>
-		public void InsertLines(
+		public LineBufferOperationResults InsertLines(
 			int lineIndex,
 			int count)
 		{
-			Do(new InsertLinesOperation(lineIndex, count));
+			return Do(new InsertLinesOperation(lineIndex, count));
+		}
+
+		/// <summary>
+		/// Inserts the text using a <see cref="InsertTextOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="characterIndex">Index of the character.</param>
+		/// <param name="text">The text.</param>
+		public LineBufferOperationResults InsertText(
+			int lineIndex,
+			int characterIndex,
+			string text)
+		{
+			return InsertText(new BufferPosition(lineIndex, characterIndex), text);
+		}
+
+		/// <summary>
+		/// Inserts the text using a <see cref="InsertTextOperation"/>.
+		/// </summary>
+		/// <param name="bufferPosition">The buffer position.</param>
+		/// <param name="text">The text.</param>
+		public LineBufferOperationResults InsertText(
+			BufferPosition bufferPosition,
+			string text)
+		{
+			return Do(new InsertTextOperation(bufferPosition, text));
 		}
 
 		/// <summary>
@@ -279,11 +305,11 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="text">The text.</param>
-		public void SetText(
+		public LineBufferOperationResults SetText(
 			int lineIndex,
 			string text)
 		{
-			Do(new SetTextOperation(lineIndex, text));
+			return Do(new SetTextOperation(lineIndex, text));
 		}
 
 		#endregion

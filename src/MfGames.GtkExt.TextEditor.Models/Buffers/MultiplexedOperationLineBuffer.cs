@@ -46,8 +46,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <returns>
 		/// The results to the changes to the buffer.
 		/// </returns>
-		public override LineBufferOperationResults Do(
-			ILineBufferOperation operation)
+		public override LineBufferOperationResults Do(ILineBufferOperation operation)
 		{
 			// Check for null values.
 			if (operation == null)
@@ -61,6 +60,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 				case LineBufferOperationType.SetText:
 					return Do((SetTextOperation) operation);
 
+				case LineBufferOperationType.InsertText:
+					return Do((InsertTextOperation) operation);
+
 				case LineBufferOperationType.DeleteLines:
 					return Do((DeleteLinesOperation) operation);
 
@@ -72,6 +74,16 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 						"operation", "Operation implements unknown OperationType.");
 			}
 		}
+
+		/// <summary>
+		/// Inserts text into the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected abstract LineBufferOperationResults Do(
+			InsertTextOperation operation);
 
 		/// <summary>
 		/// Performs the set text operation on the buffer.

@@ -147,6 +147,35 @@ namespace MfGames.GtkExt.TextEditor.Models
 		#region Buffer Operations
 
 		/// <summary>
+		/// Performs the given operation on the line buffer. This will raise any
+		/// events that were appropriate for the operation.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(InsertTextOperation operation)
+		{
+			// Get the text from the buffer, insert the text, and put it back.
+			int lineIndex = operation.BufferPosition.LineIndex;
+			string line = lines[lineIndex];
+			int characterIndex = Math.Min(
+				operation.BufferPosition.CharacterIndex, line.Length);
+
+			string newLine = line.Insert(characterIndex, operation.Text);
+
+			lines[lineIndex] = newLine;
+
+			// Fire a line changed operation.
+			RaiseLineChanged(new LineChangedArgs(lineIndex));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(
+					new BufferPosition(lineIndex, characterIndex + operation.Text.Length));
+		}
+
+		/// <summary>
 		/// Performs the set text operation on the buffer.
 		/// </summary>
 		/// <param name="operation">The operation to perform.</param>

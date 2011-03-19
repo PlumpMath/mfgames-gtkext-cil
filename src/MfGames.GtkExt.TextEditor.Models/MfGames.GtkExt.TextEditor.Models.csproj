@@ -39,6 +39,7 @@
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="Mono.Cairo, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -63,6 +64,7 @@
     <Compile Include="Buffers\ILineBufferOperation.cs" />
     <Compile Include="Buffers\ILineIndicator.cs" />
     <Compile Include="Buffers\InsertLinesOperation.cs" />
+    <Compile Include="Buffers\InsertTextOperation.cs" />
     <Compile Include="Buffers\LineBufferDecorator.cs" />
     <Compile Include="Buffers\LineBufferOperationType.cs" />
     <Compile Include="Buffers\LineChangedArgs.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Buffers\SetTextOperation.cs" />
     <Compile Include="CharacterRange.cs" />
     <Compile Include="LineBuffer.cs" />
+    <Compile Include="LineRange.cs" />
     <Compile Include="MemoryLineBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Styles\BlockStyle.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="Styles\Spacing.cs" />
     <Compile Include="Styles\StyleUsage.cs" />
     <Compile Include="Styles\Theme.cs" />
+    <Compile Include="Tests\MemoryBufferOperationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">

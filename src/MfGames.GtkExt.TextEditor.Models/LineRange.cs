@@ -31,27 +31,27 @@ using System;
 namespace MfGames.GtkExt.TextEditor.Models
 {
 	/// <summary>
-	/// Defines a range of characters from the start to the end.
+	/// Defines a range of lines from the start to the end.
 	/// </summary>
-	public struct CharacterRange
+	public struct LineRange
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CharacterRange"/> struct.
+		/// Initializes a new instance of the <see cref="LineRange"/> struct.
 		/// </summary>
 		/// <param name="startIndex">The start index.</param>
-		public CharacterRange(int startIndex)
+		public LineRange(int startIndex)
 			: this(startIndex, Int32.MaxValue)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CharacterRange"/> struct.
+		/// Initializes a new instance of the <see cref="LineRange"/> struct.
 		/// </summary>
 		/// <param name="startIndex">The start index.</param>
 		/// <param name="endIndex">The end index.</param>
-		public CharacterRange(
+		public LineRange(
 			int startIndex,
 			int endIndex)
 		{
@@ -76,16 +76,16 @@ namespace MfGames.GtkExt.TextEditor.Models
 		#region Factory
 
 		/// <summary>
-		/// Creates a new character range from a given start index and a length.
+		/// Creates a new line range from a given start index and a length.
 		/// </summary>
 		/// <param name="startIndex">The start index.</param>
 		/// <param name="length">The length.</param>
 		/// <returns></returns>
-		public static CharacterRange FromLength(
+		public static LineRange FromCount(
 			int startIndex,
 			int length)
 		{
-			return new CharacterRange(startIndex, startIndex + length);
+			return new LineRange(startIndex, startIndex + length);
 		}
 
 		#endregion
@@ -94,6 +94,15 @@ namespace MfGames.GtkExt.TextEditor.Models
 
 		private readonly int endIndex;
 		private readonly int startIndex;
+
+		/// <summary>
+		/// Gets the number of lines in the range.
+		/// </summary>
+		/// <value>The line count.</value>
+		public int Count
+		{
+			get { return endIndex - startIndex; }
+		}
 
 		/// <summary>
 		/// Gets the end character index.
@@ -113,46 +122,11 @@ namespace MfGames.GtkExt.TextEditor.Models
 		}
 
 		/// <summary>
-		/// Gets the length of the range.
-		/// </summary>
-		/// <value>The length.</value>
-		public int Length
-		{
-			get { return endIndex - startIndex; }
-		}
-
-		/// <summary>
 		/// Gets the start character index.
 		/// </summary>
 		public int StartIndex
 		{
 			get { return startIndex; }
-		}
-
-		/// <summary>
-		/// Gets a substring of the given text, normalizing for length.
-		/// </summary>
-		/// <param name="value">The value.</param>
-		/// <returns></returns>
-		public string Substring(string value)
-		{
-			// If we have a null, then return a null.
-			if (value == null)
-			{
-				return null;
-			}
-
-			// Check to see if we are trying to get the entire line.
-			if (startIndex == 0 && endIndex >= value.Length)
-			{
-				return value;
-			}
-
-			// Figure out a safe substring from the given text and return it.
-			int textEndIndex = Math.Min(endIndex, value.Length);
-			int length = startIndex - textEndIndex;
-
-			return value.Substring(startIndex, length);
 		}
 
 		#endregion
@@ -167,7 +141,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </returns>
 		public override string ToString()
 		{
-			return string.Format("Characters {0}-{1}", startIndex, endIndex);
+			return string.Format("Lines {0}-{1}", startIndex, endIndex);
 		}
 
 		#endregion
