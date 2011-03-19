@@ -285,6 +285,12 @@ namespace GtkExtDemo.TextEditor
 			CharacterRange characters,
 			LineContexts lineContexts)
 		{
+			// If we have a request for unformatted, return it directly.
+			if ((lineContexts & LineContexts.Unformatted) == LineContexts.Unformatted)
+			{
+				return base.GetLineText(lineIndex, characters, lineContexts);
+			}
+
 			// See if we have the line in the styles.
 			if (styles.Contains(lineIndex))
 			{

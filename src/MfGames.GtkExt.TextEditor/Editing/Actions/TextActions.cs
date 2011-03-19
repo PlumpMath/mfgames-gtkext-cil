@@ -52,28 +52,32 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Inserts the paragraph at the current buffer position.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.Return)]
-		public static void InsertParagraph(IActionContext actionContext)
+		public static void InsertParagraph(EditorViewController controller)
 		{
 			// Get the text of the current line.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			string lineText = displayContext.LineBuffer.GetLineText(
-				position.LineIndex, LineContexts.None);
+				position.LineIndex, LineContexts.Unformatted);
 
 			// Split the line based on the character index.
-			string before = lineText.Substring(0, position.CharacterIndex).Trim();
-			string after = lineText.Substring(position.CharacterIndex).Trim();
+			string before = lineText.Substring(0, position.CharacterIndex);
+			string after = lineText.Substring(position.CharacterIndex);
 
-			// Create the command and add the operations.
+			// Create the command and add the operations. To actually composite
+			// the command, we create a new line and set the text of both lines
+			// to the before and after.
 			var command = new Command(position);
 
 			command.Operations.Add(new InsertLinesOperation(position.LineIndex, 1));
 			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
 			command.Operations.Add(new SetTextOperation(position.LineIndex + 1, after));
 
+			// The undo operation deletes the created line and sets the text of
+			// the first line to the original contents.
 			command.UndoOperations.Add(new DeleteLinesOperation(position.LineIndex, 1));
 			command.UndoOperations.Add(
 				new SetTextOperation(position.LineIndex, lineText));
@@ -82,47 +86,41 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			position.LineIndex++;
 			position.CharacterIndex = 0;
 
-			// Perform the operations in the command.
-			actionContext.Do(command);
-
-			// Because we are inserting and changing the position beyond the
-			// normal operations, we manually set it.
-			command.EndPosition = position;
-			displayContext.Caret.Position = command.EndPosition;
-			displayContext.RequestScrollToCaret();
+			// Perform the operations in the command and set the position.
+			controller.Do(command, position);
 		}
 
 		/// <summary>
 		/// Moves the caret down one line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		/// <param name="unicode">The Unicode character.</param>
 		public static void InsertText(
-			IActionContext actionContext,
+			EditorViewController controller,
 			char unicode)
 		{
 			// Because InsertText isn't a proper "action", we need to manually
 			// remove all action states.
-			actionContext.States.RemoveAllExcluding(typeof(InsertTextActionState));
-			var actionState = actionContext.States.Get<InsertTextActionState>();
+			controller.States.RemoveAllExcluding(typeof(InsertTextActionState));
+			var actionState = controller.States.Get<InsertTextActionState>();
 
 			// If we have a selection, we need to delete it and work from the
 			// resulting text instead of what is currently in the buffer.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-			Caret caret = actionContext.DisplayContext.Caret;
+			IDisplayContext displayContext = controller.DisplayContext;
+			Caret caret = controller.DisplayContext.Caret;
 			BufferPosition position = caret.Position;
 			var command = new Command(position);
 
 			string lineText;
 
 			bool deletedSelection = DeleteSelection(
-				actionContext, command, ref position, out lineText);
+				controller, command, ref position, out lineText);
 
 			if (!deletedSelection)
 			{
 				// There is no selection, so get the line text from the buffer.
 				lineText = displayContext.LineBuffer.GetLineText(
-					caret.Position.LineIndex, LineContexts.None);
+					caret.Position.LineIndex, LineContexts.Unformatted);
 			}
 
 			// Create the operation to change the text.
@@ -159,7 +157,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 					// Perform the operation and do the various redraws.
 					// Scroll to the command's end position.
-					LineBufferOperationResults results = actionContext.Do(insertTextOperation);
+					LineBufferOperationResults results = controller.Do(insertTextOperation);
 
 					displayContext.Caret.Position = results.BufferPosition;
 					displayContext.ScrollToCaret();
@@ -187,16 +185,16 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Perform the operation on the buffer.
 			command.EndPosition = position;
-			actionContext.Do(command);
+			controller.Do(command);
 
 			// Create a new action state and add it to the states list.
 			if (actionState != null)
 			{
-				actionContext.States.Remove(actionState);
+				controller.States.Remove(actionState);
 			}
 
 			actionState = new InsertTextActionState(command, unicode.ToString());
-			actionContext.States.Add(actionState);
+			controller.States.Add(actionState);
 		}
 
 		#region Clipboard
@@ -204,15 +202,15 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Copies the selection into the clipboard.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.C, ModifierType.ControlMask)]
 		[KeyBinding(Key.Insert, ModifierType.ControlMask)]
-		public static void Copy(IActionContext actionContext)
+		public static void Copy(EditorViewController controller)
 		{
 			// If we don't have anything selected, we don't do anything.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferSegment selection = displayContext.Caret.Selection;
 
 			if (selection.IsEmpty)
@@ -227,7 +225,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			int endLineIndex =
 				lineBuffer.NormalizeLineIndex(selection.EndPosition.LineIndex);
 			string firstLine = lineBuffer.GetLineText(
-				selection.StartPosition.LineIndex, LineContexts.None);
+				selection.StartPosition.LineIndex, LineContexts.Unformatted);
 
 			if (endLineIndex == selection.StartPosition.LineIndex)
 			{
@@ -255,14 +253,14 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			     lineIndex < endLineIndex;
 			     lineIndex++)
 			{
-				buffer.Append(lineBuffer.GetLineText(lineIndex, LineContexts.None));
+				buffer.Append(lineBuffer.GetLineText(lineIndex, LineContexts.Unformatted));
 				buffer.Append("\n");
 			}
 
 			// Add the last line, which is a substring, but we don't add a
 			// newline to the end of this one.
 			buffer.Append(
-				lineBuffer.GetLineText(endLineIndex, LineContexts.None).Substring(
+				lineBuffer.GetLineText(endLineIndex, LineContexts.Unformatted).Substring(
 					0, selection.EndPosition.CharacterIndex));
 
 			// Set the clipboard value.
@@ -272,13 +270,13 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Copies, then deletes the selected text.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.X, ModifierType.ControlMask)]
-		public static void Cut(IActionContext actionContext)
+		public static void Cut(EditorViewController controller)
 		{
 			// If we don't have anything selected, we don't do anything.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferSegment selection = displayContext.Caret.Selection;
 
 			if (selection.IsEmpty)
@@ -287,23 +285,23 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Copy the text first.
-			Copy(actionContext);
+			Copy(controller);
 
 			// Then delete the text. Since we know we have a selection, this
 			// will only delete the selected text.
-			DeleteLeft(actionContext);
+			DeleteLeft(controller);
 		}
 
 		/// <summary>
 		/// Pastes the contents of the clipboard into the buffer.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.V, ModifierType.ControlMask)]
-		public static void Paste(IActionContext actionContext)
+		public static void Paste(EditorViewController controller)
 		{
 			// Get the text from the clipboard.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			Clipboard clipboard = displayContext.Clipboard;
 
 			clipboard.RequestText(null);
@@ -330,18 +328,18 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			string lineText;
 
 			bool deletedSelection = DeleteSelection(
-				actionContext, command, ref position, out lineText);
+				controller, command, ref position, out lineText);
 
 			if (!deletedSelection)
 			{
 				// There is no selection, so get the line text from the buffer.
 				lineText = displayContext.LineBuffer.GetLineText(
-					caret.Position.LineIndex, LineContexts.None);
+					caret.Position.LineIndex, LineContexts.Unformatted);
 			}
 
 			string nextLineText =
 				displayContext.LineBuffer.GetLineText(
-					caret.Position.LineIndex + 1, LineContexts.None);
+					caret.Position.LineIndex + 1, LineContexts.Unformatted);
 
 			// The paste will happen in the line, splitting the current line in half.
 			string before = lineText.Substring(0, position.CharacterIndex);
@@ -362,7 +360,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 				command.EndPosition = position;
 
 				// Perform the command.
-				actionContext.Do(command);
+				controller.Do(command);
 				return;
 			}
 
@@ -401,7 +399,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 					position.LineIndex + lines.Length - 1, lines[lines.Length - 1] + after));
 
 			// Perform the command.
-			actionContext.Do(command);
+			controller.Do(command);
 		}
 
 		#endregion
@@ -409,157 +407,213 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		#region Deleting
 
 		/// <summary>
+		/// Deletes the paragraph to the left of the character.
+		/// </summary>
+		/// <param name="controller">The action context.</param>
+		/// <param name="command">The command.</param>
+		private static void DeleteLeftParagraph(EditorViewController controller,
+		                                        Command command)
+		{
+			// Pull out useful fields.
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(
+				position.LineIndex, LineContexts.Unformatted);
+
+			// This is the beginning of a paragraph and not the first one in
+			// the buffer. This operation combines the text of the two paragraphs
+			// together.
+			string previousText = lineBuffer.GetLineText(
+				position.LineIndex - 1, LineContexts.Unformatted);
+			string newText = previousText + lineText;
+
+			// Set up the operations in the command.
+			command.Operations.Add(new DeleteLinesOperation(position.LineIndex, 1));
+			command.Operations.Add(
+				new SetTextOperation(position.LineIndex - 1, newText));
+
+			command.UndoOperations.Add(
+				new InsertLinesOperation(position.LineIndex - 1, 1));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex - 1, previousText));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
+
+			// Relocate the caret position to the previous line's end.
+			position.LineIndex--;
+			position.CharacterIndex = previousText.Length;
+
+			// Perform the operations in the command and set the position.
+			controller.Do(command, position);
+		}
+
+		/// <summary>
 		/// Deletes the character to the left.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.BackSpace)]
-		public static void DeleteLeft(IActionContext actionContext)
+		public static void DeleteLeft(EditorViewController controller)
 		{
 			// If we have a selection, then we simply delete that selection.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			var command = new Command(position);
 
-			if (DeleteSelection(actionContext, command))
+			if (DeleteSelection(controller, command))
 			{
 				// We have a command, so perform it and return.
-				actionContext.Do(command);
+				controller.Do(command, command.EndPosition);
 				return;
 			}
 
 			// Get the position in the buffer.
-			if (position.IsBeginningOfBuffer(actionContext.DisplayContext))
+			if (position.IsBeginningOfBuffer(controller.DisplayContext))
 			{
 				// We are in the beginning of the buffer, so we don't do anything.
 				return;
 			}
 
 			// If we are at the beginning of the line, then we are combining paragraphs.
-			LineBuffer lineBuffer = displayContext.LineBuffer;
-			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.None);
-
 			if (position.CharacterIndex == 0)
 			{
-				// This is the beginning of a paragraph and not the first one in
-				// the buffer. This operation combines the text of the two paragraphs
-				// together.
-				string previousText = lineBuffer.GetLineText(
-					position.LineIndex - 1, LineContexts.None);
-				string newText = previousText + lineText;
-
-				// Set up the operations in the command.
-				command.Operations.Add(new DeleteLinesOperation(position.LineIndex, 1));
-				command.Operations.Add(
-					new SetTextOperation(position.LineIndex - 1, newText));
-
-				command.UndoOperations.Add(
-					new InsertLinesOperation(position.LineIndex - 1, 1));
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex - 1, previousText));
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex, lineText));
-
-				// Relocate the caret position to the previous line's end.
-				position.LineIndex--;
-				position.CharacterIndex = previousText.Length;
+				// Delete the paragraph.
+				DeleteLeftParagraph(controller, command);
+				return;
 			}
-			else
-			{
-				// Create the set text operation.
-				command.Operations.Add(
-					new DeleteTextOperation(
-						position.LineIndex, position.CharacterIndex - 1, position.CharacterIndex));
 
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex, lineText));
+			// This is a single character delete which doesn't combine paragraphs.
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(
+				position.LineIndex, LineContexts.Unformatted);
 
-				// Shift the caret back.
-				position.CharacterIndex--;
-			}
+			// Create the operation and its undo.
+			command.Operations.Add(
+				new DeleteTextOperation(
+					position.LineIndex, position.CharacterIndex - 1, position.CharacterIndex));
+
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
 
 			// Perform the command in the context.
-			command.EndPosition = position;
-			actionContext.Do(command);
+			controller.Do(command);
 		}
 
 		/// <summary>
 		/// Deletes the left word from the caret.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.BackSpace, ModifierType.ControlMask)]
-		public static void DeleteLeftWord(IActionContext actionContext)
+		public static void DeleteLeftWord(EditorViewController controller)
 		{
 			// If we have a selection, then we simply delete that selection.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			var command = new Command(position);
 
-			if (DeleteSelection(actionContext, command))
+			if (DeleteSelection(controller, command))
 			{
 				// We have a command, so perform it and return.
-				actionContext.Do(command);
+				controller.Do(command, command.EndPosition);
 				return;
 			}
 
 			// Get the position in the buffer.
-			if (position.IsBeginningOfLine(actionContext.DisplayContext))
+			if (position.IsBeginningOfBuffer(controller.DisplayContext))
 			{
 				// We are in the beginning of the buffer, so we don't do anything.
-				DeleteLeft(actionContext);
+				return;
+			}
+
+			// Get the position in the buffer.
+			if (position.IsBeginningOfLine(controller.DisplayContext))
+			{
+				// We are in the beginning of the line, so delete the paragraph.
+				DeleteLeftParagraph(controller, command);
 				return;
 			}
 
 			// Get the index of the previous word.
 			LineBuffer lineBuffer = displayContext.LineBuffer;
 			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.None);
+				position.LineIndex, LineContexts.CurrentLine);
 			int leftBoundary =
 				displayContext.WordSplitter.GetPreviousWordBoundary(
 					lineText, position.CharacterIndex);
 
-			// Remove the text from the boundary to the caret in an operation.
-			string deletedText = lineText.Substring(0, leftBoundary) +
-			                     lineText.Substring(position.CharacterIndex);
-
 			// Create the operations we need to perform the action.
-			command.Operations.Add(new SetTextOperation(position.LineIndex, deletedText));
+			command.Operations.Add(new DeleteTextOperation(position.LineIndex, leftBoundary, position.CharacterIndex));
 
 			command.UndoOperations.Add(
 				new SetTextOperation(position.LineIndex, lineText));
 
-			// Move the position to the left boundary.
-			position.CharacterIndex = leftBoundary;
-
 			// Perform the operation.
-			command.EndPosition = position;
-			actionContext.Do(command);
+			controller.Do(command);
+		}
+
+		/// <summary>
+		/// Deletes the paragraph to the right of the caret.
+		/// </summary>
+		/// <param name="controller">The action context.</param>
+		/// <param name="command">The command.</param>
+		private static void DeleteRightParagraph(EditorViewController controller,
+												Command command)
+		{
+			// Pull out useful fields.
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(
+				position.LineIndex, LineContexts.Unformatted);
+
+			// This is the end of a paragraph and not the first one in
+			// the buffer. This operation combines the text of the two paragraphs
+			// together.
+			string nextText = lineBuffer.GetLineText(
+				position.LineIndex + 1, LineContexts.Unformatted);
+			string newText = lineText + nextText;
+
+			// Set up the operations in the command.
+			command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
+			command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+
+			command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex, 1));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex + 1, nextText));
+
+			// Relocate the caret position to the previous line's end.
+			position.CharacterIndex = lineText.Length;
+
+			// Perform the operations in the command and set the position.
+			controller.Do(command, position);
 		}
 
 		/// <summary>
 		/// Deletes the character to the right.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.Delete)]
-		public static void DeleteRight(IActionContext actionContext)
+		public static void DeleteRight(EditorViewController controller)
 		{
 			// If we have a selection, then we simply delete that selection.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			var command = new Command(position);
 
-			if (DeleteSelection(actionContext, command))
+			if (DeleteSelection(controller, command))
 			{
 				// We have a command, so perform it and return.
-				actionContext.Do(command);
+				controller.Do(command, command.EndPosition);
 				return;
 			}
 
 			// Get the position in the buffer.
-			if (position.IsEndOfBuffer(actionContext.DisplayContext))
+			if (position.IsEndOfBuffer(controller.DisplayContext))
 			{
 				// We are in the end of the buffer, so we don't do anything.
 				return;
@@ -568,116 +622,102 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// If we are at the beginning of the line, then we are combining paragraphs.
 			LineBuffer lineBuffer = displayContext.LineBuffer;
 			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.None);
+				position.LineIndex, LineContexts.Unformatted);
+			int deleteIndex = position.CharacterIndex;
 
-			if (position.CharacterIndex == lineText.Length)
+			if (deleteIndex == lineText.Length)
 			{
-				// This is the end of a paragraph and not the first one in
-				// the buffer. This operation combines the text of the two paragraphs
-				// together.
-				string nextText = lineBuffer.GetLineText(
-					position.LineIndex + 1, LineContexts.None);
-				string newText = lineText + nextText;
-
-				// Set up the operations and add them to the command.
-				command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
-				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
-
-				command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex, 1));
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex, lineText));
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex + 1, nextText));
+				DeleteRightParagraph(controller, command);
+				return;
 			}
-			else
-			{
-				// This is a single-line manipulation, so delete the character.
-				string newText = lineText.Substring(0, position.CharacterIndex) +
-				                 lineText.Substring(position.CharacterIndex + 1);
+			
+			// Create the operations for both performing and undoing the command.
+			command.Operations.Add(
+				new DeleteTextOperation(position.LineIndex, deleteIndex, deleteIndex + 1));
 
-				// Create the operations for both performing and undoing the command.
-				command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
-
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex, lineText));
-			}
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
 
 			// Perform the command to the action context.
-			command.EndPosition = position;
-			actionContext.Do(command);
+			controller.Do(command);
 		}
 
 		/// <summary>
 		/// Deletes the right word from the caret.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.Delete, ModifierType.ControlMask)]
-		public static void DeleteRightWord(IActionContext actionContext)
+		public static void DeleteRightWord(EditorViewController controller)
 		{
 			// If we have a selection, then we simply delete that selection.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			var command = new Command(position);
 
-			if (DeleteSelection(actionContext, command))
+			if (DeleteSelection(controller, command))
 			{
 				// We have a command, so perform it and return.
-				actionContext.Do(command);
+				controller.Do(command, command.EndPosition);
 				return;
 			}
 
-			// Get the position in the buffer.
-			if (position.IsEndOfLine(actionContext.DisplayContext))
+			// If we're at the end of the buffer, do nothing.
+			if (position.IsEndOfBuffer(controller.DisplayContext))
+			{
+				// We are in the end of the buffer, so we don't do anything.
+				return;
+			}
+
+			// If we are at the end of the line, delete the next paragraph.
+			if (position.IsEndOfLine(controller.DisplayContext))
 			{
 				// We are in the beginning of the buffer, so we don't do anything.
-				DeleteRight(actionContext);
+				DeleteRightParagraph(controller, command);
 				return;
 			}
 
 			// Get the index of the previous word.
 			LineBuffer lineBuffer = displayContext.LineBuffer;
 			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.None);
+				position.LineIndex, LineContexts.Unformatted);
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
 				lineText, position.CharacterIndex);
 
-			// Delete the text segment from the string.
-			string deletedText = lineText.Substring(0, position.CharacterIndex) +
-			                     lineText.Substring(rightBoundary);
-
 			// Create a operations that wraps the operations.
-			command.Operations.Add(new SetTextOperation(position.LineIndex, deletedText));
+			command.Operations.Add(
+				new DeleteTextOperation(
+					position.LineIndex, position.CharacterIndex, rightBoundary));
 
 			command.UndoOperations.Add(
 				new SetTextOperation(position.LineIndex, lineText));
 
 			// Finish by performing the command.
-			actionContext.Do(command);
+			controller.Do(command);
 		}
 
 		/// <summary>
 		/// If there is a selection already there, then this adds the operations
 		/// needed to delete the selection and the corresponding undo operations.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		/// <param name="command">The command.</param>
 		/// <returns>True if operations were added to delete the selection.</returns>
 		private static bool DeleteSelection(
-			IActionContext actionContext,
+			EditorViewController controller,
 			Command command)
 		{
 			var position = new BufferPosition();
 			string lineText;
 
-			return DeleteSelection(actionContext, command, ref position, out lineText);
+			return DeleteSelection(controller, command, ref position, out lineText);
 		}
 
 		/// <summary>
 		/// If there is a selection already there, then this adds the operations
 		/// needed to delete the selection and the corresponding undo operations.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		/// <param name="command">The command.</param>
 		/// <param name="position">The position.</param>
 		/// <param name="lineText">The line text.</param>
@@ -685,13 +725,13 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// True if operations were added to delete the selection.
 		/// </returns>
 		private static bool DeleteSelection(
-			IActionContext actionContext,
+			EditorViewController controller,
 			Command command,
 			ref BufferPosition position,
 			out string lineText)
 		{
 			// If we don't have a selection, then we don't do anything.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferSegment selection = displayContext.Caret.Selection;
 
 			if (selection.IsEmpty)
@@ -714,16 +754,19 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// If we have a single-line selection, then we have a simplier path
 			// for these operations.
 			LineBuffer lineBuffer = displayContext.LineBuffer;
-			string startLine = lineBuffer.GetLineText(startLineIndex, LineContexts.None);
+			string startLine = lineBuffer.GetLineText(startLineIndex, LineContexts.Unformatted);
+			int deleteIndex = startPosition.CharacterIndex;
 
 			if (selection.IsSameLine)
 			{
 				// Pull out the new line text.
-				lineText = startLine.Substring(0, startPosition.CharacterIndex) +
+				lineText = startLine.Substring(0, deleteIndex) +
 				           startLine.Substring(endPosition.CharacterIndex);
 
 				// Create the operations for undoing and redoing the lines.
-				command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
+				command.Operations.Add(
+					new DeleteTextOperation(
+						startLineIndex, deleteIndex, endPosition.CharacterIndex));
 
 				command.UndoOperations.Add(new SetTextOperation(startLineIndex, startLine));
 
@@ -734,10 +777,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// Multi-line deletes are more complicated. Our new text will be
 			// the beginning of the first line and end of the last. We put this
 			// into the first line we are editing.
-			string endLine = lineBuffer.GetLineText(endLineIndex, LineContexts.None);
+			string endLine = lineBuffer.GetLineText(endLineIndex, LineContexts.Unformatted);
 			int endCharacterIndex = Math.Min(endLine.Length, endPosition.CharacterIndex);
 
-			lineText = startLine.Substring(0, startPosition.CharacterIndex) +
+			lineText = startLine.Substring(0, deleteIndex) +
 			           endLine.Substring(endCharacterIndex);
 
 			command.Operations.Add(new SetTextOperation(startLineIndex, lineText));
@@ -762,7 +805,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 				// the start index because the lines will be shifting up. When
 				// we are undoing it, we are moving down so we have to use the index.
 				string deletedLineText = lineBuffer.GetLineText(
-					lineIndex, LineContexts.None);
+					lineIndex, LineContexts.Unformatted);
 
 				command.UndoOperations.Add(new SetTextOperation(lineIndex, deletedLineText));
 			}

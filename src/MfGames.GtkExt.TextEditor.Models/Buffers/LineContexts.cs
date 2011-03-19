@@ -46,5 +46,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// Indicates that the request is for the current line.
 		/// </summary>
 		CurrentLine = 1,
+
+		/// <summary>
+		/// Indicates that the request should be a bare request without any
+		/// non-editable or dynamic text.
+		/// </summary>
+		Unformatted = 2,
 	}
 }

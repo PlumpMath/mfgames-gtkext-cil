@@ -42,63 +42,63 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Redoes the specified action context.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.Y, ModifierType.ControlMask)]
-		public static void Redo(IActionContext actionContext)
+		public static void Redo(EditorViewController controller)
 		{
 			// Check to see if there an redo command.
-			if (actionContext.Commands.RedoCommands.Count <= 0)
+			if (controller.Commands.RedoCommands.Count <= 0)
 			{
 				return;
 			}
 
 			// Get the redo command from the stack.
-			Command redoCommand = actionContext.Commands.RedoCommands.Pop();
+			Command redoCommand = controller.Commands.RedoCommands.Pop();
 
 			// Loop through the operations and perform them.
 			foreach (ILineBufferOperation operation in redoCommand.Operations)
 			{
-				actionContext.Do(operation);
+				controller.Do(operation);
 			}
 
 			// Push the command on the redo stack.
-			actionContext.Commands.UndoCommands.Push(redoCommand);
+			controller.Commands.UndoCommands.Push(redoCommand);
 
 			// Move the caret and scroll to it.
-			actionContext.DisplayContext.Caret.Position = redoCommand.EndPosition;
-			actionContext.DisplayContext.ScrollToCaret();
+			controller.DisplayContext.Caret.Position = redoCommand.EndPosition;
+			controller.DisplayContext.ScrollToCaret();
 		}
 
 		/// <summary>
 		/// Undoes the last command.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.Z, ModifierType.ControlMask)]
-		public static void Undo(IActionContext actionContext)
+		public static void Undo(EditorViewController controller)
 		{
 			// Check to see if there an undo command.
-			if (actionContext.Commands.UndoCommands.Count <= 0)
+			if (controller.Commands.UndoCommands.Count <= 0)
 			{
 				return;
 			}
 
 			// Get the undo command from the stack.
-			Command undoCommand = actionContext.Commands.UndoCommands.Pop();
+			Command undoCommand = controller.Commands.UndoCommands.Pop();
 
 			// Loop through the undo commands and perform them.
 			foreach (ILineBufferOperation operation in undoCommand.UndoOperations)
 			{
-				actionContext.Do(operation);
+				controller.Do(operation);
 			}
 
 			// Push the command on the redo stack.
-			actionContext.Commands.RedoCommands.Push(undoCommand);
+			controller.Commands.RedoCommands.Push(undoCommand);
 
 			// Move the caret and scroll to it.
-			actionContext.DisplayContext.Caret.Position = undoCommand.StartPosition;
-			actionContext.DisplayContext.ScrollToCaret();
+			controller.DisplayContext.Caret.Position = undoCommand.StartPosition;
+			controller.DisplayContext.ScrollToCaret();
 		}
 	}
 }
