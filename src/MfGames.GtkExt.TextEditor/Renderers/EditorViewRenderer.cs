@@ -44,15 +44,15 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 	/// editor to provide services for laying out text, wrapping words, and
 	/// otherwise rendering the renderer.
 	/// </summary>
-	public abstract class TextRenderer
+	public abstract class EditorViewRenderer
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextRenderer"/> class.
+		/// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		protected TextRenderer(IDisplayContext displayContext)
+		protected EditorViewRenderer(IDisplayContext displayContext)
 		{
 			// Set the properties in the renderer.
 			if (displayContext == null)

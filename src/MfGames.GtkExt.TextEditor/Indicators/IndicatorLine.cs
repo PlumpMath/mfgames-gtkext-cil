@@ -200,7 +200,7 @@ namespace MfGames.GtkExt.TextEditor.Indicators
 		/// <param name="buffer">The buffer.</param>
 		public void Update(
 			IDisplayContext displayContext,
-			TextRenderer buffer)
+			EditorViewRenderer buffer)
 		{
 			// Clear out our indicators and reset our fields.
 			Reset();

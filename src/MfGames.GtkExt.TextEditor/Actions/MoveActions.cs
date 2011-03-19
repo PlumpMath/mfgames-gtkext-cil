@@ -111,7 +111,7 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			// Extract a number of useful variable for this method.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			TextRenderer buffer = displayContext.TextRenderer;
+			EditorViewRenderer buffer = displayContext.Renderer;
 
 			// Queue a draw of the old caret position.
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
@@ -346,7 +346,7 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			double bufferY =
 				Math.Min(
 					point.Y + displayContext.VerticalAdjustment.PageSize,
-					displayContext.TextRenderer.GetLineLayoutHeight(0, Int32.MaxValue));
+					displayContext.Renderer.GetLineLayoutHeight(0, Int32.MaxValue));
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
@@ -483,7 +483,7 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			// Extract a number of useful variable for this method.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			TextRenderer buffer = displayContext.TextRenderer;
+			EditorViewRenderer buffer = displayContext.Renderer;
 
 			// Queue a draw of the old caret position.
 			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
@@ -549,15 +549,15 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			IDisplayContext displayContext)
 		{
 			double y = widgetPoint.Y + displayContext.BufferOffsetY;
-			int lineIndex = displayContext.TextRenderer.GetLineLayoutRange(y);
-			Layout layout = displayContext.TextRenderer.GetLineLayout(lineIndex);
+			int lineIndex = displayContext.Renderer.GetLineLayoutRange(y);
+			Layout layout = displayContext.Renderer.GetLineLayout(lineIndex);
 
 			// Shift the buffer-relative coordinates to layout-relative coordinates.
 			double layoutY = y;
 
 			if (lineIndex > 0)
 			{
-				layoutY -= displayContext.TextRenderer.GetLineLayoutHeight(0, lineIndex - 1);
+				layoutY -= displayContext.Renderer.GetLineLayoutHeight(0, lineIndex - 1);
 			}
 
 			int pangoLayoutY = Units.FromPixels((int) layoutY);

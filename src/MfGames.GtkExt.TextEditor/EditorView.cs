@@ -136,8 +136,6 @@ namespace MfGames.GtkExt.TextEditor
 
 		#region Line Buffer
 
-		private TextRenderer textRenderer;
-
 		/// <summary>
 		/// Gets the line buffer associated with the editor.
 		/// </summary>
@@ -145,83 +143,40 @@ namespace MfGames.GtkExt.TextEditor
 		public LineBuffer LineBuffer
 		{
 			[DebuggerStepThrough]
-			get { return textRenderer == null ? null : textRenderer.LineBuffer; }
-
-			[DebuggerStepThrough]
-			set
-			{
-				// If it is null, then clear out the buffer but don't create a
-				// text renderer if we don't have to.
-				if (value == null)
-				{
-					if (textRenderer != null)
-					{
-						textRenderer.LineBuffer = null;
-					}
-
-					return;
-				}
-
-				// If we don't have a text renderer, use a "sane" default.
-				if (textRenderer == null)
-				{
-					var lineBufferRenderer = new LineBufferTextRenderer(this, value);
-					textRenderer = new CachedTextRenderer(this, lineBufferRenderer);
-				}
-
-				// Now set the line buffer.
-				textRenderer.LineBuffer = value;
-			}
+			get { return Renderer == null ? null : Renderer.LineBuffer; }
 		}
 
 		/// <summary>
 		/// Gets or sets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
-		public TextRenderer TextRenderer
+		public EditorViewRenderer Renderer { get; private set; }
+
+		/// <summary>
+		/// Clears the line buffer from the editor.
+		/// </summary>
+		public void ClearLineBuffer()
 		{
-			[DebuggerStepThrough]
-			get { return textRenderer; }
+			SetLineBuffer(null);
 		}
 
 		/// <summary>
-		/// Raises the text renderer changed event.
+		/// Clears the renderer from the editor.
 		/// </summary>
-		protected virtual void RaiseTextRendererChanged()
+		public void ClearRenderer()
 		{
-			var listeners = TextRendererChanged;
-
-			if (listeners != null)
-			{
-				listeners(this, EventArgs.Empty);
-			}
+			SetRenderer(null);
 		}
 
 		/// <summary>
-		/// Sets the text renderer.
+		/// Handles the various events and processing needed to update the view.
 		/// </summary>
-		/// <param name="value">The new <see cref="EditorView"/>, which can be null.
-		/// <param>
-		public void SetTextRenderer(TextRenderer value)
+		private void HandleChangedLineBuffer()
 		{
-			// Detach events if we previously had a renderer.
-			if (textRenderer != null)
-			{
-				// Disconnect from the events.
-				textRenderer.LineChanged -= OnLineChanged;
-			}
-
-			// Set the new buffer.
-			textRenderer = value;
-
-			// Configure the new layout buffer.
-			if (textRenderer != null)
+			if (LineBuffer != null)
 			{
 				// Reset the margins and force them to resize themselves.
 				margins.Resize(this);
-
-				// Hook up to the events.
-				textRenderer.LineChanged += OnLineChanged;
 
 				// Cause a complete redraw.
 				Caret.Position = new BufferPosition(0, 0);
@@ -240,16 +195,95 @@ namespace MfGames.GtkExt.TextEditor
 			}
 
 			// Raise an event to indicate we changed our renderer.
-			RaiseTextRendererChanged();
+			RaiseLineBufferChanged();
 
 			// Queue a redraw of the entire text editor.
-			QueueDraw();
+			RequestRedraw();
 		}
 
 		/// <summary>
-		/// Occurs when the text renderer is replaced.
+		/// Occurs when the line buffer is cleared or replaced.
 		/// </summary>
-		public event EventHandler TextRendererChanged;
+		public event EventHandler LineBufferChanged;
+
+		/// <summary>
+		/// Raises the text renderer changed event.
+		/// </summary>
+		protected virtual void RaiseLineBufferChanged()
+		{
+			var listeners = LineBufferChanged;
+
+			if (listeners != null)
+			{
+				listeners(this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Sets the line buffer in the editor view.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		public void SetLineBuffer(LineBuffer value)
+		{
+			// If it is null, then clear out the buffer but don't create a
+			// text renderer if we don't have to.
+			if (value == null)
+			{
+				if (Renderer != null)
+				{
+					Renderer.LineBuffer = null;
+				}
+
+				// Handle the update to the view.
+				HandleChangedLineBuffer();
+
+				return;
+			}
+
+			// If we don't have a text renderer, use a sane default which works
+			// in most cases.
+			if (Renderer == null)
+			{
+				// We don't have a renderer, so create one.
+				var lineBufferRenderer = new LineBufferTextRenderer(this);
+				Renderer = new CachedTextRenderer(this, lineBufferRenderer);
+			}
+
+			// Now set the line buffer and perform the preparation operations.
+			Renderer.LineBuffer = value;
+			HandleChangedLineBuffer();
+		}
+
+		/// <summary>
+		/// Sets the text renderer.
+		/// </summary>
+		/// <param name="value">The new <see cref="EditorView"/>, which can be 
+		/// <see langword="null"/>.
+		/// <param>
+		public void SetRenderer(EditorViewRenderer value)
+		{
+			// Detach events if we previously had a renderer.
+			if (Renderer != null)
+			{
+				// Disconnect from the events.
+				Renderer.LineChanged -= OnLineChanged;
+
+				// Remove the line buffer first.
+				ClearLineBuffer();
+			}
+
+			// Set the new buffer.
+			Renderer = value;
+
+			if (LineBuffer != null)
+			{
+				// Hook up to the events.
+				Renderer.LineChanged += OnLineChanged;
+			}
+
+			// Set up the editor view for the changes made.
+			HandleChangedLineBuffer();
+		}
 
 		#endregion
 
@@ -490,7 +524,7 @@ namespace MfGames.GtkExt.TextEditor
 
 				// If we don't have a buffer at this point, render the entire
 				// area with the disabled background color and stop.
-				if (textRenderer == null)
+				if (Renderer == null)
 				{
 					// Paint the background color of the window.
 					cairoContext.Color = theme.DisabledBackgroundColor;
@@ -507,7 +541,7 @@ namespace MfGames.GtkExt.TextEditor
 				cairoContext.Fill();
 
 				// Reset the layout and its properties.
-				textRenderer.Width = area.Width - margins.Width;
+				Renderer.Width = area.Width - margins.Width;
 
 				// Figure out the viewport area we'll be drawing.
 				int offsetY = 0;
@@ -522,14 +556,14 @@ namespace MfGames.GtkExt.TextEditor
 
 				// Determine the line range visible in the given area.
 				int startLine, endLine;
-				textRenderer.GetLineLayoutRange(viewArea, out startLine, out endLine);
+				Renderer.GetLineLayoutRange(viewArea, out startLine, out endLine);
 
 				// Determine where the first line actually starts.
 				int startLineY = 0;
 
 				if (startLine > 0)
 				{
-					startLineY = textRenderer.GetLineLayoutHeight(0, startLine - 1);
+					startLineY = Renderer.GetLineLayoutHeight(0, startLine - 1);
 				}
 
 				// Go through the lines and draw each one in the correct position.
@@ -538,8 +572,8 @@ namespace MfGames.GtkExt.TextEditor
 				for (int lineIndex = startLine; lineIndex <= endLine; lineIndex++)
 				{
 					// Pull out the layout and style since we'll use it.
-					Layout layout = textRenderer.GetLineLayout(lineIndex);
-					LineBlockStyle style = TextRenderer.GetLineStyle(lineIndex);
+					Layout layout = Renderer.GetLineLayout(lineIndex);
+					LineBlockStyle style = Renderer.GetLineStyle(lineIndex);
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
@@ -770,7 +804,7 @@ namespace MfGames.GtkExt.TextEditor
 		private void SetAdjustments()
 		{
 			// We have to have a size and an adjustment.
-			if (verticalAdjustment == null || textRenderer == null)
+			if (verticalAdjustment == null || Renderer == null)
 			{
 				return;
 			}
@@ -783,11 +817,11 @@ namespace MfGames.GtkExt.TextEditor
 
 			// Set the line buffer's width and then request the height for all
 			// the lines in the buffer.
-			textRenderer.Width = TextWidth;
-			int height = textRenderer.GetLineLayoutHeight(0, Int32.MaxValue);
+			Renderer.Width = TextWidth;
+			int height = Renderer.GetLineLayoutHeight(0, Int32.MaxValue);
 
 			// Set the adjustments based on those values.
-			int lineHeight = textRenderer.GetLineLayoutHeight();
+			int lineHeight = Renderer.GetLineLayoutHeight();
 
 			verticalAdjustment.SetBounds(
 				0.0, height, lineHeight, (int) (Allocation.Height / 2.0), Allocation.Height);
@@ -848,11 +882,11 @@ namespace MfGames.GtkExt.TextEditor
 				GdkWindow.MoveResize(allocation);
 			}
 
-			if (textRenderer != null)
+			if (Renderer != null)
 			{
 				// We need to reset the buffer so it can recalculate all the widths
 				// and clear any caches.
-				TextRenderer.Reset();
+				Renderer.Reset();
 
 				// Change the adjustments (scrollbars).
 				SetAdjustments();

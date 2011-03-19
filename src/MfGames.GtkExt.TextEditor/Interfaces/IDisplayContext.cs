@@ -69,7 +69,7 @@ namespace MfGames.GtkExt.TextEditor.Interfaces
 		/// Gets the line layout buffer.
 		/// </summary>
 		/// <value>The line layout buffer.</value>
-		TextRenderer TextRenderer { get; }
+		EditorViewRenderer Renderer { get; }
 
 		/// <summary>
 		/// Gets the width of the area that can be used for rendering text.

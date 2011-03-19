@@ -35,29 +35,29 @@ using MfGames.GtkExt.TextEditor.Models;
 namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
-	/// Wraps around a <see cref="TextRenderer"/> and allows for extending classes
+	/// Wraps around a <see cref="EditorViewRenderer"/> and allows for extending classes
 	/// to override various methods and properties. This implementation simply
-	/// calls the underlying <see cref="TextRenderer"/> for everything.
+	/// calls the underlying <see cref="EditorViewRenderer"/> for everything.
 	/// </summary>
-	public abstract class TextRendererDecorator : TextRenderer
+	public abstract class EditorViewRendererDecorator : EditorViewRenderer
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextRendererDecorator"/> class.
+		/// Initializes a new instance of the <see cref="EditorViewRendererDecorator"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		/// <param name="textRenderer">The text renderer.</param>
-		protected TextRendererDecorator(
+		/// <param name="editorViewRenderer">The text renderer.</param>
+		protected EditorViewRendererDecorator(
 			IDisplayContext displayContext,
-			TextRenderer textRenderer)
+			EditorViewRenderer editorViewRenderer)
 			: base(displayContext)
 		{
-			TextRenderer = textRenderer;
+			EditorViewRenderer = editorViewRenderer;
 
-			if (textRenderer == null)
+			if (editorViewRenderer == null)
 			{
-				throw new ArgumentNullException("textRenderer");
+				throw new ArgumentNullException("editorViewRenderer");
 			}
 		}
 
@@ -65,34 +65,34 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 
 		#region Renderer
 
-		private TextRenderer textRenderer;
+		private EditorViewRenderer editorViewRenderer;
 
 		/// <summary>
-		/// Gets or sets the underlying TextRenderer.
+		/// Gets or sets the underlying Renderer.
 		/// </summary>
 		/// <value>The text renderer.</value>
-		public TextRenderer TextRenderer
+		public EditorViewRenderer EditorViewRenderer
 		{
-			get { return textRenderer; }
+			get { return editorViewRenderer; }
 			private set
 			{
 				// Disconnect any events if we previously had a renderer.
-				if (textRenderer != null)
+				if (editorViewRenderer != null)
 				{
-					textRenderer.LineChanged -= OnLineChanged;
-					textRenderer.LinesDeleted -= OnLinesDeleted;
-					textRenderer.LinesInserted -= OnLinesInserted;
+					editorViewRenderer.LineChanged -= OnLineChanged;
+					editorViewRenderer.LinesDeleted -= OnLinesDeleted;
+					editorViewRenderer.LinesInserted -= OnLinesInserted;
 				}
 
 				// Set the value for the underlying data.
-				textRenderer = value;
+				editorViewRenderer = value;
 
 				// Connect the events if we have a new value.
-				if (textRenderer != null)
+				if (editorViewRenderer != null)
 				{
-					textRenderer.LineChanged += OnLineChanged;
-					textRenderer.LinesDeleted += OnLinesDeleted;
-					textRenderer.LinesInserted += OnLinesInserted;
+					editorViewRenderer.LineChanged += OnLineChanged;
+					editorViewRenderer.LinesDeleted += OnLinesDeleted;
+					editorViewRenderer.LinesInserted += OnLinesInserted;
 				}
 			}
 		}
@@ -108,10 +108,10 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		public override LineBuffer LineBuffer
 		{
 			[DebuggerStepThrough]
-			get { return TextRenderer.LineBuffer; }
+			get { return EditorViewRenderer.LineBuffer; }
 
 			[DebuggerStepThrough]
-			set { TextRenderer.LineBuffer = value; }
+			set { EditorViewRenderer.LineBuffer = value; }
 		}
 
 		#endregion
@@ -125,9 +125,9 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		public override SelectionRenderer SelectionRenderer
 		{
 			[DebuggerStepThrough]
-			get { return TextRenderer.SelectionRenderer; }
+			get { return EditorViewRenderer.SelectionRenderer; }
 			[DebuggerStepThrough]
-			set { textRenderer.SelectionRenderer = value; }
+			set { editorViewRenderer.SelectionRenderer = value; }
 		}
 
 		#endregion

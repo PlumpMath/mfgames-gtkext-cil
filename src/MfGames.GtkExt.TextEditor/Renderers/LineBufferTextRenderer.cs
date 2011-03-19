@@ -34,15 +34,24 @@ using MfGames.GtkExt.TextEditor.Models;
 namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
-	/// Implements a <see cref="TextRenderer"/> wrapped around a 
+	/// Implements a <see cref="EditorViewRenderer"/> wrapped around a 
 	/// <see cref="LineBuffer"/>.
 	/// </summary>
-	public class LineBufferTextRenderer : TextRenderer
+	public class LineBufferTextRenderer : EditorViewRenderer
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextRenderer"/> class.
+		/// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public LineBufferTextRenderer(IDisplayContext displayContext)
+			: this(displayContext, null)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="lineBuffer">The line buffer.</param>

@@ -100,7 +100,7 @@
     <Compile Include="Renderers\LineBufferTextRenderer.cs" />
     <Compile Include="Renderers\RenderContext.cs" />
     <Compile Include="Renderers\SelectionRenderer.cs" />
-    <Compile Include="Renderers\TextRenderer.cs" />
+    <Compile Include="Renderers\EditorViewRenderer.cs" />
     <Compile Include="Interfaces\IRenderContext.cs" />
     <Compile Include="Interfaces\IWordSplitter.cs" />
     <Compile Include="IndicatorView.cs" />
@@ -109,7 +109,7 @@
     <Compile Include="Renderers\MarginRendererCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EditorViewSettings.cs" />
-    <Compile Include="Renderers\TextRendererDecorator.cs" />
+    <Compile Include="Renderers\EditorViewRendererDecorator.cs" />
     <Compile Include="Tests\AttributeCenterSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\AttributeEndSelectionExhaustiveTests.cs" />
     <Compile Include="Tests\AttributeStartSelectionExhaustiveTests.cs" />

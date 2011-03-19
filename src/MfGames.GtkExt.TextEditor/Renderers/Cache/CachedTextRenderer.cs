@@ -44,10 +44,10 @@ using Rectangle=Cairo.Rectangle;
 namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 {
 	/// <summary>
-	/// Implements a dynamic cache around a <see cref="TextRenderer"/> to reduce
+	/// Implements a dynamic cache around a <see cref="EditorViewRenderer"/> to reduce
 	/// processing overhead at the expense of larger memory usage.
 	/// </summary>
-	public class CachedTextRenderer : TextRendererDecorator
+	public class CachedTextRenderer : EditorViewRendererDecorator
 	{
 		#region Constructors
 
@@ -68,11 +68,11 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		/// <param name="textRenderer">The text renderer.</param>
+		/// <param name="editorViewRenderer">The text renderer.</param>
 		public CachedTextRenderer(
 			IDisplayContext displayContext,
-			TextRenderer textRenderer)
-			: this(displayContext, textRenderer, 8, 16)
+			EditorViewRenderer editorViewRenderer)
+			: this(displayContext, editorViewRenderer, 8, 16)
 		{
 		}
 
@@ -80,15 +80,15 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 		/// Initializes a new instance of the <see cref="CachedTextRenderer"/> class.
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
-		/// <param name="textRenderer">The text renderer.</param>
+		/// <param name="editorViewRenderer">The text renderer.</param>
 		/// <param name="maximumLoadedWindows">The maximum loaded windows.</param>
 		/// <param name="windowSize">Size of the window.</param>
 		public CachedTextRenderer(
 			IDisplayContext displayContext,
-			TextRenderer textRenderer,
+			EditorViewRenderer editorViewRenderer,
 			int maximumLoadedWindows,
 			int windowSize)
-			: base(displayContext, textRenderer)
+			: base(displayContext, editorViewRenderer)
 		{
 			// Set the cache window properties.
 			this.windowSize = windowSize;

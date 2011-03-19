@@ -339,8 +339,8 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 				}
 
 				// Get the height of this line.
-				Layout layout = Renderer.TextRenderer.GetLineLayout(line);
-				LineBlockStyle style = Renderer.TextRenderer.GetLineStyle(line);
+				Layout layout = Renderer.EditorViewRenderer.GetLineLayout(line);
+				LineBlockStyle style = Renderer.EditorViewRenderer.GetLineStyle(line);
 
 				cachedLine.Style = style;
 				cachedLine.Layout = layout;

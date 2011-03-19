@@ -401,7 +401,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 				// Check to see if the selection changed.
 				if (previousSelection != displayContext.Caret.Selection)
 				{
-					displayContext.TextRenderer.UpdateSelection(
+					displayContext.Renderer.UpdateSelection(
 						displayContext, previousSelection);
 				}
 
@@ -442,7 +442,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 						MoveActions.GetBufferPosition(textPoint, displayContext);
 
 					// Update the display.
-					displayContext.TextRenderer.UpdateSelection(
+					displayContext.Renderer.UpdateSelection(
 						displayContext, previousSelection);
 					displayContext.RequestRedraw();
 
@@ -473,7 +473,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			ModifierType modifier)
 		{
 			// If we don't have a buffer, we don't do anything.
-			if (displayContext.TextRenderer == null)
+			if (displayContext.Renderer == null)
 			{
 				return false;
 			}
@@ -526,13 +526,13 @@ namespace MfGames.GtkExt.TextEditor.Editing
 						// Check to see if the selection changed.
 						if (previousSelection != displayContext.Caret.Selection)
 						{
-							displayContext.TextRenderer.UpdateSelection(
+							displayContext.Renderer.UpdateSelection(
 								displayContext, previousSelection);
 						}
 					}
 					else if (!previousSelection.IsEmpty)
 					{
-						displayContext.TextRenderer.UpdateSelection(
+						displayContext.Renderer.UpdateSelection(
 							displayContext, previousSelection);
 					}
 
@@ -584,7 +584,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 					BufferSegment currentSelection = displayContext.Caret.Selection;
 
 					displayContext.Caret.Selection = previousTextSelection;
-					displayContext.TextRenderer.UpdateSelection(
+					displayContext.Renderer.UpdateSelection(
 						displayContext, currentSelection);
 				}
 			}

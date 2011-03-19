@@ -73,8 +73,8 @@ namespace MfGames.GtkExt.TextEditor
 			EditorView = editorView;
 
 			// Hoop up to the text editor event.
-			editorView.TextRendererChanged += OnTextRendererChanged;
-			SetTextRenderer(editorView.TextRenderer);
+			editorView.LineBufferChanged += OnTextRendererChanged;
+			SetTextRenderer(editorView.Renderer);
 
 			// Start the background update.
 			sync = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
@@ -84,9 +84,8 @@ namespace MfGames.GtkExt.TextEditor
 
 		#region Indicator Lines
 
+		private EditorViewRenderer editorViewRenderer;
 		private ArrayList<IndicatorLine> indicatorLines;
-
-		private TextRenderer textRenderer;
 
 		/// <summary>
 		/// Goes through the buffer lines and assigns those lines to the
@@ -109,7 +108,8 @@ namespace MfGames.GtkExt.TextEditor
 
 			// If we don't have any lines or if we have no height, then don't
 			// do anything.
-			if (visibleLineCount == 0 || textRenderer == null)
+			if (visibleLineCount == 0 || editorViewRenderer == null ||
+			    editorViewRenderer.LineBuffer == null)
 			{
 				return;
 			}
@@ -193,7 +193,7 @@ namespace MfGames.GtkExt.TextEditor
 			object sender,
 			EventArgs e)
 		{
-			SetTextRenderer(EditorView.TextRenderer);
+			SetTextRenderer(EditorView.Renderer);
 		}
 
 		/// <summary>
@@ -218,25 +218,25 @@ namespace MfGames.GtkExt.TextEditor
 		/// Updates the text renderer from the text control.
 		/// </summary>
 		/// <param name="value">The value.</param>
-		private void SetTextRenderer(TextRenderer value)
+		private void SetTextRenderer(EditorViewRenderer value)
 		{
 			// If we had a previous renderer, disconnect the events.
-			if (textRenderer != null)
+			if (editorViewRenderer != null)
 			{
-				textRenderer.LineChanged -= OnLineChanged;
-				textRenderer.LinesInserted -= OnBufferChanged;
-				textRenderer.LinesDeleted -= OnBufferChanged;
+				editorViewRenderer.LineChanged -= OnLineChanged;
+				editorViewRenderer.LinesInserted -= OnBufferChanged;
+				editorViewRenderer.LinesDeleted -= OnBufferChanged;
 			}
 
 			// Set the new indicator buffer.
-			textRenderer = value;
+			editorViewRenderer = value;
 
 			// If we have a new indicator buffer, attach events.
-			if (textRenderer != null)
+			if (editorViewRenderer != null)
 			{
-				textRenderer.LineChanged += OnLineChanged;
-				textRenderer.LinesInserted += OnBufferChanged;
-				textRenderer.LinesDeleted += OnBufferChanged;
+				editorViewRenderer.LineChanged += OnLineChanged;
+				editorViewRenderer.LinesInserted += OnBufferChanged;
+				editorViewRenderer.LinesDeleted += OnBufferChanged;
 			}
 
 			// Rebuild the lines in the buffer.
@@ -394,7 +394,7 @@ namespace MfGames.GtkExt.TextEditor
 					if (indicatorLine.NeedIndicators)
 					{
 						// We need to update this indicator.
-						indicatorLine.Update(EditorView, textRenderer);
+						indicatorLine.Update(EditorView, editorViewRenderer);
 					}
 
 					// Update the last indicator update.
