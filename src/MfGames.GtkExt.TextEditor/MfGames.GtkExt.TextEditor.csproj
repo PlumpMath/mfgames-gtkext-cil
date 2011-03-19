@@ -92,7 +92,7 @@
     <Compile Include="Editing\ActionEntry.cs" />
     <Compile Include="Editing\Caret.cs" />
     <Compile Include="Events\PopulateContextMenuArgs.cs" />
-    <Compile Include="Editing\TextController.cs" />
+    <Compile Include="Editing\EditorViewController.cs" />
     <Compile Include="Indicators\IndicatorLine.cs" />
     <Compile Include="Interfaces\IActionState.cs" />
     <Compile Include="Interfaces\IActionContext.cs" />

@@ -57,15 +57,15 @@ namespace MfGames.GtkExt.TextEditor.Editing
 	/// action which performs the action. For undoable or buffer commands, the
 	/// action will creates a command object which one or more buffer operations.
 	/// </summary>
-	public class TextController : IActionContext
+	public class EditorViewController : IActionContext
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextController"/> class.
+		/// Initializes a new instance of the <see cref="EditorViewController"/> class.
 		/// </summary>
 		/// <param name="editorView">The text editor associated with this controller.</param>
-		public TextController(EditorView editorView)
+		public EditorViewController(EditorView editorView)
 		{
 			// Saves the display context for performing actions.
 			if (editorView == null)
