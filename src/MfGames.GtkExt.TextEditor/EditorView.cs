@@ -247,7 +247,7 @@ namespace MfGames.GtkExt.TextEditor
 			{
 				// We don't have a renderer, so create one.
 				var lineBufferRenderer = new LineBufferRenderer(this);
-				Renderer = new CachedTextRenderer(this, lineBufferRenderer);
+				SetRenderer(new CachedTextRenderer(this, lineBufferRenderer));
 			}
 
 			// Now set the line buffer and perform the preparation operations.
@@ -276,7 +276,7 @@ namespace MfGames.GtkExt.TextEditor
 			// Set the new buffer.
 			Renderer = value;
 
-			if (LineBuffer != null)
+			if (Renderer != null)
 			{
 				// Hook up to the events.
 				Renderer.LineChanged += OnLineChanged;
