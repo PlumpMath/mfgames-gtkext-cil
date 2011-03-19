@@ -1,8 +1,36 @@
+#region Copyright and License
+
+// Copyright (c) 2009-2011, Moonfire Games
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+#region Namespaces
+
 using System;
 using System.Text;
 
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
+
+#endregion
 
 namespace GtkExtDemo.TextEditor
 {
@@ -30,7 +58,8 @@ namespace GtkExtDemo.TextEditor
 			b.Append("dolores et ea rebum stet clita kasd gubergren no sea takimata ");
 			b.Append("sanctus est lorem ipsum dolor sit amet lorem ipsum dolor sit ");
 			b.Append("amet consetetur sadipscing elitr sed diam nonumy eirmod tempor ");
-			b.Append("invidunt ut labore et dolore magna aliquyam erat sed diam voluptua ");
+			b.Append(
+				"invidunt ut labore et dolore magna aliquyam erat sed diam voluptua ");
 			b.Append("at vero eos et accusam et justo duo dolores et ea rebum stet ");
 			b.Append("clita kasd gubergren no sea takimata sanctus est lorem ipsum ");
 			b.Append("dolor sit amet duis autem vel eum iriure dolor in hendrerit in ");
@@ -43,13 +72,19 @@ namespace GtkExtDemo.TextEditor
 			b.Append("enim ad minim veniam quis nostrud exerci tation ullamcorper ");
 			b.Append("suscipit lobortis nisl ut aliquip ex ea commodo consequat duis ");
 			b.Append("autem vel eum iriure dolor in hendrerit in vulputate velit esse ");
-			b.Append("molestie consequat vel illum dolore eu feugiat nulla facilisis at ");
-			b.Append("vero eros et accumsan et iusto odio dignissim qui blandit praesent ");
-			b.Append("luptatum zzril delenit augue duis dolore te feugait nulla facilisi ");
-			b.Append("nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet ");
-			b.Append("doming id quod mazim placerat facer possim assum lorem ipsum dolor ");
+			b.Append(
+				"molestie consequat vel illum dolore eu feugiat nulla facilisis at ");
+			b.Append(
+				"vero eros et accumsan et iusto odio dignissim qui blandit praesent ");
+			b.Append(
+				"luptatum zzril delenit augue duis dolore te feugait nulla facilisi ");
+			b.Append(
+				"nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet ");
+			b.Append(
+				"doming id quod mazim placerat facer possim assum lorem ipsum dolor ");
 			b.Append("sit amet consectetuer adipiscing elit sed diam nonummy nibh ");
-			b.Append("euismod tincidunt ut laoreet dolore magna aliquam erat volutpat ut ");
+			b.Append(
+				"euismod tincidunt ut laoreet dolore magna aliquam erat volutpat ut ");
 			b.Append("wisi enim ad minim veniam quis nostrud exerci tation ullamcorper");
 
 			// Split on the space and keep it in an array.
@@ -77,11 +112,22 @@ namespace GtkExtDemo.TextEditor
 		}
 
 		/// <summary>
+		/// Performs the given operation, raising any events for changing.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		public override void Do(ILineBufferOperation operation)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Gets the length of the line.
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer.</param>
 		/// <returns>The length of the line.</returns>
-		public override int GetLineLength(int lineIndex)
+		public override int GetLineLength(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			return GenerateText(lineIndex).Length;
 		}
@@ -102,24 +148,17 @@ namespace GtkExtDemo.TextEditor
 		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
 		/// <param name="characters">The character range to pull the text.</param>
 		/// <returns></returns>
-		public override string GetLineText(int lineIndex,
-		                                   CharacterRange characters)
+		public override string GetLineText(
+			int lineIndex,
+			CharacterRange characters,
+			LineContexts lineContexts)
 		{
 			return characters.Substring(GenerateText(lineIndex));
 		}
 
-		/// <summary>
-		/// Performs the given operation, raising any events for changing.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		public override void Do(ILineBufferOperation operation)
-		{
-			throw new NotImplementedException();
-		}
-
 		#region Generation
 
-		private readonly static string[] words;
+		private static readonly string[] words;
 
 		/// <summary>
 		/// Generates random text using the line index as a seed.

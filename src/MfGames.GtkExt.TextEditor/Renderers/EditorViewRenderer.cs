@@ -108,19 +108,26 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public virtual Layout GetLineLayout(int lineIndex)
+		public virtual Layout GetLineLayout(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			// Get the layout.
 			var layout = new Layout(DisplayContext.PangoContext);
 
 			// Assign the given style to the layout.
-			LineBlockStyle style = GetLineStyle(lineIndex);
+			LineBlockStyle style = GetLineStyle(lineIndex, lineContexts);
 
 			DisplayContext.SetLayout(layout, style, DisplayContext.TextWidth);
 
 			// Set the markup and return.
-			layout.SetMarkup(GetSelectionMarkup(lineIndex));
+			string markup = GetSelectionMarkup(lineIndex, lineContexts);
+			string coloredMarkup = DrawingUtility.WrapColorMarkup(
+				markup, style.GetForegroundColor());
+
+			layout.SetMarkup(coloredMarkup);
 
 			return layout;
 		}
@@ -133,13 +140,13 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		private int GetLineLayoutHeight(int lineIndex)
 		{
 			// Get the extents for the line while rendered.
-			Layout lineLayout = GetLineLayout(lineIndex);
+			Layout lineLayout = GetLineLayout(lineIndex, LineContexts.None);
 			int lineWidth, lineHeight;
 
 			lineLayout.GetPixelSize(out lineWidth, out lineHeight);
 
 			// Get the style to include the style's height.
-			LineBlockStyle style = GetLineStyle(lineIndex);
+			LineBlockStyle style = GetLineStyle(lineIndex, LineContexts.None);
 
 			lineHeight += (int) Math.Ceiling(style.Height);
 
@@ -301,7 +308,8 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			double bufferY)
 		{
 			int wrappedLineIndex;
-			return GetWrappedLineLayout(displayContext, bufferY, out wrappedLineIndex);
+			return GetWrappedLineLayout(
+				displayContext, bufferY, out wrappedLineIndex, LineContexts.None);
 		}
 
 		/// <summary>
@@ -311,11 +319,13 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="bufferY">The buffer Y.</param>
 		/// <param name="wrappedLineIndex">Index of the wrapped line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
 		public LayoutLine GetWrappedLineLayout(
 			IDisplayContext displayContext,
 			double bufferY,
-			out int wrappedLineIndex)
+			out int wrappedLineIndex,
+			LineContexts lineContexts)
 		{
 			// Get the line that contains the given Y coordinate.
 			int lineIndex, endLineIndex;
@@ -326,7 +336,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			double layoutY = bufferY - GetLineLayoutHeight(0, lineIndex);
 
 			// Figure out which line inside the layout.
-			Layout layout = GetLineLayout(lineIndex);
+			Layout layout = GetLineLayout(lineIndex, LineContexts.None);
 			int trailing;
 
 			layout.XyToIndex(0, (int) layoutY, out wrappedLineIndex, out trailing);
@@ -346,7 +356,8 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			double bufferY)
 		{
 			int wrappedLineIndex;
-			GetWrappedLineLayout(displayContext, bufferY, out wrappedLineIndex);
+			GetWrappedLineLayout(
+				displayContext, bufferY, out wrappedLineIndex, LineContexts.None);
 			return wrappedLineIndex;
 		}
 
@@ -358,11 +369,14 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// Gets the line style associated with a line.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public virtual LineBlockStyle GetLineStyle(int lineIndex)
+		public virtual LineBlockStyle GetLineStyle(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			// Get the style name and normalize it.
-			string styleName = LineBuffer.GetLineStyleName(lineIndex);
+			string styleName = LineBuffer.GetLineStyleName(lineIndex, lineContexts);
 
 			if (String.IsNullOrEmpty(styleName))
 			{
@@ -484,11 +498,14 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// Gets the Pango markup for a given line.
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public string GetSelectionMarkup(int lineIndex)
+		public string GetSelectionMarkup(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			// Get the line markup from the underlying buffer.
-			string markup = LineBuffer.GetLineMarkup(lineIndex);
+			string markup = LineBuffer.GetLineMarkup(lineIndex, lineContexts);
 
 			// Check to see if we are in the selection.
 			int startCharacterIndex, endCharacterIndex;

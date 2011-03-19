@@ -30,6 +30,7 @@ using System.Diagnostics;
 using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.TextEditor.Buffers;
 using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
@@ -339,8 +340,10 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 				}
 
 				// Get the height of this line.
-				Layout layout = Renderer.EditorViewRenderer.GetLineLayout(line);
-				LineBlockStyle style = Renderer.EditorViewRenderer.GetLineStyle(line);
+				Layout layout = Renderer.EditorViewRenderer.GetLineLayout(
+					line, LineContexts.None);
+				LineBlockStyle style = Renderer.EditorViewRenderer.GetLineStyle(
+					line, LineContexts.None);
 
 				cachedLine.Style = style;
 				cachedLine.Layout = layout;

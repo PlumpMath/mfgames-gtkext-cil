@@ -68,7 +68,8 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			LineBlockStyle lineBlockStyle)
 		{
 			// Figure out the style we need to use.
-			MarginBlockStyle style = lineBlockStyle.MarginStyles.Get(Theme.LineNumberStyle);
+			MarginBlockStyle style =
+				lineBlockStyle.MarginStyles.Get(Theme.LineNumberStyle);
 
 			// Create a layout object if we don't have one.
 			if (layout == null)

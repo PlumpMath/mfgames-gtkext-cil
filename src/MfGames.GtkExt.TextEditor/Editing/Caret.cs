@@ -31,6 +31,7 @@ using Cairo;
 using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Renderers;
 
 #endregion
@@ -140,7 +141,9 @@ namespace MfGames.GtkExt.TextEditor.Editing
 
 			// Shift the contents to compenstate for the margins.
 			x += displayContext.TextX;
-			x += displayContext.Renderer.GetLineStyle(Position.LineIndex).Left;
+			x +=
+				displayContext.Renderer.GetLineStyle(Position.LineIndex, LineContexts.None).
+					Left;
 
 			// Return the resulting rectangle.
 			return new Rectangle(x, y, 1, lineHeight);

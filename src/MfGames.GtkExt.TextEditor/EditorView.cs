@@ -594,9 +594,20 @@ namespace MfGames.GtkExt.TextEditor
 
 				for (int lineIndex = startLine; lineIndex <= endLine; lineIndex++)
 				{
+					// Figure out if we are on the current line.
+					LineContexts lineContexts = LineContexts.None;
+					bool currentLine = false;
+
+					if (lineIndex == caret.Position.LineIndex)
+					{
+						// Add the curent line to the context.
+						lineContexts |= LineContexts.CurrentLine;
+						currentLine = true;
+					}
+
 					// Pull out the layout and style since we'll use it.
-					Layout layout = Renderer.GetLineLayout(lineIndex);
-					LineBlockStyle style = Renderer.GetLineStyle(lineIndex);
+					Layout layout = Renderer.GetLineLayout(lineIndex, lineContexts);
+					LineBlockStyle style = Renderer.GetLineStyle(lineIndex, lineContexts);
 
 					// Get the extents for that line.
 					int layoutWidth, layoutHeight;
@@ -605,9 +616,7 @@ namespace MfGames.GtkExt.TextEditor
 					// Figure out the height of the line including padding.
 					double height = layoutHeight + style.Height;
 
-					// If this is the current line, then we draw an additional
-					// background color if the theme requests it.
-					if (lineIndex == caret.Position.LineIndex)
+					if (currentLine)
 					{
 						// If we have a full-line background color, display it.
 						if (theme.CurrentLineBackgroundColor.HasValue)
@@ -703,9 +712,9 @@ namespace MfGames.GtkExt.TextEditor
 
 		#region Scrollbars
 
+		private bool requestedScrollToCaret;
 		private Rectangle scrollPaddingRegion;
 		private Adjustment verticalAdjustment;
-		private bool requestedScrollToCaret;
 
 		/// <summary>
 		/// Gets or sets the vertical adjustment or offset into the viewing area.

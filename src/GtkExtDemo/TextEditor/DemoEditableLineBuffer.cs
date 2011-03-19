@@ -109,13 +109,27 @@ namespace GtkExtDemo.TextEditor
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer or
 		/// Int32.MaxValue for the last line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public override string GetLineStyleName(int lineIndex)
+		public override string GetLineStyleName(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			// See if we have the line in the styles.
 			if (styles.Contains(lineIndex))
 			{
-				return styles[lineIndex].ToString();
+				// If this is a heading line, we color it different if the
+				// user is not currently on the line.
+				DemoLineStyleType lineType = styles[lineIndex];
+
+				if (lineType == DemoLineStyleType.Heading &&
+					(lineContexts & LineContexts.CurrentLine) == 0)
+				{
+					return "Inactive Heading";
+				}
+
+				// Otherwise, return the normal style name.
+				return lineType.ToString();
 			}
 
 			return DemoLineStyleType.Default.ToString();

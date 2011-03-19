@@ -94,9 +94,10 @@ namespace GtkExtDemo.TextEditor
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer.</param>
 		/// <returns>The length of the line.</returns>
-		public override int GetLineLength(int lineIndex)
+		public override int GetLineLength(int lineIndex,
+		                                  LineContexts lineContexts)
 		{
-			return GetLineText(lineIndex, new CharacterRange(0)).Length;
+			return GetLineText(lineIndex, new CharacterRange(0), LineContexts.None).Length;
 		}
 
 		public override string GetLineNumber(int lineIndex)
@@ -105,9 +106,9 @@ namespace GtkExtDemo.TextEditor
 			return (lineIndex + 1).ToString("N0");
 		}
 
-		public override string GetLineText(
-			int lineIndex,
-			CharacterRange characters)
+		public override string GetLineText(int lineIndex,
+		                                   CharacterRange characters,
+		                                   LineContexts lineContexts)
 		{
 			// Build up a string buffer with the line text. This will always
 			// be no more than the width of the line.

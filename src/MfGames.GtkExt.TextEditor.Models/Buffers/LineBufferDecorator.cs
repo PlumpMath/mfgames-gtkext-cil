@@ -100,9 +100,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer.</param>
 		/// <returns>The length of the line.</returns>
-		public override int GetLineLength(int lineIndex)
+		public override int GetLineLength(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
-			return LineBuffer.GetLineLength(lineIndex);
+			return LineBuffer.GetLineLength(lineIndex, lineContexts);
 		}
 
 		/// <summary>
@@ -123,9 +125,10 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <returns></returns>
 		public override string GetLineText(
 			int lineIndex,
-			CharacterRange characters)
+			CharacterRange characters,
+			LineContexts lineContexts)
 		{
-			return LineBuffer.GetLineText(lineIndex, characters);
+			return LineBuffer.GetLineText(lineIndex, characters, lineContexts);
 		}
 
 		#endregion
@@ -138,9 +141,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <param name="lineIndex">The line index in the buffer or Int32.MaxValue for
 		/// the last line.</param>
 		/// <returns></returns>
-		public override string GetLineMarkup(int lineIndex)
+		public override string GetLineMarkup(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
-			return LineBuffer.GetLineMarkup(lineIndex);
+			return LineBuffer.GetLineMarkup(lineIndex, lineContexts);
 		}
 
 		/// <summary>
@@ -152,9 +157,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <param name="lineIndex">The line index in the buffer or Int32.MaxValue for
 		/// the last line.</param>
 		/// <returns></returns>
-		public override string GetLineStyleName(int lineIndex)
+		public override string GetLineStyleName(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
-			return LineBuffer.GetLineStyleName(lineIndex);
+			return LineBuffer.GetLineStyleName(lineIndex, lineContexts);
 		}
 
 		#endregion

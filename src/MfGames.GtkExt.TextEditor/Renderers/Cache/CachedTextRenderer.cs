@@ -358,9 +358,18 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 		/// Gets the line layout for a given line.
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
+		/// <param name="lineContexts"></param>
 		/// <returns></returns>
-		public override Layout GetLineLayout(int lineIndex)
+		public override Layout GetLineLayout(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
+			// If we have a context, never cache it.
+			if (lineContexts != LineContexts.None)
+			{
+				return base.GetLineLayout(lineIndex, lineContexts);
+			}
+
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
 
@@ -522,9 +531,18 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 		/// Gets the line style for a given line.
 		/// </summary>
 		/// <param name="lineIndex">The line number.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public override LineBlockStyle GetLineStyle(int lineIndex)
+		public override LineBlockStyle GetLineStyle(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
+			// If we have a context, never cache it.
+			if (lineContexts != LineContexts.None)
+			{
+				return base.GetLineStyle(lineIndex, lineContexts);
+			}
+
 			// Make sure we have all the windows allocated.
 			AllocateWindows();
 

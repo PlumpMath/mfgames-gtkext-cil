@@ -66,6 +66,7 @@
     <Compile Include="Buffers\LineBufferDecorator.cs" />
     <Compile Include="Buffers\LineBufferOperationType.cs" />
     <Compile Include="Buffers\LineChangedArgs.cs" />
+    <Compile Include="Buffers\LineContexts.cs" />
     <Compile Include="Buffers\LineRangeEventArgs.cs" />
     <Compile Include="Buffers\SetTextOperation.cs" />
     <Compile Include="CharacterRange.cs" />

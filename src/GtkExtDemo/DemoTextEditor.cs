@@ -28,6 +28,8 @@ using System;
 
 using C5;
 
+using Cairo;
+
 using Gtk;
 
 using GtkExtDemo.TextEditor;
@@ -39,10 +41,6 @@ using MfGames.GtkExt.TextEditor.Events;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Models.Styles;
-using MfGames.GtkExt.TextEditor.Renderers;
-using MfGames.GtkExt.TextEditor.Renderers.Cache;
-
-using Color=Cairo.Color;
 
 #endregion
 
@@ -119,7 +117,9 @@ namespace GtkExtDemo
 			theme.IndicatorRatioPixelGap = 1;
 
 			// Set up the editable text styles.
-			for (DemoLineStyleType type = DemoLineStyleType.Default; type <= DemoLineStyleType.Heading; type++)
+			for (DemoLineStyleType type = DemoLineStyleType.Default;
+			     type <= DemoLineStyleType.Heading;
+			     type++)
 			{
 				// Create a line style for this type.
 				var lineStyle = new LineBlockStyle(theme.TextLineStyle);
@@ -135,6 +135,14 @@ namespace GtkExtDemo
 						break;
 				}
 			}
+
+			// Create the inactive header style.
+			var inactiveHeadingStyle =
+				new LineBlockStyle(theme.LineStyles["Heading"]);
+
+			inactiveHeadingStyle.ForegroundColor = new Color(0.8, 0.8, 0.8);
+
+			theme.LineStyles["Inactive Heading"] = inactiveHeadingStyle;
 		}
 
 		#endregion
@@ -361,7 +369,8 @@ namespace GtkExtDemo
 			int lineIndex)
 		{
 			// Get the original line text.
-			string lineText = editorView.LineBuffer.GetLineText(lineIndex);
+			string lineText = editorView.LineBuffer.GetLineText(
+				lineIndex, LineContexts.None);
 
 			// Create a reverse of the text.
 			var characters = new ArrayList<char>();

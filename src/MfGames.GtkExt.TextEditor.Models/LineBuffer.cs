@@ -61,8 +61,11 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// Gets the length of the line.
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns>The length of the line.</returns>
-		public abstract int GetLineLength(int lineIndex);
+		public abstract int GetLineLength(
+			int lineIndex,
+			LineContexts lineContexts);
 
 		/// <summary>
 		/// Gets the formatted line number for a given line.
@@ -75,10 +78,13 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// Gets the text for a specific line.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public string GetLineText(int lineIndex)
+		public string GetLineText(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
-			return GetLineText(lineIndex, new CharacterRange(0));
+			return GetLineText(lineIndex, new CharacterRange(0), lineContexts);
 		}
 
 		/// <summary>
@@ -86,10 +92,12 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
 		/// <param name="characters">The character range to pull the text.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
 		public abstract string GetLineText(
 			int lineIndex,
-			CharacterRange characters);
+			CharacterRange characters,
+			LineContexts lineContexts);
 
 		/// <summary>
 		/// Normalizes the index of the line and makes sure nothing is beyond
@@ -111,25 +119,37 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer or Int32.MaxValue for
 		/// the last line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public virtual string GetLineMarkup(int lineIndex)
+		public virtual string GetLineMarkup(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
-			string text = GetLineText(lineIndex, new CharacterRange(0));
+			string text = GetLineText(
+				lineIndex, new CharacterRange(0), LineContexts.None);
 
 			return PangoUtility.Escape(text);
 		}
 
 		/// <summary>
 		/// Gets the name of the line style associated with this line. If the
-		/// default style is desired, then this can return 
+		/// default style is desired, then this can return
 		/// <see langword="null"/>. Otherwise, it has to be a name of an
 		/// existing style. If this returns a style name that doesn't exist,
 		/// then an exception will be thrown.
+		/// 
+		/// Styles that are for different context, but the same name, cannot
+		/// change the size of the line. This means they need to have the same
+		/// font and size. Otherwise, some of the wrap routines will fail to
+		/// work properly.
 		/// </summary>
 		/// <param name="lineIndex">The line index in the buffer or
 		/// Int32.MaxValue for the last line.</param>
+		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public virtual string GetLineStyleName(int lineIndex)
+		public virtual string GetLineStyleName(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			return null;
 		}

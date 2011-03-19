@@ -61,7 +61,8 @@ namespace MfGames.GtkExt.TextEditor.Models
 
 			for (int line = 0; line < lineCount; line++)
 			{
-				lines.Add(buffer.GetLineText(line, new CharacterRange(0)));
+				lines.Add(
+					buffer.GetLineText(line, new CharacterRange(0), LineContexts.None));
 			}
 		}
 
@@ -91,7 +92,9 @@ namespace MfGames.GtkExt.TextEditor.Models
 			get { return readOnly; }
 		}
 
-		public override int GetLineLength(int lineIndex)
+		public override int GetLineLength(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			return lines[lineIndex].Length;
 		}
@@ -110,7 +113,8 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// <returns></returns>
 		public override string GetLineText(
 			int lineIndex,
-			CharacterRange characters)
+			CharacterRange characters,
+			LineContexts lineContexts)
 		{
 			string text = lines[lineIndex];
 

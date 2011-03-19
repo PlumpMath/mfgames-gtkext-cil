@@ -35,6 +35,7 @@ using MfGames.GtkExt.TextEditor.Attributes;
 using MfGames.GtkExt.TextEditor.Editing;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Renderers;
 
 using Pango;
@@ -137,7 +138,7 @@ namespace MfGames.GtkExt.TextEditor.Actions
 
 				// Move to the next line.
 				position.LineIndex++;
-				layout = buffer.GetLineLayout(position.LineIndex);
+				layout = buffer.GetLineLayout(position.LineIndex, LineContexts.None);
 				wrappedLine = layout.Lines[0];
 			}
 			else
@@ -260,7 +261,8 @@ namespace MfGames.GtkExt.TextEditor.Actions
 				{
 					position.LineIndex--;
 					position.CharacterIndex =
-						displayContext.LineBuffer.GetLineLength(position.LineIndex);
+						displayContext.LineBuffer.GetLineLength(
+							position.LineIndex, LineContexts.None);
 				}
 			}
 			else
@@ -286,7 +288,8 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			// Get the text and line for the position in question.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			string text = displayContext.LineBuffer.GetLineText(position.LineIndex);
+			string text = displayContext.LineBuffer.GetLineText(
+				position.LineIndex, LineContexts.None);
 
 			// If there is no left boundary, we move up a line.
 			int leftBoundary = displayContext.WordSplitter.GetPreviousWordBoundary(
@@ -299,7 +302,8 @@ namespace MfGames.GtkExt.TextEditor.Actions
 				{
 					position.LineIndex--;
 					position.CharacterIndex =
-						displayContext.LineBuffer.GetLineLength(position.LineIndex);
+						displayContext.LineBuffer.GetLineLength(
+							position.LineIndex, LineContexts.None);
 				}
 			}
 			else
@@ -413,7 +417,8 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			BufferPosition position = displayContext.Caret.Position;
 			LineBuffer lineBuffer = displayContext.LineBuffer;
 
-			if (position.CharacterIndex == lineBuffer.GetLineLength(position.LineIndex))
+			if (position.CharacterIndex ==
+			    lineBuffer.GetLineLength(position.LineIndex, LineContexts.None))
 			{
 				if (position.LineIndex < lineBuffer.LineCount - 1)
 				{
@@ -444,7 +449,8 @@ namespace MfGames.GtkExt.TextEditor.Actions
 			// Get the text and line for the position in question.
 			IDisplayContext displayContext = actionContext.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-			string text = displayContext.LineBuffer.GetLineText(position.LineIndex);
+			string text = displayContext.LineBuffer.GetLineText(
+				position.LineIndex, LineContexts.None);
 
 			// If there is no right boundary, we move down a line.
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
@@ -509,7 +515,7 @@ namespace MfGames.GtkExt.TextEditor.Actions
 
 				// Move to the next line.
 				position.LineIndex--;
-				layout = buffer.GetLineLayout(position.LineIndex);
+				layout = buffer.GetLineLayout(position.LineIndex, LineContexts.None);
 				wrappedLineIndex = layout.LineCount - 1;
 				wrappedLine = layout.Lines[wrappedLineIndex];
 			}
@@ -550,7 +556,8 @@ namespace MfGames.GtkExt.TextEditor.Actions
 		{
 			double y = widgetPoint.Y + displayContext.BufferOffsetY;
 			int lineIndex = displayContext.Renderer.GetLineLayoutRange(y);
-			Layout layout = displayContext.Renderer.GetLineLayout(lineIndex);
+			Layout layout = displayContext.Renderer.GetLineLayout(
+				lineIndex, LineContexts.None);
 
 			// Shift the buffer-relative coordinates to layout-relative coordinates.
 			double layoutY = y;

@@ -62,10 +62,12 @@ namespace GtkExtDemo.TextEditor
 		/// </summary>
 		/// <param name="lineIndex">The line.</param>
 		/// <returns></returns>
-		public override string GetLineMarkup(int lineIndex)
+		public override string GetLineMarkup(
+			int lineIndex,
+			LineContexts lineContexts)
 		{
 			// Get the escaped line markup.
-			string markup = base.GetLineMarkup(lineIndex);
+			string markup = base.GetLineMarkup(lineIndex, lineContexts);
 
 			// Parse through the markup and get a list of entries. We go through
 			// the list in reverse so we can use the character entries without
@@ -122,7 +124,7 @@ namespace GtkExtDemo.TextEditor
 			int endCharacterIndex)
 		{
 			// Get the escaped line markup.
-			string text = GetLineText(lineIndex);
+			string text = GetLineText(lineIndex, LineContexts.None);
 
 			endCharacterIndex = Math.Min(endCharacterIndex, text.Length);
 
