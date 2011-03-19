@@ -61,6 +61,7 @@
     <Compile Include="Buffers\CommandCollection.cs" />
     <Compile Include="Buffers\CommandManager.cs" />
     <Compile Include="Buffers\DeleteLinesOperation.cs" />
+    <Compile Include="Buffers\DeleteTextOperation.cs" />
     <Compile Include="Buffers\ILineBufferOperation.cs" />
     <Compile Include="Buffers\ILineIndicator.cs" />
     <Compile Include="Buffers\InsertLinesOperation.cs" />

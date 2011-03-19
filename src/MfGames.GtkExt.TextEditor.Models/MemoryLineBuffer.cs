@@ -176,6 +176,36 @@ namespace MfGames.GtkExt.TextEditor.Models
 		}
 
 		/// <summary>
+		/// Deletes text from the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected override LineBufferOperationResults Do(DeleteTextOperation operation)
+		{
+			// Get the text from the buffer, insert the text, and put it back.
+			int lineIndex = operation.LineIndex;
+			string line = lines[lineIndex];
+			int endCharacterIndex = Math.Min(
+				operation.CharacterRange.EndIndex, line.Length);
+
+			string newLine = line.Remove(
+				operation.CharacterRange.StartIndex,
+				endCharacterIndex - operation.CharacterRange.StartIndex);
+
+			lines[lineIndex] = newLine;
+
+			// Fire a line changed operation.
+			RaiseLineChanged(new LineChangedArgs(lineIndex));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(
+					new BufferPosition(lineIndex, operation.CharacterRange.StartIndex));
+		}
+
+		/// <summary>
 		/// Performs the set text operation on the buffer.
 		/// </summary>
 		/// <param name="operation">The operation to perform.</param>

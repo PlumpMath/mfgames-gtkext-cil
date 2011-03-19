@@ -63,6 +63,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 				case LineBufferOperationType.InsertText:
 					return Do((InsertTextOperation) operation);
 
+				case LineBufferOperationType.DeleteText:
+					return Do((DeleteTextOperation) operation);
+
 				case LineBufferOperationType.DeleteLines:
 					return Do((DeleteLinesOperation) operation);
 
@@ -84,6 +87,16 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// </returns>
 		protected abstract LineBufferOperationResults Do(
 			InsertTextOperation operation);
+
+		/// <summary>
+		/// Deletes text from the buffer.
+		/// </summary>
+		/// <param name="operation">The operation to perform.</param>
+		/// <returns>
+		/// The results to the changes to the buffer.
+		/// </returns>
+		protected abstract LineBufferOperationResults Do(
+			DeleteTextOperation operation);
 
 		/// <summary>
 		/// Performs the set text operation on the buffer.

@@ -198,6 +198,48 @@ namespace MfGames.GtkExt.TextEditor.Models
 		}
 
 		/// <summary>
+		/// Deletes the text from the buffer using a <see cref="DeleteTextOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="startCharacterIndex">Start index of the character.</param>
+		/// <param name="endCharacterIndex">End index of the character.</param>
+		/// <returns></returns>
+		public LineBufferOperationResults DeleteText(
+			int lineIndex,
+			int startCharacterIndex,
+			int endCharacterIndex)
+		{
+			return DeleteText(
+				lineIndex, new CharacterRange(startCharacterIndex, endCharacterIndex));
+		}
+
+		/// <summary>
+		/// Deletes the text from the buffer using a <see cref="DeleteTextOperation"/>.
+		/// </summary>
+		/// <param name="bufferPosition">The buffer position.</param>
+		/// <param name="length">The length.</param>
+		/// <returns></returns>
+		public LineBufferOperationResults DeleteText(
+			BufferPosition bufferPosition,
+			int length)
+		{
+			return Do(new DeleteTextOperation(bufferPosition, length));
+		}
+
+		/// <summary>
+		/// Deletes the text from the buffer using a <see cref="DeleteTextOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="characterRange">The character range.</param>
+		/// <returns></returns>
+		public LineBufferOperationResults DeleteText(
+			int lineIndex,
+			CharacterRange characterRange)
+		{
+			return Do(new DeleteTextOperation(lineIndex, characterRange));
+		}
+
+		/// <summary>
 		/// Performs the given operation on the line buffer. This will raise any
 		/// events that were appropriate for the operation.
 		/// </summary>

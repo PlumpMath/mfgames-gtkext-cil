@@ -45,6 +45,12 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		InsertText,
 
 		/// <summary>
+		/// Indicates that the associated operation extends 
+		/// <see cref="DeleteTextOperation"/>.
+		/// </summary>
+		DeleteText,
+
+		/// <summary>
 		/// Indicates that the associated operation extends <see cref="InsertLinesOperation"/>.
 		/// </summary>
 		InsertLines,
