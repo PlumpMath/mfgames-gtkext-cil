@@ -73,6 +73,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		{
 			[DebuggerStepThrough]
 			get { return Selection.TailPosition; }
+
 			[DebuggerStepThrough]
 			set
 			{

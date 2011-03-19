@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Text.RegularExpressions;
 
 using C5;
 
@@ -42,6 +43,14 @@ namespace GtkExtDemo.TextEditor
 	public class DemoEditableLineBuffer : MemoryLineBuffer
 	{
 		#region Constructors
+
+		/// <summary>
+		/// Initializes the <see cref="DemoEditableLineBuffer"/> class.
+		/// </summary>
+		static DemoEditableLineBuffer()
+		{
+			removeExcessiveSpaces = new Regex(@"\s+", RegexOptions.Singleline);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DemoEditableLineBuffer"/> class.
@@ -71,6 +80,11 @@ namespace GtkExtDemo.TextEditor
 		#endregion
 
 		#region Operations
+
+		/// <summary>
+		/// Contains a regular expression for finding multiple spaces.
+		/// </summary>
+		private static readonly Regex removeExcessiveSpaces;
 
 		/// <summary>
 		/// Checks to see if a line operation caused a style to change.
@@ -137,6 +151,29 @@ namespace GtkExtDemo.TextEditor
 				Math.Max(0, results.BufferPosition.CharacterIndex - difference));
 
 			return results;
+		}
+
+		/// <summary>
+		/// Trims and removes duplicate spaces from the line.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		/// <returns></returns>
+		protected override LineBufferOperationResults Do(ExitLineOperation operation)
+		{
+			// Get the line in question.
+			string lineText = GetLineText(operation.LineIndex);
+
+			// Perform clean up operations on the line to see if it changed.
+			string newText = removeExcessiveSpaces.Replace(lineText.Trim(), " ");
+
+			// If the text isn't the same, update the line.
+			if (lineText != newText)
+			{
+				SetText(operation.LineIndex, newText);
+			}
+
+			// Return an empty operation results.
+			return new LineBufferOperationResults();
 		}
 
 		/// <summary>

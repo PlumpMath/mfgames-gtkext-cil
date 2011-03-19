@@ -803,6 +803,9 @@ namespace MfGames.GtkExt.TextEditor
 				return;
 			}
 
+			// Request that the widget get updated.
+			RequestRedraw();
+
 			// Figure out if the caret is already in the visible area.
 			Rectangle caretRegion = caret.GetDrawRegion();
 
@@ -831,9 +834,31 @@ namespace MfGames.GtkExt.TextEditor
 
 				verticalAdjustment.Value += difference;
 			}
+		}
 
-			// Redraw the screen.
-			RequestRedraw();
+		/// <summary>
+		/// Scrolls the view to ensure the caret is visible.
+		/// </summary>
+		/// <param name="bufferPosition">The buffer position.</param>
+		public void ScrollToCaret(BufferPosition bufferPosition)
+		{
+			// If we don't have adjustments, don't do anything.
+			if (verticalAdjustment == null)
+			{
+				return;
+			}
+
+			// Look to see if we are moving to a different position. If we are,
+			// we tell the line buffer that we have exited the previous line.
+			if (caret.Position.LineIndex != bufferPosition.LineIndex)
+			{
+				// Send an operation to the line buffer that we left the line.
+				LineBuffer.ExitLine(caret.Position.LineIndex);
+			}
+
+			// Call the base scrolling.
+			caret.Position = bufferPosition;
+			ScrollToCaret();
 		}
 
 		/// <summary>

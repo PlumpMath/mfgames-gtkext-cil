@@ -24,46 +24,50 @@
 
 #region Namespaces
 
+using System.Diagnostics;
+
 #endregion
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
-	/// Defines the various operations that a line buffer can receive.
+	/// Defines an operation that allows the buffer to update a line after the
+	/// user has exited it.
 	/// </summary>
-	public enum LineBufferOperationType : byte
+	public class ExitLineOperation : ILineBufferOperation
 	{
-		/// <summary>
-		/// Indicates that the associated operation extends <see cref="SetTextOperation"/>.
-		/// </summary>
-		SetText,
+		#region Constructors
 
 		/// <summary>
-		/// Indicates that the associated operation extends 
-		/// <see cref="InsertTextOperation"/>.
+		/// Initializes a new instance of the <see cref="ExitLineOperation"/> class.
 		/// </summary>
-		InsertText,
+		/// <param name="lineIndex">Index of the line.</param>
+		public ExitLineOperation(
+			int lineIndex)
+		{
+			LineIndex = lineIndex;
+		}
+
+		#endregion
+
+		#region Operation
 
 		/// <summary>
-		/// Indicates that the associated operation extends 
-		/// <see cref="DeleteTextOperation"/>.
+		/// Gets the type of the operation representing this object.
 		/// </summary>
-		DeleteText,
+		/// <value>The type of the operation.</value>
+		public LineBufferOperationType OperationType
+		{
+			[DebuggerStepThrough]
+			get { return LineBufferOperationType.ExitLine; }
+		}
 
 		/// <summary>
-		/// Indicates that the associated operation extends <see cref="InsertLinesOperation"/>.
+		/// Gets or sets the index of the line.
 		/// </summary>
-		InsertLines,
+		/// <value>The index of the line.</value>
+		public int LineIndex { get; private set; }
 
-		/// <summary>
-		/// Indicates that the associated operation extends <see cref="DeleteLinesOperation"/>.
-		/// </summary>
-		DeleteLines,
-
-		/// <summary>
-		/// Indicates that the user has scrolled off a line. The associated operation
-		/// extends <see cref="ExitLineOperation"/>.
-		/// </summary>
-		ExitLine,
+		#endregion
 	}
 }

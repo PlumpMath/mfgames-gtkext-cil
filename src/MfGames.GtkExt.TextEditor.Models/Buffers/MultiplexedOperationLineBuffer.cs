@@ -72,10 +72,23 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 				case LineBufferOperationType.InsertLines:
 					return Do((InsertLinesOperation) operation);
 
+				case LineBufferOperationType.ExitLine:
+					return Do((ExitLineOperation) operation);
+
 				default:
 					throw new ArgumentOutOfRangeException(
 						"operation", "Operation implements unknown OperationType.");
 			}
+		}
+
+		/// <summary>
+		/// Indicates that the user has exited the line.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		/// <returns></returns>
+		protected virtual LineBufferOperationResults Do(ExitLineOperation operation)
+		{
+			return new LineBufferOperationResults();
 		}
 
 		/// <summary>

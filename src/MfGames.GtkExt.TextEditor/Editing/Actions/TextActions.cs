@@ -74,6 +74,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			command.Operations.Add(new InsertLinesOperation(position.LineIndex, 1));
 			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
+			command.Operations.Add(new ExitLineOperation(position.LineIndex));
 			command.Operations.Add(new SetTextOperation(position.LineIndex + 1, after));
 
 			// The undo operation deletes the created line and sets the text of
@@ -159,8 +160,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 					// Scroll to the command's end position.
 					LineBufferOperationResults results = controller.Do(insertTextOperation);
 
-					displayContext.Caret.Position = results.BufferPosition;
-					displayContext.ScrollToCaret();
+					displayContext.ScrollToCaret(results.BufferPosition);
 
 					// We are done.
 					return;

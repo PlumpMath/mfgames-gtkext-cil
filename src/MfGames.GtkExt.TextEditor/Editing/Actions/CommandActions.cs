@@ -66,8 +66,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			controller.Commands.UndoCommands.Push(redoCommand);
 
 			// Move the caret and scroll to it.
-			controller.DisplayContext.Caret.Position = redoCommand.EndPosition;
-			controller.DisplayContext.ScrollToCaret();
+			controller.DisplayContext.ScrollToCaret(redoCommand.EndPosition);
 		}
 
 		/// <summary>
@@ -97,8 +96,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			controller.Commands.RedoCommands.Push(undoCommand);
 
 			// Move the caret and scroll to it.
-			controller.DisplayContext.Caret.Position = undoCommand.StartPosition;
-			controller.DisplayContext.ScrollToCaret();
+			controller.DisplayContext.ScrollToCaret(undoCommand.StartPosition);
 		}
 	}
 }

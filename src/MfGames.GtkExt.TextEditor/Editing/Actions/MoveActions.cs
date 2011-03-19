@@ -61,18 +61,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.Home, ModifierType.ControlMask)]
 		public static void BeginningOfBuffer(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
 			IDisplayContext displayContext = controller.DisplayContext;
-
-			// Queue a draw of the old caret position.
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToBeginningOfBuffer(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToBeginningOfBuffer(displayContext));
 		}
 
 		/// <summary>
@@ -84,18 +75,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.Home)]
 		public static void BeginningOfWrappedLine(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
 			IDisplayContext displayContext = controller.DisplayContext;
-
-			// Queue a draw of the old caret position.
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToBeginningOfWrappedLine(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToBeginningOfWrappedLine(displayContext));
 		}
 
 		/// <summary>
@@ -112,9 +94,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			EditorViewRenderer buffer = displayContext.Renderer;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -154,11 +133,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			wrappedLine.XToIndex(lineX, out index, out trailing);
 			position.CharacterIndex = index;
-			displayContext.Caret.Position = position;
 
 			// Draw the new location of the caret.
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
@@ -170,18 +147,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.End, ModifierType.ControlMask)]
 		public static void EndOfBuffer(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
 			IDisplayContext displayContext = controller.DisplayContext;
-
-			// Queue a draw of the old caret position.
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToEndOfBuffer(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToEndOfBuffer(displayContext));
 		}
 
 		/// <summary>
@@ -193,18 +161,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.End)]
 		public static void EndOfWrappedLine(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
 			IDisplayContext displayContext = controller.DisplayContext;
-
-			// Queue a draw of the old caret position.
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToEndOfWrappedLine(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToEndOfWrappedLine(displayContext));
 		}
 
 		/// <summary>
@@ -270,9 +229,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
@@ -311,9 +268,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
@@ -329,9 +284,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// Extract a number of useful variable for this method.
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -373,9 +325,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// Extract a number of useful variable for this method.
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -431,9 +380,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
@@ -470,9 +417,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
@@ -489,9 +434,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			EditorViewRenderer buffer = displayContext.Renderer;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -534,9 +476,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			position.CharacterIndex = index;
 
 			// Draw the new location of the caret.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		#endregion
@@ -593,12 +533,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			IDisplayContext displayContext,
 			PointD widgetPoint)
 		{
-			// Find the line layout that is closest to the point given.
-			displayContext.Caret.Position = GetBufferPosition(
-				widgetPoint, displayContext);
-
 			// Move to and draw the caret.
-			displayContext.ScrollToCaret();
+			displayContext.ScrollToCaret(GetBufferPosition(widgetPoint, displayContext));
 		}
 
 		#endregion
