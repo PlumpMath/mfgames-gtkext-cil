@@ -44,7 +44,6 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		#region Constants
 
 		public const string BaseStyle = "Base";
-		public const string CurrentLineNumberStyle = "CurrentLineNumber";
 		public const string LineNumberStyle = "LineNumber";
 		public const string MarginStyle = "Margin";
 		public const string TextStyle = "Text";
@@ -62,11 +61,19 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 			// by the text editor.
 			lineStyles = new HashDictionary<string, LineBlockStyle>();
 
+			// Set up the base style as a fallback for everything.
 			var baseStyle = new LineBlockStyle();
+			baseStyle.MarginStyles.Add(LineNumberStyle);
 
 			var marginStyle = new LineBlockStyle(baseStyle);
 
-			var lineNumberStyle = new LineBlockStyle(marginStyle);
+			// Set the default text style.
+			var textStyle = new LineBlockStyle(baseStyle);
+			textStyle.Margins.Top = 4;
+			textStyle.Margins.Bottom = 4;
+			textStyle.Margins.Left = 8;
+
+			var lineNumberStyle = textStyle.MarginStyles.Add(LineNumberStyle);
 			lineNumberStyle.Alignment = Alignment.Right;
 			lineNumberStyle.BackgroundColor = new Color(0.9, 0.9, 0.9);
 			lineNumberStyle.ForegroundColor = new Color(0.5, 0.5, 0.5);
@@ -77,19 +84,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 			lineNumberStyle.Margins.Top = 4;
 			lineNumberStyle.Margins.Bottom = 4;
 
-			var currentLineNumberStyle = new LineBlockStyle(lineNumberStyle);
-			currentLineNumberStyle.BackgroundColor = new Color(0.8, 0.8, 0.8);
-			currentLineNumberStyle.ForegroundColor = new Color(0.0, 0.0, 0.0);
-
-			var textStyle = new LineBlockStyle(baseStyle);
-			textStyle.Margins.Top = 4;
-			textStyle.Margins.Bottom = 4;
-			textStyle.Margins.Left = 8;
-
+			// Store the styles in the theme.
 			lineStyles[BaseStyle] = baseStyle;
 			lineStyles[MarginStyle] = marginStyle;
-			lineStyles[LineNumberStyle] = lineNumberStyle;
-			lineStyles[CurrentLineNumberStyle] = currentLineNumberStyle;
 			lineStyles[TextStyle] = textStyle;
 
 			// Colors
@@ -144,24 +141,6 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		#region Line Styles
 
 		private readonly HashDictionary<string, LineBlockStyle> lineStyles;
-
-		/// <summary>
-		/// Gets the current line number block style.
-		/// </summary>
-		/// <value>The line number block style.</value>
-		public LineBlockStyle CurrentLineBlockNumberLineBlockStyle
-		{
-			get { return lineStyles[CurrentLineNumberStyle]; }
-		}
-
-		/// <summary>
-		/// Gets the line number block style.
-		/// </summary>
-		/// <value>The line number block style.</value>
-		public LineBlockStyle LineNumberLineStyle
-		{
-			get { return lineStyles[LineNumberStyle]; }
-		}
 
 		/// <summary>
 		/// Gets the selector styles.

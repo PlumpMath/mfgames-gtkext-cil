@@ -78,6 +78,8 @@
     <Compile Include="Styles\IndicatorRenderStyle.cs" />
     <Compile Include="Styles\IndicatorStyle.cs" />
     <Compile Include="Styles\LineBlockStyle.cs" />
+    <Compile Include="Styles\MarginBlockStyle.cs" />
+    <Compile Include="Styles\MarginBlockStyleCollection.cs" />
     <Compile Include="Styles\OptionalBorders.cs" />
     <Compile Include="Styles\OptionalSpacing.cs" />
     <Compile Include="Styles\Spacing.cs" />

@@ -28,10 +28,6 @@ using System.Diagnostics;
 
 using C5;
 
-using Pango;
-
-using Color=Cairo.Color;
-
 #endregion
 
 namespace MfGames.GtkExt.TextEditor.Models.Styles
@@ -52,9 +48,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		public LineBlockStyle()
 		{
 			children = new LinkedList<LineBlockStyle>();
-			margins = new OptionalSpacing();
-			padding = new OptionalSpacing();
-			borders = new OptionalBorders();
+			MarginStyles = new MarginBlockStyleCollection(this);
 		}
 
 		/// <summary>
@@ -71,14 +65,14 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 
 		#region Cascading
 
-		private readonly LinkedList<LineBlockStyle> children;
+		private readonly C5.LinkedList<LineBlockStyle> children;
 		private LineBlockStyle parent;
 
 		/// <summary>
 		/// Gets the children styles associated with this one.
 		/// </summary>
 		/// <value>The children.</value>
-		public LinkedList<LineBlockStyle> Children
+		public C5.LinkedList<LineBlockStyle> Children
 		{
 			[DebuggerStepThrough]
 			get { return children; }
@@ -111,356 +105,25 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		}
 
 		/// <summary>
-		/// Gets or sets the style usage.
+		/// Gets the parent block style for this element.
 		/// </summary>
-		/// <value>The style usage.</value>
-		public StyleUsage StyleUsage { get; set; }
-
-		#endregion
-
-		#region Colors
-
-		/// <summary>
-		/// Gets or sets the background color.
-		/// </summary>
-		/// <value>The color of the background.</value>
-		public Color? BackgroundColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the foreground color.
-		/// </summary>
-		/// <value>The color of the foreground.</value>
-		public Color? ForegroundColor { get; set; }
-
-		/// <summary>
-		/// Gets the background color from this selector or the parent.
-		/// </summary>
-		/// <returns></returns>
-		public Color? GetBackgroundColor()
+		/// <value>The parent block style.</value>
+		protected override BlockStyle ParentBlockStyle
 		{
-			// If we have a value, then use that directly.
-			if (BackgroundColor.HasValue)
-			{
-				return BackgroundColor.Value;
-			}
-
-			// If we have a parent, then cascade up into it.
-			if (parent != null)
-			{
-				return parent.GetBackgroundColor();
-			}
-
-			// Otherwise, return nothing to indicate no background.
-			return null;
-		}
-
-		/// <summary>
-		/// Gets the foreground color from this selector or the parent.
-		/// </summary>
-		/// <returns></returns>
-		public Color GetForegroundColor()
-		{
-			// If we have a value, then use that directly.
-			if (ForegroundColor.HasValue)
-			{
-				return ForegroundColor.Value;
-			}
-
-			// If we have a parent, then cascade up into it.
-			if (parent != null)
-			{
-				return parent.GetForegroundColor();
-			}
-
-			// Otherwise, return a sane default.
-			return new Color(0, 0, 0);
+			get { return parent; }
 		}
 
 		#endregion
 
-		#region Spacing and Borders
-
-		private OptionalBorders borders;
-		private OptionalSpacing margins;
-		private OptionalSpacing padding;
+		#region Margins
 
 		/// <summary>
-		/// Gets or sets the borders.
+		/// Gets the margin styles.
 		/// </summary>
-		/// <value>The borders.</value>
-		public OptionalBorders Borders
-		{
-			[DebuggerStepThrough]
-			get { return borders; }
-			[DebuggerStepThrough]
-			set { borders = value ?? new OptionalBorders(); }
-		}
-
-		/// <summary>
-		/// Gets the height of the various elements in the style.
-		/// </summary>
-		/// <value>The height.</value>
-		public double Height
-		{
-			get { return GetMargins().Height + GetPadding().Height; }
-		}
-
-		/// <summary>
-		/// Gets the left spacing.
-		/// </summary>
-		/// <value>The left.</value>
-		public double Left
-		{
-			get { return GetMargins().Left + GetPadding().Left; }
-		}
-
-		/// <summary>
-		/// Gets or sets the margins.
-		/// </summary>
-		/// <value>The margins.</value>
-		public OptionalSpacing Margins
-		{
-			[DebuggerStepThrough]
-			get { return margins; }
-			set { margins = value ?? new OptionalSpacing(); }
-		}
-
-		/// <summary>
-		/// Gets or sets the padding.
-		/// </summary>
-		/// <value>The padding.</value>
-		public OptionalSpacing Padding
-		{
-			[DebuggerStepThrough]
-			get { return padding; }
-			set { padding = value ?? new OptionalSpacing(); }
-		}
-
-		/// <summary>
-		/// Gets the right spacing.
-		/// </summary>
-		/// <value>The left.</value>
-		public double Right
-		{
-			get { return GetMargins().Right + GetPadding().Right; }
-		}
-
-		/// <summary>
-		/// Gets the top spacing.
-		/// </summary>
-		/// <value>The top.</value>
-		public double Top
-		{
-			get { return GetMargins().Top + GetPadding().Top; }
-		}
-
-		/// <summary>
-		/// Gets the width of the various elements in the style.
-		/// </summary>
-		/// <value>The width.</value>
-		public double Width
-		{
-			get { return GetMargins().Width + GetPadding().Width; }
-		}
-
-		/// <summary>
-		/// Gets the completed borders by processing the parents.
-		/// </summary>
-		/// <returns></returns>
-		public Borders GetBorders()
-		{
-			// If we have all four borders, then return them.
-			if (borders.Complete)
-			{
-				return borders.ToBorders();
-			}
-
-			// If the current is empty, then just get the parent.
-			if (borders.Empty)
-			{
-				return parent != null ? parent.GetBorders() : new Borders();
-			}
-
-			// If we don't have a parent, then we set the rest of the values
-			// to zero and return it.
-			if (parent == null)
-			{
-				return borders.ToBorders();
-			}
-
-			// If we have a parent, then we need to merge all the values
-			// together.
-			Borders parentBorders = parent.GetBorders();
-
-			return new Borders(
-				borders.Top ?? parentBorders.Top,
-				borders.Right ?? parentBorders.Right,
-				borders.Bottom ?? parentBorders.Bottom,
-				borders.Left ?? parentBorders.Left);
-		}
-
-		/// <summary>
-		/// Gets the completed margins by processing the parents.
-		/// </summary>
-		/// <returns></returns>
-		public Spacing GetMargins()
-		{
-			// If we have all four margins, then return them.
-			if (margins.Complete)
-			{
-				return margins.ToSpacing();
-			}
-
-			// If the current is empty, then just get the parent.
-			if (margins.Empty)
-			{
-				return parent != null ? parent.GetMargins() : new Spacing();
-			}
-
-			// If we don't have a parent, then we set the rest of the values
-			// to zero and return it.
-			if (parent == null)
-			{
-				return margins.ToSpacing();
-			}
-
-			// If we have a parent, then we need to merge all the values
-			// together.
-			Spacing parentMargins = parent.GetMargins();
-
-			return
-				new Spacing(
-					margins.Top.HasValue ? margins.Top.Value : parentMargins.Top,
-					margins.Right.HasValue ? margins.Right.Value : parentMargins.Right,
-					margins.Bottom.HasValue ? margins.Bottom.Value : parentMargins.Bottom,
-					margins.Left.HasValue ? margins.Left.Value : parentMargins.Left);
-		}
-
-		/// <summary>
-		/// Gets the completed paddings by processing the parents.
-		/// </summary>
-		/// <returns></returns>
-		public Spacing GetPadding()
-		{
-			// If we have all four padding, then return them.
-			if (padding.Complete)
-			{
-				return padding.ToSpacing();
-			}
-
-			// If the current is empty, then just get the parent.
-			if (padding.Empty)
-			{
-				return parent != null ? parent.GetPadding() : new Spacing();
-			}
-
-			// If we don't have a parent, then we set the rest of the values
-			// to zero and return it.
-			if (parent == null)
-			{
-				return padding.ToSpacing();
-			}
-
-			// If we have a parent, then we need to merge all the values
-			// together.
-			Spacing parentPadding = parent.GetPadding();
-
-			return
-				new Spacing(
-					padding.Top.HasValue ? padding.Top.Value : parentPadding.Top,
-					padding.Right.HasValue ? padding.Right.Value : parentPadding.Right,
-					padding.Bottom.HasValue ? padding.Bottom.Value : parentPadding.Bottom,
-					padding.Left.HasValue ? padding.Left.Value : parentPadding.Left);
-		}
+		/// <value>The margin styles.</value>
+		public MarginBlockStyleCollection MarginStyles { get; private set; }
 
 		#endregion
 
-		#region Text
-
-		/// <summary>
-		/// Gets or sets the text alignment.
-		/// </summary>
-		/// <value>The alignment.</value>
-		public Alignment? Alignment { get; set; }
-
-		/// <summary>
-		/// Gets or sets the font description.
-		/// </summary>
-		/// <value>The font description.</value>
-		public FontDescription FontDescription { get; set; }
-
-		/// <summary>
-		/// Gets or sets the wrap mode.
-		/// </summary>
-		/// <value>The wrap mode.</value>
-		public WrapMode? WrapMode { get; set; }
-
-		/// <summary>
-		/// Gets the alignment from this selector or the parent.
-		/// </summary>
-		/// <returns></returns>
-		public Alignment GetAlignment()
-		{
-			// If we have a value, then use that directly.
-			if (Alignment.HasValue)
-			{
-				return Alignment.Value;
-			}
-
-			// If we have a parent, then cascade up into it.
-			if (parent != null)
-			{
-				return parent.GetAlignment();
-			}
-
-			// Otherwise, return a sane default.
-			return Pango.Alignment.Left;
-		}
-
-		/// <summary>
-		/// Gets the font description from this selector or the parent.
-		/// </summary>
-		/// <returns></returns>
-		public FontDescription GetFontDescription()
-		{
-			// If we have a value, then use that directly.
-			if (FontDescription != null)
-			{
-				return FontDescription;
-			}
-
-			// If we have a parent, then cascade up into it.
-			if (parent != null)
-			{
-				return parent.GetFontDescription();
-			}
-
-			// Otherwise, return a sane default.
-			return FontDescriptionCache.GetFontDescription("Sans 12");
-		}
-
-		/// <summary>
-		/// Gets the wrap mode from this selector or the parent.
-		/// </summary>
-		/// <returns></returns>
-		public WrapMode GetWrap()
-		{
-			// If we have a value, then use that directly.
-			if (WrapMode.HasValue)
-			{
-				return WrapMode.Value;
-			}
-
-			// If we have a parent, then cascade up into it.
-			if (parent != null)
-			{
-				return parent.GetWrap();
-			}
-
-			// Otherwise, return a sane default.
-			return Pango.WrapMode.Word;
-		}
-
-		#endregion
 	}
 }

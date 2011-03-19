@@ -103,7 +103,7 @@ namespace MfGames.GtkExt.TextEditor.Interfaces
 		/// <param name="width">The width.</param>
 		void SetLayout(
 			Layout layout,
-			LineBlockStyle style,
+			BlockStyle style,
 			int width);
 
 		#region Windows

@@ -30,6 +30,7 @@ using System.Diagnostics;
 using Cairo;
 
 using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 #endregion
 
@@ -144,7 +145,8 @@ namespace MfGames.GtkExt.TextEditor.Margins
 			IRenderContext renderContext,
 			int lineIndex,
 			PointD point,
-			double height);
+			double height,
+			LineBlockStyle lineBlockStyle);
 
 		#endregion
 	}

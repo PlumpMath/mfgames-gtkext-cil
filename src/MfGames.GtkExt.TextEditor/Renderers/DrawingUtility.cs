@@ -60,7 +60,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			IDisplayContext displayContext,
 			IRenderContext renderContext,
 			Rectangle region,
-			LineBlockStyle style)
+			BlockStyle style)
 		{
 			// Get the style for the line number.
 			Spacing margins = style.GetMargins();
@@ -136,7 +136,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			IRenderContext renderContext,
 			Rectangle region,
 			Layout layout,
-			LineBlockStyle style)
+			BlockStyle style)
 		{
 			// Get the style for the line number.
 			Spacing margins = style.GetMargins();

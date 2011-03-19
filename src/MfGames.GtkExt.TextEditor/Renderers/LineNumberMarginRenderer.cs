@@ -59,25 +59,17 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 		/// <param name="lineIndex">The line index being rendered.</param>
 		/// <param name="point">The point of the specific line number.</param>
 		/// <param name="height">The height of the rendered line.</param>
+		/// <param name="lineBlockStyle"></param>
 		public override void Draw(
 			IDisplayContext displayContext,
 			IRenderContext renderContext,
 			int lineIndex,
 			PointD point,
-			double height)
+			double height,
+			LineBlockStyle lineBlockStyle)
 		{
 			// Figure out the style we need to use.
-			LineBlockStyle style;
-
-			if (displayContext.Caret.Position.LineIndex == lineIndex)
-			{
-				// This is the current line.
-				style = displayContext.Theme.CurrentLineBlockNumberLineBlockStyle;
-			}
-			else
-			{
-				style = displayContext.Theme.LineNumberLineStyle;
-			}
+			MarginBlockStyle style = lineBlockStyle.MarginStyles.Get(Theme.LineNumberStyle);
 
 			// Create a layout object if we don't have one.
 			if (layout == null)

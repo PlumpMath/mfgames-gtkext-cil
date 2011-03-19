@@ -31,6 +31,7 @@ using C5;
 using Cairo;
 
 using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 
 #endregion
 
@@ -182,12 +183,14 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		/// <param name="lineIndex">The line index being rendered.</param>
 		/// <param name="point">The point of the specific line number.</param>
 		/// <param name="height">The height of the rendered line.</param>
+		/// <param name="lineBlockStyle">The line block style.</param>
 		public void Draw(
 			IDisplayContext displayContext,
 			IRenderContext renderContext,
 			int lineIndex,
 			PointD point,
-			double height)
+			double height,
+			LineBlockStyle lineBlockStyle)
 		{
 			// Go through the margins and draw each one so they don't overlap.
 			double dx = point.X;
@@ -202,7 +205,12 @@ namespace MfGames.GtkExt.TextEditor.Margins
 
 				// Draw out the individual margin.
 				marginRenderer.Draw(
-					displayContext, renderContext, lineIndex, new PointD(dx, point.Y), height);
+					displayContext,
+					renderContext,
+					lineIndex,
+					new PointD(dx, point.Y),
+					height,
+					lineBlockStyle);
 
 				// Add to the x coordinate so we don't overlap the renders.
 				dx += marginRenderer.Width;

@@ -298,7 +298,7 @@ namespace MfGames.GtkExt.TextEditor
 		/// <param name="width">The width.</param>
 		public void SetLayout(
 			Layout layout,
-			LineBlockStyle style,
+			BlockStyle style,
 			int width)
 		{
 			// Set the style elements.
@@ -608,18 +608,6 @@ namespace MfGames.GtkExt.TextEditor
 
 							wrappedLine.GetPixelExtents(out wrappedLineExtents);
 
-							//// Figure out where in the screen we'll be drawing this layout.
-							//double wrappedY = currentY + logicalRegion.Y + style.Top;
-
-							//Console.WriteLine(
-							//    string.Format(
-							//        "wy {0} cy {1} ly {2} iy {4} st {3}",
-							//        wrappedY,
-							//        currentY,
-							//        logicalRegion.Y,
-							//        style.Top,
-							//        inkRegion.Y));
-
 							// Draw the current wrapped line index.
 							var wrappedLineArea = new Rectangle(
 								TextX,
@@ -643,7 +631,7 @@ namespace MfGames.GtkExt.TextEditor
 
 					// Render out the margin renderers.
 					margins.Draw(
-						this, renderContext, lineIndex, new PointD(0, currentY), height);
+						this, renderContext, lineIndex, new PointD(0, currentY), height, style);
 
 					// Move down a line.
 					currentY += height;
