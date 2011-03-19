@@ -150,6 +150,11 @@ namespace MfGames.GtkExt.TextEditor.Interfaces
 		void RequestRedraw(Rectangle region);
 
 		/// <summary>
+		/// Requests the editor scroll to the caret.
+		/// </summary>
+		void RequestScrollToCaret();
+
+		/// <summary>
 		/// Scrolls the display to the caret.
 		/// </summary>
 		void ScrollToCaret();

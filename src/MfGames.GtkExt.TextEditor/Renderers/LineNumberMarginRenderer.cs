@@ -29,7 +29,6 @@ using System;
 using Cairo;
 
 using MfGames.GtkExt.TextEditor.Interfaces;
-using MfGames.GtkExt.TextEditor.Margins;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 
 using Pango;
@@ -104,7 +103,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 				// Set the layout width so we don't have to redo the entire
 				// layout and update our margin width (including style).
 				layout.Width = layoutWidth;
-				Width = (int) (Units.ToPixels(layoutWidth) + style.Width);
+				SetWidth((int) (Units.ToPixels(layoutWidth) + style.Width));
 
 				// Since we are looking at a large length of line number, update
 				// it so we don't continually calculate the line width.
@@ -113,6 +112,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 				// Request a full redraw since this will change even the lines
 				// we already drew. We draw the line anyways to avoid seeing a
 				// white block.
+				displayContext.RequestScrollToCaret();
 				displayContext.RequestRedraw();
 			}
 

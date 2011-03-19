@@ -88,6 +88,8 @@ namespace MfGames.GtkExt.TextEditor
 			// Set up the rest of the screen elements.
 			margins = new MarginRendererCollection();
 			margins.Add(new LineNumberMarginRenderer());
+			margins.WidthChanged += OnMarginsWidthChanged;
+
 			theme = new Theme();
 			editorViewSettings = new EditorViewSettings();
 
@@ -348,6 +350,18 @@ namespace MfGames.GtkExt.TextEditor
 			set { wordSplitter = value ?? new OffsetWordSplitter(); }
 		}
 
+		/// <summary>
+		/// Called when the margins change their width.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnMarginsWidthChanged(
+			object sender,
+			EventArgs e)
+		{
+			ResizeComponents();
+		}
+
 		#endregion
 
 		#region Editing
@@ -389,6 +403,7 @@ namespace MfGames.GtkExt.TextEditor
 			EventArgs args)
 		{
 			requestedRedraw = false;
+			requestedScrollToCaret = false;
 		}
 
 		/// <summary>
@@ -428,6 +443,11 @@ namespace MfGames.GtkExt.TextEditor
 			object sender,
 			EventArgs args)
 		{
+			if (requestedScrollToCaret)
+			{
+				ScrollToCaret();
+			}
+
 			if (requestedRedraw)
 			{
 				QueueDraw();
@@ -685,6 +705,7 @@ namespace MfGames.GtkExt.TextEditor
 
 		private Rectangle scrollPaddingRegion;
 		private Adjustment verticalAdjustment;
+		private bool requestedScrollToCaret;
 
 		/// <summary>
 		/// Gets or sets the vertical adjustment or offset into the viewing area.
@@ -743,6 +764,21 @@ namespace MfGames.GtkExt.TextEditor
 		{
 			// Redraw the entire window.
 			QueueDraw();
+		}
+
+		/// <summary>
+		/// Requests the editor scroll to the caret.
+		/// </summary>
+		public void RequestScrollToCaret()
+		{
+			if (controller.InAction)
+			{
+				requestedScrollToCaret = true;
+			}
+			else
+			{
+				ScrollToCaret();
+			}
 		}
 
 		/// <summary>
@@ -873,21 +909,8 @@ namespace MfGames.GtkExt.TextEditor
 				GdkWindow.MoveResize(allocation);
 			}
 
-			if (Renderer != null)
-			{
-				// We need to reset the buffer so it can recalculate all the widths
-				// and clear any caches.
-				Renderer.Reset();
-
-				// Change the adjustments (scrollbars).
-				SetAdjustments();
-
-				// Get rid of any input states.
-				controller.Reset();
-			}
-
-			// Force the entire widget to draw.
-			QueueDraw();
+			// Resize our components.
+			ResizeComponents();
 		}
 
 		/// <summary>
@@ -903,6 +926,28 @@ namespace MfGames.GtkExt.TextEditor
 			}
 
 			base.OnUnrealized();
+		}
+
+		/// <summary>
+		/// Resizes the components of the window.
+		/// </summary>
+		private void ResizeComponents()
+		{
+			if (Renderer != null)
+			{
+				// We need to reset the buffer so it can recalculate all the widths
+				// and clear any caches.
+				Renderer.Reset();
+
+				// Change the adjustments (scrollbars).
+				SetAdjustments();
+
+				// Get rid of any input states.
+				controller.Reset();
+			}
+
+			// Force the entire widget to draw.
+			QueueDraw();
 		}
 
 		#endregion

@@ -34,7 +34,7 @@ using MfGames.GtkExt.TextEditor.Models.Styles;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Margins
+namespace MfGames.GtkExt.TextEditor.Renderers
 {
 	/// <summary>
 	/// The abstract base class for margin renderers. These can be used to show
@@ -81,18 +81,6 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		{
 			[DebuggerStepThrough]
 			get { return width; }
-
-			set
-			{
-				bool fireEvent = width != value;
-
-				width = value;
-
-				if (fireEvent)
-				{
-					FireWidthChanged();
-				}
-			}
 		}
 
 		/// <summary>
@@ -111,7 +99,9 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		/// </summary>
 		public virtual void Reset()
 		{
-			Width = 0;
+			// We don't need to fire an event since this is called from the
+			// collection's Reset().
+			width = 0;
 		}
 
 		/// <summary>
@@ -121,6 +111,23 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		public virtual void Resize(EditorView editorView)
 		{
 			// The default implementation is to do nothing.
+		}
+
+		/// <summary>
+		/// Sets the width of the margin.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// <returns></returns>
+		public void SetWidth(int value)
+		{
+			bool fireEvent = width != value;
+
+			width = value;
+
+			if (fireEvent)
+			{
+				FireWidthChanged();
+			}
 		}
 
 		/// <summary>
@@ -140,6 +147,7 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		/// <param name="lineIndex">The line index being rendered.</param>
 		/// <param name="point">The point of the specific line number.</param>
 		/// <param name="height">The height of the rendered line.</param>
+		/// <param name="lineBlockStyle">The line block style.</param>
 		public abstract void Draw(
 			IDisplayContext displayContext,
 			IRenderContext renderContext,

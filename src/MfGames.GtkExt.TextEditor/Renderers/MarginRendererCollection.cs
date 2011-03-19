@@ -32,6 +32,7 @@ using Cairo;
 
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models.Styles;
+using MfGames.GtkExt.TextEditor.Renderers;
 
 #endregion
 
@@ -58,7 +59,7 @@ namespace MfGames.GtkExt.TextEditor.Margins
 		}
 
 		/// <summary>
-		/// Fires the WidthChanged event.
+		/// Fires the <see cref="WidthChanged"/> event.
 		/// </summary>
 		private void FireWidthChanged()
 		{
