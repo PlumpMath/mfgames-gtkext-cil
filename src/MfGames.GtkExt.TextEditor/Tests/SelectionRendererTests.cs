@@ -24,6 +24,8 @@
 
 #region Namespaces
 
+using System;
+
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Renderers;
 
@@ -80,6 +82,24 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		#endregion
 
 		#region Plain Markup
+
+		/// <summary>
+		/// Test rendering a selection at the very end of a line.
+		/// </summary>
+		[Test]
+		public void PlainEmptySelectionAtEndOfLine()
+		{
+			// Setup
+			const string markup = "this";
+			var selectionRenderer = new SelectionRenderer();
+			var characters = new CharacterRange(5, Int32.MaxValue);
+
+			// Operation
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
+
+			// Verification
+			Assert.AreEqual("this", output);
+		}
 
 		[Test]
 		public void PlainBeginningOfString()

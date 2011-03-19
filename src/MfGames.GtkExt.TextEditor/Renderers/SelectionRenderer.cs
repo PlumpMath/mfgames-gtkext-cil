@@ -378,6 +378,13 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 				out leadingXmlIndex,
 				out trailingXmlDepth);
 
+			// If we have a startIndex of -1, that means that the selection is
+			// the end of the line and we have nothing.
+			if (startIndex < 0)
+			{
+				return markup;
+			}
+
 			// Use a string builder and build up the selection markup, this way
 			// we avoid as much object creation as possible.
 			var buffer = new StringBuilder();

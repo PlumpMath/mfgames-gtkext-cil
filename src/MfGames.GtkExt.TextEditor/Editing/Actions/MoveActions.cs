@@ -34,6 +34,7 @@ using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 using MfGames.GtkExt.TextEditor.Renderers;
 
 using Pango;
@@ -567,15 +568,20 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			int pangoLayoutY = Units.FromPixels((int) layoutY);
 
+			// Shift the buffer-relative coordinates to handle padding.
+			LineBlockStyle style = displayContext.Renderer.GetLineStyle(
+				lineIndex, LineContexts.None);
+			double layoutX = widgetPoint.X - style.Left;
+
 			// Determines where in the layout is the point.
-			int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
+			int pangoLayoutX = Units.FromPixels((int) layoutX);
 			int characterIndex, trailing;
 
 			layout.XyToIndex(
 				pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
 
 			// Return the buffer position.
-			return new BufferPosition(lineIndex, characterIndex);
+			return new BufferPosition(lineIndex, characterIndex + trailing);
 		}
 
 		/// <summary>
