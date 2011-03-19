@@ -648,7 +648,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Home, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.Home, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		public static void SelectBeginningOfBuffer(EditorViewController controller)
@@ -661,7 +660,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Home, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Home, ModifierType.ShiftMask)]
 		public static void SelectBeginningOfWrappedLine(EditorViewController controller)
@@ -687,7 +685,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_End, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.End, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		public static void SelectEndOfBuffer(EditorViewController controller)
@@ -700,7 +697,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_End, ModifierType.ShiftMask)]
 		[KeyBinding(Key.End, ModifierType.ShiftMask)]
 		public static void SelectEndOfWrappedLine(EditorViewController controller)
@@ -713,7 +709,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Left, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Left, ModifierType.ShiftMask)]
 		public static void SelectLeft(EditorViewController controller)
@@ -726,7 +721,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Left, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.Left, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		public static void SelectLeftWord(EditorViewController controller)
@@ -765,7 +759,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Right, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Right, ModifierType.ShiftMask)]
 		public static void SelectRight(EditorViewController controller)
@@ -778,7 +771,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// </summary>
 		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Right, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.Right, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		public static void SelectRightWord(EditorViewController controller)
