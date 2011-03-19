@@ -32,6 +32,8 @@ using Cairo;
 
 using Gtk;
 
+using GtkExtDemo.TextEditor;
+
 using MfGames.GtkExt;
 using MfGames.GtkExt.TextEditor;
 using MfGames.GtkExt.TextEditor.Editing;
@@ -44,7 +46,7 @@ using MfGames.GtkExt.TextEditor.Renderers.Cache;
 
 #endregion
 
-namespace GtkExtDemo.TextEditor
+namespace GtkExtDemo
 {
 	/// <summary>
 	/// Contains the basic control for showing off the features of the line
@@ -129,6 +131,15 @@ namespace GtkExtDemo.TextEditor
 			return keywordBuffer;
 		}
 
+		/// <summary>
+		/// Creates the read-only line buffer.
+		/// </summary>
+		/// <returns></returns>
+		private LineBuffer CreateReadOnlyLineBuffer()
+		{
+			return new DemoReadOnlyLineBuffer();
+		}
+
 		#endregion
 
 		#region Widgets
@@ -180,7 +191,7 @@ namespace GtkExtDemo.TextEditor
 			EventArgs e)
 		{
 			// Create the buffer and set it.
-			editorView.SetLineBuffer(CreateEditableLineBuffer());
+			editorView.SetLineBuffer(CreateReadOnlyLineBuffer());
 
 			// Set the menu item toggle states.
 			SetBufferMenuStates(false, true, false);
