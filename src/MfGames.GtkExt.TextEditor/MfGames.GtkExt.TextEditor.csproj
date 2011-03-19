@@ -71,17 +71,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionStateCollection.cs" />
-    <Compile Include="Actions\CommandActions.cs" />
-    <Compile Include="Actions\InsertTextActionState.cs" />
-    <Compile Include="Actions\MenuActions.cs" />
-    <Compile Include="Actions\MoveActions.cs" />
-    <Compile Include="Actions\TextActions.cs" />
-    <Compile Include="Actions\VerticalMovementActionState.cs" />
-    <Compile Include="Attributes\ActionAttribute.cs" />
-    <Compile Include="Attributes\ActionFixtureAttribute.cs" />
-    <Compile Include="Attributes\ActionStateAttribute.cs" />
-    <Compile Include="Attributes\KeyBindingAttribute.cs" />
+    <Compile Include="Editing\Actions\ActionStateCollection.cs" />
+    <Compile Include="Editing\Actions\CommandActions.cs" />
+    <Compile Include="Editing\Actions\InsertTextActionState.cs" />
+    <Compile Include="Editing\Actions\MenuActions.cs" />
+    <Compile Include="Editing\Actions\MoveActions.cs" />
+    <Compile Include="Editing\Actions\TextActions.cs" />
+    <Compile Include="Editing\Actions\VerticalMovementActionState.cs" />
+    <Compile Include="Editing\Actions\ActionAttribute.cs" />
+    <Compile Include="Editing\Actions\ActionFixtureAttribute.cs" />
+    <Compile Include="Editing\Actions\ActionStateAttribute.cs" />
+    <Compile Include="Editing\Actions\KeyBindingAttribute.cs" />
     <Compile Include="Renderers\BufferPositionHelper.cs" />
     <Compile Include="Renderers\Cache\CachedLine.cs" />
     <Compile Include="Renderers\Cache\CachedTextRenderer.cs" />

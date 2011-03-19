@@ -28,7 +28,7 @@ using System;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
 	/// Used to mark classes that contain Action attributes and used to

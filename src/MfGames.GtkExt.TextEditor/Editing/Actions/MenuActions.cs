@@ -30,7 +30,6 @@ using Gdk;
 
 using Gtk;
 
-using MfGames.GtkExt.TextEditor.Attributes;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Renderers;
 
@@ -39,7 +38,7 @@ using Key=Gdk.Key;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
 	/// Contains the various actions used for moving the caret (cursor) around

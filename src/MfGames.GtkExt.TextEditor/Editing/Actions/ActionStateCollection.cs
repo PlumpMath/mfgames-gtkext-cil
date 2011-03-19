@@ -33,7 +33,7 @@ using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
 	/// Contains a collection of action states that can be conditionally

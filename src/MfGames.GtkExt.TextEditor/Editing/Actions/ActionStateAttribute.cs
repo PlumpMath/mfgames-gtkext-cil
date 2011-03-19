@@ -26,40 +26,37 @@
 
 using System;
 
-using Gdk;
+using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
-	/// Defines a default key binding into the text editor.
+	/// Attribute that indicates the types of objects that are used to maintain
+	/// state for this method. All other states are requested to be removed
+	/// before the method is called.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-	public class KeyBindingAttribute : Attribute
+	public class ActionStateAttribute : Attribute
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
+		/// Initializes a new instance of the <see cref="ActionStateAttribute"/> class.
 		/// </summary>
-		/// <param name="key">The key.</param>
-		public KeyBindingAttribute(Key key)
+		/// <param name="stateType">Type of state object to leave in the action states.</param>
+		public ActionStateAttribute(Type stateType)
 		{
-			Key = key;
-		}
+			// Save the state to be retrieved later.
+			StateType = stateType;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <param name="modifier">The modifier.</param>
-		public KeyBindingAttribute(
-			Key key,
-			ModifierType modifier)
-			: this(key)
-		{
-			Modifier = modifier;
+			// Make sure the state extends the proper class.
+			if (!typeof(IActionState).IsAssignableFrom(StateType))
+			{
+				throw new Exception(
+					"Can only assign an IActionState type of ActionState attributes");
+			}
 		}
 
 		#endregion
@@ -67,16 +64,10 @@ namespace MfGames.GtkExt.TextEditor.Attributes
 		#region Properties
 
 		/// <summary>
-		/// Gets or sets the key code associated with this binding.
+		/// Gets the type object that represents an action state.
 		/// </summary>
-		/// <value>The key.</value>
-		public Key Key { get; private set; }
-
-		/// <summary>
-		/// Gets or sets the modifier associated with this binding.
-		/// </summary>
-		/// <value>The modifier.</value>
-		public ModifierType Modifier { get; private set; }
+		/// <value>The type of the state.</value>
+		public Type StateType { get; private set; }
 
 		#endregion
 	}

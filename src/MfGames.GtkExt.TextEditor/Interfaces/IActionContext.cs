@@ -26,7 +26,7 @@
 
 using Gtk;
 
-using MfGames.GtkExt.TextEditor.Actions;
+using MfGames.GtkExt.TextEditor.Editing.Actions;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion

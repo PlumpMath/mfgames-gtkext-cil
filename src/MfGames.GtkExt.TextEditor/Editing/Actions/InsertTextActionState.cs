@@ -30,7 +30,7 @@ using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Actions
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
 	/// Represents an action state that combines multiple text inserts

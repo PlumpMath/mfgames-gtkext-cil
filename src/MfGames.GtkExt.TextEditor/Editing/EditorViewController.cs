@@ -38,8 +38,7 @@ using Gtk;
 
 using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
-using MfGames.GtkExt.TextEditor.Actions;
-using MfGames.GtkExt.TextEditor.Attributes;
+using MfGames.GtkExt.TextEditor.Editing.Actions;
 using MfGames.GtkExt.TextEditor.Events;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;

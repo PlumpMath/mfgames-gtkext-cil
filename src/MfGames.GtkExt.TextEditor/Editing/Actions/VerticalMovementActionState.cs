@@ -24,39 +24,42 @@
 
 #region Namespaces
 
-using System;
-
 using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
-	/// Attribute that indicates the types of objects that are used to maintain
-	/// state for this method. All other states are requested to be removed
-	/// before the method is called.
+	/// Used to contain the state between vertical movement.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-	public class ActionStateAttribute : Attribute
+	public class VerticalMovementActionState : IActionState
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionStateAttribute"/> class.
+		/// Initializes a new instance of the <see cref="VerticalMovementActionState"/> class.
 		/// </summary>
-		/// <param name="stateType">Type of state object to leave in the action states.</param>
-		public ActionStateAttribute(Type stateType)
+		/// <param name="layoutLineX">The X coordinate in Pango units.</param>
+		public VerticalMovementActionState(int layoutLineX)
 		{
-			// Save the state to be retrieved later.
-			StateType = stateType;
+			LayoutLineX = layoutLineX;
+		}
 
-			// Make sure the state extends the proper class.
-			if (!typeof(IActionState).IsAssignableFrom(StateType))
-			{
-				throw new Exception(
-					"Can only assign an IActionState type of ActionState attributes");
-			}
+		#endregion
+
+		#region Action State
+
+		/// <summary>
+		/// Determines whether this action state can be removed. This is also
+		/// an opportunity for the action to clean up before removed.
+		/// </summary>
+		/// <returns>
+		///   <c>true</c> if this instance can remove; otherwise, <c>false</c>.
+		/// </returns>
+		public bool CanRemove()
+		{
+			return true;
 		}
 
 		#endregion
@@ -64,10 +67,12 @@ namespace MfGames.GtkExt.TextEditor.Attributes
 		#region Properties
 
 		/// <summary>
-		/// Gets the type object that represents an action state.
+		/// Gets or sets the line X for vertical movements.
 		/// </summary>
-		/// <value>The type of the state.</value>
-		public Type StateType { get; private set; }
+		/// <value>
+		/// The line X-coordinate.
+		/// </value>
+		public int LayoutLineX { get; set; }
 
 		#endregion
 	}

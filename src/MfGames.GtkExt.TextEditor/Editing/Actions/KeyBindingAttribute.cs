@@ -26,16 +26,58 @@
 
 using System;
 
+using Gdk;
+
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Attributes
+namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
 	/// <summary>
-	/// Attribute used to mark a method has being an action the text editor
-	/// could use. All methods take a single parameter, IDisplayContext.
+	/// Defines a default key binding into the text editor.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Method)]
-	public class ActionAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class KeyBindingAttribute : Attribute
 	{
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		public KeyBindingAttribute(Key key)
+		{
+			Key = key;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <param name="modifier">The modifier.</param>
+		public KeyBindingAttribute(
+			Key key,
+			ModifierType modifier)
+			: this(key)
+		{
+			Modifier = modifier;
+		}
+
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// Gets or sets the key code associated with this binding.
+		/// </summary>
+		/// <value>The key.</value>
+		public Key Key { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the modifier associated with this binding.
+		/// </summary>
+		/// <value>The modifier.</value>
+		public ModifierType Modifier { get; private set; }
+
+		#endregion
 	}
 }
