@@ -58,7 +58,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// Gets the type of the operation representing this object.
 		/// </summary>
 		/// <value>The type of the operation.</value>
-		public LineBufferOperationType LineBufferOperationType
+		public LineBufferOperationType OperationType
 		{
 			[DebuggerStepThrough]
 			get { return LineBufferOperationType.SetText; }

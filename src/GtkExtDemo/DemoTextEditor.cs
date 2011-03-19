@@ -28,8 +28,6 @@ using System;
 
 using C5;
 
-using Cairo;
-
 using Gtk;
 
 using GtkExtDemo.TextEditor;
@@ -43,6 +41,8 @@ using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 using MfGames.GtkExt.TextEditor.Renderers;
 using MfGames.GtkExt.TextEditor.Renderers.Cache;
+
+using Color=Cairo.Color;
 
 #endregion
 
@@ -66,15 +66,7 @@ namespace GtkExtDemo
 			editorView.Controller.PopulateContextMenu += OnPopulateContextMenu;
 
 			// Update the theme with some additional colors.
-			Theme theme = editorView.Theme;
-
-			theme.IndicatorStyles["Error"] = new IndicatorStyle(
-				"Error", 100, new Color(1, 0, 0));
-			theme.IndicatorStyles["Warning"] = new IndicatorStyle(
-				"Warning", 10, new Color(1, 165 / 255.0, 0));
-			theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
-			theme.IndicatorPixelHeight = 2;
-			theme.IndicatorRatioPixelGap = 1;
+			SetupTheme();
 
 			// Wrap the text editor in a scrollbar.
 			var scrolledWindow = new ScrolledWindow();
@@ -109,6 +101,42 @@ namespace GtkExtDemo
 			PackStart(verticalLayout, true, true, 2);
 		}
 
+		/// <summary>
+		/// Configures the theme for all the elements used in the demo.
+		/// </summary>
+		private void SetupTheme()
+		{
+			// Grab the theme.
+			Theme theme = editorView.Theme;
+
+			// Set up the indicator styles.
+			theme.IndicatorStyles["Error"] = new IndicatorStyle(
+				"Error", 100, new Color(1, 0, 0));
+			theme.IndicatorStyles["Warning"] = new IndicatorStyle(
+				"Warning", 10, new Color(1, 165 / 255.0, 0));
+			theme.IndicatorRenderStyle = IndicatorRenderStyle.Ratio;
+			theme.IndicatorPixelHeight = 2;
+			theme.IndicatorRatioPixelGap = 1;
+
+			// Set up the editable text styles.
+			for (DemoLineStyleType type = DemoLineStyleType.Default; type <= DemoLineStyleType.Heading; type++)
+			{
+				// Create a line style for this type.
+				var lineStyle = new LineBlockStyle(theme.TextLineStyle);
+
+				theme.LineStyles[type.ToString()] = lineStyle;
+
+				// Custom the style based on type.
+				switch (type)
+				{
+					case DemoLineStyleType.Heading:
+						lineStyle.FontDescription =
+							FontDescriptionCache.GetFontDescription("Sans Bold 20");
+						break;
+				}
+			}
+		}
+
 		#endregion
 
 		#region Buffers
@@ -117,11 +145,10 @@ namespace GtkExtDemo
 		/// Creates the editable line buffer.
 		/// </summary>
 		/// <returns></returns>
-		private LineBuffer CreateEditableLineBuffer()
+		private static LineBuffer CreateEditableLineBuffer()
 		{
 			// Create a patterned line buffer and make it read-write.
-			var patternLineBuffer = new PatternLineBuffer(1024, 256, 4);
-			var lineBuffer = new MemoryLineBuffer(patternLineBuffer);
+			var lineBuffer = new DemoEditableLineBuffer();
 
 			// Decorate the line buffer with something that will highlight the
 			// error and warning keywords.
@@ -135,7 +162,7 @@ namespace GtkExtDemo
 		/// Creates the read-only line buffer.
 		/// </summary>
 		/// <returns></returns>
-		private LineBuffer CreateReadOnlyLineBuffer()
+		private static LineBuffer CreateReadOnlyLineBuffer()
 		{
 			return new DemoReadOnlyLineBuffer();
 		}

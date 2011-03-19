@@ -137,7 +137,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		public override void Do(ILineBufferOperation operation)
 		{
 			// Figure out what to do based on the operation.
-			switch (operation.LineBufferOperationType)
+			switch (operation.OperationType)
 			{
 				case LineBufferOperationType.SetText:
 					// Pull out the text operation.

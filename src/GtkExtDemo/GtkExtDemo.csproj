@@ -29,6 +29,7 @@
     <Compile Include="DemoComponents.cs" />
     <Compile Include="DemoTab.cs" />
     <Compile Include="DemoTextEditor.cs" />
+    <Compile Include="TextEditor\DemoEditableLineBuffer.cs" />
     <Compile Include="TextEditor\DemoReadOnlyLineBuffer.cs" />
     <Compile Include="TextEditor\KeywordLineBuffer.cs" />
     <Compile Include="TextEditor\KeywordMarkupEntry.cs" />

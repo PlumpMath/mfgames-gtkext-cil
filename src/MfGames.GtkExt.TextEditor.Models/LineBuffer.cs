@@ -166,10 +166,34 @@ namespace MfGames.GtkExt.TextEditor.Models
 		#region Operations
 
 		/// <summary>
+		/// Deletes the lines using a <see cref="DeleteLinesOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="count">The count.</param>
+		public void DeleteLines(
+			int lineIndex,
+			int count)
+		{
+			Do(new DeleteLinesOperation(lineIndex, count));
+		}
+
+		/// <summary>
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
 		/// <param name="operation">The operation.</param>
 		public abstract void Do(ILineBufferOperation operation);
+
+		/// <summary>
+		/// Inserts the lines using a <see cref="InsertLinesOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="count">The count.</param>
+		public void InsertLines(
+			int lineIndex,
+			int count)
+		{
+			Do(new InsertLinesOperation(lineIndex, count));
+		}
 
 		/// <summary>
 		/// Used to indicate that a line changed.
@@ -226,6 +250,18 @@ namespace MfGames.GtkExt.TextEditor.Models
 			{
 				listeners(this, e);
 			}
+		}
+
+		/// <summary>
+		/// Sets the text using a <see cref="SetTextOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="text">The text.</param>
+		public void SetText(
+			int lineIndex,
+			string text)
+		{
+			Do(new SetTextOperation(lineIndex, text));
 		}
 
 		#endregion

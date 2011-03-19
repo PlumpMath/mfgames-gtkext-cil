@@ -40,5 +40,11 @@ namespace GtkExtDemo.TextEditor
 		/// </summary>
 		[Description("Default (D:)")]
 		Default,
+
+		/// <summary>
+		/// Represents a heading line.
+		/// </summary>
+		[Description("Heading (H:)")]
+		Heading,
 	}
 }
