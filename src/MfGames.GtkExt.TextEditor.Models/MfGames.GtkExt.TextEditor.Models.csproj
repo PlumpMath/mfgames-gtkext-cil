@@ -80,6 +80,7 @@
     <Compile Include="MemoryLineBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Styles\BlockStyle.cs" />
+    <Compile Include="Styles\BlockStyleDictionary.cs" />
     <Compile Include="Styles\Border.cs" />
     <Compile Include="Styles\Borders.cs" />
     <Compile Include="Styles\IndicatorRenderStyle.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Styles\MarginBlockStyleCollection.cs" />
     <Compile Include="Styles\OptionalBorders.cs" />
     <Compile Include="Styles\OptionalSpacing.cs" />
+    <Compile Include="Styles\RegionBlockStyle.cs" />
     <Compile Include="Styles\Spacing.cs" />
     <Compile Include="Styles\StyleUsage.cs" />
     <Compile Include="Styles\Theme.cs" />

@@ -59,7 +59,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		{
 			// Create the initial styles along with the styles used internally
 			// by the text editor.
-			lineStyles = new HashDictionary<string, LineBlockStyle>();
+			lineStyles = new BlockStyleDictionary<LineBlockStyle>();
 
 			// Set up the base style as a fallback for everything.
 			var baseStyle = new LineBlockStyle();
@@ -96,6 +96,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 			CurrentLineBackgroundColor = new Color(255 / 255.0, 250 / 255.0, 205 / 255.0);
 			CurrentWrappedLineBackgroundColor = new Color(
 				238 / 255.0, 233 / 255.0, 191 / 255.0);
+
+			// Region styles.
+			regionStyles = new BlockStyleDictionary<RegionBlockStyle>();
 
 			// Indicator styles.
 			indicatorStyles = new HashDictionary<string, IndicatorStyle>();
@@ -138,9 +141,23 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 
 		#endregion
 
+		#region Region Styles
+
+		private readonly BlockStyleDictionary<RegionBlockStyle> regionStyles;
+
+		/// <summary>
+		/// Gets the region styles.
+		/// </summary>
+        public IDictionary<string, RegionBlockStyle> RegionStyles
+        {
+            get { return regionStyles; }
+        }
+
+        #endregion
+
 		#region Line Styles
 
-		private readonly HashDictionary<string, LineBlockStyle> lineStyles;
+		private readonly BlockStyleDictionary<LineBlockStyle> lineStyles;
 
 		/// <summary>
 		/// Gets the selector styles.

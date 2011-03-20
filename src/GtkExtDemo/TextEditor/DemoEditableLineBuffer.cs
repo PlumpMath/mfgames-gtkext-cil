@@ -58,10 +58,10 @@ namespace GtkExtDemo.TextEditor
 			// Set the text on the lines with the prefix so they can be styled
 			// as part of the set operation.
 			SetText(0, "H: Heading Line");
-			SetText(1, "T: Regular Text");
+			SetText(1, "T: Warning text right below the heading.");
 			SetText(2, "H:");
-			SetText(3, "T: Regular Text");
-			SetText(4, "T: Regular Text");
+			SetText(3, "T: Regular text with nothing remarkable about it.");
+			SetText(4, "T: Regular text with an error inside it.");
 		}
 
 		#endregion

@@ -56,6 +56,20 @@ namespace MfGames.GtkExt.TextEditor
 	/// </summary>
 	public class IndicatorView : DrawingArea
 	{
+		#region Constants
+
+		/// <summary>
+		/// The name of the style for the background view.
+		/// </summary>
+		public const string BackgroundRegionName = "IndicatorViewBackground";
+
+		/// <summary>
+		/// The name of the region style for the visible bar area.
+		/// </summary>
+		public const string VisibleRegionName = "IndicatorViewVisible";
+
+		#endregion
+
 		#region Constructors
 
 		/// <summary>
@@ -314,7 +328,7 @@ namespace MfGames.GtkExt.TextEditor
 
 		#endregion
 
-		#region Gtk
+		#region Events
 
 		private readonly ReaderWriterLockSlim sync;
 		private bool idleRunning;
@@ -336,10 +350,13 @@ namespace MfGames.GtkExt.TextEditor
 				var renderContext = new RenderContext(cairoContext);
 				renderContext.RenderRegion = cairoArea;
 
-				// Paint the background color of the window.
-				cairoContext.Color = Theme.IndicatorBackgroundColor;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
+				// Paint the background of the entire indicator bar.
+				BlockStyle backgroundStyle = Theme.RegionStyles[BackgroundRegionName];
+
+				DrawingUtility.DrawLayout(EditorView, renderContext, cairoArea, backgroundStyle);
+				//cairoContext.Color = Theme.IndicatorBackgroundColor;
+				//cairoContext.Rectangle(cairoArea);
+				//cairoContext.Fill();
 
 				// Draw all the indicator lines on the display.
 				double y = 0.5;
