@@ -24,7 +24,7 @@
 
 #region Namespaces
 
-using MfGames.GtkExt.TextEditor.Buffers;
+using MfGames.GtkExt.TextEditor.Editing;
 
 using NUnit.Framework;
 

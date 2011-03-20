@@ -402,7 +402,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
 				text, position.CharacterIndex);
 
-			if (rightBoundary == -1)
+			if (rightBoundary == Int32.MaxValue)
 			{
 				// Check to see if we are at the top of the line or not.
 				if (position.LineIndex <= displayContext.LineBuffer.LineCount)
@@ -540,6 +540,50 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		#endregion
 
 		#region Selection
+
+		/// <summary>
+		/// Selects the word around the current cursor position.
+		/// </summary>
+		/// <param name="controller">The controller.</param>
+		public static void SelectWord(EditorViewController controller)
+		{
+			// Pull out information about the current context.
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+			string lineText = displayContext.LineBuffer.GetLineText(
+				position.LineIndex, LineContexts.Unformatted);
+
+			// Find the boundaries for the current word.
+			int startIndex = Math.Max(
+				0,
+				displayContext.WordSplitter.GetPreviousWordBoundary(
+					lineText, position.CharacterIndex));
+			int endIndex = Math.Min(
+				lineText.Length,
+				displayContext.WordSplitter.GetNextWordBoundary(
+					lineText, position.CharacterIndex));
+
+			// Set the selection to the boundaries.
+			displayContext.Caret.Selection.AnchorPosition =
+				new BufferPosition(position.LineIndex, startIndex);
+			displayContext.Caret.Selection.TailPosition =
+				new BufferPosition(position.LineIndex, endIndex);
+		}
+
+		/// <summary>
+		/// Selects the entire line the current currently is located on.
+		/// </summary>
+		/// <param name="controller">The controller.</param>
+		public static void SelectLine(EditorViewController controller)
+		{
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+
+			displayContext.Caret.Selection.AnchorPosition =
+				position.ToBeginningOfLine(displayContext);
+			displayContext.Caret.Selection.TailPosition =
+				position.ToEndOfLine(displayContext);
+		}
 
 		/// <summary>
 		/// Performs an action that handles a move action coupled with an

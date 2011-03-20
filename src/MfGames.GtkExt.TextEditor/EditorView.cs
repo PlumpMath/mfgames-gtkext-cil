@@ -417,7 +417,7 @@ namespace MfGames.GtkExt.TextEditor
 			var point = new PointD(buttonEvent.X, buttonEvent.Y);
 
 			return controller.HandleMousePress(
-				point, buttonEvent.Button, buttonEvent.State);
+				point, buttonEvent.Button, buttonEvent.State, buttonEvent.Type);
 		}
 
 		/// <summary>

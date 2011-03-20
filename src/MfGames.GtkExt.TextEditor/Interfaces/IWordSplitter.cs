@@ -34,7 +34,8 @@ namespace MfGames.GtkExt.TextEditor.Interfaces
 		/// </summary>
 		/// <param name="text">The text.</param>
 		/// <param name="characterIndex">Index of the character.</param>
-		/// <returns></returns>
+		/// <returns>The character index of the next word or Int32.MaxValue if one
+		/// cannot be found.</returns>
 		int GetNextWordBoundary(
 			string text,
 			int characterIndex);

@@ -24,11 +24,13 @@
 
 #region Namespaces
 
+using System;
+
 using MfGames.GtkExt.TextEditor.Interfaces;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Buffers
+namespace MfGames.GtkExt.TextEditor.Editing
 {
 	/// <summary>
 	/// Implements a word splitter that looks for typical English boundaries.
@@ -48,9 +50,9 @@ namespace MfGames.GtkExt.TextEditor.Buffers
 			int characterIndex)
 		{
 			// If we are at the end of the string, there is no boundary.
-			if (characterIndex == text.Length)
+			if (characterIndex >= text.Length)
 			{
-				return -1;
+				return Int32.MaxValue;
 			}
 
 			// Check the starting character. If it is puncutation, then our
@@ -103,7 +105,7 @@ namespace MfGames.GtkExt.TextEditor.Buffers
 			int characterIndex)
 		{
 			// If we are at the beginning, there is no boundary.
-			if (characterIndex == 0)
+			if (characterIndex == 0 || characterIndex -1 >= text.Length)
 			{
 				return -1;
 			}

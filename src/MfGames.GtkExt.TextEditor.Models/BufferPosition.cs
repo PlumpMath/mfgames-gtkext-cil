@@ -26,6 +26,8 @@
 
 #endregion
 
+using System;
+
 namespace MfGames.GtkExt.TextEditor.Models
 {
 	/// <summary>
@@ -39,14 +41,26 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferPosition"/> struct.
 		/// </summary>
-		/// <param name="line">The line.</param>
-		/// <param name="character">The character.</param>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <param name="characterIndex">Index of the character.</param>
 		public BufferPosition(
-			int line,
-			int character)
+			int lineIndex,
+			int characterIndex)
 		{
-			lineIndex = line;
-			characterIndex = character;
+			if (lineIndex < 0)
+			{
+				throw new ArgumentOutOfRangeException(
+					"lineIndex", "Line index cannot be negative.");
+			}
+
+			if (characterIndex < 0)
+			{
+				throw new ArgumentOutOfRangeException(
+					"characterIndex", "Character index cannot be negative.");
+			}
+
+			this.lineIndex = lineIndex;
+			this.characterIndex = characterIndex;
 		}
 
 		/// <summary>

@@ -490,11 +490,13 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// <param name="point">The point.</param>
 		/// <param name="button">The button.</param>
 		/// <param name="modifier">The state.</param>
-		/// <returns></returns>
-		public bool HandleMousePress(
-			PointD point,
-			uint button,
-			ModifierType modifier)
+		/// <param name="eventType">The event type that triggered the press.</param>
+		/// <returns>If handled, <see langword="true"/>. Otherwise, 
+		/// <see langword="false"/>.</returns>
+		public bool HandleMousePress(PointD point,
+		                             uint button,
+		                             ModifierType modifier,
+		                             EventType eventType)
 		{
 			// If we don't have a buffer, we don't do anything.
 			if (displayContext.Renderer == null)
@@ -532,7 +534,20 @@ namespace MfGames.GtkExt.TextEditor.Editing
 					// Perform the appropriate action.
 					try
 					{
-						MoveActions.Point(displayContext, textPoint);
+						switch (eventType)
+						{
+							case EventType.TwoButtonPress:
+								MoveActions.SelectWord(this);
+								break;
+
+							case EventType.ThreeButtonPress:
+								MoveActions.SelectLine(this);
+								break;
+
+							default:
+								MoveActions.Point(displayContext, textPoint);
+								break;
+						}
 					}
 					finally
 					{

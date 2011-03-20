@@ -44,6 +44,12 @@ namespace MfGames.GtkExt.TextEditor.Models
 		public CharacterRange(int startIndex)
 			: this(startIndex, Int32.MaxValue)
 		{
+			if (startIndex < 0)
+			{
+				throw new ArgumentOutOfRangeException(
+					"startIndex", "Start index cannot be less than zero.");
+			}
+
 		}
 
 		/// <summary>
