@@ -73,6 +73,18 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <value>The top.</value>
 		public Border Top { get; set; }
 
+		/// <summary>
+		/// Sets the border on all sides.
+		/// </summary>
+		/// <param name="border">The border.</param>
+		public void SetBorder(Border border)
+		{
+			Top = border;
+			Bottom = border;
+			Right = border;
+			Left = border;
+		}
+
 		#endregion
 
 		#region Conversion

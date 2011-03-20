@@ -118,6 +118,16 @@ namespace GtkExtDemo
 			theme.IndicatorPixelHeight = 2;
 			theme.IndicatorRatioPixelGap = 1;
 
+			var indicatorBackgroundStyle = new RegionBlockStyle();
+			indicatorBackgroundStyle.BackgroundColor = new Color(1, 0.9, 1);
+			//indicatorBackgroundStyle.Borders.SetBorder(new Border(1, new Color(0.5, 0, 0)));
+			theme.RegionStyles[IndicatorView.BackgroundRegionName] = indicatorBackgroundStyle;
+
+			var indicatorVisibleStyle = new RegionBlockStyle();
+			indicatorVisibleStyle.BackgroundColor = new Color(1, 1, 0.9);
+			indicatorVisibleStyle.Borders.SetBorder(new Border(1, new Color(0, 0.5, 0)));
+			theme.RegionStyles[IndicatorView.VisibleRegionName] = indicatorVisibleStyle;
+
 			// Set up the editable text styles.
 			for (DemoLineStyleType type = DemoLineStyleType.Default;
 				 type <= DemoLineStyleType.Break;

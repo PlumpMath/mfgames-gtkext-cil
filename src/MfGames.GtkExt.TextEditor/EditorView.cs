@@ -270,6 +270,8 @@ namespace MfGames.GtkExt.TextEditor
 			{
 				// Disconnect from the events.
 				Renderer.LineChanged -= OnLineChanged;
+				Renderer.LinesDeleted -= OnLineBufferLinesChanged;
+				Renderer.LinesInserted -= OnLineBufferLinesChanged;
 
 				// Remove the line buffer first.
 				ClearLineBuffer();
@@ -282,6 +284,8 @@ namespace MfGames.GtkExt.TextEditor
 			{
 				// Hook up to the events.
 				Renderer.LineChanged += OnLineChanged;
+				Renderer.LinesDeleted += OnLineBufferLinesChanged;
+				Renderer.LinesInserted += OnLineBufferLinesChanged;
 			}
 
 			// Set up the editor view for the changes made.
@@ -492,6 +496,16 @@ namespace MfGames.GtkExt.TextEditor
 		}
 
 		/// <summary>
+		/// Called when the line buffer count changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnLineBufferLinesChanged(object sender, EventArgs e)
+		{
+			SetAdjustments();
+		}
+
+		/// <summary>
 		/// Called when the mouse moves.
 		/// </summary>
 		/// <param name="motionEvent">The motion event.</param>
@@ -547,23 +561,15 @@ namespace MfGames.GtkExt.TextEditor
 				var renderContext = new RenderContext(cairoContext);
 				renderContext.RenderRegion = cairoArea;
 
-				// If we don't have a buffer at this point, render the entire
-				// area with the disabled background color and stop.
+				// If we don't have a buffer at this point, don't render anything.
 				if (Renderer == null)
 				{
-					// Paint the background color of the window.
-					cairoContext.Color = theme.DisabledBackgroundColor;
-					cairoContext.Rectangle(cairoArea);
-					cairoContext.Fill();
-
-					// We are done processing.
 					return true;
 				}
 
 				// Paint the background color of the window.
-				cairoContext.Color = theme.BackgroundColor;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
+				RegionBlockStyle backgroundStyle = Theme.RegionStyles[Theme.BackgroundRegionStyleName];
+				DrawingUtility.DrawLayout(this, renderContext, cairoArea, backgroundStyle);
 
 				// Reset the layout and its properties.
 				Renderer.Width = area.Width - margins.Width;
@@ -621,17 +627,19 @@ namespace MfGames.GtkExt.TextEditor
 					if (currentLine)
 					{
 						// If we have a full-line background color, display it.
-						if (theme.CurrentLineBackgroundColor.HasValue)
+						RegionBlockStyle currentLineStyle = Theme.RegionStyles[Theme.CurrentLineRegionStyleName];
+
+						if (currentLineStyle != null)
 						{
 							var lineArea = new Rectangle(TextX, currentY, TextWidth, height);
 
-							cairoContext.Color = theme.CurrentLineBackgroundColor.Value;
-							cairoContext.Rectangle(lineArea);
-							cairoContext.Fill();
+							DrawingUtility.DrawLayout(this, renderContext, lineArea, currentLineStyle);
 						}
 
 						// If we have a wrapped line background color, draw it.
-						if (theme.CurrentWrappedLineBackgroundColor.HasValue)
+						RegionBlockStyle currentWrappedLineStyle = Theme.RegionStyles[Theme.CurrentWrappedLineRegionStyleName];
+
+						if (currentWrappedLineStyle != null)
 						{
 							// Get the wrapped line for the caret's position.
 							LayoutLine wrappedLine = caret.Position.GetWrappedLine(this);
@@ -646,9 +654,7 @@ namespace MfGames.GtkExt.TextEditor
 								TextWidth,
 								wrappedLineExtents.Height);
 
-							cairoContext.Color = theme.CurrentWrappedLineBackgroundColor.Value;
-							cairoContext.Rectangle(wrappedLineArea);
-							cairoContext.Fill();
+							DrawingUtility.DrawLayout(this, renderContext, wrappedLineArea, currentWrappedLineStyle);
 						}
 					}
 
@@ -842,12 +848,6 @@ namespace MfGames.GtkExt.TextEditor
 		/// <param name="bufferPosition">The buffer position.</param>
 		public void ScrollToCaret(BufferPosition bufferPosition)
 		{
-			// If we don't have adjustments, don't do anything.
-			if (verticalAdjustment == null)
-			{
-				return;
-			}
-
 			// Look to see if we are moving to a different position. If we are,
 			// we tell the line buffer that we have exited the previous line.
 			if (caret.Position.LineIndex != bufferPosition.LineIndex)

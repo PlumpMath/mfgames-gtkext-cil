@@ -62,6 +62,12 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			Rectangle region,
 			BlockStyle style)
 		{
+			// If we don't have a style, then don't do anything.
+			if (style == null)
+			{
+				return;
+			}
+
 			// Get the style for the line number.
 			Spacing margins = style.GetMargins();
 			Borders borders = style.GetBorders();

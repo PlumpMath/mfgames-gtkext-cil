@@ -197,6 +197,21 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			controller.States.Add(actionState);
 		}
 
+		/// <summary>
+		/// Inserts the text into the buffer.
+		/// </summary>
+		/// <param name="controller">The controller.</param>
+		/// <param name="input">The input.</param>
+		public static void InsertText(
+			EditorViewController controller,
+			string input)
+		{
+			foreach (char c in input)
+			{
+				InsertText(controller, c);
+			}
+		}
+
 		#region Clipboard
 
 		/// <summary>
@@ -407,48 +422,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		#region Deleting
 
 		/// <summary>
-		/// Deletes the paragraph to the left of the character.
-		/// </summary>
-		/// <param name="controller">The action context.</param>
-		/// <param name="command">The command.</param>
-		private static void DeleteLeftParagraph(EditorViewController controller,
-		                                        Command command)
-		{
-			// Pull out useful fields.
-			IDisplayContext displayContext = controller.DisplayContext;
-			BufferPosition position = displayContext.Caret.Position;
-			LineBuffer lineBuffer = displayContext.LineBuffer;
-			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.Unformatted);
-
-			// This is the beginning of a paragraph and not the first one in
-			// the buffer. This operation combines the text of the two paragraphs
-			// together.
-			string previousText = lineBuffer.GetLineText(
-				position.LineIndex - 1, LineContexts.Unformatted);
-			string newText = previousText + lineText;
-
-			// Set up the operations in the command.
-			command.Operations.Add(new DeleteLinesOperation(position.LineIndex, 1));
-			command.Operations.Add(
-				new SetTextOperation(position.LineIndex - 1, newText));
-
-			command.UndoOperations.Add(
-				new InsertLinesOperation(position.LineIndex - 1, 1));
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex - 1, previousText));
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex, lineText));
-
-			// Relocate the caret position to the previous line's end.
-			position.LineIndex--;
-			position.CharacterIndex = previousText.Length;
-
-			// Perform the operations in the command and set the position.
-			controller.Do(command, position);
-		}
-
-		/// <summary>
 		/// Deletes the character to the left.
 		/// </summary>
 		/// <param name="controller">The action context.</param>
@@ -501,6 +474,48 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		}
 
 		/// <summary>
+		/// Deletes the paragraph to the left of the character.
+		/// </summary>
+		/// <param name="controller">The action context.</param>
+		/// <param name="command">The command.</param>
+		private static void DeleteLeftParagraph(
+			EditorViewController controller,
+			Command command)
+		{
+			// Pull out useful fields.
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(
+				position.LineIndex, LineContexts.Unformatted);
+
+			// This is the beginning of a paragraph and not the first one in
+			// the buffer. This operation combines the text of the two paragraphs
+			// together.
+			string previousText = lineBuffer.GetLineText(
+				position.LineIndex - 1, LineContexts.Unformatted);
+			string newText = previousText + lineText;
+
+			// Set up the operations in the command.
+			command.Operations.Add(new DeleteLinesOperation(position.LineIndex, 1));
+			command.Operations.Add(new SetTextOperation(position.LineIndex - 1, newText));
+
+			command.UndoOperations.Add(
+				new InsertLinesOperation(position.LineIndex - 1, 1));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex - 1, previousText));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
+
+			// Relocate the caret position to the previous line's end.
+			position.LineIndex--;
+			position.CharacterIndex = previousText.Length;
+
+			// Perform the operations in the command and set the position.
+			controller.Do(command, position);
+		}
+
+		/// <summary>
 		/// Deletes the left word from the caret.
 		/// </summary>
 		/// <param name="controller">The action context.</param>
@@ -544,52 +559,15 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 					lineText, position.CharacterIndex);
 
 			// Create the operations we need to perform the action.
-			command.Operations.Add(new DeleteTextOperation(position.LineIndex, leftBoundary, position.CharacterIndex));
+			command.Operations.Add(
+				new DeleteTextOperation(
+					position.LineIndex, leftBoundary, position.CharacterIndex));
 
 			command.UndoOperations.Add(
 				new SetTextOperation(position.LineIndex, lineText));
 
 			// Perform the operation.
 			controller.Do(command);
-		}
-
-		/// <summary>
-		/// Deletes the paragraph to the right of the caret.
-		/// </summary>
-		/// <param name="controller">The action context.</param>
-		/// <param name="command">The command.</param>
-		private static void DeleteRightParagraph(EditorViewController controller,
-												Command command)
-		{
-			// Pull out useful fields.
-			IDisplayContext displayContext = controller.DisplayContext;
-			BufferPosition position = displayContext.Caret.Position;
-			LineBuffer lineBuffer = displayContext.LineBuffer;
-			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.Unformatted);
-
-			// This is the end of a paragraph and not the first one in
-			// the buffer. This operation combines the text of the two paragraphs
-			// together.
-			string nextText = lineBuffer.GetLineText(
-				position.LineIndex + 1, LineContexts.Unformatted);
-			string newText = lineText + nextText;
-
-			// Set up the operations in the command.
-			command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
-			command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
-
-			command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex, 1));
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex, lineText));
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex + 1, nextText));
-
-			// Relocate the caret position to the previous line's end.
-			position.CharacterIndex = lineText.Length;
-
-			// Perform the operations in the command and set the position.
-			controller.Do(command, position);
 		}
 
 		/// <summary>
@@ -630,7 +608,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 				DeleteRightParagraph(controller, command);
 				return;
 			}
-			
+
 			// Create the operations for both performing and undoing the command.
 			command.Operations.Add(
 				new DeleteTextOperation(position.LineIndex, deleteIndex, deleteIndex + 1));
@@ -640,6 +618,46 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Perform the command to the action context.
 			controller.Do(command);
+		}
+
+		/// <summary>
+		/// Deletes the paragraph to the right of the caret.
+		/// </summary>
+		/// <param name="controller">The action context.</param>
+		/// <param name="command">The command.</param>
+		private static void DeleteRightParagraph(
+			EditorViewController controller,
+			Command command)
+		{
+			// Pull out useful fields.
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+			LineBuffer lineBuffer = displayContext.LineBuffer;
+			string lineText = lineBuffer.GetLineText(
+				position.LineIndex, LineContexts.Unformatted);
+
+			// This is the end of a paragraph and not the first one in
+			// the buffer. This operation combines the text of the two paragraphs
+			// together.
+			string nextText = lineBuffer.GetLineText(
+				position.LineIndex + 1, LineContexts.Unformatted);
+			string newText = lineText + nextText;
+
+			// Set up the operations in the command.
+			command.Operations.Add(new DeleteLinesOperation(position.LineIndex + 1, 1));
+			command.Operations.Add(new SetTextOperation(position.LineIndex, newText));
+
+			command.UndoOperations.Add(new InsertLinesOperation(position.LineIndex, 1));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex, lineText));
+			command.UndoOperations.Add(
+				new SetTextOperation(position.LineIndex + 1, nextText));
+
+			// Relocate the caret position to the previous line's end.
+			position.CharacterIndex = lineText.Length;
+
+			// Perform the operations in the command and set the position.
+			controller.Do(command, position);
 		}
 
 		/// <summary>
@@ -754,7 +772,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// If we have a single-line selection, then we have a simplier path
 			// for these operations.
 			LineBuffer lineBuffer = displayContext.LineBuffer;
-			string startLine = lineBuffer.GetLineText(startLineIndex, LineContexts.Unformatted);
+			string startLine = lineBuffer.GetLineText(
+				startLineIndex, LineContexts.Unformatted);
 			int deleteIndex = startPosition.CharacterIndex;
 
 			if (selection.IsSameLine)
@@ -777,7 +796,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			// Multi-line deletes are more complicated. Our new text will be
 			// the beginning of the first line and end of the last. We put this
 			// into the first line we are editing.
-			string endLine = lineBuffer.GetLineText(endLineIndex, LineContexts.Unformatted);
+			string endLine = lineBuffer.GetLineText(
+				endLineIndex, LineContexts.Unformatted);
 			int endCharacterIndex = Math.Min(endLine.Length, endPosition.CharacterIndex);
 
 			lineText = startLine.Substring(0, deleteIndex) +

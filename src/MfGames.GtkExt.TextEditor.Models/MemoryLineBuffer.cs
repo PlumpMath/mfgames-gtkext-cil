@@ -121,7 +121,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <returns></returns>
-		protected string GetLineText(int lineIndex)
+		public string GetLineText(int lineIndex)
 		{
 			return lines[lineIndex];
 		}

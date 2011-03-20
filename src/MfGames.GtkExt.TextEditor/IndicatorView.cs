@@ -56,6 +56,20 @@ namespace MfGames.GtkExt.TextEditor
 	/// </summary>
 	public class IndicatorView : DrawingArea
 	{
+		#region Constants
+
+		/// <summary>
+		/// The name of the style for the background view.
+		/// </summary>
+		public const string BackgroundRegionName = "IndicatorViewBackground";
+
+		/// <summary>
+		/// The name of the region style for the visible bar area.
+		/// </summary>
+		public const string VisibleRegionName = "IndicatorViewVisible";
+
+		#endregion
+
 		#region Constructors
 
 		/// <summary>
@@ -84,31 +98,34 @@ namespace MfGames.GtkExt.TextEditor
 
 		#region Indicator Lines
 
-		private EditorViewRenderer editorViewRenderer;
-		private ArrayList<IndicatorLine> indicatorLines;
+		private IndicatorLine[] indicatorLines;
+		private int visibleIndicatorLines;
+		private int indicatorLinesUsed;
 
 		/// <summary>
 		/// Goes through the buffer lines and assigns those lines to the
 		/// indicator lines.
 		/// </summary>
-		private void AssignLines()
+		private void AssignIndicatorLines()
 		{
 			// Go through all the lines and put them in a known and reset state.
 			// Reset the lines we're using and clear out the lines we aren't.
+			indicatorLinesUsed = 0;
+
 			for (int indicatorLineIndex = 0;
-			     indicatorLineIndex < visibleLineCount;
+			     indicatorLineIndex < visibleIndicatorLines;
 			     indicatorLineIndex++)
 			{
 				IndicatorLine indicatorLine = indicatorLines[indicatorLineIndex];
 
-				indicatorLine.Visible = false;
+				indicatorLine.Reset();
 				indicatorLine.StartLineIndex = -1;
 				indicatorLine.EndLineIndex = -1;
 			}
 
 			// If we don't have any lines or if we have no height, then don't
 			// do anything.
-			if (visibleLineCount == 0 || editorViewRenderer == null ||
+			if (visibleIndicatorLines == 0 || editorViewRenderer == null ||
 			    editorViewRenderer.LineBuffer == null)
 			{
 				return;
@@ -123,28 +140,46 @@ namespace MfGames.GtkExt.TextEditor
 				return;
 			}
 
-			// Figure out how many indicator lines we'll be using.
-			int bufferLinesPerIndicatorLine = BufferLinesPerIndicatorLine;
-			int indicatorLinesUsed = 1 +
-			                         EditorView.LineBuffer.LineCount /
-			                         bufferLinesPerIndicatorLine;
+			// Figure out roughly how many buffer lines we'll pack into a single
+			// indicator line. This is a double since there will be a fractional
+			// amount per line but it will fill out the height better.
+			double bufferLinesPerIndicatorLine = Math.Max(1, (double)lineCount / visibleIndicatorLines);
 
-			// Reset the lines we're using and clear out the lines we aren't.
+			// Go through all the lines and allocate the ranges to each indicator
+			// line.
+			int lastBufferLineIndex = -1;
+			double lastFractionalBufferLineIndex = 0.0;
+
 			for (int indicatorLineIndex = 0;
-			     indicatorLineIndex < visibleLineCount;
-			     indicatorLineIndex++)
+				 indicatorLineIndex < visibleIndicatorLines;
+				 indicatorLineIndex++)
 			{
+				// Get the indicator line for the current line.
 				IndicatorLine indicatorLine = indicatorLines[indicatorLineIndex];
 
-				if (indicatorLineIndex < indicatorLinesUsed)
-				{
-					indicatorLine.Reset();
-					indicatorLine.StartLineIndex = indicatorLineIndex *
-					                               bufferLinesPerIndicatorLine;
-					indicatorLine.EndLineIndex = Math.Min(
-						lineCount - 1, (indicatorLineIndex + 1) * bufferLinesPerIndicatorLine - 1);
-				}
-				else
+				indicatorLinesUsed++;
+
+				// Figure out how many lines would be used at this point if
+				// we were using doubles. We do this since 1.5 means that every
+				// other line would have 2 instead of 1, but it would fill out
+				// the visible bar better. Otherwise, doing it just through integer
+				// math would cut the bar in half when it went from 1 to 2.
+				lastFractionalBufferLineIndex += bufferLinesPerIndicatorLine;
+
+				// Figure out the integer indexes for the start and end of this
+				// indicator line.
+				int startBufferLineIndex = lastBufferLineIndex + 1;
+				int endBufferLineIndex = Math.Min(lineCount, (int)Math.Floor(lastFractionalBufferLineIndex)) - 1;
+
+				lastBufferLineIndex = endBufferLineIndex;
+
+				// Set up the indicator line for the given line indexes.
+				indicatorLine.Visible = true;
+				indicatorLine.StartLineIndex = startBufferLineIndex;
+				indicatorLine.EndLineIndex = endBufferLineIndex;
+
+				// If this range ends with the last line in the buffer, break out.
+				if (endBufferLineIndex >= lineCount - 1)
 				{
 					break;
 				}
@@ -155,64 +190,38 @@ namespace MfGames.GtkExt.TextEditor
 		}
 
 		/// <summary>
-		/// Called when the buffer changes.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnBufferChanged(
-			object sender,
-			EventArgs args)
-		{
-			AssignLines();
-		}
-
-		/// <summary>
-		/// Called when a single line changes.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The event arguments.</param>
-		private void OnLineChanged(
-			object sender,
-			LineChangedArgs args)
-		{
-			// Reset the line indicator so it reparses later.
-			int indicatorLineIndex = args.LineIndex / BufferLinesPerIndicatorLine;
-
-			indicatorLines[indicatorLineIndex].Reset();
-
-			// Start the background update, if it isn't already.
-			StartBackgroundUpdate();
-		}
-
-		/// <summary>
-		/// Called when the text editor's renderer changes.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnTextRendererChanged(
-			object sender,
-			EventArgs e)
-		{
-			SetTextRenderer(EditorView.Renderer);
-		}
-
-		/// <summary>
 		/// Reallocates the indicator line objects.
 		/// </summary>
-		private void ReallocateLines()
+		private void AllocateIndicatorLines()
 		{
+			// Figure out how many lines we can show on the screen.
+			double height = Allocation.Height;
+
+			RegionBlockStyle style = Theme.RegionStyles[BackgroundRegionName];
+			height -= style == null ? 0 : style.Height;
+
+			style = Theme.RegionStyles[VisibleRegionName];
+			height -= style == null ? 0 : style.Height;
+
+			visibleIndicatorLines = (int) Math.Floor(height / Theme.IndicatorPixelHeight);
+
 			// Create a new indicator line which is then populated
 			// with null values to reset the bar.
-			indicatorLines = new ArrayList<IndicatorLine>(visibleLineCount);
+			indicatorLines = new IndicatorLine[visibleIndicatorLines];
 
-			for (int index = 0; index < visibleLineCount; index++)
+			for (int index = 0; index < visibleIndicatorLines; index++)
 			{
-				indicatorLines.Add(new IndicatorLine());
+				indicatorLines[index] = new IndicatorLine();
 			}
 
 			// Assign the lines, since we may have changed.
-			AssignLines();
+			AssignIndicatorLines();
 		}
+
+		#endregion
+
+		#region Editor Views
+		private EditorViewRenderer editorViewRenderer;
 
 		/// <summary>
 		/// Updates the text renderer from the text control.
@@ -240,8 +249,51 @@ namespace MfGames.GtkExt.TextEditor
 			}
 
 			// Rebuild the lines in the buffer.
-			AssignLines();
+			AssignIndicatorLines();
 			QueueDraw();
+		}
+
+		/// <summary>
+		/// Called when the buffer changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnBufferChanged(
+			object sender,
+			EventArgs args)
+		{
+			AssignIndicatorLines();
+		}
+
+		/// <summary>
+		/// Called when a single line changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="args">The event arguments.</param>
+		private void OnLineChanged(
+			object sender,
+			LineChangedArgs args)
+		{
+			foreach (IndicatorLine indicatorLine in indicatorLines)
+			{
+				if (args.LineIndex >= indicatorLine.StartLineIndex && args.LineIndex <= indicatorLine.EndLineIndex)
+				{
+					indicatorLine.Reset();
+					StartBackgroundUpdate();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Called when the text editor's renderer changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnTextRendererChanged(
+			object sender,
+			EventArgs e)
+		{
+			SetTextRenderer(EditorView.Renderer);
 		}
 
 		#endregion
@@ -252,23 +304,6 @@ namespace MfGames.GtkExt.TextEditor
 		/// Keeps track of the last indicator line updated.
 		/// </summary>
 		private int lastIndicatorLineUpdated;
-
-		private int visibleLineCount;
-
-		/// <summary>
-		/// Gets the lines per indicator line.
-		/// </summary>
-		/// <value>The wrapped lines per indicator line.</value>
-		protected int BufferLinesPerIndicatorLine
-		{
-			get
-			{
-				return Math.Max(
-					1,
-					(int)
-					Math.Ceiling((double) EditorView.LineBuffer.LineCount / visibleLineCount));
-			}
-		}
 
 		/// <summary>
 		/// Gets or sets the display context.
@@ -286,35 +321,9 @@ namespace MfGames.GtkExt.TextEditor
 			get { return EditorView.Theme; }
 		}
 
-		/// <summary>
-		/// Gets the number of lines that can be drawn.
-		/// </summary>
-		/// <value>The visible line count.</value>
-		protected int VisibleLineCount
-		{
-			[DebuggerStepThrough]
-			get { return visibleLineCount; }
-
-			private set
-			{
-				// Save the visible line count.
-				int oldLineCount = visibleLineCount;
-				visibleLineCount = value;
-
-				// Reallocate the size of the array, if it is different.
-				if (oldLineCount == visibleLineCount)
-				{
-					return;
-				}
-
-				// Reallocate the cached indicator lines.
-				ReallocateLines();
-			}
-		}
-
 		#endregion
 
-		#region Gtk
+		#region Events
 
 		private readonly ReaderWriterLockSlim sync;
 		private bool idleRunning;
@@ -326,9 +335,11 @@ namespace MfGames.GtkExt.TextEditor
 		/// <returns></returns>
 		protected override bool OnExposeEvent(EventExpose exposeEvent)
 		{
-			// Figure out the area we are rendering into.
+			// Figure out the area we are rendering into. We subtract one
+			// from the width and height because of rounding causes one-pixel
+			// borders off the bottom and right edges.
 			Rectangle area = exposeEvent.Region.Clipbox;
-			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
+			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width - 1, area.Height - 1);
 
 			using (Context cairoContext = CairoHelper.Create(exposeEvent.Window))
 			{
@@ -336,29 +347,50 @@ namespace MfGames.GtkExt.TextEditor
 				var renderContext = new RenderContext(cairoContext);
 				renderContext.RenderRegion = cairoArea;
 
-				// Paint the background color of the window.
-				cairoContext.Color = Theme.IndicatorBackgroundColor;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
+				// Paint the background of the entire indicator bar.
+				BlockStyle backgroundStyle = Theme.RegionStyles[BackgroundRegionName] ?? new RegionBlockStyle();
+				DrawingUtility.DrawLayout(EditorView, renderContext, cairoArea, backgroundStyle);
+
+				// Show the visible area, if we have one.
+				BlockStyle visibleStyle = Theme.RegionStyles[VisibleRegionName];
+				double barX = area.X + backgroundStyle.Left + 0.5;
+				double barWidth = area.Width - backgroundStyle.Width - 1;
+				double barY = area.Y + backgroundStyle.Top + 0.5;
+
+				if (visibleStyle != null)
+				{
+					// Figure out the area and adjust the bar variables with this style.
+					var visibleArea = new Cairo.Rectangle(
+						barX,
+						barY,
+						barWidth,
+						indicatorLinesUsed * Theme.IndicatorPixelHeight + visibleStyle.Height);
+
+					barX += visibleStyle.Left;
+					barWidth -= visibleStyle.Width;
+					barY += visibleStyle.Top;
+
+					// Draw the style's elements.
+					DrawingUtility.DrawLayout(
+						EditorView, renderContext, visibleArea, visibleStyle);
+				}
 
 				// Draw all the indicator lines on the display.
-				double y = 0.5;
-
 				cairoContext.LineWidth = EditorView.Theme.IndicatorPixelHeight;
 				cairoContext.Antialias = Antialias.None;
 
-				for (int index = 0; index < VisibleLineCount; index++)
+				for (int index = 0; index < indicatorLinesUsed; index++)
 				{
 					// Make sure the line has been processed and it visible.
 					IndicatorLine indicatorLine = indicatorLines[index];
-
+					
 					if (!indicatorLine.NeedIndicators && indicatorLine.Visible)
 					{
-						indicatorLine.Draw(EditorView, cairoContext, y, Allocation.Width);
+						indicatorLine.Draw(EditorView, cairoContext, barX, barY, barWidth);
 					}
 
 					// Shift the y-coordinate down.
-					y += EditorView.Theme.IndicatorPixelHeight;
+					barY += EditorView.Theme.IndicatorPixelHeight;
 				}
 			}
 
@@ -385,7 +417,7 @@ namespace MfGames.GtkExt.TextEditor
 				bool startedAtBeginning = lastIndicatorLineUpdated == 0;
 
 				for (int index = lastIndicatorLineUpdated;
-				     index < indicatorLines.Count;
+				     index < indicatorLines.Length;
 				     index++)
 				{
 					// If we need data, then do something.
@@ -442,12 +474,11 @@ namespace MfGames.GtkExt.TextEditor
 		/// <param name="allocation">The allocation.</param>
 		protected override void OnSizeAllocated(Rectangle allocation)
 		{
-			// Call the base implementation.
+			// Call the base implementation for allocation.
 			base.OnSizeAllocated(allocation);
 
-			// Determine how many lines we can show on the widget. This is the 
-			// height divided by the height of each indicator line.
-			VisibleLineCount = Allocation.Height / EditorView.Theme.IndicatorPixelHeight;
+			// Allocate the lines internally.
+			AllocateIndicatorLines();
 		}
 
 		/// <summary>
