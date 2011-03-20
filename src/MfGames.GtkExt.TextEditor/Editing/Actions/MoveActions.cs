@@ -396,7 +396,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			string text = displayContext.LineBuffer.GetLineText(
-				position.LineIndex, LineContexts.None);
+				position.LineIndex, LineContexts.Unformatted);
 
 			// If there is no right boundary, we move down a line.
 			int rightBoundary = displayContext.WordSplitter.GetNextWordBoundary(
@@ -404,12 +404,15 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			if (rightBoundary == Int32.MaxValue)
 			{
-				// Check to see if we are at the top of the line or not.
-				if (position.LineIndex <= displayContext.LineBuffer.LineCount)
+				// Check to see if we are at the bottom of the buffer.
+				if (position.LineIndex + 1 >= displayContext.LineBuffer.LineCount)
 				{
-					position.LineIndex++;
-					position.CharacterIndex = 0;
+					return;
 				}
+
+				// Advance the position to the next line.
+				position.LineIndex++;
+				position.CharacterIndex = 0;
 			}
 			else
 			{
