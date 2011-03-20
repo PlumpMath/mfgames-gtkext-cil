@@ -55,7 +55,7 @@ namespace MfGames.GtkExt.TextEditor.Indicators
 		/// Gets or sets the indexes of the last line.
 		/// </summary>
 		/// <value>The end index of the line.</value>
-		public int EndLineIndex { private get; set; }
+		public int EndLineIndex { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this instance needs to
@@ -68,7 +68,7 @@ namespace MfGames.GtkExt.TextEditor.Indicators
 		/// Gets or sets the index of the first line.
 		/// </summary>
 		/// <value>The start index of the line.</value>
-		public int StartLineIndex { private get; set; }
+		public int StartLineIndex { get; set; }
 
 		/// <summary>
 		/// Resets this indicator so we can query for more information.
@@ -284,11 +284,13 @@ namespace MfGames.GtkExt.TextEditor.Indicators
 		/// </summary>
 		/// <param name="displayContext">The display context.</param>
 		/// <param name="cairoContext">The cairo context.</param>
+		/// <param name="x">The x.</param>
 		/// <param name="y">The y.</param>
 		/// <param name="width">The width.</param>
 		public void Draw(
 			IDisplayContext displayContext,
 			Context cairoContext,
+			double x,
 			double y,
 			double width)
 		{
@@ -302,8 +304,6 @@ namespace MfGames.GtkExt.TextEditor.Indicators
 			width -= (ratios.Length - 1) * displayContext.Theme.IndicatorRatioPixelGap;
 
 			// Go through the the various colors/ratios and render each one.
-			double x = 0;
-
 			for (int index = 0; index < ratios.Length; index++)
 			{
 				// Pull out the ratio and adjust it for the width.
@@ -321,6 +321,26 @@ namespace MfGames.GtkExt.TextEditor.Indicators
 				x += currentWidth;
 				x += displayContext.Theme.IndicatorRatioPixelGap;
 			}
+		}
+
+		#endregion
+
+		#region Conversion
+
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents this instance.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.String"/> that represents this instance.
+		/// </returns>
+		public override string ToString()
+		{
+			return string.Format(
+				"Indicator Line {0}-{1} Visible {2} NeedsIndicators {3}",
+				StartLineIndex,
+				EndLineIndex,
+				Visible,
+				NeedIndicators);
 		}
 
 		#endregion

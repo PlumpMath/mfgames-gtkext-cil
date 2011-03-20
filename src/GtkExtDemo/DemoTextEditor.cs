@@ -118,7 +118,7 @@ namespace GtkExtDemo
 
 			var indicatorBackgroundStyle = new RegionBlockStyle();
 			indicatorBackgroundStyle.BackgroundColor = new Color(1, 0.9, 1);
-			indicatorBackgroundStyle.Borders.SetBorder(new Border(1, new Color(0.5, 0, 0)));
+			//indicatorBackgroundStyle.Borders.SetBorder(new Border(1, new Color(0.5, 0, 0)));
 			theme.RegionStyles[IndicatorView.BackgroundRegionName] = indicatorBackgroundStyle;
 
 			var indicatorVisibleStyle = new RegionBlockStyle();

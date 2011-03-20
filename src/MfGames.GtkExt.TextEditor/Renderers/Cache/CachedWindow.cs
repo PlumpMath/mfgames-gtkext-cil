@@ -313,7 +313,6 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 			if (Lines == null)
 			{
 				Lines = Renderer.GetAllocatedCachedLines();
-				Console.WriteLine(DateTime.UtcNow + "   Alloc lines " + this);
 			}
 
 			// Go through all the lines in the window and populate them.
