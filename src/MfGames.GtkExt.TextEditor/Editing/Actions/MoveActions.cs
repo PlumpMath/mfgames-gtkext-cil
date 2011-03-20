@@ -34,6 +34,7 @@ using MfGames.GtkExt.Extensions.Pango;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 using MfGames.GtkExt.TextEditor.Renderers;
 
 using Pango;
@@ -54,66 +55,45 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Moves the caret to the end of the buffer.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.KP_Home, ModifierType.ControlMask)]
 		[KeyBinding(Key.Home, ModifierType.ControlMask)]
-		public static void BeginningOfBuffer(IActionContext actionContext)
+		public static void BeginningOfBuffer(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
+			IDisplayContext displayContext = controller.DisplayContext;
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToBeginningOfBuffer(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToBeginningOfBuffer(displayContext));
 		}
 
 		/// <summary>
 		/// Moves the caret to the end of the visible line.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.KP_Home)]
 		[KeyBinding(Key.Home)]
-		public static void BeginningOfWrappedLine(IActionContext actionContext)
+		public static void BeginningOfWrappedLine(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
+			IDisplayContext displayContext = controller.DisplayContext;
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToBeginningOfWrappedLine(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToBeginningOfWrappedLine(displayContext));
 		}
 
 		/// <summary>
 		/// Moves the caret down one line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Down)]
 		[KeyBinding(Key.Down)]
-		public static void Down(IActionContext actionContext)
+		public static void Down(EditorViewController controller)
 		{
 			// Extract a number of useful variable for this method.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			EditorViewRenderer buffer = displayContext.Renderer;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -123,7 +103,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
-			int lineX = GetLineX(actionContext, wrappedLine, position);
+			int lineX = GetLineX(controller, wrappedLine, position);
 
 			// Figure out which wrapped line we'll be moving the caret to.
 			if (wrappedLine.IsLastLineInLayout())
@@ -153,74 +133,54 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			wrappedLine.XToIndex(lineX, out index, out trailing);
 			position.CharacterIndex = index;
-			displayContext.Caret.Position = position;
 
 			// Draw the new location of the caret.
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
 		/// Moves the caret to the end of the buffer.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.KP_End, ModifierType.ControlMask)]
 		[KeyBinding(Key.End, ModifierType.ControlMask)]
-		public static void EndOfBuffer(IActionContext actionContext)
+		public static void EndOfBuffer(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
+			IDisplayContext displayContext = controller.DisplayContext;
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToEndOfBuffer(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToEndOfBuffer(displayContext));
 		}
 
 		/// <summary>
 		/// Moves the caret to the end of the line.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.KP_End)]
 		[KeyBinding(Key.End)]
-		public static void EndOfWrappedLine(IActionContext actionContext)
+		public static void EndOfWrappedLine(EditorViewController controller)
 		{
-			// Redraw the previous area of the caret.
-			IDisplayContext displayContext = actionContext.DisplayContext;
-
-			// Queue a draw of the old caret position.
+			IDisplayContext displayContext = controller.DisplayContext;
 			Caret caret = displayContext.Caret;
-
-			displayContext.RequestRedraw(caret.GetDrawRegion());
-
-			// Move the cursor and redraw the area.
-			caret.Position = caret.Position.ToEndOfWrappedLine(displayContext);
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(caret.GetDrawRegion());
+			displayContext.ScrollToCaret(caret.Position.ToEndOfWrappedLine(displayContext));
 		}
 
 		/// <summary>
 		/// Gets the line X coordinates from either the state if we have one
 		/// or calculate it from the buffer position's X coordinate.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		/// <param name="wrappedLine">The wrapped line.</param>
 		/// <param name="position">The position.</param>
 		/// <returns></returns>
 		private static int GetLineX(
-			IActionContext actionContext,
+			EditorViewController controller,
 			LayoutLine wrappedLine,
 			BufferPosition position)
 		{
 			int lineX;
-			var state = actionContext.States.Get<VerticalMovementActionState>();
+			var state = controller.States.Get<VerticalMovementActionState>();
 
 			if (state == null)
 			{
@@ -229,7 +189,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 				// Save a new state into the states.
 				state = new VerticalMovementActionState(lineX);
-				actionContext.States.Add(state);
+				controller.States.Add(state);
 			}
 			else
 			{
@@ -243,14 +203,14 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Moves the caret left one character.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[KeyBinding(Key.KP_Left)]
 		[KeyBinding(Key.Left)]
-		public static void Left(IActionContext actionContext)
+		public static void Left(EditorViewController controller)
 		{
 			// Move the character position.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 
 			if (position.CharacterIndex == 0)
@@ -269,22 +229,20 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
 		/// Moves the caret left one word.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[KeyBinding(Key.KP_Left, ModifierType.ControlMask)]
 		[KeyBinding(Key.Left, ModifierType.ControlMask)]
-		public static void LeftWord(IActionContext actionContext)
+		public static void LeftWord(EditorViewController controller)
 		{
 			// Get the text and line for the position in question.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			string text = displayContext.LineBuffer.GetLineText(
 				position.LineIndex, LineContexts.None);
@@ -310,27 +268,22 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
 		/// Moves the caret down one page.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Page_Down)]
 		[KeyBinding(Key.Page_Down)]
-		public static void PageDown(IActionContext actionContext)
+		public static void PageDown(EditorViewController controller)
 		{
 			// Extract a number of useful variable for this method.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -352,7 +305,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
-			int lineX = Units.ToPixels(GetLineX(actionContext, wrappedLine, position));
+			int lineX = Units.ToPixels(GetLineX(controller, wrappedLine, position));
 
 			// Move to the calculated point.
 			Point(
@@ -362,19 +315,16 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Moves the caret down one page.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Page_Up)]
 		[KeyBinding(Key.Page_Up)]
-		public static void PageUp(IActionContext actionContext)
+		public static void PageUp(EditorViewController controller)
 		{
 			// Extract a number of useful variable for this method.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -394,7 +344,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
-			int lineX = Units.ToPixels(GetLineX(actionContext, wrappedLine, position));
+			int lineX = Units.ToPixels(GetLineX(controller, wrappedLine, position));
 
 			// Move to the calculated point.
 			Point(
@@ -404,14 +354,14 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Moves the caret right one character.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[KeyBinding(Key.KP_Right)]
 		[KeyBinding(Key.Right)]
-		public static void Right(IActionContext actionContext)
+		public static void Right(EditorViewController controller)
 		{
 			// Move the character position.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			LineBuffer lineBuffer = displayContext.LineBuffer;
 
@@ -430,22 +380,20 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
 		/// Moves the caret right one word.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[KeyBinding(Key.KP_Right, ModifierType.ControlMask)]
 		[KeyBinding(Key.Right, ModifierType.ControlMask)]
-		public static void RightWord(IActionContext actionContext)
+		public static void RightWord(EditorViewController controller)
 		{
 			// Get the text and line for the position in question.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			string text = displayContext.LineBuffer.GetLineText(
 				position.LineIndex, LineContexts.None);
@@ -469,28 +417,23 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Cause the text editor to redraw itself.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		/// <summary>
 		/// Moves the caret up one line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Up)]
 		[KeyBinding(Key.Up)]
-		public static void Up(IActionContext actionContext)
+		public static void Up(EditorViewController controller)
 		{
 			// Extract a number of useful variable for this method.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 			EditorViewRenderer buffer = displayContext.Renderer;
-
-			// Queue a draw of the old caret position.
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
 
 			// Figure out the layout and wrapped line we are currently on.
 			Layout layout;
@@ -500,7 +443,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Figure out the X coordinate of the line. If there is an action context,
 			// use that. Otherwise, calculate it from the character index of the position.
-			int lineX = GetLineX(actionContext, wrappedLine, position);
+			int lineX = GetLineX(controller, wrappedLine, position);
 
 			// Figure out which wrapped line we'll be moving the caret to.
 			if (wrappedLineIndex == 0)
@@ -533,9 +476,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			position.CharacterIndex = index;
 
 			// Draw the new location of the caret.
-			displayContext.Caret.Position = position;
-			displayContext.ScrollToCaret();
-			displayContext.RequestRedraw(displayContext.Caret.GetDrawRegion());
+			displayContext.ScrollToCaret(position);
 		}
 
 		#endregion
@@ -567,15 +508,20 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			int pangoLayoutY = Units.FromPixels((int) layoutY);
 
+			// Shift the buffer-relative coordinates to handle padding.
+			LineBlockStyle style = displayContext.Renderer.GetLineStyle(
+				lineIndex, LineContexts.None);
+			double layoutX = widgetPoint.X - style.Left;
+
 			// Determines where in the layout is the point.
-			int pangoLayoutX = Units.FromPixels((int) widgetPoint.X);
+			int pangoLayoutX = Units.FromPixels((int) layoutX);
 			int characterIndex, trailing;
 
 			layout.XyToIndex(
 				pangoLayoutX, pangoLayoutY, out characterIndex, out trailing);
 
 			// Return the buffer position.
-			return new BufferPosition(lineIndex, characterIndex);
+			return new BufferPosition(lineIndex, characterIndex + trailing);
 		}
 
 		/// <summary>
@@ -587,12 +533,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			IDisplayContext displayContext,
 			PointD widgetPoint)
 		{
-			// Find the line layout that is closest to the point given.
-			displayContext.Caret.Position = GetBufferPosition(
-				widgetPoint, displayContext);
-
 			// Move to and draw the caret.
-			displayContext.ScrollToCaret();
+			displayContext.ScrollToCaret(GetBufferPosition(widgetPoint, displayContext));
 		}
 
 		#endregion
@@ -603,19 +545,19 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// Performs an action that handles a move action coupled with an
 		/// extend or set selection.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		/// <param name="action">The action.</param>
 		private static void SelectAction(
-			IActionContext actionContext,
-			Action<IActionContext> action)
+			EditorViewController controller,
+			Action<EditorViewController> action)
 		{
 			// Grab the anchor position of the selection since that will
 			// remain the same after the command.
-			Caret caret = actionContext.DisplayContext.Caret;
+			Caret caret = controller.DisplayContext.Caret;
 			BufferPosition anchorPosition = caret.Selection.AnchorPosition;
 
 			// Perform the move command.
-			action(actionContext);
+			action(controller);
 
 			// Restore the anchor position which will extend the selection back.
 			caret.Selection.AnchorPosition = anchorPosition;
@@ -624,173 +566,165 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Selects all the text in the buffer.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.A, ModifierType.ControlMask)]
-		public static void SelectAll(IActionContext actionContext)
+		public static void SelectAll(EditorViewController controller)
 		{
-			actionContext.DisplayContext.Caret.Selection.AnchorPosition =
+			controller.DisplayContext.Caret.Selection.AnchorPosition =
 				new BufferPosition(0, 0);
-			actionContext.DisplayContext.Caret.Selection.TailPosition =
+			controller.DisplayContext.Caret.Selection.TailPosition =
 				new BufferPosition(Int32.MaxValue, Int32.MaxValue);
 
-			actionContext.DisplayContext.RequestRedraw();
+			controller.DisplayContext.RequestRedraw();
 		}
 
 		/// <summary>
 		/// Expands the selection to the beginning of the buffer.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Home, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.Home, ModifierType.ShiftMask | ModifierType.ControlMask)]
-		public static void SelectBeginningOfBuffer(IActionContext actionContext)
+		public static void SelectBeginningOfBuffer(EditorViewController controller)
 		{
-			SelectAction(actionContext, BeginningOfBuffer);
+			SelectAction(controller, BeginningOfBuffer);
 		}
 
 		/// <summary>
 		/// Expands the selection to the beginning of the line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Home, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Home, ModifierType.ShiftMask)]
-		public static void SelectBeginningOfWrappedLine(IActionContext actionContext)
+		public static void SelectBeginningOfWrappedLine(EditorViewController controller)
 		{
-			SelectAction(actionContext, BeginningOfWrappedLine);
+			SelectAction(controller, BeginningOfWrappedLine);
 		}
 
 		/// <summary>
 		/// Expands the selection down one line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Down, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Down, ModifierType.ShiftMask)]
-		public static void SelectDown(IActionContext actionContext)
+		public static void SelectDown(EditorViewController controller)
 		{
-			SelectAction(actionContext, Down);
+			SelectAction(controller, Down);
 		}
 
 		/// <summary>
 		/// Expands the selection to the end of the buffer.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_End, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.End, ModifierType.ShiftMask | ModifierType.ControlMask)]
-		public static void SelectEndOfBuffer(IActionContext actionContext)
+		public static void SelectEndOfBuffer(EditorViewController controller)
 		{
-			SelectAction(actionContext, EndOfBuffer);
+			SelectAction(controller, EndOfBuffer);
 		}
 
 		/// <summary>
 		/// Expands the selection to the end of the line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_End, ModifierType.ShiftMask)]
 		[KeyBinding(Key.End, ModifierType.ShiftMask)]
-		public static void SelectEndOfWrappedLine(IActionContext actionContext)
+		public static void SelectEndOfWrappedLine(EditorViewController controller)
 		{
-			SelectAction(actionContext, EndOfWrappedLine);
+			SelectAction(controller, EndOfWrappedLine);
 		}
 
 		/// <summary>
 		/// Expands the selection left one character.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Left, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Left, ModifierType.ShiftMask)]
-		public static void SelectLeft(IActionContext actionContext)
+		public static void SelectLeft(EditorViewController controller)
 		{
-			SelectAction(actionContext, Left);
+			SelectAction(controller, Left);
 		}
 
 		/// <summary>
 		/// Expands the selection left one word.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Left, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.Left, ModifierType.ShiftMask | ModifierType.ControlMask)]
-		public static void SelectLeftWord(IActionContext actionContext)
+		public static void SelectLeftWord(EditorViewController controller)
 		{
-			SelectAction(actionContext, LeftWord);
+			SelectAction(controller, LeftWord);
 		}
 
 		/// <summary>
 		/// Expands the selection down one page.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Page_Down, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Page_Down, ModifierType.ShiftMask)]
-		public static void SelectPageDown(IActionContext actionContext)
+		public static void SelectPageDown(EditorViewController controller)
 		{
-			SelectAction(actionContext, PageDown);
+			SelectAction(controller, PageDown);
 		}
 
 		/// <summary>
 		/// Expands the selection up one page.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Page_Up, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Page_Up, ModifierType.ShiftMask)]
-		public static void SelectPageUp(IActionContext actionContext)
+		public static void SelectPageUp(EditorViewController controller)
 		{
-			SelectAction(actionContext, PageUp);
+			SelectAction(controller, PageUp);
 		}
 
 		/// <summary>
 		/// Expands the selection right one character.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Right, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Right, ModifierType.ShiftMask)]
-		public static void SelectRight(IActionContext actionContext)
+		public static void SelectRight(EditorViewController controller)
 		{
-			SelectAction(actionContext, Right);
+			SelectAction(controller, Right);
 		}
 
 		/// <summary>
 		/// Expands the selection right one word.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
-		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Right, ModifierType.ShiftMask | ModifierType.ControlMask)]
 		[KeyBinding(Key.Right, ModifierType.ShiftMask | ModifierType.ControlMask)]
-		public static void SelectRightWord(IActionContext actionContext)
+		public static void SelectRightWord(EditorViewController controller)
 		{
-			SelectAction(actionContext, RightWord);
+			SelectAction(controller, RightWord);
 		}
 
 		/// <summary>
 		/// Expands the selection up one line.
 		/// </summary>
-		/// <param name="actionContext">The display context.</param>
+		/// <param name="controller">The display context.</param>
 		[Action]
 		[ActionState(typeof(VerticalMovementActionState))]
 		[KeyBinding(Key.KP_Up, ModifierType.ShiftMask)]
 		[KeyBinding(Key.Up, ModifierType.ShiftMask)]
-		public static void SelectUp(IActionContext actionContext)
+		public static void SelectUp(EditorViewController controller)
 		{
-			SelectAction(actionContext, Up);
+			SelectAction(controller, Up);
 		}
 
 		#endregion

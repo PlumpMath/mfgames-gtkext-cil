@@ -24,52 +24,50 @@
 
 #region Namespaces
 
-using Gtk;
-
-using MfGames.GtkExt.TextEditor.Editing.Actions;
-using MfGames.GtkExt.TextEditor.Models.Buffers;
+using System.Diagnostics;
 
 #endregion
 
-namespace MfGames.GtkExt.TextEditor.Interfaces
+namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
-	/// Defines the interface to the context for a specific action.
+	/// Defines an operation that allows the buffer to update a line after the
+	/// user has exited it.
 	/// </summary>
-	public interface IActionContext
+	public class ExitLineOperation : ILineBufferOperation
 	{
-		/// <summary>
-		/// Gets the commands for the text editor.
-		/// </summary>
-		CommandManager Commands { get; }
+		#region Constructors
 
 		/// <summary>
-		/// Gets the display context for this action.
+		/// Initializes a new instance of the <see cref="ExitLineOperation"/> class.
 		/// </summary>
-		/// <value>The display.</value>
-		IDisplayContext DisplayContext { get; }
+		/// <param name="lineIndex">Index of the line.</param>
+		public ExitLineOperation(
+			int lineIndex)
+		{
+			LineIndex = lineIndex;
+		}
+
+		#endregion
+
+		#region Operation
 
 		/// <summary>
-		/// Gets the action states associated with the action.
+		/// Gets the type of the operation representing this object.
 		/// </summary>
-		ActionStateCollection States { get; }
+		/// <value>The type of the operation.</value>
+		public LineBufferOperationType OperationType
+		{
+			[DebuggerStepThrough]
+			get { return LineBufferOperationType.ExitLine; }
+		}
 
 		/// <summary>
-		/// Creates the context menu for the caret position.
+		/// Gets or sets the index of the line.
 		/// </summary>
-		/// <returns></returns>
-		Menu CreateContextMenu();
+		/// <value>The index of the line.</value>
+		public int LineIndex { get; private set; }
 
-		/// <summary>
-		/// Performs the given operation on the line buffer.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		LineBufferOperationResults Do(ILineBufferOperation operation);
-
-		/// <summary>
-		/// Performs the given command on the line buffer.
-		/// </summary>
-		/// <param name="command">The command.</param>
-		void Do(Command command);
+		#endregion
 	}
 }

@@ -157,7 +157,8 @@ namespace MfGames.GtkExt.TextEditor.Interfaces
 		/// <summary>
 		/// Scrolls the display to the caret.
 		/// </summary>
-		void ScrollToCaret();
+		/// <param name="bufferPosition">The buffer position.</param>
+		void ScrollToCaret(BufferPosition bufferPosition);
 
 		#endregion
 	}

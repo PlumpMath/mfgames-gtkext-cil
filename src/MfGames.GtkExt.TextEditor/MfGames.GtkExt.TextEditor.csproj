@@ -95,7 +95,6 @@
     <Compile Include="Editing\EditorViewController.cs" />
     <Compile Include="Indicators\IndicatorLine.cs" />
     <Compile Include="Interfaces\IActionState.cs" />
-    <Compile Include="Interfaces\IActionContext.cs" />
     <Compile Include="Interfaces\IDisplayContext.cs" />
     <Compile Include="Renderers\LineBufferRenderer.cs" />
     <Compile Include="Renderers\RenderContext.cs" />

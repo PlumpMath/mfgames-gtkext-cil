@@ -56,7 +56,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 	/// action which performs the action. For undoable or buffer commands, the
 	/// action will creates a command object which one or more buffer operations.
 	/// </summary>
-	public class EditorViewController : IActionContext
+	public class EditorViewController
 	{
 		#region Constructors
 
@@ -155,8 +155,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 
 					// Create an action entry for this element.
 					var action =
-						(Action<IActionContext>)
-						Delegate.CreateDelegate(typeof(Action<IActionContext>), method);
+						(Action<EditorViewController>)
+						Delegate.CreateDelegate(typeof(Action<EditorViewController>), method);
 					var entry = new ActionEntry(method.Name, action);
 
 					actions[method.Name] = entry;
@@ -266,7 +266,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 				// Create the arguments for the event.
 				var args = new PopulateContextMenuArgs();
 				args.Menu = menu;
-				args.ActionContext = this;
+				args.Controller = this;
 
 				// Trigger the event.
 				PopulateContextMenu(this, args);
@@ -314,6 +314,23 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			Commands.Add(command);
 
 			// Scroll to the command's end position.
+			displayContext.Caret.Position = command.EndPosition;
+			displayContext.RequestScrollToCaret();
+		}
+
+		/// <summary>
+		/// Performs the given command on the line buffer.
+		/// </summary>
+		/// <param name="command">The command.</param>
+		/// <param name="bufferPosition">The buffer position.</param>
+		public void Do(Command command,
+					   BufferPosition bufferPosition)
+		{
+			// Perform the commands.
+			Do(command);
+
+			// This explictly sets the buffer position after the commands.
+			command.EndPosition = bufferPosition;
 			displayContext.Caret.Position = command.EndPosition;
 			displayContext.RequestScrollToCaret();
 		}

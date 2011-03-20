@@ -52,17 +52,17 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		/// <summary>
 		/// Moves the caret to the end of the buffer.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
+		/// <param name="controller">The action context.</param>
 		[Action]
 		[KeyBinding(Key.Return, ModifierType.Mod1Mask)]
-		public static void ShowContextMenu(IActionContext actionContext)
+		public static void ShowContextMenu(EditorViewController controller)
 		{
 			// Get the coordinates to display the menu. Since the popup that
 			// sets the coordinates based on the screen, we have to adjust from
 			// text-specific coordinates clear to screen coordinates.
 
 			// Start by getting the widget's screen coordinates.
-			IDisplayContext displayContext = actionContext.DisplayContext;
+			IDisplayContext displayContext = controller.DisplayContext;
 			int screenX, screenY;
 
 			displayContext.GdkWindow.GetOrigin(out screenX, out screenY);
@@ -79,7 +79,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 
 			// Create the context menu and show it on the screen right below
 			// where the user is currently focused.
-			Menu contextMenu = actionContext.CreateContextMenu();
+			Menu contextMenu = controller.CreateContextMenu();
 
 			if (contextMenu != null)
 			{

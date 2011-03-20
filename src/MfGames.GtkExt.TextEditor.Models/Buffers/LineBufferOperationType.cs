@@ -59,5 +59,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// Indicates that the associated operation extends <see cref="DeleteLinesOperation"/>.
 		/// </summary>
 		DeleteLines,
+
+		/// <summary>
+		/// Indicates that the user has scrolled off a line. The associated operation
+		/// extends <see cref="ExitLineOperation"/>.
+		/// </summary>
+		ExitLine,
 	}
 }

@@ -48,7 +48,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// <param name="action">The action.</param>
 		public ActionEntry(
 			string name,
-			Action<IActionContext> action)
+			Action<EditorViewController> action)
 		{
 			// Save the action for processing.
 			Action = action;
@@ -67,7 +67,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// <summary>
 		/// Gets the action delegate to perform this action.
 		/// </summary>
-		public Action<IActionContext> Action;
+		public Action<EditorViewController> Action;
 
 		/// <summary>
 		/// Gets or sets the name of the action.
@@ -90,15 +90,15 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// <summary>
 		/// Performs the specified action using the context.
 		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		public void Perform(IActionContext actionContext)
+		/// <param name="controller">The action context.</param>
+		public void Perform(EditorViewController controller)
 		{
 			// Start by going through the states and remove anything that isn't
 			// in our state types.
-			actionContext.States.RemoveAllExcluding(stateTypes);
+			controller.States.RemoveAllExcluding(stateTypes);
 
 			// Perform the action itself.
-			Action(actionContext);
+			Action(controller);
 		}
 
 		#endregion

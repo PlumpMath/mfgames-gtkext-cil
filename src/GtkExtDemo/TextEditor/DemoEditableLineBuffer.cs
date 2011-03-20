@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.Text.RegularExpressions;
 
 using C5;
 
@@ -44,6 +45,14 @@ namespace GtkExtDemo.TextEditor
 		#region Constructors
 
 		/// <summary>
+		/// Initializes the <see cref="DemoEditableLineBuffer"/> class.
+		/// </summary>
+		static DemoEditableLineBuffer()
+		{
+			removeExcessiveSpaces = new Regex(@"\s+", RegexOptions.Singleline);
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="DemoEditableLineBuffer"/> class.
 		/// </summary>
 		public DemoEditableLineBuffer()
@@ -53,20 +62,29 @@ namespace GtkExtDemo.TextEditor
 
 			// Create the initial lines. There is already one in the buffer before
 			// this insert operates.
-			InsertLines(0, 4);
+			InsertLines(0, 6);
 
 			// Set the text on the lines with the prefix so they can be styled
 			// as part of the set operation.
-			SetText(0, "H: Heading Line");
-			SetText(1, "T: Warning text right below the heading.");
-			SetText(2, "H:");
-			SetText(3, "T: Regular text with nothing remarkable about it.");
-			SetText(4, "T: Regular text with an error inside it.");
+			int lineIndex = 0;
+
+			SetText(lineIndex++, "C: Name of Chapter");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex++, "H: Heading Line");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex++, "H:");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex, "B: Regular Text");
 		}
 
 		#endregion
 
 		#region Operations
+
+		/// <summary>
+		/// Contains a regular expression for finding multiple spaces.
+		/// </summary>
+		private static readonly Regex removeExcessiveSpaces;
 
 		/// <summary>
 		/// Checks to see if a line operation caused a style to change.
@@ -97,6 +115,16 @@ namespace GtkExtDemo.TextEditor
 					changed = true;
 					break;
 
+				case 'B':
+					styles[lineIndex] = DemoLineStyleType.Borders;
+					changed = true;
+					break;
+
+				case 'C':
+					styles[lineIndex] = DemoLineStyleType.Chapter;
+					changed = true;
+					break;
+
 				case 'H':
 					styles[lineIndex] = DemoLineStyleType.Heading;
 					changed = true;
@@ -123,6 +151,29 @@ namespace GtkExtDemo.TextEditor
 				Math.Max(0, results.BufferPosition.CharacterIndex - difference));
 
 			return results;
+		}
+
+		/// <summary>
+		/// Trims and removes duplicate spaces from the line.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		/// <returns></returns>
+		protected override LineBufferOperationResults Do(ExitLineOperation operation)
+		{
+			// Get the line in question.
+			string lineText = GetLineText(operation.LineIndex);
+
+			// Perform clean up operations on the line to see if it changed.
+			string newText = removeExcessiveSpaces.Replace(lineText.Trim(), " ");
+
+			// If the text isn't the same, update the line.
+			if (lineText != newText)
+			{
+				SetText(operation.LineIndex, newText);
+			}
+
+			// Return an empty operation results.
+			return new LineBufferOperationResults();
 		}
 
 		/// <summary>
@@ -271,6 +322,12 @@ namespace GtkExtDemo.TextEditor
 			CharacterRange characters,
 			LineContexts lineContexts)
 		{
+			// If we have a request for unformatted, return it directly.
+			if ((lineContexts & LineContexts.Unformatted) == LineContexts.Unformatted)
+			{
+				return base.GetLineText(lineIndex, characters, lineContexts);
+			}
+
 			// See if we have the line in the styles.
 			if (styles.Contains(lineIndex))
 			{

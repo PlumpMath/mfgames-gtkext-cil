@@ -248,6 +248,16 @@ namespace MfGames.GtkExt.TextEditor.Models
 		public abstract LineBufferOperationResults Do(ILineBufferOperation operation);
 
 		/// <summary>
+		/// Exits the line using a <see cref="ExitLineOperation"/>.
+		/// </summary>
+		/// <param name="lineIndex">Index of the line.</param>
+		/// <returns></returns>
+		public LineBufferOperationResults ExitLine(int lineIndex)
+		{
+			return Do(new ExitLineOperation(lineIndex));
+		}
+
+		/// <summary>
 		/// Inserts the lines using a <see cref="InsertLinesOperation"/>.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>

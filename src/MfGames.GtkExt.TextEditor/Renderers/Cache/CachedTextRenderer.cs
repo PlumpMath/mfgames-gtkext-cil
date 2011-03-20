@@ -631,6 +631,9 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 				int endLineIndex =
 					displayContext.LineBuffer.NormalizeLineIndex(
 						currentSelection.EndPosition.LineIndex);
+				int previousEndLineIndex =
+					displayContext.LineBuffer.NormalizeLineIndex(
+						previousSelection.EndPosition.LineIndex);
 
 				for (int lineIndex = currentSelection.StartPosition.LineIndex;
 				     lineIndex <= endLineIndex;
@@ -644,7 +647,7 @@ namespace MfGames.GtkExt.TextEditor.Renderers.Cache
 				}
 
 				for (int lineIndex = previousSelection.StartPosition.LineIndex;
-				     lineIndex <= endLineIndex;
+					 lineIndex <= previousEndLineIndex;
 				     lineIndex++)
 				{
 					// Get the window for the line change and reset that window.

@@ -28,7 +28,7 @@ using System;
 
 using Gtk;
 
-using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Editing;
 
 #endregion
 
@@ -45,7 +45,7 @@ namespace MfGames.GtkExt.TextEditor.Events
 		/// Gets or sets the action context for this context.
 		/// </summary>
 		/// <value>The action context.</value>
-		public IActionContext ActionContext { get; set; }
+		public EditorViewController Controller { get; set; }
 
 		/// <summary>
 		/// Contains the menu that will be shown to the user. If this is set to 

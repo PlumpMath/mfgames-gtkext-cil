@@ -96,10 +96,21 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		public Borders ToBorders()
 		{
 			return new Borders(
-				Top == null ? Top : new Border(),
-				Right == null ? Right : new Border(),
-				Bottom == null ? Bottom : new Border(),
-				Left == null ? Left : new Border());
+				Top ?? new Border(),
+				Right ?? new Border(),
+				Bottom ?? new Border(),
+				Left ?? new Border());
+		}
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+		/// </returns>
+		public override string ToString()
+		{
+			return string.Format("Borders? T:{0} R:{1} B:{2} L:{3}", Top, Right, Bottom, Left);
 		}
 
 		#endregion

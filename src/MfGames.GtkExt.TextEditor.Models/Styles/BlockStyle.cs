@@ -153,7 +153,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <value>The height.</value>
 		public double Height
 		{
-			get { return GetMargins().Height + GetPadding().Height; }
+			get { return GetMargins().Height + GetPadding().Height + GetBorders().Height; }
 		}
 
 		/// <summary>
@@ -162,7 +162,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <value>The left.</value>
 		public double Left
 		{
-			get { return GetMargins().Left + GetPadding().Left; }
+			get { return GetMargins().Left + GetPadding().Left + GetBorders().Left.LineWidth; }
 		}
 
 		/// <summary>
@@ -193,7 +193,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <value>The left.</value>
 		public double Right
 		{
-			get { return GetMargins().Right + GetPadding().Right; }
+			get { return GetMargins().Right + GetPadding().Right + GetBorders().Right.LineWidth; }
 		}
 
 		/// <summary>
@@ -202,7 +202,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <value>The top.</value>
 		public double Top
 		{
-			get { return GetMargins().Top + GetPadding().Top; }
+			get { return GetMargins().Top + GetPadding().Top + GetBorders().Top.LineWidth; }
 		}
 
 		/// <summary>
@@ -211,7 +211,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <value>The width.</value>
 		public double Width
 		{
-			get { return GetMargins().Width + GetPadding().Width; }
+			get { return GetMargins().Width + GetPadding().Width + GetBorders().Width; }
 		}
 
 		/// <summary>
