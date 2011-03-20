@@ -35,8 +35,8 @@ using MfGames.GtkExt.TextEditor.Renderers;
 
 using NUnit.Framework;
 
+using Action=System.Action;
 using Key=Gdk.Key;
-using Action = System.Action;
 
 #endregion
 
@@ -51,19 +51,9 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		#region Setup
 
 		private MemoryLineBuffer buffer;
-		private EditorView editor;
 		private EditorViewController controller;
+		private EditorView editor;
 		private EditorViewRenderer renderer;
-
-		/// <summary>
-		/// Configures the entire fixture to ensure Gtk# is initialized.
-		/// </summary>
-		[TestFixtureSetUp]
-		public void SetupFixture()
-		{
-			// Set up Gtk
-			Application.Init();
-		}
 
 		/// <summary>
 		/// Sets up the individual tests with a clean slate.
@@ -76,9 +66,19 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			editor = new EditorView();
 			controller = editor.Controller;
 			buffer = new MemoryLineBuffer();
-			renderer = new Renderers.LineBufferRenderer(editor, buffer);
-			
+			renderer = new LineBufferRenderer(editor, buffer);
+
 			editor.SetRenderer(renderer);
+		}
+
+		/// <summary>
+		/// Configures the entire fixture to ensure Gtk# is initialized.
+		/// </summary>
+		[TestFixtureSetUp]
+		public void SetupFixture()
+		{
+			// Set up Gtk
+			Application.Init();
 		}
 
 		#endregion
@@ -98,6 +98,28 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		#endregion
 
 		#region Text Input
+
+		/// <summary>
+		/// Inserts the multiple paragraphs into the buffer.
+		/// </summary>
+		[Test]
+		public void InsertMultipleParagraphs()
+		{
+			// Setup
+
+			// Operation
+			TextActions.InsertText(controller, "One");
+			TextActions.InsertParagraph(controller);
+			TextActions.InsertText(controller, "Two");
+			TextActions.InsertParagraph(controller);
+			TextActions.InsertText(controller, "Three");
+
+			// Verification
+			Assert.AreEqual(3, buffer.LineCount);
+			Assert.AreEqual("One", buffer.GetLineText(0));
+			Assert.AreEqual("Two", buffer.GetLineText(1));
+			Assert.AreEqual("Three", buffer.GetLineText(2));
+		}
 
 		/// <summary>
 		/// Inserts a short amount of text using the HandleKeyPress.
@@ -154,28 +176,6 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		}
 
 		/// <summary>
-		/// Inserts the multiple paragraphs into the buffer.
-		/// </summary>
-		[Test]
-		public void InsertMultipleParagraphs()
-		{
-			// Setup
-
-			// Operation
-			TextActions.InsertText(controller, "One");
-			TextActions.InsertParagraph(controller);
-			TextActions.InsertText(controller, "Two");
-			TextActions.InsertParagraph(controller);
-			TextActions.InsertText(controller, "Three");
-
-			// Verification
-			Assert.AreEqual(3, buffer.LineCount);
-			Assert.AreEqual("One", buffer.GetLineText(0));
-			Assert.AreEqual("Two", buffer.GetLineText(1));
-			Assert.AreEqual("Three", buffer.GetLineText(2));
-		}
-
-		/// <summary>
 		/// Verifies that the pattern insert method works correctly.
 		/// </summary>
 		[Test]
@@ -198,27 +198,6 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		#region Paste Actions
 
 		#region Single Pastes
-
-		/// <summary>
-		/// Pastes a single line text into the middle of a string.
-		/// </summary>
-		[Test]
-		public void PasteSingleInMiddle()
-		{
-			// Setup
-			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert ";
-			editor.Caret.Position = new BufferPosition(1, 5);
-
-			// Operation
-			TextActions.Paste(controller);
-
-			// Verification
-			Assert.AreEqual(3, buffer.LineCount);
-			Assert.AreEqual("Line 1", buffer.GetLineText(0));
-			Assert.AreEqual("Line Insert 2", buffer.GetLineText(1));
-			Assert.AreEqual("Line 3", buffer.GetLineText(2));
-		}
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -262,31 +241,30 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(2));
 		}
 
-		#endregion
-
-		#region Single EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteSingleEolInMiddle()
+		public void PasteSingleInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert\n";
+			editor.Clipboard.Text = "Insert ";
 			editor.Caret.Position = new BufferPosition(1, 5);
 
 			// Operation
 			TextActions.Paste(controller);
 
 			// Verification
-			Assert.AreEqual(4, buffer.LineCount);
+			Assert.AreEqual(3, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
-			Assert.AreEqual("Line Insert", buffer.GetLineText(1));
-			Assert.AreEqual("2", buffer.GetLineText(2));
-			Assert.AreEqual("Line 3", buffer.GetLineText(3));
+			Assert.AreEqual("Line Insert 2", buffer.GetLineText(1));
+			Assert.AreEqual("Line 3", buffer.GetLineText(2));
 		}
+
+		#endregion
+
+		#region Single EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -332,19 +310,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
 
-		#endregion
-
-		#region Multiple Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteMultipleInMiddle()
+		public void PasteSingleEolInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert\nNew ";
+			editor.Clipboard.Text = "Insert\n";
 			editor.Caret.Position = new BufferPosition(1, 5);
 
 			// Operation
@@ -354,9 +328,13 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual(4, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
 			Assert.AreEqual("Line Insert", buffer.GetLineText(1));
-			Assert.AreEqual("New 2", buffer.GetLineText(2));
+			Assert.AreEqual("2", buffer.GetLineText(2));
 			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
+
+		#endregion
+
+		#region Multiple Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -402,32 +380,31 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
 
-		#endregion
-
-		#region Multiple EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteMultipleEolInMiddle()
+		public void PasteMultipleInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert\nNew\n";
+			editor.Clipboard.Text = "Insert\nNew ";
 			editor.Caret.Position = new BufferPosition(1, 5);
 
 			// Operation
 			TextActions.Paste(controller);
 
 			// Verification
-			Assert.AreEqual(5, buffer.LineCount);
+			Assert.AreEqual(4, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
 			Assert.AreEqual("Line Insert", buffer.GetLineText(1));
-			Assert.AreEqual("New", buffer.GetLineText(2));
-			Assert.AreEqual("2", buffer.GetLineText(3));
-			Assert.AreEqual("Line 3", buffer.GetLineText(4));
+			Assert.AreEqual("New 2", buffer.GetLineText(2));
+			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
+
+		#endregion
+
+		#region Multiple EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -475,31 +452,32 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(4));
 		}
 
-		#endregion
-
-		#region Single Selection Single Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteSingleSelectionSingleInMiddle()
+		public void PasteMultipleEolInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert ";
-			editor.Caret.Selection.AnchorPosition = new BufferPosition(1, 3);
-			editor.Caret.Selection.TailPosition = new BufferPosition(1, 5);
+			editor.Clipboard.Text = "Insert\nNew\n";
+			editor.Caret.Position = new BufferPosition(1, 5);
 
 			// Operation
 			TextActions.Paste(controller);
 
 			// Verification
-			Assert.AreEqual(3, buffer.LineCount);
+			Assert.AreEqual(5, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
-			Assert.AreEqual("LinInsert 2", buffer.GetLineText(1));
-			Assert.AreEqual("Line 3", buffer.GetLineText(2));
+			Assert.AreEqual("Line Insert", buffer.GetLineText(1));
+			Assert.AreEqual("New", buffer.GetLineText(2));
+			Assert.AreEqual("2", buffer.GetLineText(3));
+			Assert.AreEqual("Line 3", buffer.GetLineText(4));
 		}
+
+		#endregion
+
+		#region Single Selection Single Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -545,19 +523,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(2));
 		}
 
-		#endregion
-
-		#region Single Selection Single EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteSingleSelectionSingleEolInMiddle()
+		public void PasteSingleSelectionSingleInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert\n";
+			editor.Clipboard.Text = "Insert ";
 			editor.Caret.Selection.AnchorPosition = new BufferPosition(1, 3);
 			editor.Caret.Selection.TailPosition = new BufferPosition(1, 5);
 
@@ -565,12 +539,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			TextActions.Paste(controller);
 
 			// Verification
-			Assert.AreEqual(4, buffer.LineCount);
+			Assert.AreEqual(3, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
-			Assert.AreEqual("LinInsert", buffer.GetLineText(1));
-			Assert.AreEqual("2", buffer.GetLineText(2));
-			Assert.AreEqual("Line 3", buffer.GetLineText(3));
+			Assert.AreEqual("LinInsert 2", buffer.GetLineText(1));
+			Assert.AreEqual("Line 3", buffer.GetLineText(2));
 		}
+
+		#endregion
+
+		#region Single Selection Single EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -618,19 +595,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
 
-		#endregion
-
-		#region Single Selection Multiple Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteSingleSelectionMultipleInMiddle()
+		public void PasteSingleSelectionSingleEolInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert\nNew ";
+			editor.Clipboard.Text = "Insert\n";
 			editor.Caret.Selection.AnchorPosition = new BufferPosition(1, 3);
 			editor.Caret.Selection.TailPosition = new BufferPosition(1, 5);
 
@@ -641,9 +614,13 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual(4, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
 			Assert.AreEqual("LinInsert", buffer.GetLineText(1));
-			Assert.AreEqual("New 2", buffer.GetLineText(2));
+			Assert.AreEqual("2", buffer.GetLineText(2));
 			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
+
+		#endregion
+
+		#region Single Selection Multiple Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -691,19 +668,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
 
-		#endregion
-
-		#region Single Selection Multiple EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void PasteSingleSelectionMultipleEolInMiddle()
+		public void PasteSingleSelectionMultipleInMiddle()
 		{
 			// Setup
 			InsertPatternIntoBuffer(3);
-			editor.Clipboard.Text = "Insert\nNew\n";
+			editor.Clipboard.Text = "Insert\nNew ";
 			editor.Caret.Selection.AnchorPosition = new BufferPosition(1, 3);
 			editor.Caret.Selection.TailPosition = new BufferPosition(1, 5);
 
@@ -711,13 +684,16 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			TextActions.Paste(controller);
 
 			// Verification
-			Assert.AreEqual(5, buffer.LineCount);
+			Assert.AreEqual(4, buffer.LineCount);
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
 			Assert.AreEqual("LinInsert", buffer.GetLineText(1));
-			Assert.AreEqual("New", buffer.GetLineText(2));
-			Assert.AreEqual("2", buffer.GetLineText(3));
-			Assert.AreEqual("Line 3", buffer.GetLineText(4));
+			Assert.AreEqual("New 2", buffer.GetLineText(2));
+			Assert.AreEqual("Line 3", buffer.GetLineText(3));
 		}
+
+		#endregion
+
+		#region Single Selection Multiple EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -767,20 +743,35 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 3", buffer.GetLineText(4));
 		}
 
+		/// <summary>
+		/// Pastes a single line text into the middle of a string.
+		/// </summary>
+		[Test]
+		public void PasteSingleSelectionMultipleEolInMiddle()
+		{
+			// Setup
+			InsertPatternIntoBuffer(3);
+			editor.Clipboard.Text = "Insert\nNew\n";
+			editor.Caret.Selection.AnchorPosition = new BufferPosition(1, 3);
+			editor.Caret.Selection.TailPosition = new BufferPosition(1, 5);
+
+			// Operation
+			TextActions.Paste(controller);
+
+			// Verification
+			Assert.AreEqual(5, buffer.LineCount);
+			Assert.AreEqual("Line 1", buffer.GetLineText(0));
+			Assert.AreEqual("LinInsert", buffer.GetLineText(1));
+			Assert.AreEqual("New", buffer.GetLineText(2));
+			Assert.AreEqual("2", buffer.GetLineText(3));
+			Assert.AreEqual("Line 3", buffer.GetLineText(4));
+		}
+
 		#endregion
 
 		#region Undo Paste Actions
 
 		#region Single Pastes
-
-		/// <summary>
-		/// Pastes a single line text into the middle of a string.
-		/// </summary>
-		[Test]
-		public void UndoPasteSingleInMiddle()
-		{
-			Undo(PasteSingleInMiddle);
-		}
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -800,18 +791,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteSingleAtEnd);
 		}
 
-		#endregion
-
-		#region Single EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteSingleEolInMiddle()
+		public void UndoPasteSingleInMiddle()
 		{
-			Undo(PasteSingleEolInMiddle);
+			Undo(PasteSingleInMiddle);
 		}
+
+		#endregion
+
+		#region Single EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -831,18 +822,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteSingleEolAtEnd);
 		}
 
-		#endregion
-
-		#region Multiple Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteMultipleInMiddle()
+		public void UndoPasteSingleEolInMiddle()
 		{
-			Undo(PasteMultipleInMiddle);
+			Undo(PasteSingleEolInMiddle);
 		}
+
+		#endregion
+
+		#region Multiple Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -862,18 +853,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteMultipleAtEnd);
 		}
 
-		#endregion
-
-		#region Multiple EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteMultipleEolInMiddle()
+		public void UndoPasteMultipleInMiddle()
 		{
-			Undo(PasteMultipleEolInMiddle);
+			Undo(PasteMultipleInMiddle);
 		}
+
+		#endregion
+
+		#region Multiple EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -893,18 +884,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteMultipleEolAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Single Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteSingleSelectionSingleInMiddle()
+		public void UndoPasteMultipleEolInMiddle()
 		{
-			Undo(PasteSingleSelectionSingleInMiddle);
+			Undo(PasteMultipleEolInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Single Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -924,18 +915,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteSingleSelectionSingleAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Single EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteSingleSelectionSingleEolInMiddle()
+		public void UndoPasteSingleSelectionSingleInMiddle()
 		{
-			Undo(PasteSingleSelectionSingleEolInMiddle);
+			Undo(PasteSingleSelectionSingleInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Single EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -955,18 +946,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteSingleSelectionSingleEolAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Multiple Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteSingleSelectionMultipleInMiddle()
+		public void UndoPasteSingleSelectionSingleEolInMiddle()
 		{
-			Undo(PasteSingleSelectionMultipleInMiddle);
+			Undo(PasteSingleSelectionSingleEolInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Multiple Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -986,18 +977,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteSingleSelectionMultipleAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Multiple EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoPasteSingleSelectionMultipleEolInMiddle()
+		public void UndoPasteSingleSelectionMultipleInMiddle()
 		{
-			Undo(PasteSingleSelectionMultipleEolInMiddle);
+			Undo(PasteSingleSelectionMultipleInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Multiple EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1017,6 +1008,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Undo(PasteSingleSelectionMultipleEolAtEnd);
 		}
 
+		/// <summary>
+		/// Pastes a single line text into the middle of a string.
+		/// </summary>
+		[Test]
+		public void UndoPasteSingleSelectionMultipleEolInMiddle()
+		{
+			Undo(PasteSingleSelectionMultipleEolInMiddle);
+		}
+
 		#endregion
 
 		#endregion
@@ -1024,15 +1024,6 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		#region Undo/Redo/Undo Paste Actions
 
 		#region Single Pastes
-
-		/// <summary>
-		/// Pastes a single line text into the middle of a string.
-		/// </summary>
-		[Test]
-		public void UndoRedoUndoPasteSingleInMiddle()
-		{
-			UndoRedoUndo(PasteSingleInMiddle);
-		}
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1052,18 +1043,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteSingleAtEnd);
 		}
 
-		#endregion
-
-		#region Single EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteSingleEolInMiddle()
+		public void UndoRedoUndoPasteSingleInMiddle()
 		{
-			UndoRedoUndo(PasteSingleEolInMiddle);
+			UndoRedoUndo(PasteSingleInMiddle);
 		}
+
+		#endregion
+
+		#region Single EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1083,18 +1074,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteSingleEolAtEnd);
 		}
 
-		#endregion
-
-		#region Multiple Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteMultipleInMiddle()
+		public void UndoRedoUndoPasteSingleEolInMiddle()
 		{
-			UndoRedoUndo(PasteMultipleInMiddle);
+			UndoRedoUndo(PasteSingleEolInMiddle);
 		}
+
+		#endregion
+
+		#region Multiple Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1114,18 +1105,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteMultipleAtEnd);
 		}
 
-		#endregion
-
-		#region Multiple EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteMultipleEolInMiddle()
+		public void UndoRedoUndoPasteMultipleInMiddle()
 		{
-			UndoRedoUndo(PasteMultipleEolInMiddle);
+			UndoRedoUndo(PasteMultipleInMiddle);
 		}
+
+		#endregion
+
+		#region Multiple EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1145,18 +1136,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteMultipleEolAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Single Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteSingleSelectionSingleInMiddle()
+		public void UndoRedoUndoPasteMultipleEolInMiddle()
 		{
-			UndoRedoUndo(PasteSingleSelectionSingleInMiddle);
+			UndoRedoUndo(PasteMultipleEolInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Single Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1176,18 +1167,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteSingleSelectionSingleAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Single EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteSingleSelectionSingleEolInMiddle()
+		public void UndoRedoUndoPasteSingleSelectionSingleInMiddle()
 		{
-			UndoRedoUndo(PasteSingleSelectionSingleEolInMiddle);
+			UndoRedoUndo(PasteSingleSelectionSingleInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Single EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1207,18 +1198,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteSingleSelectionSingleEolAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Multiple Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteSingleSelectionMultipleInMiddle()
+		public void UndoRedoUndoPasteSingleSelectionSingleEolInMiddle()
 		{
-			UndoRedoUndo(PasteSingleSelectionMultipleInMiddle);
+			UndoRedoUndo(PasteSingleSelectionSingleEolInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Multiple Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1238,18 +1229,18 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			UndoRedoUndo(PasteSingleSelectionMultipleAtEnd);
 		}
 
-		#endregion
-
-		#region Single Selection Multiple EOL Pastes
-
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
 		/// </summary>
 		[Test]
-		public void UndoRedoUndoPasteSingleSelectionMultipleEolInMiddle()
+		public void UndoRedoUndoPasteSingleSelectionMultipleInMiddle()
 		{
-			UndoRedoUndo(PasteSingleSelectionMultipleEolInMiddle);
+			UndoRedoUndo(PasteSingleSelectionMultipleInMiddle);
 		}
+
+		#endregion
+
+		#region Single Selection Multiple EOL Pastes
 
 		/// <summary>
 		/// Pastes a single line text into the middle of a string.
@@ -1267,6 +1258,15 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		public void UndoRedoUndoPasteSingleSelectionMultipleEolAtEnd()
 		{
 			UndoRedoUndo(PasteSingleSelectionMultipleEolAtEnd);
+		}
+
+		/// <summary>
+		/// Pastes a single line text into the middle of a string.
+		/// </summary>
+		[Test]
+		public void UndoRedoUndoPasteSingleSelectionMultipleEolInMiddle()
+		{
+			UndoRedoUndo(PasteSingleSelectionMultipleEolInMiddle);
 		}
 
 		#endregion
@@ -1303,6 +1303,7 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		private void Undo(Action test)
 		{
 			// Setup
+			BufferPosition startingPosition = editor.Caret.Position;
 			test();
 
 			// Operation
@@ -1313,6 +1314,7 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
 			Assert.AreEqual("Line 2", buffer.GetLineText(1));
 			Assert.AreEqual("Line 3", buffer.GetLineText(2));
+			Assert.AreEqual(startingPosition, editor.Caret.Position);
 		}
 
 		/// <summary>
@@ -1323,6 +1325,7 @@ namespace MfGames.GtkExt.TextEditor.Tests
 		private void UndoRedoUndo(Action test)
 		{
 			// Setup
+			BufferPosition startingPosition = editor.Caret.Position;
 			test();
 
 			// Operation
@@ -1335,6 +1338,7 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.AreEqual("Line 1", buffer.GetLineText(0));
 			Assert.AreEqual("Line 2", buffer.GetLineText(1));
 			Assert.AreEqual("Line 3", buffer.GetLineText(2));
+			Assert.AreEqual(startingPosition, editor.Caret.Position);
 		}
 
 		#endregion

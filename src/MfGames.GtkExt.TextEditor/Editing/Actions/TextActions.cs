@@ -367,8 +367,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 				command.Operations.Add(
 					new SetTextOperation(position.LineIndex, before + lines[0] + after));
 
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex, lineText));
+				if (!deletedSelection)
+				{
+					command.UndoOperations.Add(
+						new SetTextOperation(position.LineIndex, lineText));
+				}
 
 				// Set the end of the command position.
 				position.CharacterIndex = (before + lines[0]).Length;
