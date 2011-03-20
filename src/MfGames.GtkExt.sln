@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{9499
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.TextEditor.Models", "MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj", "{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "GtkExtUnitTests\UnitTests.csproj", "{2EB3E9A0-514D-4194-A74D-F6386366E394}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,12 +41,17 @@ Global
 		{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EB3E9A0-514D-4194-A74D-F6386366E394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EB3E9A0-514D-4194-A74D-F6386366E394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EB3E9A0-514D-4194-A74D-F6386366E394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EB3E9A0-514D-4194-A74D-F6386366E394}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3FB956E6-40FB-4ED3-8047-1CCDC8DECE3B} = {94993FB2-3AB7-4F80-9881-2F2D3CCA39B1}
+		{2EB3E9A0-514D-4194-A74D-F6386366E394} = {94993FB2-3AB7-4F80-9881-2F2D3CCA39B1}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = GtkExtDemo\GtkExtDemo.csproj
