@@ -42,6 +42,8 @@ using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 
+using Alignment=Pango.Alignment;
+
 #endregion
 
 namespace GtkExtDemo
@@ -118,7 +120,7 @@ namespace GtkExtDemo
 
 			// Set up the editable text styles.
 			for (DemoLineStyleType type = DemoLineStyleType.Default;
-				 type <= DemoLineStyleType.Heading;
+				 type <= DemoLineStyleType.Break;
 				 type++)
 			{
 				// Create a line style for this type.
@@ -157,6 +159,11 @@ namespace GtkExtDemo
 
 					case DemoLineStyleType.Default:
 						lineStyle.Padding.Left = 50;
+						break;
+
+					case DemoLineStyleType.Break:
+						lineStyle.Padding.Left = 50;
+						lineStyle.Alignment = Alignment.Center;
 						break;
 				}
 			}

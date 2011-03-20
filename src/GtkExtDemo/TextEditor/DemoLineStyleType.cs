@@ -58,5 +58,11 @@ namespace GtkExtDemo.TextEditor
 		/// </summary>
 		[Description("Heading (H:)")]
 		Heading,
+
+		/// <summary>
+		/// Represents a blank line.
+		/// </summary>
+		[Description("Break")]
+		Break,
 	}
 }

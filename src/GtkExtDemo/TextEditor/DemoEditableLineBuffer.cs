@@ -62,7 +62,7 @@ namespace GtkExtDemo.TextEditor
 
 			// Create the initial lines. There is already one in the buffer before
 			// this insert operates.
-			InsertLines(0, 6);
+			InsertLines(0, 8);
 
 			// Set the text on the lines with the prefix so they can be styled
 			// as part of the set operation.
@@ -73,6 +73,8 @@ namespace GtkExtDemo.TextEditor
 			SetText(lineIndex++, "H: Heading Line");
 			SetText(lineIndex++, "T: Regular Text");
 			SetText(lineIndex++, "H:");
+			SetText(lineIndex++, "T: Regular Text");
+			SetText(lineIndex++, "T:");
 			SetText(lineIndex++, "T: Regular Text");
 			SetText(lineIndex, "B: Regular Text");
 		}
@@ -290,24 +292,31 @@ namespace GtkExtDemo.TextEditor
 			LineContexts lineContexts)
 		{
 			// See if we have the line in the styles.
+			DemoLineStyleType lineType = DemoLineStyleType.Default;
+
 			if (styles.Contains(lineIndex))
 			{
 				// If this is a heading line, and it has no value, and it is
 				// not the current line, we color it differently to make it
 				// obvious we are adding dynamic data.
-				DemoLineStyleType lineType = styles[lineIndex];
+				lineType = styles[lineIndex];
 
 				if (lineType == DemoLineStyleType.Heading &&
 				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
 				{
 					return "Inactive Heading";
 				}
-
-				// Otherwise, return the normal style name.
-				return lineType.ToString();
 			}
 
-			return DemoLineStyleType.Default.ToString();
+			// If we are a default and the text is blank, we have a break.
+			if (lineType == DemoLineStyleType.Default &&
+			    GetLineText(lineIndex).Trim().Length == 0)
+			{
+				lineType = DemoLineStyleType.Break;
+			}
+
+			// Otherwise, return the normal style name.
+			return lineType.ToString();
 		}
 
 		/// <summary>
@@ -328,19 +337,29 @@ namespace GtkExtDemo.TextEditor
 				return base.GetLineText(lineIndex, characters, lineContexts);
 			}
 
-			// See if we have the line in the styles.
+			// Get the style of the line, defaulting to default if we don't have
+			// it in the hash.
+			DemoLineStyleType lineType = DemoLineStyleType.Default;
+			int lineLength = base.GetLineLength(lineIndex, LineContexts.Unformatted);
+
 			if (styles.Contains(lineIndex))
 			{
 				// If this is a heading line, and it has no value, and it is
 				// not the current line, we put in different text for a
 				// placeholder.
-				DemoLineStyleType lineType = styles[lineIndex];
+				lineType = styles[lineIndex];
 
 				if (lineType == DemoLineStyleType.Heading &&
-				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
+				    lineLength == 0)
 				{
 					return "<Heading>";
 				}
+			}
+
+			// Check to see if we are default with no text.
+			if (lineType == DemoLineStyleType.Default && lineLength == 0)
+			{
+				return "\u25E6 \u25E6 \u25E6";
 			}
 
 			// We don't have a special case, so just return the base.
