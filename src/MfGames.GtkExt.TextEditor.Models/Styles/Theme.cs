@@ -43,9 +43,40 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 	{
 		#region Constants
 
-		public const string BaseStyle = "Base";
+		/// <summary>
+		/// The name of the background region style.
+		/// </summary>
+		public const string BackgroundRegionStyleName = "EditorViewBackground";
+
+		/// <summary>
+		/// Contains the name of the base style.
+		/// </summary>
+		public const string BaseStyleName = "Base";
+
+		/// <summary>
+		/// The name of the style for rendering the current line.
+		/// </summary>
+		public const string CurrentLineRegionStyleName = "EditorViewCurrentLine";
+
+		/// <summary>
+		/// The name of the style for rendering the current wrapped line.
+		/// </summary>
+		public const string CurrentWrappedLineRegionStyleName =
+			"EditorViewCurrentWrappedLine";
+
+		/// <summary>
+		/// The name of the line number renderer style.
+		/// </summary>
 		public const string LineNumberStyle = "LineNumber";
+
+		/// <summary>
+		/// The name of the parent style for all margin renderers.
+		/// </summary>
 		public const string MarginStyle = "Margin";
+
+		/// <summary>
+		/// The name for the default text style.
+		/// </summary>
 		public const string TextStyle = "Text";
 
 		#endregion
@@ -85,59 +116,31 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 			lineNumberStyle.Margins.Right = 0;
 
 			// Store the styles in the theme.
-			lineStyles[BaseStyle] = baseStyle;
+			lineStyles[BaseStyleName] = baseStyle;
 			lineStyles[MarginStyle] = marginStyle;
 			lineStyles[TextStyle] = textStyle;
 
-			// Colors
-			BackgroundColor = new Color(1, 1, 1);
-			DisabledBackgroundColor = new Color(0.9, 0.9, 0.9);
-			IndicatorBackgroundColor = new Color(1, 1, 1);
-			CurrentLineBackgroundColor = new Color(255 / 255.0, 250 / 255.0, 205 / 255.0);
-			CurrentWrappedLineBackgroundColor = new Color(
-				238 / 255.0, 233 / 255.0, 191 / 255.0);
-
-			// Region styles.
+			// Common region styles for the editor.
 			regionStyles = new BlockStyleDictionary<RegionBlockStyle>();
+
+			var backgroundRegionStyle = new RegionBlockStyle();
+			backgroundRegionStyle.BackgroundColor = new Color(1, 1, 1);
+			regionStyles[BackgroundRegionStyleName] = backgroundRegionStyle;
+
+			var currentLineRegionStyle = new RegionBlockStyle();
+			currentLineRegionStyle.BackgroundColor = new Color(
+				255 / 255.0, 250 / 255.0, 205 / 255.0);
+			regionStyles[CurrentLineRegionStyleName] = currentLineRegionStyle;
+
+			var currentWrappedLineRegionStyle = new RegionBlockStyle();
+			currentWrappedLineRegionStyle.BackgroundColor = new Color(
+				238 / 255.0, 233 / 255.0, 191 / 255.0);
+			regionStyles[CurrentWrappedLineRegionStyleName] =
+				currentWrappedLineRegionStyle;
 
 			// Indicator styles.
 			indicatorStyles = new HashDictionary<string, IndicatorStyle>();
 		}
-
-		#endregion
-
-		#region Colors
-
-		/// <summary>
-		/// Gets or sets the color of the background.
-		/// </summary>
-		/// <value>The color of the background.</value>
-		public Color BackgroundColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the background color for the currently selected line.
-		/// </summary>
-		/// <value>The color of the current line background.</value>
-		public Color? CurrentLineBackgroundColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the background color of the current positioned wrapped
-		/// line.
-		/// </summary>
-		/// <value>The color of the current wrapped line background.</value>
-		public Color? CurrentWrappedLineBackgroundColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the color of the disabled background.
-		/// </summary>
-		/// <value>The color of the disabled background.</value>
-		public Color DisabledBackgroundColor { get; set; }
-
-		/// <summary>
-		/// Gets or sets the background color of an indicator bar.
-		/// </summary>
-		/// <value>The color of the background.</value>
-		public Color IndicatorBackgroundColor { get; set; }
 
 		#endregion
 
@@ -148,12 +151,12 @@ namespace MfGames.GtkExt.TextEditor.Models.Styles
 		/// <summary>
 		/// Gets the region styles.
 		/// </summary>
-        public IDictionary<string, RegionBlockStyle> RegionStyles
-        {
-            get { return regionStyles; }
-        }
+		public IDictionary<string, RegionBlockStyle> RegionStyles
+		{
+			get { return regionStyles; }
+		}
 
-        #endregion
+		#endregion
 
 		#region Line Styles
 

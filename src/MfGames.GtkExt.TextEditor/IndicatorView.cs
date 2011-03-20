@@ -100,6 +100,7 @@ namespace MfGames.GtkExt.TextEditor
 
 		private EditorViewRenderer editorViewRenderer;
 		private ArrayList<IndicatorLine> indicatorLines;
+		private int indicatorLinesUsed;
 
 		/// <summary>
 		/// Goes through the buffer lines and assigns those lines to the
@@ -109,6 +110,8 @@ namespace MfGames.GtkExt.TextEditor
 		{
 			// Go through all the lines and put them in a known and reset state.
 			// Reset the lines we're using and clear out the lines we aren't.
+			indicatorLinesUsed = 0;
+
 			for (int indicatorLineIndex = 0;
 			     indicatorLineIndex < visibleLineCount;
 			     indicatorLineIndex++)
@@ -139,7 +142,8 @@ namespace MfGames.GtkExt.TextEditor
 
 			// Figure out how many indicator lines we'll be using.
 			int bufferLinesPerIndicatorLine = BufferLinesPerIndicatorLine;
-			int indicatorLinesUsed = 1 +
+			
+			indicatorLinesUsed = 1 +
 			                         EditorView.LineBuffer.LineCount /
 			                         bufferLinesPerIndicatorLine;
 
@@ -340,9 +344,11 @@ namespace MfGames.GtkExt.TextEditor
 		/// <returns></returns>
 		protected override bool OnExposeEvent(EventExpose exposeEvent)
 		{
-			// Figure out the area we are rendering into.
+			// Figure out the area we are rendering into. We subtract one
+			// from the width and height because of rounding causes one-pixel
+			// borders off the bottom and right edges.
 			Rectangle area = exposeEvent.Region.Clipbox;
-			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width, area.Height);
+			var cairoArea = new Cairo.Rectangle(area.X, area.Y, area.Width - 1, area.Height - 1);
 
 			using (Context cairoContext = CairoHelper.Create(exposeEvent.Window))
 			{
@@ -352,11 +358,22 @@ namespace MfGames.GtkExt.TextEditor
 
 				// Paint the background of the entire indicator bar.
 				BlockStyle backgroundStyle = Theme.RegionStyles[BackgroundRegionName];
-
 				DrawingUtility.DrawLayout(EditorView, renderContext, cairoArea, backgroundStyle);
-				//cairoContext.Color = Theme.IndicatorBackgroundColor;
-				//cairoContext.Rectangle(cairoArea);
-				//cairoContext.Fill();
+
+				// Show the visible area, if we have one.
+				BlockStyle visibleStyle = Theme.RegionStyles[VisibleRegionName];
+
+				if (visibleStyle != null)
+				{
+					var visibleArea = new Cairo.Rectangle(
+						area.X,
+						area.Y,
+						area.Width - 1,
+						indicatorLinesUsed * Theme.IndicatorPixelHeight);
+
+					DrawingUtility.DrawLayout(
+						EditorView, renderContext, visibleArea, visibleStyle);
+				}
 
 				// Draw all the indicator lines on the display.
 				double y = 0.5;

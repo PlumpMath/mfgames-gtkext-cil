@@ -547,23 +547,15 @@ namespace MfGames.GtkExt.TextEditor
 				var renderContext = new RenderContext(cairoContext);
 				renderContext.RenderRegion = cairoArea;
 
-				// If we don't have a buffer at this point, render the entire
-				// area with the disabled background color and stop.
+				// If we don't have a buffer at this point, don't render anything.
 				if (Renderer == null)
 				{
-					// Paint the background color of the window.
-					cairoContext.Color = theme.DisabledBackgroundColor;
-					cairoContext.Rectangle(cairoArea);
-					cairoContext.Fill();
-
-					// We are done processing.
 					return true;
 				}
 
 				// Paint the background color of the window.
-				cairoContext.Color = theme.BackgroundColor;
-				cairoContext.Rectangle(cairoArea);
-				cairoContext.Fill();
+				RegionBlockStyle backgroundStyle = Theme.RegionStyles[Theme.BackgroundRegionStyleName];
+				DrawingUtility.DrawLayout(this, renderContext, cairoArea, backgroundStyle);
 
 				// Reset the layout and its properties.
 				Renderer.Width = area.Width - margins.Width;
@@ -621,17 +613,19 @@ namespace MfGames.GtkExt.TextEditor
 					if (currentLine)
 					{
 						// If we have a full-line background color, display it.
-						if (theme.CurrentLineBackgroundColor.HasValue)
+						RegionBlockStyle currentLineStyle = Theme.RegionStyles[Theme.CurrentLineRegionStyleName];
+
+						if (currentLineStyle != null)
 						{
 							var lineArea = new Rectangle(TextX, currentY, TextWidth, height);
 
-							cairoContext.Color = theme.CurrentLineBackgroundColor.Value;
-							cairoContext.Rectangle(lineArea);
-							cairoContext.Fill();
+							DrawingUtility.DrawLayout(this, renderContext, lineArea, currentLineStyle);
 						}
 
 						// If we have a wrapped line background color, draw it.
-						if (theme.CurrentWrappedLineBackgroundColor.HasValue)
+						RegionBlockStyle currentWrappedLineStyle = Theme.RegionStyles[Theme.CurrentWrappedLineRegionStyleName];
+
+						if (currentWrappedLineStyle != null)
 						{
 							// Get the wrapped line for the caret's position.
 							LayoutLine wrappedLine = caret.Position.GetWrappedLine(this);
@@ -646,9 +640,7 @@ namespace MfGames.GtkExt.TextEditor
 								TextWidth,
 								wrappedLineExtents.Height);
 
-							cairoContext.Color = theme.CurrentWrappedLineBackgroundColor.Value;
-							cairoContext.Rectangle(wrappedLineArea);
-							cairoContext.Fill();
+							DrawingUtility.DrawLayout(this, renderContext, wrappedLineArea, currentWrappedLineStyle);
 						}
 					}
 
