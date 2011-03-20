@@ -848,12 +848,6 @@ namespace MfGames.GtkExt.TextEditor
 		/// <param name="bufferPosition">The buffer position.</param>
 		public void ScrollToCaret(BufferPosition bufferPosition)
 		{
-			// If we don't have adjustments, don't do anything.
-			if (verticalAdjustment == null)
-			{
-				return;
-			}
-
 			// Look to see if we are moving to a different position. If we are,
 			// we tell the line buffer that we have exited the previous line.
 			if (caret.Position.LineIndex != bufferPosition.LineIndex)
