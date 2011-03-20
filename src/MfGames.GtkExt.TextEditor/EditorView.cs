@@ -270,6 +270,8 @@ namespace MfGames.GtkExt.TextEditor
 			{
 				// Disconnect from the events.
 				Renderer.LineChanged -= OnLineChanged;
+				Renderer.LinesDeleted -= OnLineBufferLinesChanged;
+				Renderer.LinesInserted -= OnLineBufferLinesChanged;
 
 				// Remove the line buffer first.
 				ClearLineBuffer();
@@ -282,6 +284,8 @@ namespace MfGames.GtkExt.TextEditor
 			{
 				// Hook up to the events.
 				Renderer.LineChanged += OnLineChanged;
+				Renderer.LinesDeleted += OnLineBufferLinesChanged;
+				Renderer.LinesInserted += OnLineBufferLinesChanged;
 			}
 
 			// Set up the editor view for the changes made.
@@ -489,6 +493,16 @@ namespace MfGames.GtkExt.TextEditor
 			LineChangedArgs args)
 		{
 			RequestRedraw();
+		}
+
+		/// <summary>
+		/// Called when the line buffer count changes.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnLineBufferLinesChanged(object sender, EventArgs e)
+		{
+			SetAdjustments();
 		}
 
 		/// <summary>
