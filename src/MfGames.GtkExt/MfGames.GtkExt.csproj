@@ -70,6 +70,16 @@
     <Compile Include="PangoUtility.cs" />
     <Compile Include="StringListEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserActions\IUserActionFixture.cs" />
+    <Compile Include="UserActions\UserActionAttribute.cs" />
+    <Compile Include="UserActions\UserAction.cs" />
+    <Compile Include="UserActions\UserActionManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ext\mfgames-cil\src\MfGames\MfGames.csproj">
+      <Project>{3BABBE73-CD1D-494E-A81F-E4EA40107FA9}</Project>
+      <Name>MfGames</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

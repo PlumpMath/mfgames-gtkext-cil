@@ -1,0 +1,3 @@
+[submodule "ext/mfgames-cil"]
+	path = ext/mfgames-cil
+	url = git://github.com/dmoonfire/mfgames-cil.git
