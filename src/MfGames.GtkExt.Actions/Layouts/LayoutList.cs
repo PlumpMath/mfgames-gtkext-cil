@@ -24,29 +24,34 @@
 
 #region Namespaces
 
-using Gtk;
+using System.Collections.Generic;
+using System.Xml;
 
 #endregion
 
-namespace GtkExtDemo
+namespace MfGames.GtkExt.Actions.Layouts
 {
-	/// <summary>
-	/// Represents the common functionality of all the demo notebook tab.
-	/// </summary>
-	public abstract class DemoTab : VBox
+	internal class LayoutList : List<ILayoutItem>, ILayoutItem
 	{
-		#region GUI
+		#region Constructors
 
 		/// <summary>
-		/// Configures the GUI and allows a demo to add menu and widgets.
+		/// Initializes a new instance of the <see cref="LayoutList"/> class.
 		/// </summary>
-		/// <param name="demoWindow">The demo.</param>
-		/// <param name="uiManager">The UI manager.</param>
-		public virtual void ConfigureGui(
-			DemoWindow demoWindow,
-			UIManager uiManager)
+		/// <param name="reader">The reader.</param>
+		public LayoutList(XmlReader reader)
 		{
+			Id = reader["id"];
+			Label = reader["label"];
 		}
+
+		#endregion
+
+		#region Properties
+
+		public string Id { get; set; }
+
+		public string Label { get; set; }
 
 		#endregion
 	}

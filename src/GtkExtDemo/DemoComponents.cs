@@ -85,7 +85,7 @@ namespace GtkExtDemo
 			object obj,
 			EventArgs args)
 		{
-			Demo.Statusbar.Push(
+			DemoWindow.Statusbar.Push(
 				0,
 				"ExampleEnumeration: " + testEnumCombo.ActiveEnum + " (" +
 				testEnumCombo.Active + ")");

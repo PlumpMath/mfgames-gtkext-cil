@@ -26,9 +26,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Xml;
 
-using Action=Gtk.Action;
+using Gtk;
+
+using MfGames.GtkExt.Actions.Layouts;
 
 #endregion
 
@@ -49,7 +53,8 @@ namespace MfGames.GtkExt.Actions
 		/// </summary>
 		public UserActionManager()
 		{
-			entries = new Dictionary<HierarchicalPath, Entry>();
+			entries = new Dictionary<HierarchicalPath, UserActionEntry>();
+			layouts = new Dictionary<string, LayoutList>();
 		}
 
 		/// <summary>
@@ -93,7 +98,7 @@ namespace MfGames.GtkExt.Actions
 
 		#region Entries
 
-		private readonly Dictionary<HierarchicalPath, Entry> entries;
+		private readonly Dictionary<HierarchicalPath, UserActionEntry> entries;
 
 		/// <summary>
 		/// Scans through the given assembly and looks for anything that  is
@@ -103,6 +108,79 @@ namespace MfGames.GtkExt.Actions
 		/// <param name="assembly">The assembly.</param>
 		public void Add(Assembly assembly)
 		{
+			// Make sure we don't have a null since we can't handle that.
+			if (assembly == null)
+			{
+				throw new ArgumentNullException("assembly");
+			}
+
+			// Scan through the types of the assembly.
+			var emptyTypes = new Type[] { };
+			var emptyObjects = new object[] { };
+			Type userActionType = typeof(IUserAction);
+			Type userActionFixtureType = typeof(IUserActionFixture);
+
+			foreach (Type type in assembly.GetTypes())
+			{
+				// Make sure the type is a concrete instance.
+				if (!type.IsClass || type.IsAbstract)
+				{
+					// We can't create this type.
+					continue;
+				}
+
+				// Determine if we have a parameterless constructor.
+				ConstructorInfo constructor = type.GetConstructor(emptyTypes);
+
+				// If we implement the IUserAction, add it directly.
+				object results = null;
+
+				if (userActionType.IsAssignableFrom(type))
+				{
+					// Check the constructor.
+					if (constructor == null)
+					{
+						throw new Exception(
+							"Cannot create IUserAction type " + type +
+							" because it doesn't have a parameterless constructor.");
+					}
+
+					// Create the item and add it.
+					var userAction = (IUserAction) constructor.Invoke(emptyObjects);
+
+					results = userAction;
+					Add(userAction);
+				}
+
+				// If we implement the IUserActionFixture, add it directly.
+				if (userActionFixtureType.IsAssignableFrom(type))
+				{
+					// Check the constructor.
+					if (constructor == null)
+					{
+						throw new Exception(
+							"Cannot create IUserActionFixture type " + type +
+							" because it doesn't have a parameterless constructor.");
+					}
+
+					// Create the item and add it. If we already did (it could
+					// happen), then just reuse the same object.
+					IUserActionFixture userActionFixture;
+
+					if (results == null)
+					{
+						userActionFixture = (IUserActionFixture) constructor.Invoke(emptyObjects);
+					}
+					else
+					{
+						userActionFixture = (IUserActionFixture) results;
+					}
+
+					Add(userActionFixture);
+
+					continue;
+				}
+			}
 		}
 
 		/// <summary>
@@ -134,7 +212,7 @@ namespace MfGames.GtkExt.Actions
 			}
 
 			// Add the path into the dictionary.
-			entries[path] = new Entry(userAction);
+			entries[path] = new UserActionEntry(userAction);
 		}
 
 		/// <summary>
@@ -191,39 +269,186 @@ namespace MfGames.GtkExt.Actions
 
 		#region Layout
 
+		private readonly Dictionary<string, LayoutList> layouts;
+
+		/// <summary>
+		/// Loads a layout file into memory, replacing any elements that
+		/// exist already.
+		/// </summary>
+		/// <param name="filename">The filename.</param>
+		public void LoadFileLayout(string filename)
+		{
+			if (filename == null)
+			{
+				throw new ArgumentNullException("filename");
+			}
+
+			LoadFileLayout(new FileInfo(filename));
+		}
+
+		/// <summary>
+		/// Loads a layout file into memory, replacing any elements that
+		/// exist already.
+		/// </summary>
+		/// <param name="file">The file.</param>
+		public void LoadFileLayout(FileInfo file)
+		{
+			// Make sure the file is usable.
+			if (file == null)
+			{
+				throw new ArgumentNullException("file");
+			}
+
+			if (!file.Exists)
+			{
+				throw new FileNotFoundException("Cannot find layout file", file.FullName);
+			}
+
+			// Get an XML reader and use that.
+			using (
+				FileStream stream = file.Open(
+					FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				LoadLayout(stream);
+			}
+		}
+
+		/// <summary>
+		/// Loads a layout from the stream, replacing any keys found.
+		/// </summary>
+		/// <param name="stream">The stream.</param>
+		public void LoadLayout(Stream stream)
+		{
+			using (XmlReader reader = XmlReader.Create(stream))
+			{
+				LoadLayout(reader);
+			}
+		}
+
+		/// <summary>
+		/// Loads a layout from the XML reader, replacing any keys found.
+		/// </summary>
+		/// <param name="reader">The reader.</param>
+		public void LoadLayout(XmlReader reader)
+		{
+			// Keep track of a stack of list items.
+			var lists = new LinkedList<LayoutList>();
+			LayoutList currentList = null;
+
+			// Loop through the layout and add the items.
+			while (reader.Read())
+			{
+				// Check for opening elements.
+				if (reader.NodeType == XmlNodeType.Element)
+				{
+					switch (reader.LocalName)
+					{
+						case "List":
+							if (reader.IsEmptyElement)
+							{
+								break;
+							}
+							
+							// Create a new list and add it.
+							var newList = new LayoutList(reader);
+							lists.AddLast(currentList);
+
+							// If we are a top-level list, we need to keep it
+							// so calling programs can refer to it.
+							if (currentList == null)
+							{
+								layouts[newList.Id] = newList;
+							}
+							else
+							{
+								currentList.Add(newList);
+							}
+
+							currentList = newList;
+
+							break;
+
+						case "Action":
+							if (currentList == null)
+							{
+								throw new Exception("Could not find <List> element in XML input.");
+							}
+
+							var action = new LayoutAction(reader);
+							currentList.Add(action);
+							break;
+					}
+				}
+
+				// Check for closing elements.
+				if (reader.NodeType == XmlNodeType.EndElement)
+				{
+					if (reader.LocalName == "List")
+					{
+						// Pop the last list item off.
+						lists.RemoveLast();
+
+						// Change the list to the new current one.
+						currentList = lists.Count == 0 ? null : lists.Last.Value;
+					}
+				}
+			}
+		}
+
 		#endregion
 
 		#region Widgets
 
-		#endregion
-
-		#region Nested type: Entry
-
 		/// <summary>
-		/// Represents an user action and the associated data.
+		/// Populates the specified menubar with a given layout.
 		/// </summary>
-		private struct Entry
+		/// <param name="menubar">The menubar.</param>
+		/// <param name="layoutId">The layout ID.</param>
+		public void Populate(MenuBar menubar, string layoutId)
 		{
-			#region Constructors
+			// Clear the menubar of its current elements.
 
-			/// <summary>
-			/// Initializes a new instance of the <see cref="Entry"/> struct.
-			/// </summary>
-			/// <param name="userAction">The user action.</param>
-			public Entry(IUserAction userAction)
+			// Get the layout with the given name.
+			LayoutList layout = layouts[layoutId];
+
+			// Add the items in the list.
+			Populate(menubar, layout);
+		}
+
+		private void Populate(MenuBar menubar, LayoutList layout)
+		{
+			// Go through the list and pull out the layouts.
+			foreach (LayoutList menuLayout in layout)
 			{
-				UserAction = userAction;
-				Action = null;
+				// Create a new menu for this item.
+				var menu = new Menu();
+
+				var menuItem = new MenuItem(menuLayout.Label);
+				menuItem.Submenu = menu;
+
+				menubar.Append(menuItem);
+
+				// Go through and populate the menu itself.
+				Populate(menu, menuLayout);
 			}
+		}
 
-			#endregion
-
-			#region Properties
-
-			public Action Action;
-			public IUserAction UserAction;
-
-			#endregion
+		private void Populate(Menu menu, LayoutList layout)
+		{
+			// Go through all the items in the menu.
+			foreach (ILayoutItem item in layout)
+			{
+				// Check the type of item.
+				if (item is LayoutAction)
+				{
+					// Pull out the action we are processing.
+					var action = (LayoutAction) item;
+					
+					// Create a new menu item.
+					var menuItem = new MenuItem(action.Label);
+					menu.Append(menuItem);
+				}
+			}
 		}
 
 		#endregion

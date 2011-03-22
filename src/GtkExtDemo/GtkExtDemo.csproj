@@ -25,7 +25,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Demo.cs" />
+    <Compile Include="Actions\QuitUserAction.cs" />
+    <Compile Include="DemoWindow.cs" />
     <Compile Include="DemoComponents.cs" />
     <Compile Include="DemoTab.cs" />
     <Compile Include="DemoTextEditor.cs" />
@@ -38,6 +39,14 @@
     <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ext\mfgames-cil\src\MfGames\MfGames.csproj">
+      <Project>{3BABBE73-CD1D-494E-A81F-E4EA40107FA9}</Project>
+      <Name>MfGames</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MfGames.GtkExt.Actions\MfGames.GtkExt.Actions.csproj">
+      <Project>{E0A0DD4B-5D5D-41BD-81C3-FFDB3981263A}</Project>
+      <Name>MfGames.GtkExt.Actions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj">
       <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>
       <Name>MfGames.GtkExt.TextEditor.Models</Name>

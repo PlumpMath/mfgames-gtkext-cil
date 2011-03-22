@@ -28,25 +28,31 @@ using Gtk;
 
 #endregion
 
-namespace GtkExtDemo
+namespace MfGames.GtkExt.Actions
 {
 	/// <summary>
-	/// Represents the common functionality of all the demo notebook tab.
+	/// Represents an user action and the associated data.
 	/// </summary>
-	public abstract class DemoTab : VBox
+	internal struct UserActionEntry
 	{
-		#region GUI
+		#region Constructors
 
 		/// <summary>
-		/// Configures the GUI and allows a demo to add menu and widgets.
+		/// Initializes a new instance of the <see cref="UserActionEntry"/> struct.
 		/// </summary>
-		/// <param name="demoWindow">The demo.</param>
-		/// <param name="uiManager">The UI manager.</param>
-		public virtual void ConfigureGui(
-			DemoWindow demoWindow,
-			UIManager uiManager)
+		/// <param name="userAction">The user action.</param>
+		public UserActionEntry(IUserAction userAction)
 		{
+			UserAction = userAction;
+			Action = null;
 		}
+
+		#endregion
+
+		#region Properties
+
+		public Action Action;
+		public IUserAction UserAction;
 
 		#endregion
 	}

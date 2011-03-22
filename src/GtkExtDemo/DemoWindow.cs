@@ -29,16 +29,21 @@ using System.Text;
 
 using Gtk;
 
+using MfGames.GtkExt.Actions;
+
 #endregion
 
 namespace GtkExtDemo
 {
-	public class Demo : Window
+	/// <summary>
+	/// Primary demo window.
+	/// </summary>
+	public class DemoWindow : Window
 	{
 		/// <summary>
 		/// Constructs a demo object with the appropriate gui.
 		/// </summary>
-		public Demo()
+		public DemoWindow()
 			: base("Moonfire Games' Gtk Demo")
 		{
 			// Build the GUI
@@ -55,6 +60,7 @@ namespace GtkExtDemo
 
 		private readonly UIManager uiManager;
 		private Notebook notebook;
+		private MenuBar menubar;
 
 		/// <summary>
 		/// Contains the current page.
@@ -87,6 +93,7 @@ namespace GtkExtDemo
 			Add(box);
 
 			// Add the menu
+			menubar = new MenuBar();
 			box.PackStart(CreateGuiMenu(), false, false, 0);
 
 			// Set up the demo components.
@@ -112,6 +119,19 @@ namespace GtkExtDemo
 
 		private Widget CreateGuiMenu()
 		{
+#if USE_USERACTIONS
+			// Create a user action manager.
+			var userActionManager = new UserActionManager();
+			userActionManager.Add(GetType().Assembly);
+
+			// Load the layout from the assembly.
+			userActionManager.LoadFileLayout("ActionLayout1.xml");
+
+			// Populate the menubar and return it.
+			userActionManager.Populate(menubar, "MainMenu");
+			menubar.ShowAll();
+			return menubar;
+#else
 			// Defines the menu
 			var uiInfo = new StringBuilder();
 
@@ -167,7 +187,9 @@ namespace GtkExtDemo
 
 			// Set up the interfaces from XML
 			uiManager.AddUiFromString(uiInfo.ToString());
-			return uiManager.GetWidget("/MenuBar");
+			menubar = (MenuBar) uiManager.GetWidget("/MenuBar");
+			return menubar;
+#endif
 		}
 
 		/// <summary>
@@ -233,7 +255,7 @@ namespace GtkExtDemo
 			Application.Init();
 
 			// Create the demo
-			var demo = new Demo();
+			var demo = new DemoWindow();
 
 			// Assign the page if the user requested it.
 			if (args.Length > 0)
