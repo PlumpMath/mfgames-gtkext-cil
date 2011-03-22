@@ -24,19 +24,22 @@
 
 #region Namespaces
 
-using System;
+using System.Collections.Generic;
 
 #endregion
 
-namespace MfGames.GtkExt.UserActions
+namespace MfGames.GtkExt.Actions
 {
 	/// <summary>
-	/// Marks a user action that can be found using the manager's assembly scan
-	/// feature. Any <see cref="UserAction"/> or <see cref="IUserActionFixture"/>
-	/// marked with this attribute will be created and added to the manager.
+	/// Identifies a class that can configure one or more multiple user actions
+	/// in a single call.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class, Inherited = true)]
-	public class UserActionAttribute : Attribute
+	public interface IUserActionFixture
 	{
+		/// <summary>
+		/// Creates the user actions associated with this class.
+		/// </summary>
+		/// <returns></returns>
+		ICollection<IUserAction> CreateUserActions();
 	}
 }

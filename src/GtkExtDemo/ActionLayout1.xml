@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Layout>
+	<List id="MainMenu">
+		<List label="_File">
+			<Action id="/Application/Quit" label="_Quit" />
+		</List>
+	</List>
+</Layout>
