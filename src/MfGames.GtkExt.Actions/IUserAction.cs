@@ -52,6 +52,30 @@ namespace MfGames.GtkExt.Actions
 		#region Actions
 
 		/// <summary>
+		/// Gets the Gtk-formatted label, including mnemonics.
+		/// </summary>
+		/// <value>The label.</value>
+		string Label { get; }
+
+		/// <summary>
+		/// Gets the name suitable for showing to the user.
+		/// </summary>
+		/// <value>The display name.</value>
+		string Name { get; }
+
+		/// <summary>
+		/// Gets the icon ID.
+		/// </summary>
+		/// <value>The icon id.</value>
+		string IconId { get; }
+
+		/// <summary>
+		/// Gets the stock id, or <see langword="null"/> if this is not a stock item.
+		/// </summary>
+		/// <value>The stock id.</value>
+		string StockId { get; }
+
+		/// <summary>
 		/// Gets a value indicating whether this action can be undone.
 		/// </summary>
 		/// <value><c>true</c> if this instance can undo; otherwise, <c>false</c>.</value>

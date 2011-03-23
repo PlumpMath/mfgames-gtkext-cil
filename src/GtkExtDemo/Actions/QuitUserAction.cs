@@ -41,6 +41,42 @@ namespace GtkExtDemo.Actions
 	public class QuitUserAction : IUserAction
 	{
 		/// <summary>
+		/// Gets the Gtk-formatted label, including mnemonics.
+		/// </summary>
+		/// <value>The label.</value>
+		public string Label
+		{
+			get { return null; }
+		}
+
+		/// <summary>
+		/// Gets the name suitable for showing to the user.
+		/// </summary>
+		/// <value>The display name.</value>
+		public string Name
+		{
+			get { return "Quit"; }
+		}
+
+		/// <summary>
+		/// Gets the icon ID.
+		/// </summary>
+		/// <value>The icon id.</value>
+		public string IconId
+		{
+			get { return null; }
+		}
+
+		/// <summary>
+		/// Gets the stock id, or <see langword="null"/> if this is not a stock item.
+		/// </summary>
+		/// <value>The stock id.</value>
+		public string StockId
+		{
+			get { return Stock.Quit; }
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether this action can be undone.
 		/// </summary>
 		/// <value><c>true</c> if this instance can undo; otherwise, <c>false</c>.</value>

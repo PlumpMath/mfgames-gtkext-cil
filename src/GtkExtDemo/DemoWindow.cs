@@ -119,7 +119,7 @@ namespace GtkExtDemo
 
 		private Widget CreateGuiMenu()
 		{
-#if USE_USERACTIONS
+#if !USE_USERACTIONS
 			// Create a user action manager.
 			var userActionManager = new UserActionManager();
 			userActionManager.Add(GetType().Assembly);

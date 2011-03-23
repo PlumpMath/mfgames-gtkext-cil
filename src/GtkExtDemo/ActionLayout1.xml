@@ -2,7 +2,11 @@
 <Layout>
 	<List id="MainMenu">
 		<List label="_File">
-			<Action path="/Application/Quit" label="_Quit" />
+			<Action path="/Application/Quit" />
+		</List>
+		<List label="_View">
+			<Action path="/View/Components" />
+			<Action path="/View/Editor" />
 		</List>
 	</List>
 </Layout>

@@ -140,9 +140,9 @@ namespace MfGames.GtkExt.Actions
 					// Check the constructor.
 					if (constructor == null)
 					{
-						throw new Exception(
-							"Cannot create IUserAction type " + type +
-							" because it doesn't have a parameterless constructor.");
+						// We don't add it because there might be another reason
+						// this isn't included.
+						continue;
 					}
 
 					// Create the item and add it.
@@ -351,7 +351,7 @@ namespace MfGames.GtkExt.Actions
 							
 							// Create a new list and add it.
 							var newList = new LayoutList(reader);
-							lists.AddLast(currentList);
+							lists.AddLast(newList);
 
 							// If we are a top-level list, we need to keep it
 							// so calling programs can refer to it.
@@ -397,12 +397,36 @@ namespace MfGames.GtkExt.Actions
 
 		#endregion
 
+		#region Localization
+
+		/// <summary>
+		/// Gets the localized label.
+		/// </summary>
+		/// <param name="label">The label.</param>
+		/// <returns></returns>
+		protected virtual string GetLocalizedLabel(string label)
+		{
+			return label;
+		}
+
+		/// <summary>
+		/// Gets the localized text.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <returns></returns>
+		protected virtual string GetLocalizedText(string text)
+		{
+			return text;
+		}
+
+		#endregion
+
 		#region Widgets
 
 		/// <summary>
-		/// Populates the specified menubar with a given layout.
+		/// Populates the specified menu bar with a given layout.
 		/// </summary>
-		/// <param name="menubar">The menubar.</param>
+		/// <param name="menubar">The menu bar.</param>
 		/// <param name="layoutId">The layout ID.</param>
 		public void Populate(MenuBar menubar, string layoutId)
 		{
@@ -443,9 +467,22 @@ namespace MfGames.GtkExt.Actions
 				{
 					// Pull out the action we are processing.
 					var action = (LayoutAction) item;
+					UserActionEntry entry = entries[action.ConfigurationPath];
+					IUserAction userAction = entry.UserAction;
 					
-					// Create a new menu item.
-					var menuItem = new MenuItem(action.Label);
+					// If the menu has an icon or is stock, then we use that.
+					MenuItem menuItem;
+
+					if (String.IsNullOrEmpty(userAction.StockId))
+					{
+						menuItem = new ImageMenuItem(userAction.Label);
+					}
+					else
+					{
+						menuItem = new ImageMenuItem(userAction.StockId, new AccelGroup());
+					}
+
+					// Add the menu item to the list.
 					menu.Append(menuItem);
 				}
 			}
