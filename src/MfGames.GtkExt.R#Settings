@@ -14,7 +14,9 @@
                 <Name>en-US</Name>
                 <CaseSensitive>false</CaseSensitive>
                 <UserWords>Pango
-Renderers</UserWords>
+Renderers
+Mf
+Moonfire</UserWords>
               </CustomDictionary>
             </Dictionaries>
           </CustomDictionaries>
@@ -1160,7 +1162,7 @@ THE SOFTWARE.]]></FileHeader>
         <ResxSpellCheckSuggestion>WARNING</ResxSpellCheckSuggestion>
         <StringLiteralsWordIsNotInDictionary>SUGGESTION</StringLiteralsWordIsNotInDictionary>
         <VerbatimStringLiteralsWordIsNotInDictionary>SUGGESTION</VerbatimStringLiteralsWordIsNotInDictionary>
-        <IdentifierWordIsNotInDictionary>SUGGESTION</IdentifierWordIsNotInDictionary>
+        <IdentifierWordIsNotInDictionary>DO_NOT_SHOW</IdentifierWordIsNotInDictionary>
       </SeverityTable>
     </HighlightingSettings>
     <CodeCleanup SilentCleanup="Deep Cleanup" RecentlyUsed="Deep Cleanup">

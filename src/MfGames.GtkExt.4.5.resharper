@@ -12,7 +12,8 @@
               <CaseSensitive>false</CaseSensitive>
               <UserWords>Pango
 Renderers
-Mf</UserWords>
+Mf
+Moonfire</UserWords>
             </CustomDictionary>
           </Dictionaries>
         </CustomDictionaries>
