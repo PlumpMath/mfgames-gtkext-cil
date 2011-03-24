@@ -50,6 +50,16 @@ namespace GtkExtDemo.Actions
 		}
 
 		/// <summary>
+		/// Gets the name of the group associated with this action. This cannot
+		/// be <see langword="null"/> or empty.
+		/// </summary>
+		/// <value>The name of the group.</value>
+		public string GroupName
+		{
+			get { return "Global"; }
+		}
+
+		/// <summary>
 		/// Gets the name suitable for showing to the user.
 		/// </summary>
 		/// <value>The display name.</value>

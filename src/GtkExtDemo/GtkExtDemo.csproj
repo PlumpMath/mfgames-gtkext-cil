@@ -26,7 +26,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Actions\QuitUserAction.cs" />
-    <Compile Include="Actions\ViewUserActionFixture.cs" />
+    <Compile Include="Actions\SwitchPageUserAction.cs" />
     <Compile Include="DemoWindow.cs" />
     <Compile Include="DemoComponents.cs" />
     <Compile Include="DemoTab.cs" />

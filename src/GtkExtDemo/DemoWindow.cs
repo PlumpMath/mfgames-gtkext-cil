@@ -29,6 +29,8 @@ using System.Text;
 
 using Gtk;
 
+using GtkExtDemo.Actions;
+
 using MfGames.GtkExt.Actions;
 
 #endregion
@@ -92,6 +94,9 @@ namespace GtkExtDemo
 			var box = new VBox();
 			Add(box);
 
+			// Create the components we need before the menu.
+			notebook = new Notebook();
+
 			// Add the menu
 			menubar = new MenuBar();
 			box.PackStart(CreateGuiMenu(), false, false, 0);
@@ -100,7 +105,6 @@ namespace GtkExtDemo
 			demoTextEditor.ConfigureGui(this, uiManager);
 
 			// Create a notebook
-			notebook = new Notebook();
 			notebook.BorderWidth = 5;
 			box.PackStart(notebook, true, true, 0);
 
@@ -120,9 +124,15 @@ namespace GtkExtDemo
 		private Widget CreateGuiMenu()
 		{
 #if !USE_USERACTIONS
+			// Create a new accelerator and add it to the window.
+			var accelGroup = new AccelGroup();
+			AddAccelGroup(accelGroup);
+
 			// Create a user action manager.
-			var userActionManager = new UserActionManager();
+			var userActionManager = new UserActionManager(accelGroup);
 			userActionManager.Add(GetType().Assembly);
+			userActionManager.Add(new SwitchPageUserAction(notebook, 0, "Components"));
+			userActionManager.Add(new SwitchPageUserAction(notebook, 1, "Text Editor"));
 
 			// Load the layout from the assembly.
 			userActionManager.LoadFileLayout("ActionLayout1.xml");

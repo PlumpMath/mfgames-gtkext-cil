@@ -6,7 +6,7 @@
 		</List>
 		<List label="_View">
 			<Action path="/View/Components" />
-			<Action path="/View/Editor" />
+			<Action path="/View/Text Editor" />
 		</List>
 	</List>
 </Layout>

@@ -47,6 +47,13 @@ namespace MfGames.GtkExt.Actions
 		/// </summary>
 		HierarchicalPath ConfigurationPath { get; }
 
+		/// <summary>
+		/// Gets the name of the group associated with this action. This cannot
+		/// be <see langword="null"/> or empty.
+		/// </summary>
+		/// <value>The name of the group.</value>
+		string GroupName { get; }
+
 		#endregion
 
 		#region Actions

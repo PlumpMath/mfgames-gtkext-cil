@@ -40,7 +40,7 @@ namespace MfGames.GtkExt.Actions
 {
 	/// <summary>
 	/// Handles gathering and managing user actions. It also is used to populate
-	/// various widget containers, such as menus and toolbars.
+	/// various widget containers, such as menus and tool bars.
 	/// This is organized that a class could extend one of the interfaces and
 	/// automatically gather up actions using an IoC manager.
 	/// </summary>
@@ -51,19 +51,29 @@ namespace MfGames.GtkExt.Actions
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UserActionManager"/> class.
 		/// </summary>
-		public UserActionManager()
+		/// <param name="accelGroup">The accelerator group to attach to.</param>
+		public UserActionManager(AccelGroup accelGroup)
 		{
+			if (accelGroup == null)
+			{
+				throw new ArgumentNullException("accelGroup");
+			}
+
+			this.AccelGroup = accelGroup;
+
 			entries = new Dictionary<HierarchicalPath, UserActionEntry>();
 			layouts = new Dictionary<string, LayoutList>();
+			groups = new Dictionary<string, WidgetGroup>();
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UserActionManager"/> class
 		/// and populates it with the actions given.
 		/// </summary>
+		/// <param name="accelGroup">The accelerator group to attach to.</param>
 		/// <param name="userActions">The user actions.</param>
-		public UserActionManager(IEnumerable<IUserAction> userActions)
-			: this()
+		public UserActionManager(AccelGroup accelGroup, IEnumerable<IUserAction> userActions)
+			: this(accelGroup)
 		{
 			Add(userActions);
 		}
@@ -72,9 +82,10 @@ namespace MfGames.GtkExt.Actions
 		/// Initializes a new instance of the <see cref="UserActionManager"/> class
 		/// and populates it with the actions from the fixtures.
 		/// </summary>
+		/// <param name="accelGroup">The accelerator group to attach to.</param>
 		/// <param name="userActionFixtures">The user action fixtures.</param>
-		public UserActionManager(IEnumerable<IUserActionFixture> userActionFixtures)
-			: this()
+		public UserActionManager(AccelGroup accelGroup, IEnumerable<IUserActionFixture> userActionFixtures)
+			: this(accelGroup)
 		{
 			Add(userActionFixtures);
 		}
@@ -83,12 +94,14 @@ namespace MfGames.GtkExt.Actions
 		/// Initializes a new instance of the <see cref="UserActionManager"/> class
 		/// and populates it with the given user actions and action fixtures.
 		/// </summary>
+		/// <param name="accelGroup">The accelerator group to attach to.</param>
 		/// <param name="userActions">The user actions.</param>
 		/// <param name="userActionFixtures">The user action fixtures.</param>
 		public UserActionManager(
+			AccelGroup accelGroup,
 			IEnumerable<IUserAction> userActions,
 			IEnumerable<IUserActionFixture> userActionFixtures)
-			: this()
+			: this(accelGroup)
 		{
 			Add(userActions);
 			Add(userActionFixtures);
@@ -259,6 +272,35 @@ namespace MfGames.GtkExt.Actions
 		public void Remove(HierarchicalPath configurationPath)
 		{
 			entries.Remove(configurationPath);
+		}
+
+		#endregion
+
+		#region Groups
+
+		private readonly Dictionary<string, WidgetGroup> groups;
+
+		/// <summary>
+		/// Gets the accelerator group associated with this manager.
+		/// </summary>
+		/// <value>The accelerator group.</value>
+		public AccelGroup AccelGroup { get; private set; }
+
+		/// <summary>
+		/// Gets or creates the widget group.
+		/// </summary>
+		/// <param name="groupName">Name of the group.</param>
+		/// <returns></returns>
+		protected WidgetGroup GetOrCreateGroup(string groupName)
+		{
+			// If we don't have the group, then create a new one.
+			if (!groups.ContainsKey(groupName))
+			{
+				groups[groupName] = new WidgetGroup(groupName);
+			}
+
+			// Pull out the group and return it.
+			return groups[groupName];
 		}
 
 		#endregion
@@ -462,29 +504,34 @@ namespace MfGames.GtkExt.Actions
 			// Go through all the items in the menu.
 			foreach (ILayoutItem item in layout)
 			{
-				// Check the type of item.
-				if (item is LayoutAction)
+				// If we aren't a layout action, don't do anything.
+				if (!(item is LayoutAction))
 				{
-					// Pull out the action we are processing.
-					var action = (LayoutAction) item;
-					UserActionEntry entry = entries[action.ConfigurationPath];
-					IUserAction userAction = entry.UserAction;
-					
-					// If the menu has an icon or is stock, then we use that.
-					MenuItem menuItem;
-
-					if (String.IsNullOrEmpty(userAction.StockId))
-					{
-						menuItem = new ImageMenuItem(userAction.Label);
-					}
-					else
-					{
-						menuItem = new ImageMenuItem(userAction.StockId, new AccelGroup());
-					}
-
-					// Add the menu item to the list.
-					menu.Append(menuItem);
+					continue;
 				}
+
+				// Pull out the action we are processing.
+				var action = (LayoutAction) item;
+
+				if (!entries.ContainsKey(action.ConfigurationPath))
+				{
+					throw new KeyNotFoundException(
+						"Cannot find " + action.ConfigurationPath + " as a defined action.");
+				}
+
+				UserActionEntry entry = entries[action.ConfigurationPath];
+				IUserAction userAction = entry.UserAction;
+
+				// If the menu has an icon or is stock, then we use that.
+				MenuItem menuItem = String.IsNullOrEmpty(userAction.StockId)
+				                    	? new ImageMenuItem(userAction.Label)
+				                    	: new ImageMenuItem(userAction.StockId, AccelGroup);
+
+				// Add a link to the activation of the item.
+				menuItem.Activated += entry.Do;
+
+				// Add the menu item to the list.
+				menu.Append(menuItem);
 			}
 		}
 

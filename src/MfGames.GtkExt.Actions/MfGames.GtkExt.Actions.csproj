@@ -57,6 +57,7 @@
     <Compile Include="IUserActionFixture.cs" />
     <Compile Include="UserActionEntry.cs" />
     <Compile Include="UserActionManager.cs" />
+    <Compile Include="WidgetGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ext\mfgames-cil\src\MfGames\MfGames.csproj">

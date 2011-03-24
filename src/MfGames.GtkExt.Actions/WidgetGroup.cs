@@ -26,49 +26,44 @@
 
 using System;
 
-using Action=Gtk.Action;
+using Gtk;
 
 #endregion
 
 namespace MfGames.GtkExt.Actions
 {
 	/// <summary>
-	/// Represents an user action and the associated data.
+	/// Defines a group of widgets, including accelerators, that can be managed
+	/// as a single unit.
 	/// </summary>
-	internal struct UserActionEntry
+	public class WidgetGroup
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UserActionEntry"/> struct.
+		/// Initializes a new instance of the <see cref="WidgetGroup"/> class.
 		/// </summary>
-		/// <param name="userAction">The user action.</param>
-		public UserActionEntry(IUserAction userAction)
+		/// <param name="groupName">Name of the group.</param>
+		public WidgetGroup(string groupName)
 		{
-			UserAction = userAction;
-			Action = null;
+			// Keep the parameters for the class.
+			if (String.IsNullOrEmpty(groupName))
+			{
+				throw new ArgumentNullException("groupName");
+			}
+
+			GroupName = groupName;
 		}
 
 		#endregion
 
-		#region Properties
-
-		public Action Action;
-		public IUserAction UserAction;
-
-		#endregion
-
-		#region Actions
+		#region Groups
 
 		/// <summary>
-		/// Performs the action associated with this action.
+		/// Gets the name of the group.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		public void Do(object sender, EventArgs args)
-		{
-			UserAction.Do();
-		}
+		/// <value>The name of the group.</value>
+		public string GroupName { get; private set; }
 
 		#endregion
 	}
