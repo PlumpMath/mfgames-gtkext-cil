@@ -99,6 +99,9 @@ namespace GtkExtDemo
 
 			// Add the editor and the controls into a vertical box.
 			PackStart(verticalLayout, true, true, 2);
+
+			// Call the first callback.
+			OnEditableBufferActivated(this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -283,20 +286,20 @@ namespace GtkExtDemo
 			bool checkReadOnly,
 			bool checkClear)
 		{
-			// Remove the events from the items to avoid callbacks on the items.
-			editableBufferMenuItem.Activated -= OnEditableBufferActivated;
-			readOnlyBufferMenuItem.Activated -= OnReadOnlyBufferActivated;
-			clearBufferMenuItem.Activated -= OnClearBuffer;
+			//// Remove the events from the items to avoid callbacks on the items.
+			//editableBufferMenuItem.Activated -= OnEditableBufferActivated;
+			//readOnlyBufferMenuItem.Activated -= OnReadOnlyBufferActivated;
+			//clearBufferMenuItem.Activated -= OnClearBuffer;
 
-			// Check the boxes.
-			editableBufferMenuItem.Active = checkEditable;
-			readOnlyBufferMenuItem.Active = checkReadOnly;
-			clearBufferMenuItem.Active = checkClear;
+			//// Check the boxes.
+			//editableBufferMenuItem.Active = checkEditable;
+			//readOnlyBufferMenuItem.Active = checkReadOnly;
+			//clearBufferMenuItem.Active = checkClear;
 
-			// Add the events back in.
-			editableBufferMenuItem.Activated += OnEditableBufferActivated;
-			readOnlyBufferMenuItem.Activated += OnReadOnlyBufferActivated;
-			clearBufferMenuItem.Activated += OnClearBuffer;
+			//// Add the events back in.
+			//editableBufferMenuItem.Activated += OnEditableBufferActivated;
+			//readOnlyBufferMenuItem.Activated += OnReadOnlyBufferActivated;
+			//clearBufferMenuItem.Activated += OnClearBuffer;
 		}
 
 		#endregion
@@ -346,9 +349,6 @@ namespace GtkExtDemo
 			clearBufferMenuItem.DrawAsRadio = true;
 			clearBufferMenuItem.Activated += OnClearBuffer;
 			menu.Append(clearBufferMenuItem);
-
-			// Call the first callback.
-			OnEditableBufferActivated(this, EventArgs.Empty);
 		}
 
 		#endregion
