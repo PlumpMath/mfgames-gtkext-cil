@@ -34,18 +34,18 @@ using Gtk;
 namespace MfGames.GtkExt.Actions.Layouts
 {
 	/// <summary>
-	/// Implements a list of layout items which can include other layout lists
-	/// and actions.
+	/// Contains the top-level element in a <see cref="ActionLayout"/>.
 	/// </summary>
-	public class LayoutList : List<ILayoutItem>, ILayoutItem
+	public class LayoutGroup : List<LayoutList>
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LayoutList"/> class.
+		/// Initializes a new instance of the <see cref="LayoutGroup"/> class
+		/// and populates it from the given reader.
 		/// </summary>
 		/// <param name="reader">The reader.</param>
-		public LayoutList(XmlReader reader)
+		public LayoutGroup(XmlReader reader)
 		{
 			Load(reader);
 		}
@@ -55,30 +55,23 @@ namespace MfGames.GtkExt.Actions.Layouts
 		#region Properties
 
 		/// <summary>
-		/// Gets or sets the name of the action group associated with this list.
+		/// Contains the ID to identify the group.
 		/// </summary>
-		/// <value>The name of the group.</value>
-		public string GroupName { get; set; }
-
-		/// <summary>
-		/// Gets or sets the label of the list which is used in the menus.
-		/// </summary>
-		/// <value>The label.</value>
-		public string Label { get; set; }
+		public string Id { get; private set; }
 
 		#endregion
 
 		#region Loading
 
 		/// <summary>
-		/// Loads the layout list from the given reader.
+		/// Loads the layout group from the given reader. This assumes that the
+		/// reader is positioned on the group's tag.
 		/// </summary>
 		/// <param name="reader">The reader.</param>
 		private void Load(XmlReader reader)
 		{
 			// Pull out the group's information.
-			Label = reader["label"];
-			GroupName = reader["group"];
+			Id = reader["id"];
 
 			// Loop through until we find the end of the group.
 			while (reader.Read())
@@ -91,17 +84,17 @@ namespace MfGames.GtkExt.Actions.Layouts
 
 				// Check for the end of the layout tag.
 				if (reader.NodeType == XmlNodeType.EndElement &&
-				    reader.LocalName == "layout-list")
+				    reader.LocalName == "layout-group")
 				{
 					// We are done reading.
 					return;
 				}
 
 				// Load the list as we get them.
-				if (reader.LocalName == "action")
+				if (reader.LocalName == "layout-list")
 				{
-					var action = new LayoutAction(reader);
-					Add(action);
+					var list = new LayoutList(reader);
+					Add(list);
 				}
 			}
 		}
@@ -111,27 +104,18 @@ namespace MfGames.GtkExt.Actions.Layouts
 		#region Population
 
 		/// <summary>
-		/// Populates the specified shell with sub-menus.
+		/// Populates the specified menu bar with components from this list.
 		/// </summary>
-		/// <param name="shell">The shell.</param>
+		/// <param name="manager">The manager.</param>
+		/// <param name="menubar">The menu bar.</param>
 		public void Populate(
 			ActionManager manager,
-			MenuShell shell)
+			MenuBar menubar)
 		{
-			// Create a new submenu for ourselves.
-			var menu = new Menu();
-
-			var menuItem = new MenuItem(Label);
-			menuItem.Submenu = menu;
-
-			// Attach our menu to the shell.
-			shell.Append(menuItem);
-
-			// Go through all of our elements and add them to our menu.
-			foreach (ILayoutItem item in this)
+			// Go through all the lists in this group.
+			foreach (LayoutList list in this)
 			{
-				// Go through and populate the menu itself.
-				item.Populate(manager, menu);
+				list.Populate(manager, menubar);
 			}
 		}
 
@@ -147,8 +131,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 		/// </returns>
 		public override string ToString()
 		{
-			return string.Format(
-				"LayoutList ({0}, {1}, Items {2})", Label, GroupName ?? "<No Group>", Count);
+			return "Layout Group (" + Id + ", Lists " + Count + ")";
 		}
 
 		#endregion

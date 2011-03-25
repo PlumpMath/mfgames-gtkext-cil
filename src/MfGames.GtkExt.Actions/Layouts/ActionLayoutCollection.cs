@@ -24,60 +24,53 @@
 
 #region Namespaces
 
-using System.Xml;
-
-using Gtk;
+using System;
+using System.Collections.Generic;
 
 #endregion
 
 namespace MfGames.GtkExt.Actions.Layouts
 {
 	/// <summary>
-	/// Represents a single item in the layout.
+	/// Contains a list of action layouts.
 	/// </summary>
-	public class LayoutAction : ILayoutItem
+	public class ActionLayoutCollection : List<ActionLayout>
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LayoutAction"/> class.
+		/// Initializes a new instance of the <see cref="ActionLayoutCollection"/> class.
 		/// </summary>
-		/// <param name="reader">The reader.</param>
-		public LayoutAction(XmlReader reader)
+		/// <param name="actionManager">The action manager.</param>
+		public ActionLayoutCollection(ActionManager actionManager)
 		{
-			ActionName = reader["name"];
+			this.actionManager = actionManager;
 		}
 
 		#endregion
 
 		#region Properties
 
-		/// <summary>
-		/// Gets or sets the name.
-		/// </summary>
-		/// <value>The name.</value>
-		public string ActionName { get; set; }
+		private readonly ActionManager actionManager;
 
 		#endregion
 
-		#region Population
+		#region Collection
 
 		/// <summary>
-		/// Populates the specified shell with sub-menus.
+		/// Adds the specified layout to the collection.
 		/// </summary>
-		/// <param name="manager"></param>
-		/// <param name="shell">The shell.</param>
-		public void Populate(
-			ActionManager manager,
-			MenuShell shell)
+		/// <param name="layout">The layout.</param>
+		public new void Add(ActionLayout layout)
 		{
-			// Get the action associated with this.
-			Action action = manager.GetAction(ActionName);
+			if (layout == null)
+			{
+				throw new ArgumentNullException("layout");
+			}
 
-			// Create a menu item from this action.
-			Widget widget = action.CreateMenuItem();
+			layout.ActionManager = actionManager;
 
-			shell.Add(widget);
+			base.Add(layout);
 		}
 
 		#endregion

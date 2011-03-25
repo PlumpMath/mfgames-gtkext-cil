@@ -26,6 +26,8 @@
 
 using System.Collections.Generic;
 
+using Gtk;
+
 #endregion
 
 namespace MfGames.GtkExt.Actions
@@ -34,12 +36,13 @@ namespace MfGames.GtkExt.Actions
 	/// Identifies a class that can configure one or more multiple user actions
 	/// in a single call.
 	/// </summary>
-	public interface IUserActionFixture
+	public interface IActionFactory
 	{
 		/// <summary>
-		/// Creates the user actions associated with this class.
+		/// Creates all the <see cref="Action"/> objects associated with the extending
+		/// class.
 		/// </summary>
 		/// <returns></returns>
-		ICollection<IUserAction> CreateUserActions();
+		ICollection<Action> CreateActions();
 	}
 }

@@ -24,50 +24,38 @@
 
 #region Namespaces
 
-using System;
-
-using Action=Gtk.Action;
+using Gtk;
 
 #endregion
 
-namespace MfGames.GtkExt.Actions
+namespace GtkExtDemo.Actions
 {
 	/// <summary>
-	/// Represents an user action and the associated data.
+	/// Represents the quit action.
 	/// </summary>
-	internal struct UserActionEntry
+	public class QuitAction : Action
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UserActionEntry"/> struct.
+		/// Initializes a new instance of the <see cref="QuitAction"/> class
+		/// and uses the stock settings for it.
 		/// </summary>
-		/// <param name="userAction">The user action.</param>
-		public UserActionEntry(IUserAction userAction)
+		public QuitAction()
+			: base("Quit", null, null, Stock.Quit)
 		{
-			UserAction = userAction;
-			Action = null;
 		}
-
-		#endregion
-
-		#region Properties
-
-		public Action Action;
-		public IUserAction UserAction;
 
 		#endregion
 
 		#region Actions
 
 		/// <summary>
-		/// Performs the action associated with this action.
+		/// Called when the action is called.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		public void Do(object sender, EventArgs args)
+		protected override void OnActivated()
 		{
-			UserAction.Do();
+			Application.Quit();
 		}
 
 		#endregion

@@ -25,46 +25,36 @@
 #region Namespaces
 
 using System;
-
-using Gtk;
+using System.Collections.Generic;
 
 #endregion
 
-namespace MfGames.GtkExt.Actions
+namespace MfGames.GtkExt.Actions.Layouts
 {
 	/// <summary>
-	/// Defines a group of widgets, including accelerators, that can be managed
-	/// as a single unit.
+	/// A list of <see cref="LayoutGroup"/> objects.
 	/// </summary>
-	public class WidgetGroup
+	public class LayoutGroupCollection : List<LayoutGroup>
 	{
-		#region Constructors
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WidgetGroup"/> class.
+		/// Gets the <see cref="MfGames.GtkExt.Actions.Layouts.LayoutGroup"/> with the
+		/// specified group name.
 		/// </summary>
-		/// <param name="groupName">Name of the group.</param>
-		public WidgetGroup(string groupName)
+		/// <value></value>
+		public LayoutGroup this[string groupName]
 		{
-			// Keep the parameters for the class.
-			if (String.IsNullOrEmpty(groupName))
+			get
 			{
-				throw new ArgumentNullException("groupName");
+				foreach (LayoutGroup group in this)
+				{
+					if (group.Id == groupName)
+					{
+						return group;
+					}
+				}
+
+				throw new Exception("Cannot find group " + groupName);
 			}
-
-			GroupName = groupName;
 		}
-
-		#endregion
-
-		#region Groups
-
-		/// <summary>
-		/// Gets the name of the group.
-		/// </summary>
-		/// <value>The name of the group.</value>
-		public string GroupName { get; private set; }
-
-		#endregion
 	}
 }

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Layout>
-	<List id="MainMenu">
-		<List label="_File">
-			<Action path="/Application/Quit" />
-		</List>
-		<List label="_View">
-			<Action path="/View/Components" />
-			<Action path="/View/Text Editor" />
-		</List>
-	</List>
-</Layout>
+<action-layout xmlns="urn:mfgames.com/mfgames-gtkext-cil/action-layout/0">
+	<layout-group id="Main">
+		<layout-list label="_File">
+			<action name="Quit"/>
+		</layout-list>
+		<layout-list label="_View" group="View" >
+			<action name="SwitchPage0"/>
+			<action name="SwitchPage1"/>
+		</layout-list>
+	</layout-group>
+</action-layout>

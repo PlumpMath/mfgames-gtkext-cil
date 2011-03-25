@@ -25,8 +25,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Actions\QuitUserAction.cs" />
-    <Compile Include="Actions\SwitchPageUserAction.cs" />
+    <Compile Include="Actions\QuitAction.cs" />
+    <Compile Include="Actions\SwitchPageAction.cs" />
     <Compile Include="DemoWindow.cs" />
     <Compile Include="DemoComponents.cs" />
     <Compile Include="DemoTab.cs" />

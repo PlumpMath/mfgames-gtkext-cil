@@ -25,6 +25,7 @@
 #region Namespaces
 
 using System;
+using System.IO;
 using System.Text;
 
 using Gtk;
@@ -129,16 +130,18 @@ namespace GtkExtDemo
 			AddAccelGroup(accelGroup);
 
 			// Create a user action manager.
-			var userActionManager = new UserActionManager(accelGroup);
-			userActionManager.Add(GetType().Assembly);
-			userActionManager.Add(new SwitchPageUserAction(notebook, 0, "Components"));
-			userActionManager.Add(new SwitchPageUserAction(notebook, 1, "Text Editor"));
+			var actionManager = new ActionManager(accelGroup);
+			actionManager.Add(GetType().Assembly);
+			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
+			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
 
 			// Load the layout from the assembly.
-			userActionManager.LoadFileLayout("ActionLayout1.xml");
+			var layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
+			actionManager.Add(layout);
 
-			// Populate the menubar and return it.
-			userActionManager.Populate(menubar, "MainMenu");
+			//// Populate the menubar and return it.
+			layout.Populate(menubar, "Main");
+
 			menubar.ShowAll();
 			return menubar;
 #else

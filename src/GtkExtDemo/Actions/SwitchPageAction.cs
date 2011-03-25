@@ -24,60 +24,49 @@
 
 #region Namespaces
 
-using System.Xml;
-
 using Gtk;
 
 #endregion
 
-namespace MfGames.GtkExt.Actions.Layouts
+namespace GtkExtDemo.Actions
 {
 	/// <summary>
-	/// Represents a single item in the layout.
+	/// Defines a user action that switches notebook pages.
 	/// </summary>
-	public class LayoutAction : ILayoutItem
+	public class SwitchPageAction : Action
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LayoutAction"/> class.
+		/// Initializes a new instance of the <see cref="SwitchPageAction"/>
+		/// class and configures it to switch to the given page.
 		/// </summary>
-		/// <param name="reader">The reader.</param>
-		public LayoutAction(XmlReader reader)
+		/// <param name="notebook">The notebook.</param>
+		/// <param name="pageNumber">The page number.</param>
+		/// <param name="label">The label.</param>
+		public SwitchPageAction(
+			Notebook notebook,
+			int pageNumber,
+			string label)
+			: base("SwitchPage" + pageNumber, label)
 		{
-			ActionName = reader["name"];
+			this.notebook = notebook;
+			this.pageNumber = pageNumber;
 		}
 
 		#endregion
 
-		#region Properties
+		#region Action
+
+		private readonly Notebook notebook;
+		private readonly int pageNumber;
 
 		/// <summary>
-		/// Gets or sets the name.
+		/// Switched the notebook page when activated.
 		/// </summary>
-		/// <value>The name.</value>
-		public string ActionName { get; set; }
-
-		#endregion
-
-		#region Population
-
-		/// <summary>
-		/// Populates the specified shell with sub-menus.
-		/// </summary>
-		/// <param name="manager"></param>
-		/// <param name="shell">The shell.</param>
-		public void Populate(
-			ActionManager manager,
-			MenuShell shell)
+		protected override void OnActivated()
 		{
-			// Get the action associated with this.
-			Action action = manager.GetAction(ActionName);
-
-			// Create a menu item from this action.
-			Widget widget = action.CreateMenuItem();
-
-			shell.Add(widget);
+			notebook.Page = pageNumber;
 		}
 
 		#endregion
