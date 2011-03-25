@@ -35,19 +35,5 @@ namespace GtkExtDemo
 	/// </summary>
 	public abstract class DemoTab : VBox
 	{
-		#region GUI
-
-		/// <summary>
-		/// Configures the GUI and allows a demo to add menu and widgets.
-		/// </summary>
-		/// <param name="demoWindow">The demo.</param>
-		/// <param name="uiManager">The UI manager.</param>
-		public virtual void ConfigureGui(
-			DemoWindow demoWindow,
-			UIManager uiManager)
-		{
-		}
-
-		#endregion
 	}
 }

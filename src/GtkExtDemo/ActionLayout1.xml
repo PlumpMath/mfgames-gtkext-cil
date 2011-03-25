@@ -8,5 +8,10 @@
 			<action name="SwitchPage0"/>
 			<action name="SwitchPage1"/>
 		</layout-list>
+		<layout-list label="_Editor" group="Editor" >
+			<action name="EditableBuffer"/>
+			<action name="ReadOnlyBuffer"/>
+			<action name="ClearBuffer"/>
+		</layout-list>
 	</layout-group>
 </action-layout>

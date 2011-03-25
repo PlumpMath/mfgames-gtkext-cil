@@ -562,7 +562,7 @@ namespace MfGames.GtkExt.TextEditor
 				renderContext.RenderRegion = cairoArea;
 
 				// If we don't have a buffer at this point, don't render anything.
-				if (Renderer == null)
+				if (Renderer == null || LineBuffer == null)
 				{
 					return true;
 				}

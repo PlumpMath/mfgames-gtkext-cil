@@ -148,6 +148,22 @@ namespace MfGames.GtkExt.Actions
 		}
 
 		/// <summary>
+		/// Adds the actions from the specified factory.
+		/// </summary>
+		/// <param name="actionFactory">The action factory.</param>
+		public void Add(IActionFactory actionFactory)
+		{
+			if (actionFactory == null)
+			{
+				throw new ArgumentNullException("actionFactory");
+			}
+
+			ICollection<Action> newActions = actionFactory.CreateActions();
+
+			Add(newActions);
+		}
+
+		/// <summary>
 		/// Scans the specified assembly and looks for all constructible actions
 		/// with zero parameter constructors. For every one, it creates a new
 		/// instance and adds it to the manager.

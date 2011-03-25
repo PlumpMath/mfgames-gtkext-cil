@@ -98,16 +98,8 @@ namespace GtkExtDemo
 			// Create the components we need before the menu.
 			notebook = new Notebook();
 
-			// Add the menu
-			menubar = new MenuBar();
-			box.PackStart(CreateGuiMenu(), false, false, 0);
-
-			// Set up the demo components.
-			demoTextEditor.ConfigureGui(this, uiManager);
-
 			// Create a notebook
 			notebook.BorderWidth = 5;
-			box.PackStart(notebook, true, true, 0);
 
 			notebook.AppendPage(demoComponents, new Label("Components"));
 			notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
@@ -116,6 +108,13 @@ namespace GtkExtDemo
 			statusbar = new Statusbar();
 			statusbar.Push(0, "Welcome!");
 			statusbar.HasResizeGrip = true;
+
+			// Create the menu
+			menubar = new MenuBar();
+
+			// Back everything into place.
+			box.PackStart(CreateGuiMenu(), false, false, 0);
+			box.PackStart(notebook, true, true, 0);
 			box.PackStart(statusbar, false, false, 0);
 
 			// Show everything as the final
@@ -134,6 +133,7 @@ namespace GtkExtDemo
 			actionManager.Add(GetType().Assembly);
 			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
 			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
+			actionManager.Add(demoTextEditor);
 
 			// Load the layout from the assembly.
 			var layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));

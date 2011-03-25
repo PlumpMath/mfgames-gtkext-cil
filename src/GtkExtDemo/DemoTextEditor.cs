@@ -25,8 +25,7 @@
 #region Namespaces
 
 using System;
-
-using C5;
+using System.Collections.Generic;
 
 using Cairo;
 
@@ -35,6 +34,7 @@ using Gtk;
 using GtkExtDemo.TextEditor;
 
 using MfGames.GtkExt;
+using MfGames.GtkExt.Actions;
 using MfGames.GtkExt.TextEditor;
 using MfGames.GtkExt.TextEditor.Editing;
 using MfGames.GtkExt.TextEditor.Events;
@@ -42,6 +42,7 @@ using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 
+using Action=Gtk.Action;
 using Alignment=Pango.Alignment;
 
 #endregion
@@ -52,7 +53,7 @@ namespace GtkExtDemo
 	/// Contains the basic control for showing off the features of the line
 	/// text editor.
 	/// </summary>
-	public class DemoTextEditor : DemoTab
+	public class DemoTextEditor : DemoTab, IActionFactory
 	{
 		#region Constructors
 
@@ -100,8 +101,9 @@ namespace GtkExtDemo
 			// Add the editor and the controls into a vertical box.
 			PackStart(verticalLayout, true, true, 2);
 
-			// Call the first callback.
-			OnEditableBufferActivated(this, EventArgs.Empty);
+			// Create the first buffer.
+			editorView.SetLineBuffer(CreateEditableLineBuffer());
+			SetBufferMenuStates(true, false, false);
 		}
 
 		/// <summary>
@@ -248,11 +250,7 @@ namespace GtkExtDemo
 		/// <summary>
 		/// Called when the Editable Buffer button is clicked.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnEditableBufferActivated(
-			object sender,
-			EventArgs e)
+		private void OnEditableBufferActivated()
 		{
 			// Create the buffer and set it.
 			editorView.SetLineBuffer(CreateEditableLineBuffer());
@@ -306,49 +304,38 @@ namespace GtkExtDemo
 
 		#region Setup
 
-		private CheckMenuItem clearBufferMenuItem;
-		private CheckMenuItem editableBufferMenuItem;
-		private CheckMenuItem readOnlyBufferMenuItem;
-
 		/// <summary>
-		/// Configures the GUI and allows a demo to add menu and widgets.
+		/// Creates all the <see cref="Action"/> objects associated with the extending
+		/// class.
 		/// </summary>
-		/// <param name="demoWindow">The demo.</param>
-		/// <param name="uiManager">The UI manager.</param>
-		public override void ConfigureGui(
-			DemoWindow demoWindow,
-			UIManager uiManager)
+		/// <returns></returns>
+		public ICollection<Action> CreateActions()
 		{
-			// Get the menu and manually add the items.
-			var menubar = (MenuBar) uiManager.GetWidget("/MenuBar");
+			var actions = new List<Action>();
 
-			if (menubar == null)
-			{
-				return;
-			}
+			actions.Add(
+				new ChangeEditorBufferAction(
+					"EditableBuffer",
+					"_Editable Buffer",
+					editorView,
+					1,
+					CreateEditableLineBuffer));
+			actions.Add(
+				new ChangeEditorBufferAction(
+					"ReadOnlyBuffer",
+					"_Read-Only Buffer",
+					editorView,
+					2,
+					CreateReadOnlyLineBuffer));
+			actions.Add(
+				new ChangeEditorBufferAction(
+					"ClearBuffer",
+					"_Clear Buffer",
+					editorView,
+					3,
+					null));
 
-			var menu = new Menu();
-
-			var menuItem = new MenuItem("_Text Editor");
-			menuItem.Submenu = menu;
-
-			menubar.Append(menuItem);
-
-			// Create the styled buffers.
-			editableBufferMenuItem = new CheckMenuItem("_Editable Buffer");
-			editableBufferMenuItem.DrawAsRadio = true;
-			editableBufferMenuItem.Activated += OnEditableBufferActivated;
-			menu.Append(editableBufferMenuItem);
-
-			readOnlyBufferMenuItem = new CheckMenuItem("_Read-Only Buffer");
-			readOnlyBufferMenuItem.DrawAsRadio = true;
-			readOnlyBufferMenuItem.Activated += OnReadOnlyBufferActivated;
-			menu.Append(readOnlyBufferMenuItem);
-
-			clearBufferMenuItem = new CheckMenuItem("_Clear");
-			clearBufferMenuItem.DrawAsRadio = true;
-			clearBufferMenuItem.Activated += OnClearBuffer;
-			menu.Append(clearBufferMenuItem);
+			return actions;
 		}
 
 		#endregion
@@ -420,17 +407,17 @@ namespace GtkExtDemo
 				lineIndex, LineContexts.None);
 
 			// Create a reverse of the text.
-			var characters = new ArrayList<char>();
+			//var characters = new ArrayList<char>();
 
-			characters.AddAll(lineText);
-			characters.Reverse();
+			//characters.AddAll(lineText);
+			//characters.Reverse();
 
-			var reverseText = new string(characters.ToArray());
+			//var reverseText = new string(characters.ToArray());
 
-			// Add the operations to the command.
-			command.Operations.Add(new SetTextOperation(lineIndex, reverseText));
+			//// Add the operations to the command.
+			//command.Operations.Add(new SetTextOperation(lineIndex, reverseText));
 
-			command.UndoOperations.Add(new SetTextOperation(lineIndex, lineText));
+			//command.UndoOperations.Add(new SetTextOperation(lineIndex, lineText));
 		}
 
 		#endregion
