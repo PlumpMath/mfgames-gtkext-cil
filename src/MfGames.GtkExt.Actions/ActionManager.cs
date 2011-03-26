@@ -30,6 +30,7 @@ using System.Reflection;
 
 using Gtk;
 
+using MfGames.GtkExt.Actions.Keybindings;
 using MfGames.GtkExt.Actions.Layouts;
 using MfGames.Reporting;
 
@@ -50,22 +51,25 @@ namespace MfGames.GtkExt.Actions
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ActionManager"/> class.
 		/// </summary>
-		/// <param name="accelGroup">The accelerator group to attach to.</param>
-		public ActionManager(AccelGroup accelGroup)
+		/// <param name="attachToWindow">The widget to attach processing to.</param>
+		public ActionManager(Window attachToWindow)
 		{
 			// Save the parameters.
-			if (accelGroup == null)
+			if (attachToWindow == null)
 			{
-				throw new ArgumentNullException("accelGroup");
+				throw new ArgumentNullException("attachToWindow");
 			}
-
-			AccelGroup = accelGroup;
 
 			// Create the collections we use.
 			messages = new SeverityMessageCollection();
 			actions = new Dictionary<string, Action>();
 			groups = new Dictionary<string, ActionGroup>();
 			layouts = new ActionLayoutCollection(this);
+			keybindings = new ActionKeybindingsCollection();
+			attachedWindows = new HashSet<Window>();
+
+			// Attach to the widget.
+			AttachToRootWindow(attachToWindow);
 		}
 
 		#endregion
@@ -73,12 +77,61 @@ namespace MfGames.GtkExt.Actions
 		#region Gtk#
 
 		private readonly SeverityMessageCollection messages;
+		private readonly HashSet<Window> attachedWindows;
 
 		/// <summary>
-		/// Gets the accelerator group associated with this manager.
+		/// Connects various events to the widget for processing key strokes.
 		/// </summary>
-		/// <value>The accelerator group.</value>
-		public AccelGroup AccelGroup { get; private set; }
+		/// <param name="window">The window.</param>
+		public void AttachToWindow(Window window)
+		{
+			// See if we already have attached to the window.
+			if (attachedWindows.Contains(window))
+			{
+				// Nothing new to do.
+				return;
+			}
+
+			// Add it to the dictionary to keep track of it.
+			attachedWindows.Add(window);
+
+			// Attach to events for processing.
+			window.KeyPressEvent += OnKeyPrePressed;
+			window.KeyPressEvent += OnKeyPressed;
+			window.Destroyed += OnDestroyed;
+		}
+
+		/// <summary>
+		/// Attaches to the root window and installs the accelerator processing.
+		/// </summary>
+		/// <param name="window"></param>
+		public void AttachToRootWindow(Window window)
+		{
+			// Install the accelerator group.
+			//window.AddAccelGroup(AccelGroup);
+
+			// Attach to the window normally.
+			AttachToWindow(window);
+		}
+
+		/// <summary>
+		/// Called when an attached window is destroyed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		void OnDestroyed(object sender, EventArgs e)
+		{
+			// Cast the sender as a window since it is the only source we'll get.
+			var window = (Window)sender;
+			
+			// Disconnect from the events.
+			window.Destroyed -= OnDestroyed;
+			window.KeyPressEvent -= OnKeyPressed;
+			window.KeyPressEvent -= OnKeyPrePressed;
+
+			// Remove it from our dictionary.
+			attachedWindows.Remove(window);
+		}
 
 		#endregion
 
@@ -130,9 +183,6 @@ namespace MfGames.GtkExt.Actions
 			ActionGroup group = GetOrCreateGroup(groupName);
 
 			newAction.ActionGroup = group;
-
-			// Assign the accelerator of the entire manager.
-			newAction.AccelGroup = AccelGroup;
 		}
 
 		/// <summary>
@@ -294,6 +344,65 @@ namespace MfGames.GtkExt.Actions
 
 			// Return the resulting group.
 			return groups[groupName];
+		}
+
+		#endregion
+
+		#region Action Keybindings
+
+		private readonly ActionKeybindingsCollection keybindings;
+		private ActionKeybindings currentKeybindings;
+
+		/// <summary>
+		/// Adds the specified keybindings to the manager.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <param name="newKeybindings">The new keybindings.</param>
+		public void Add(string name, ActionKeybindings newKeybindings)
+		{
+			keybindings[name] = newKeybindings;
+		}
+
+		/// <summary>
+		/// Sets the current keybindings.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		public void SetCurrentKeybindings(string name)
+		{
+			// Set the current key binding.
+			currentKeybindings = keybindings[name];
+
+			// TODO Update the menu to reflect the new keybindings.
+		}
+
+		/// <summary>
+		/// Called when a key is pressed and is used to handle custom keybindings.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="Gtk.KeyPressEventArgs"/> instance containing the event data.</param>
+		private void OnKeyPressed(object sender, KeyPressEventArgs e)
+		{
+			// If we have a current key binding, then pass it on.
+			if (currentKeybindings != null)
+			{
+				currentKeybindings.KeyPressed(e);
+			}
+		}
+
+		/// <summary>
+		/// Called when when a key is pressed but before it is managed by
+		/// the individual widgets.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="Gtk.KeyPressEventArgs"/> instance containing the event data.</param>
+		[GLib.ConnectBefore]
+		private void OnKeyPrePressed(object sender, KeyPressEventArgs e)
+		{
+			// If we have a current key binding, then pass it on.
+			if (currentKeybindings != null)
+			{
+				currentKeybindings.KeyPrePressed(e);
+			}
 		}
 
 		#endregion

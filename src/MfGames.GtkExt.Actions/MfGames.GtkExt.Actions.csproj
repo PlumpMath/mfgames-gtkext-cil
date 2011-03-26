@@ -49,7 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionKeybindings.cs" />
+    <Compile Include="Keybindings\ActionKeybinding.cs" />
+    <Compile Include="Keybindings\ActionKeybindingsCollection.cs" />
     <Compile Include="ActionLayout.cs" />
+    <Compile Include="Keybindings\ActionKeybindingCollection.cs" />
     <Compile Include="Layouts\ActionLayoutCollection.cs" />
     <Compile Include="Layouts\ILayoutItem.cs" />
     <Compile Include="Layouts\LayoutAction.cs" />
@@ -64,6 +68,10 @@
     <ProjectReference Include="..\..\ext\mfgames-cil\src\MfGames\MfGames.csproj">
       <Project>{3BABBE73-CD1D-494E-A81F-E4EA40107FA9}</Project>
       <Name>MfGames</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
+      <Project>{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}</Project>
+      <Name>MfGames.GtkExt</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

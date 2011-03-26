@@ -393,7 +393,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			int keyCode = GdkUtility.GetNormalizedKeyCode(key, filteredModifiers);
 
 			// Check to see if we have an action for this.
-			bool isCharacter = unicodeKey != 0 && filteredModifiers == ModifierType.None;
+			ModifierType isNormalOrShifted = filteredModifiers & ~ModifierType.ShiftMask;
+			bool isCharacter = unicodeKey != 0 && isNormalOrShifted == ModifierType.None;
 			bool isAction = keyBindings.Contains(keyCode);
 
 			if (isAction || isCharacter)

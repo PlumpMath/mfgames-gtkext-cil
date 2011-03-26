@@ -129,17 +129,24 @@ namespace GtkExtDemo
 			AddAccelGroup(accelGroup);
 
 			// Create a user action manager.
-			var actionManager = new ActionManager(accelGroup);
+			var actionManager = new ActionManager(this);
 			actionManager.Add(GetType().Assembly);
 			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
 			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
 			actionManager.Add(demoTextEditor);
 
-			// Load the layout from the assembly.
+			// Load the layout from the file system.
 			var layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
 			actionManager.Add(layout);
 
-			//// Populate the menubar and return it.
+			// Load the keybinding from a file.
+			var keybindings = new ActionKeybindings();
+			keybindings.ActionManager = actionManager;
+			keybindings.LoadFromFile("ActionKeybindings1.xml");
+			actionManager.Add("Default", keybindings);
+			actionManager.SetCurrentKeybindings("Default");
+
+			// Populate the menubar and return it.
 			layout.Populate(menubar, "Main");
 
 			menubar.ShowAll();
