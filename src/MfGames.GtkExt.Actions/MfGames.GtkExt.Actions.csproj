@@ -59,6 +59,7 @@
     <Compile Include="Layouts\LayoutGroup.cs" />
     <Compile Include="Layouts\LayoutGroupCollection.cs" />
     <Compile Include="Layouts\LayoutList.cs" />
+    <Compile Include="Layouts\LayoutSeparator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IActionFactory.cs" />
     <Compile Include="ActionManager.cs" />

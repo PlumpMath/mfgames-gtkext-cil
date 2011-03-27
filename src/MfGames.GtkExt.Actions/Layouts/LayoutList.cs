@@ -98,10 +98,17 @@ namespace MfGames.GtkExt.Actions.Layouts
 				}
 
 				// Load the list as we get them.
-				if (reader.LocalName == "action")
+				switch (reader.LocalName)
 				{
-					var action = new LayoutAction(reader);
-					Add(action);
+					case "action":
+						var action = new LayoutAction(reader);
+						Add(action);
+						break;
+				
+					case "separator":
+						var separator = new LayoutSeparator();
+						Add(separator);
+						break;
 				}
 			}
 		}
