@@ -364,6 +364,24 @@ namespace MfGames.GtkExt.Actions
 		}
 
 		/// <summary>
+		/// Gets the primary accelerator path for a given action or returns 
+		/// <see langword="null"/> if one can't be found.
+		/// </summary>
+		/// <param name="action">The action.</param>
+		/// <returns></returns>
+		public HierarchicalPath GetPrimaryAcceleratorPath(Action action)
+		{
+			// If we don't have a current keybindings, then return null.
+			if (currentKeybindings == null)
+			{
+				return null;
+			}
+
+			// Pass it into the keybindings.
+			return currentKeybindings.GetPrimaryAcceleratorPath(action);
+		}
+
+		/// <summary>
 		/// Sets the current keybindings.
 		/// </summary>
 		/// <param name="name">The name.</param>

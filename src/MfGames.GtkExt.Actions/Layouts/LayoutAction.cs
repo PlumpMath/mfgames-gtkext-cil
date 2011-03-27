@@ -28,6 +28,8 @@ using System.Xml;
 
 using Gtk;
 
+using MfGames.GtkExt.Actions.Widgets;
+
 #endregion
 
 namespace MfGames.GtkExt.Actions.Layouts
@@ -75,7 +77,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 			Action action = manager.GetAction(ActionName);
 
 			// Create a menu item from this action.
-			Widget widget = action.CreateMenuItem();
+			Widget widget = new ActionMenuItem(manager, action);
 
 			shell.Add(widget);
 		}

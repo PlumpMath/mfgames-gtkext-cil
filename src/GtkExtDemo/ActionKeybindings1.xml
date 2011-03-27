@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <action-keybindings xmlns="urn:mfgames.com/mfgames-gtkext-cil/action-keybindings/0">
 	<action name="Quit" keybinding="/Control+Q"/>
-	<action name="SwitchPage0" keybinding="/Control+V/1"/>
-	<action name="SwitchPage1" keybinding="/Control+V/2"/>
 	<action name="EditableBuffer" keybinding="/Control+E/1"/>
 	<action name="ReadOnlyBuffer" keybinding="/Control+E/2"/>
 	<action name="ClearBuffer" keybinding="/Control+E/3"/>

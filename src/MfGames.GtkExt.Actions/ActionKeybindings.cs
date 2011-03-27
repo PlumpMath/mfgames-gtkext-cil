@@ -25,7 +25,9 @@
 #region Namespaces
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 using Gdk;
@@ -64,6 +66,7 @@ namespace MfGames.GtkExt.Actions
 		public ActionKeybindings()
 		{
 			keybindings = new ActionKeybindingCollection();
+			actionKeybindings = new Dictionary<string, List<HierarchicalPath>>();
 			currentAccelerator = HierarchicalPath.AbsoluteRoot;
 		}
 
@@ -82,7 +85,51 @@ namespace MfGames.GtkExt.Actions
 		#region Keybindings
 
 		private readonly ActionKeybindingCollection keybindings;
+		private readonly Dictionary<string, List<HierarchicalPath>> actionKeybindings;
 		private HierarchicalPath currentAccelerator;
+
+		/// <summary>
+		/// Gets the primary accelerator path for a given action or returns 
+		/// <see langword="null"/> if one can't be found.
+		/// </summary>
+		/// <param name="action">The action.</param>
+		/// <returns></returns>
+		public HierarchicalPath GetPrimaryAcceleratorPath(Action action)
+		{
+			// If we don't have a keybinding, then return null.
+			if (!actionKeybindings.ContainsKey(action.Name))
+			{
+				return null;
+			}
+
+			// Return the first accelerator path.
+			return actionKeybindings[action.Name][0];
+		}
+
+		/// <summary>
+		/// Formats the accelerator path for display to the user.
+		/// </summary>
+		/// <param name="acceleratorPath">The accelerator path.</param>
+		/// <returns></returns>
+		public static string FormatAcceleratorPath(HierarchicalPath acceleratorPath)
+		{
+			// Create a buffer and format each one.
+			var buffer = new StringBuilder();
+
+			for (int i = 0; i < acceleratorPath.Levels.Count; i++)
+			{
+				if (i > 0)
+				{
+					buffer.Append(", ");
+				}
+
+				buffer.Append(acceleratorPath.Levels[i]);
+			}
+
+			// Return the resulting string and changing the abbreviations as
+			// appropriate.
+			return buffer.ToString().Replace("Control+", "Ctrl+");
+		}
 
 		/// <summary>
 		/// Called when the <see cref="ActionManager"/> gets a key press and it passes
@@ -109,8 +156,6 @@ namespace MfGames.GtkExt.Actions
 
 			// Build a path with the current accelerator and the new one.
 			var acceleratorPath = new HierarchicalPath(accelerator, currentAccelerator);
-
-			System.Diagnostics.Debug.WriteLine("a " + accelerator + " ap " + acceleratorPath + " cp " + currentAccelerator);
 
 			// See if we have an accelerator for this path.
 			if (!keybindings.Contains(acceleratorPath))
@@ -243,10 +288,20 @@ namespace MfGames.GtkExt.Actions
 					var keybinding = new ActionKeybinding(reader);
 
 					// Load the action from the manager.
-					Action action = ActionManager.GetAction(keybinding.ActionName);
+					string actionName = keybinding.ActionName;
+					Action action = ActionManager.GetAction(actionName);
 
 					// Assign the keybinding.
-					keybindings.Add(keybinding.AcceleratorPath, action);
+					HierarchicalPath acceleratorPath = keybinding.AcceleratorPath;
+					keybindings.Add(acceleratorPath, action);
+
+					// Add this to the list of actions.
+					if (!actionKeybindings.ContainsKey(actionName))
+					{
+						actionKeybindings[actionName] = new List<HierarchicalPath>();
+					}
+
+					actionKeybindings[actionName].Add(acceleratorPath);
 				}
 			}
 		}
