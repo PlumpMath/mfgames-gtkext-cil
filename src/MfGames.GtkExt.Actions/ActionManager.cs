@@ -26,12 +26,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
+
+using GLib;
 
 using Gtk;
 
-using MfGames.GtkExt.Actions.Keybindings;
-using MfGames.GtkExt.Actions.Layouts;
 using MfGames.Reporting;
 
 using Action=Gtk.Action;
@@ -64,8 +65,6 @@ namespace MfGames.GtkExt.Actions
 			messages = new SeverityMessageCollection();
 			actions = new Dictionary<string, Action>();
 			groups = new Dictionary<string, ActionGroup>();
-			layouts = new ActionLayoutCollection(this);
-			keybindings = new ActionKeybindingsCollection();
 			attachedWindows = new HashSet<Window>();
 
 			// Attach to the widget.
@@ -76,8 +75,21 @@ namespace MfGames.GtkExt.Actions
 
 		#region Gtk#
 
-		private readonly SeverityMessageCollection messages;
 		private readonly HashSet<Window> attachedWindows;
+		private readonly SeverityMessageCollection messages;
+
+		/// <summary>
+		/// Attaches to the root window and installs the accelerator processing.
+		/// </summary>
+		/// <param name="window"></param>
+		public void AttachToRootWindow(Window window)
+		{
+			// Install the accelerator group.
+			//window.AddAccelGroup(AccelGroup);
+
+			// Attach to the window normally.
+			AttachToWindow(window);
+		}
 
 		/// <summary>
 		/// Connects various events to the widget for processing key strokes.
@@ -102,28 +114,17 @@ namespace MfGames.GtkExt.Actions
 		}
 
 		/// <summary>
-		/// Attaches to the root window and installs the accelerator processing.
-		/// </summary>
-		/// <param name="window"></param>
-		public void AttachToRootWindow(Window window)
-		{
-			// Install the accelerator group.
-			//window.AddAccelGroup(AccelGroup);
-
-			// Attach to the window normally.
-			AttachToWindow(window);
-		}
-
-		/// <summary>
 		/// Called when an attached window is destroyed.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void OnDestroyed(object sender, EventArgs e)
+		private void OnDestroyed(
+			object sender,
+			EventArgs e)
 		{
 			// Cast the sender as a window since it is the only source we'll get.
-			var window = (Window)sender;
-			
+			var window = (Window) sender;
+
 			// Disconnect from the events.
 			window.Destroyed -= OnDestroyed;
 			window.KeyPressEvent -= OnKeyPressed;
@@ -144,7 +145,7 @@ namespace MfGames.GtkExt.Actions
 		/// accelerators and groups.
 		/// </summary>
 		/// <param name="newAction">The action to add.</param>
-		public void Add(Action newAction)
+		public void AddActions(Action newAction)
 		{
 			// Make sure we have sane data.
 			if (newAction == null)
@@ -189,11 +190,11 @@ namespace MfGames.GtkExt.Actions
 		/// Adds a collection of Action objects into the manager.
 		/// </summary>
 		/// <param name="newActions">The actions to add.</param>
-		public void Add(IEnumerable<Action> newActions)
+		public void AddActions(IEnumerable<Action> newActions)
 		{
 			foreach (Action action in newActions)
 			{
-				Add(action);
+				AddActions(action);
 			}
 		}
 
@@ -201,7 +202,7 @@ namespace MfGames.GtkExt.Actions
 		/// Adds the actions from the specified factory.
 		/// </summary>
 		/// <param name="actionFactory">The action factory.</param>
-		public void Add(IActionFactory actionFactory)
+		public void AddActions(IActionFactory actionFactory)
 		{
 			if (actionFactory == null)
 			{
@@ -210,7 +211,7 @@ namespace MfGames.GtkExt.Actions
 
 			ICollection<Action> newActions = actionFactory.CreateActions();
 
-			Add(newActions);
+			AddActions(newActions);
 		}
 
 		/// <summary>
@@ -219,7 +220,7 @@ namespace MfGames.GtkExt.Actions
 		/// instance and adds it to the manager.
 		/// </summary>
 		/// <param name="assembly">The assembly.</param>
-		public void Add(Assembly assembly)
+		public void AddActions(Assembly assembly)
 		{
 			// Make sure we don't have a null since we can't handle that.
 			if (assembly == null)
@@ -272,7 +273,7 @@ namespace MfGames.GtkExt.Actions
 				// Create the item and add it to the manager.
 				var action = (Action) constructor.Invoke(emptyObjects);
 
-				Add(action);
+				AddActions(action);
 			}
 		}
 
@@ -350,18 +351,7 @@ namespace MfGames.GtkExt.Actions
 
 		#region Action Keybindings
 
-		private readonly ActionKeybindingsCollection keybindings;
-		private ActionKeybindings currentKeybindings;
-
-		/// <summary>
-		/// Adds the specified keybindings to the manager.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="newKeybindings">The new keybindings.</param>
-		public void Add(string name, ActionKeybindings newKeybindings)
-		{
-			keybindings[name] = newKeybindings;
-		}
+		private ActionKeybindings keybindings;
 
 		/// <summary>
 		/// Gets the primary accelerator path for a given action or returns 
@@ -372,39 +362,13 @@ namespace MfGames.GtkExt.Actions
 		public HierarchicalPath GetPrimaryAcceleratorPath(Action action)
 		{
 			// If we don't have a current keybindings, then return null.
-			if (currentKeybindings == null)
+			if (keybindings == null)
 			{
 				return null;
 			}
 
 			// Pass it into the keybindings.
-			return currentKeybindings.GetPrimaryAcceleratorPath(action);
-		}
-
-		/// <summary>
-		/// Sets the current keybindings.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		public void SetCurrentKeybindings(string name)
-		{
-			// Set the current key binding.
-			currentKeybindings = keybindings[name];
-
-			// TODO Update the menu to reflect the new keybindings.
-		}
-
-		/// <summary>
-		/// Called when a key is pressed and is used to handle custom keybindings.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="Gtk.KeyPressEventArgs"/> instance containing the event data.</param>
-		private void OnKeyPressed(object sender, KeyPressEventArgs e)
-		{
-			// If we have a current key binding, then pass it on.
-			if (currentKeybindings != null)
-			{
-				currentKeybindings.KeyPressed(e);
-			}
+			return keybindings.GetPrimaryAcceleratorPath(action);
 		}
 
 		/// <summary>
@@ -413,13 +377,53 @@ namespace MfGames.GtkExt.Actions
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="Gtk.KeyPressEventArgs"/> instance containing the event data.</param>
-		[GLib.ConnectBefore]
-		private void OnKeyPrePressed(object sender, KeyPressEventArgs e)
+		[ConnectBefore]
+		private void OnKeyPrePressed(
+			object sender,
+			KeyPressEventArgs e)
 		{
 			// If we have a current key binding, then pass it on.
-			if (currentKeybindings != null)
+			if (keybindings != null)
 			{
-				currentKeybindings.KeyPrePressed(e);
+				keybindings.KeyPrePressed(e);
+			}
+		}
+
+		/// <summary>
+		/// Called when a key is pressed and is used to handle custom keybindings.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="Gtk.KeyPressEventArgs"/> instance containing the event data.</param>
+		private void OnKeyPressed(
+			object sender,
+			KeyPressEventArgs e)
+		{
+			// If we have a current key binding, then pass it on.
+			if (keybindings != null)
+			{
+				keybindings.KeyPressed(e);
+			}
+		}
+
+		/// <summary>
+		/// Sets the current keybindings.
+		/// </summary>
+		/// <param name="newKeybindings">The new keybindings.</param>
+		public void SetKeybindings(ActionKeybindings newKeybindings)
+		{
+			// Clear out the old keybindings.
+			if (keybindings != null)
+			{
+				keybindings.ActionManager = null;
+			}
+
+			// Set the current key binding.
+			keybindings = newKeybindings;
+
+			// Set up the new keybindings.
+			if (keybindings != null)
+			{
+				keybindings.ActionManager = this;
 			}
 		}
 
@@ -427,20 +431,40 @@ namespace MfGames.GtkExt.Actions
 
 		#region Action Layouts
 
-		private readonly ActionLayoutCollection layouts;
+		private ActionLayout layout;
 
 		/// <summary>
-		/// Adds the specified layout to the manager.
+		/// Gets or sets the layout.
 		/// </summary>
-		/// <param name="layout">The layout.</param>
-		public void Add(ActionLayout layout)
+		/// <value>
+		/// The layout.
+		/// </value>
+		public ActionLayout Layout
 		{
-			if (layout == null)
+			[DebuggerStepThrough]
+			get { return layout; }
+		}
+
+		/// <summary>
+		/// Sets the action layout.
+		/// </summary>
+		/// <param name="newLayout">The new layout.</param>
+		public void SetLayout(ActionLayout newLayout)
+		{
+			// Clear out the old layout
+			if (layout != null)
 			{
-				throw new ArgumentNullException("layout");
+				layout.ActionManager = null;
 			}
 
-			layouts.Add(layout);
+			// Save the new layout.
+			layout = newLayout;
+
+			// Clear out the new layout
+			if (layout != null)
+			{
+				layout.ActionManager = this;
+			}
 		}
 
 		#endregion

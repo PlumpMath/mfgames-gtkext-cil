@@ -39,7 +39,7 @@ namespace MfGames.GtkExt.Actions.Keybindings
 	/// level and "M" at the second.
 	/// </summary>
 	public class ActionKeybindingCollection
-		: HierarchicalPathTreeCollection<Action>
+		: HierarchicalPathTreeCollection<string>
 	{
 	}
 }

@@ -70,6 +70,16 @@ namespace MfGames.GtkExt.Actions
 			currentAccelerator = HierarchicalPath.AbsoluteRoot;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ActionKeybindings"/> class.
+		/// </summary>
+		/// <param name="file">The file.</param>
+		public ActionKeybindings(FileInfo file)
+			: this()
+		{
+			Load(file);
+		}
+
 		#endregion
 
 		#region Properties
@@ -171,8 +181,9 @@ namespace MfGames.GtkExt.Actions
 			// Grab the accelerator for this key. If we don't have an item, then
 			// this is going to be a continued chain.
 			var actionTree = keybindings.Get(acceleratorPath);
+			string actionName = actionTree.Item;
 
-			if (actionTree.Item == null)
+			if (actionName == null)
 			{
 				// We are only the first part of an action chain.
 				currentAccelerator = acceleratorPath;
@@ -182,8 +193,14 @@ namespace MfGames.GtkExt.Actions
 				return;
 			}
 
-			// We have found a terminal action, so perform it.
-			actionTree.Item.Activate();
+			// We have found a terminal action, so get the action involved.
+			Action action = ActionManager.GetAction(actionName);
+
+			if (action != null)
+			{
+				action.Activate();
+			}
+
 			e.RetVal = true;
 		}
 
@@ -257,13 +274,6 @@ namespace MfGames.GtkExt.Actions
 		/// <param name="reader">The reader.</param>
 		public void Load(XmlReader reader)
 		{
-			// Check our state.
-			if (ActionManager == null)
-			{
-				throw new InvalidOperationException(
-					"Cannot populate a menubar unless ActionManager is set.");
-			}
-
 			// Loop through the file until we find the end XML element.
 			while (reader.Read())
 			{
@@ -289,11 +299,10 @@ namespace MfGames.GtkExt.Actions
 
 					// Load the action from the manager.
 					string actionName = keybinding.ActionName;
-					Action action = ActionManager.GetAction(actionName);
 
 					// Assign the keybinding.
 					HierarchicalPath acceleratorPath = keybinding.AcceleratorPath;
-					keybindings.Add(acceleratorPath, action);
+					keybindings.Add(acceleratorPath, actionName);
 
 					// Add this to the list of actions.
 					if (!actionKeybindings.ContainsKey(actionName))

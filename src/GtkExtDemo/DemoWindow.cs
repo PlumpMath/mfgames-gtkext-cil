@@ -130,21 +130,20 @@ namespace GtkExtDemo
 
 			// Create a user action manager.
 			var actionManager = new ActionManager(this);
-			actionManager.Add(GetType().Assembly);
-			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
-			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
-			actionManager.Add(demoTextEditor);
+			actionManager.AddActions(GetType().Assembly);
+			actionManager.AddActions(new SwitchPageAction(notebook, 0, "Components"));
+			actionManager.AddActions(new SwitchPageAction(notebook, 1, "Text Editor"));
+			actionManager.AddActions(demoTextEditor);
 
 			// Load the layout from the file system.
 			var layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
-			actionManager.Add(layout);
+			
+			actionManager.SetLayout(layout);
 
 			// Load the keybinding from a file.
-			var keybindings = new ActionKeybindings();
-			keybindings.ActionManager = actionManager;
-			keybindings.LoadFromFile("ActionKeybindings1.xml");
-			actionManager.Add("Default", keybindings);
-			actionManager.SetCurrentKeybindings("Default");
+			var keybindings = new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
+
+			actionManager.SetKeybindings(keybindings);
 
 			// Populate the menubar and return it.
 			layout.Populate(menubar, "Main");

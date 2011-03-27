@@ -54,7 +54,6 @@
     <Compile Include="Keybindings\ActionKeybindingsCollection.cs" />
     <Compile Include="ActionLayout.cs" />
     <Compile Include="Keybindings\ActionKeybindingCollection.cs" />
-    <Compile Include="Layouts\ActionLayoutCollection.cs" />
     <Compile Include="Layouts\ILayoutItem.cs" />
     <Compile Include="Layouts\LayoutAction.cs" />
     <Compile Include="Layouts\LayoutGroup.cs" />
