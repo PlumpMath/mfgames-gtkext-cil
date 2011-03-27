@@ -27,6 +27,7 @@
   <ItemGroup>
     <Compile Include="Actions\QuitAction.cs" />
     <Compile Include="Actions\SwitchPageAction.cs" />
+    <Compile Include="DemoActions.cs" />
     <Compile Include="DemoWindow.cs" />
     <Compile Include="DemoComponents.cs" />
     <Compile Include="DemoTab.cs" />

@@ -6,7 +6,8 @@
 		</layout-list>
 		<layout-list label="_View" group="View" >
 			<action name="SwitchPage0"/>
-			<action name="SwitchPage1"/>
+      <action name="SwitchPage1"/>
+      <action name="SwitchPage2"/>
 		</layout-list>
 		<layout-list label="_Editor" group="Editor" >
 			<action name="EditableBuffer"/>
@@ -14,5 +15,8 @@
       <separator/>
 			<action name="ClearBuffer"/>
 		</layout-list>
+    <separator/>
+    <layout-list label="_Help" right-aligned="True">
+    </layout-list>
 	</layout-group>
 </action-layout>

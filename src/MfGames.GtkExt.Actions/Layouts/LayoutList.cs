@@ -24,6 +24,7 @@
 
 #region Namespaces
 
+using System;
 using System.Collections.Generic;
 using System.Xml;
 
@@ -37,7 +38,8 @@ namespace MfGames.GtkExt.Actions.Layouts
 	/// Implements a list of layout items which can include other layout lists
 	/// and actions.
 	/// </summary>
-	public class LayoutList : List<ILayoutItem>, ILayoutItem
+	public class LayoutList
+		: List<ILayoutListItem>, ILayoutListItem, ILayoutGroupItem
 	{
 		#region Constructors
 
@@ -66,6 +68,15 @@ namespace MfGames.GtkExt.Actions.Layouts
 		/// <value>The label.</value>
 		public string Label { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the list would be right
+		/// aligned in the menu bar.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if [right aligned]; otherwise, <c>false</c>.
+		/// </value>
+		public bool RightAligned { get; set; }
+
 		#endregion
 
 		#region Loading
@@ -79,6 +90,11 @@ namespace MfGames.GtkExt.Actions.Layouts
 			// Pull out the group's information.
 			Label = reader["label"];
 			GroupName = reader["group"];
+
+			if (!String.IsNullOrEmpty(reader["right-aligned"]))
+			{
+				RightAligned = Convert.ToBoolean(reader["right-aligned"]);
+			}
 
 			// Loop through until we find the end of the group.
 			while (reader.Read())
@@ -104,7 +120,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 						var action = new LayoutAction(reader);
 						Add(action);
 						break;
-				
+
 					case "separator":
 						var separator = new LayoutSeparator();
 						Add(separator);
@@ -120,6 +136,18 @@ namespace MfGames.GtkExt.Actions.Layouts
 		/// <summary>
 		/// Populates the specified shell with sub-menus.
 		/// </summary>
+		/// <param name="manager">The manager.</param>
+		/// <param name="menuBar">The menu bar.</param>
+		public void Populate(
+			ActionManager manager,
+			MenuBar menuBar)
+		{
+			Populate(manager, (MenuShell) menuBar);
+		}
+
+		/// <summary>
+		/// Populates the specified shell with sub-menus.
+		/// </summary>
 		/// <param name="shell">The shell.</param>
 		public void Populate(
 			ActionManager manager,
@@ -130,12 +158,21 @@ namespace MfGames.GtkExt.Actions.Layouts
 
 			var menuItem = new MenuItem(Label);
 			menuItem.Submenu = menu;
+			menuItem.RightJustified = RightAligned;
+
+			// If we have a group name, add it to the list.
+			if (!String.IsNullOrEmpty(GroupName))
+			{
+				ActionSet group = manager.GetOrCreateGroup(GroupName);
+
+				group.Add(menuItem);
+			}
 
 			// Attach our menu to the shell.
 			shell.Append(menuItem);
 
 			// Go through all of our elements and add them to our menu.
-			foreach (ILayoutItem item in this)
+			foreach (ILayoutListItem item in this)
 			{
 				// Go through and populate the menu itself.
 				item.Populate(manager, menu);

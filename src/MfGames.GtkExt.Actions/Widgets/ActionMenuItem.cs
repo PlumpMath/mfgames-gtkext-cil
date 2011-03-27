@@ -65,7 +65,10 @@ namespace MfGames.GtkExt.Actions.Widgets
 				throw new ArgumentNullException("action");
 			}
 
+			// Attach to the action.
 			this.action = action;
+
+			action.ConnectProxy(this);
 
 			// The default menu can't handle the chained accelerators, so we 
 			// remove the contents of the menu item and recreate it using a 
@@ -126,13 +129,13 @@ namespace MfGames.GtkExt.Actions.Widgets
 
 		private readonly Action action;
 
-		/// <summary>
-		/// Called when the menu item is activated.
-		/// </summary>
-		protected override void OnActivated()
-		{
-			action.Activate();
-		}
+		///// <summary>
+		///// Called when the menu item is activated.
+		///// </summary>
+		//protected override void OnActivated()
+		//{
+		//    action.Activate();
+		//}
 
 		#endregion
 	}

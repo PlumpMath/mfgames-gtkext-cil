@@ -53,7 +53,7 @@ namespace GtkExtDemo
 	/// Contains the basic control for showing off the features of the line
 	/// text editor.
 	/// </summary>
-	public class DemoTextEditor : DemoTab, IActionFactory
+	public class DemoTextEditor: DemoTab, IActionFactory
 	{
 		#region Constructors
 

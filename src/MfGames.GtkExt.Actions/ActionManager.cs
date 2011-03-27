@@ -64,7 +64,7 @@ namespace MfGames.GtkExt.Actions
 			// Create the collections we use.
 			messages = new SeverityMessageCollection();
 			actions = new Dictionary<string, Action>();
-			groups = new Dictionary<string, ActionGroup>();
+			groups = new Dictionary<string, ActionSet>();
 			attachedWindows = new HashSet<Window>();
 
 			// Attach to the widget.
@@ -145,7 +145,7 @@ namespace MfGames.GtkExt.Actions
 		/// accelerators and groups.
 		/// </summary>
 		/// <param name="newAction">The action to add.</param>
-		public void AddActions(Action newAction)
+		public void Add(Action newAction)
 		{
 			// Make sure we have sane data.
 			if (newAction == null)
@@ -179,22 +179,27 @@ namespace MfGames.GtkExt.Actions
 			actions[actionName] = newAction;
 
 			// Figure out what action group this action is associated with.
-			const string groupName = "Global";
+			string groupName = "Global";
 
-			ActionGroup group = GetOrCreateGroup(groupName);
+			if (newAction is IConfigurableAction)
+			{
+				groupName = ((IConfigurableAction)newAction).GroupName;
+			}
 
-			newAction.ActionGroup = group;
+			ActionSet group = GetOrCreateGroup(groupName);
+
+			group.Add(newAction);
 		}
 
 		/// <summary>
 		/// Adds a collection of Action objects into the manager.
 		/// </summary>
 		/// <param name="newActions">The actions to add.</param>
-		public void AddActions(IEnumerable<Action> newActions)
+		public void Add(IEnumerable<Action> newActions)
 		{
 			foreach (Action action in newActions)
 			{
-				AddActions(action);
+				Add(action);
 			}
 		}
 
@@ -202,7 +207,7 @@ namespace MfGames.GtkExt.Actions
 		/// Adds the actions from the specified factory.
 		/// </summary>
 		/// <param name="actionFactory">The action factory.</param>
-		public void AddActions(IActionFactory actionFactory)
+		public void Add(IActionFactory actionFactory)
 		{
 			if (actionFactory == null)
 			{
@@ -211,7 +216,7 @@ namespace MfGames.GtkExt.Actions
 
 			ICollection<Action> newActions = actionFactory.CreateActions();
 
-			AddActions(newActions);
+			Add(newActions);
 		}
 
 		/// <summary>
@@ -220,7 +225,7 @@ namespace MfGames.GtkExt.Actions
 		/// instance and adds it to the manager.
 		/// </summary>
 		/// <param name="assembly">The assembly.</param>
-		public void AddActions(Assembly assembly)
+		public void Add(Assembly assembly)
 		{
 			// Make sure we don't have a null since we can't handle that.
 			if (assembly == null)
@@ -273,7 +278,7 @@ namespace MfGames.GtkExt.Actions
 				// Create the item and add it to the manager.
 				var action = (Action) constructor.Invoke(emptyObjects);
 
-				AddActions(action);
+				Add(action);
 			}
 		}
 
@@ -321,14 +326,32 @@ namespace MfGames.GtkExt.Actions
 
 		#region Action Groups
 
-		private readonly Dictionary<string, ActionGroup> groups;
+		private readonly Dictionary<string, ActionSet> groups;
+
+		/// <summary>
+		/// Gets the group from the given name.
+		/// </summary>
+		/// <param name="groupName">Name of the group.</param>
+		/// <returns></returns>
+		public ActionSet GetGroup(string groupName)
+		{
+			// Make sure we have sane values.
+			if (String.IsNullOrEmpty(groupName))
+			{
+				throw new ArgumentException(
+					"Cannot retrieve a group with an empty or null name.", groupName);
+			}
+
+			// Return the resulting group.
+			return groups[groupName];
+		}
 
 		/// <summary>
 		/// Gets or creates an <see cref="ActionGroup"/> of the given name.
 		/// </summary>
 		/// <param name="groupName">Name of the group.</param>
 		/// <returns></returns>
-		private ActionGroup GetOrCreateGroup(string groupName)
+		public ActionSet GetOrCreateGroup(string groupName)
 		{
 			// Make sure we have sane values.
 			if (String.IsNullOrEmpty(groupName))
@@ -340,7 +363,7 @@ namespace MfGames.GtkExt.Actions
 			// Look to see if the group doesn't exist.
 			if (!groups.ContainsKey(groupName))
 			{
-				groups[groupName] = new ActionGroup(groupName);
+				groups[groupName] = new ActionSet();
 			}
 
 			// Return the resulting group.

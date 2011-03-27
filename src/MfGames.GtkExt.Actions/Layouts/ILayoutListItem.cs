@@ -31,21 +31,21 @@ using Gtk;
 namespace MfGames.GtkExt.Actions.Layouts
 {
 	/// <summary>
-	/// Represents a separator for the screen.
+	/// Represents the common functionality for all layout items.
 	/// </summary>
-	public class LayoutSeparator : ILayoutListItem
+	public interface ILayoutListItem
 	{
+		#region Population
+
 		/// <summary>
 		/// Populates the specified shell with sub-menus.
 		/// </summary>
 		/// <param name="manager">The manager.</param>
 		/// <param name="shell">The shell.</param>
-		public void Populate(
+		void Populate(
 			ActionManager manager,
-			MenuShell shell)
-		{
-			var separator = new MenuItem();
-			shell.Add(separator);
-		}
+			MenuShell shell);
+
+		#endregion
 	}
 }

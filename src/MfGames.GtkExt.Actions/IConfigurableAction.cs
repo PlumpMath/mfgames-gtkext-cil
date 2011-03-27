@@ -22,30 +22,20 @@
 
 #endregion
 
-#region Namespaces
-
-using Gtk;
-
-#endregion
-
-namespace MfGames.GtkExt.Actions.Layouts
+namespace MfGames.GtkExt.Actions
 {
 	/// <summary>
-	/// Represents the common functionality for all layout items.
+	/// Defines the additional elements of an action that can be configured
+	/// and arranged.
 	/// </summary>
-	public interface ILayoutItem
+	public interface IConfigurableAction
 	{
-		#region Population
-
 		/// <summary>
-		/// Populates the specified shell with sub-menus.
+		/// Gets the name of the action group to associate with this action.
 		/// </summary>
-		/// <param name="manager">The manager.</param>
-		/// <param name="shell">The shell.</param>
-		void Populate(
-			ActionManager manager,
-			MenuShell shell);
-
-		#endregion
+		/// <value>
+		/// The name of the group.
+		/// </value>
+		string GroupName { get; }
 	}
 }

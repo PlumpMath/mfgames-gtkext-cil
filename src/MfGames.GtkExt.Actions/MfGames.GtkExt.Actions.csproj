@@ -50,11 +50,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionKeybindings.cs" />
+    <Compile Include="ActionSet.cs" />
+    <Compile Include="IConfigurableAction.cs" />
     <Compile Include="Keybindings\ActionKeybinding.cs" />
     <Compile Include="Keybindings\ActionKeybindingsCollection.cs" />
     <Compile Include="ActionLayout.cs" />
     <Compile Include="Keybindings\ActionKeybindingCollection.cs" />
-    <Compile Include="Layouts\ILayoutItem.cs" />
+    <Compile Include="Layouts\ILayoutGroupItem.cs" />
+    <Compile Include="Layouts\ILayoutListItem.cs" />
     <Compile Include="Layouts\LayoutAction.cs" />
     <Compile Include="Layouts\LayoutGroup.cs" />
     <Compile Include="Layouts\LayoutGroupCollection.cs" />

@@ -26,6 +26,7 @@
 
 using System;
 
+using MfGames.GtkExt.Actions;
 using MfGames.GtkExt.TextEditor;
 using MfGames.GtkExt.TextEditor.Models;
 
@@ -38,7 +39,7 @@ namespace GtkExtDemo.TextEditor
 	/// <summary>
 	/// Implements an action that changes the buffer.
 	/// </summary>
-	public class ChangeEditorBufferAction : Action
+	public class ChangeEditorBufferAction : Action, IConfigurableAction
 	{
 		#region Constructors
 
@@ -65,7 +66,6 @@ namespace GtkExtDemo.TextEditor
 			}
 
 			this.editorView = editorView;
-			this.index = index;
 			this.action = action;
 		}
 
@@ -75,7 +75,17 @@ namespace GtkExtDemo.TextEditor
 
 		private readonly Func<LineBuffer> action;
 		private readonly EditorView editorView;
-		private readonly int index;
+
+		/// <summary>
+		/// Gets the name of the action group to associate with this action.
+		/// </summary>
+		/// <value>
+		/// The name of the group.
+		/// </value>
+		public string GroupName
+		{
+			get { return "Editor"; }
+		}
 
 		/// <summary>
 		/// Called when the menu item is activated.

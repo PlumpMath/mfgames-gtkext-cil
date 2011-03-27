@@ -49,47 +49,28 @@ namespace GtkExtDemo
 		public DemoWindow()
 			: base("Moonfire Games' Gtk Demo")
 		{
-			// Build the GUI
-			uiManager = new UIManager();
-			CreateGui();
-		}
-
-		#region GUI
-
-		private static Statusbar statusbar;
-		private readonly DemoComponents demoComponents = new DemoComponents();
-
-		private readonly DemoTextEditor demoTextEditor = new DemoTextEditor();
-
-		private readonly UIManager uiManager;
-		private Notebook notebook;
-		private MenuBar menubar;
-
-		/// <summary>
-		/// Contains the current page.
-		/// </summary>
-		public int CurrentPage
-		{
-			get { return notebook.Page; }
-			set { notebook.Page = value; }
-		}
-
-		/// <summary>
-		/// Contains the statusbar for the demo.
-		/// </summary>
-		public static Statusbar Statusbar
-		{
-			get { return statusbar; }
-		}
-
-		/// <summary>
-		/// Creates the GUI interface.
-		/// </summary>
-		private void CreateGui()
-		{
 			// Create a window
 			SetDefaultSize(1000, 800);
 			DeleteEvent += OnWindowDelete;
+
+			demoComponents = new DemoComponents();
+
+			// Create a user action manager.
+			var actionManager = new ActionManager(this);
+			actionManager.Add(GetType().Assembly);
+
+			demoTextEditor = new DemoTextEditor();
+			actionManager.Add(demoTextEditor);
+
+			demoActions = new DemoActions(actionManager);
+
+			// Load the layout from the file system.
+			layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
+			actionManager.SetLayout(layout);
+
+			// Load the keybinding from a file.
+			keybindings = new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
+			actionManager.SetKeybindings(keybindings);
 
 			// Create the window frame
 			var box = new VBox();
@@ -98,11 +79,16 @@ namespace GtkExtDemo
 			// Create the components we need before the menu.
 			notebook = new Notebook();
 
+			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
+			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
+			actionManager.Add(new SwitchPageAction(notebook, 2, "Actions"));
+
 			// Create a notebook
 			notebook.BorderWidth = 5;
 
 			notebook.AppendPage(demoComponents, new Label("Components"));
 			notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
+			notebook.AppendPage(demoActions, new Label("Actions"));
 
 			// Add the status bar
 			statusbar = new Statusbar();
@@ -121,94 +107,41 @@ namespace GtkExtDemo
 			ShowAll();
 		}
 
+		#region GUI
+
+		private static Statusbar statusbar;
+		private readonly DemoComponents demoComponents;
+		private readonly DemoTextEditor demoTextEditor;
+		private readonly DemoActions demoActions;
+		private Notebook notebook;
+		private MenuBar menubar;
+		private ActionLayout layout;
+		private ActionKeybindings keybindings;
+
+		/// <summary>
+		/// Contains the current page.
+		/// </summary>
+		public int CurrentPage
+		{
+			get { return notebook.Page; }
+			set { notebook.Page = value; }
+		}
+
+		/// <summary>
+		/// Contains the statusbar for the demo.
+		/// </summary>
+		public static Statusbar Statusbar
+		{
+			get { return statusbar; }
+		}
+
 		private Widget CreateGuiMenu()
 		{
-#if !USE_USERACTIONS
-			// Create a new accelerator and add it to the window.
-			var accelGroup = new AccelGroup();
-			AddAccelGroup(accelGroup);
-
-			// Create a user action manager.
-			var actionManager = new ActionManager(this);
-			actionManager.AddActions(GetType().Assembly);
-			actionManager.AddActions(new SwitchPageAction(notebook, 0, "Components"));
-			actionManager.AddActions(new SwitchPageAction(notebook, 1, "Text Editor"));
-			actionManager.AddActions(demoTextEditor);
-
-			// Load the layout from the file system.
-			var layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
-			
-			actionManager.SetLayout(layout);
-
-			// Load the keybinding from a file.
-			var keybindings = new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
-
-			actionManager.SetKeybindings(keybindings);
-
 			// Populate the menubar and return it.
 			layout.Populate(menubar, "Main");
 
 			menubar.ShowAll();
 			return menubar;
-#else
-			// Defines the menu
-			var uiInfo = new StringBuilder();
-
-			uiInfo.Append("<ui>");
-			uiInfo.Append("<menubar name='MenuBar'>");
-			uiInfo.Append("<menu action='FileMenu'>");
-			uiInfo.Append("<menuitem action='Quit'/>");
-			uiInfo.Append("</menu>");
-			uiInfo.Append("<menu action='ViewMenu'>");
-			uiInfo.Append("<menuitem action='Components'/>");
-			uiInfo.Append("<menuitem action='TextEditor'/>");
-			uiInfo.Append("</menu>");
-			uiInfo.Append("</menubar>");
-			uiInfo.Append("</ui>");
-
-			// Set up the actions
-			var entries = new[]
-			              {
-			              	// "File" Menu
-			              	new ActionEntry(
-			              		"FileMenu", null, "_File", null, null, null),
-			              	new ActionEntry(
-			              		"Quit",
-			              		Stock.Quit,
-			              		"_Quit",
-			              		"<control>Q",
-			              		"Quit",
-			              		OnQuitAction), // "View" Menu
-			              	new ActionEntry(
-			              		"ViewMenu", null, "_View", null, null, null),
-			              	new ActionEntry(
-			              		"Components",
-			              		null,
-			              		"_Components",
-			              		"<control>1",
-			              		null,
-			              		OnSwitchComponents),
-			              	new ActionEntry(
-			              		"TextEditor",
-			              		null,
-			              		"_Line Text Editor",
-			              		"<control>2",
-			              		null,
-			              		OnSwitchTextEditor),
-			              };
-
-			// Build up the actions
-			var actions = new ActionGroup("group");
-			actions.Add(entries);
-
-			uiManager.InsertActionGroup(actions, 0);
-			AddAccelGroup(uiManager.AccelGroup);
-
-			// Set up the interfaces from XML
-			uiManager.AddUiFromString(uiInfo.ToString());
-			menubar = (MenuBar) uiManager.GetWidget("/MenuBar");
-			return menubar;
-#endif
 		}
 
 		/// <summary>

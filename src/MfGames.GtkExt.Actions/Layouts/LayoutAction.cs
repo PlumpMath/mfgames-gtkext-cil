@@ -37,7 +37,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 	/// <summary>
 	/// Represents a single item in the layout.
 	/// </summary>
-	public class LayoutAction : ILayoutItem
+	public class LayoutAction : ILayoutListItem
 	{
 		#region Constructors
 
@@ -78,7 +78,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 
 			// Create a menu item from this action.
 			Widget widget = new ActionMenuItem(manager, action);
-
+			
 			shell.Add(widget);
 		}
 

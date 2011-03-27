@@ -36,7 +36,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 	/// <summary>
 	/// Contains the top-level element in a <see cref="ActionLayout"/>.
 	/// </summary>
-	public class LayoutGroup : List<LayoutList>
+	public class LayoutGroup : List<ILayoutGroupItem>
 	{
 		#region Constructors
 
@@ -113,7 +113,7 @@ namespace MfGames.GtkExt.Actions.Layouts
 			MenuBar menubar)
 		{
 			// Go through all the lists in this group.
-			foreach (LayoutList list in this)
+			foreach (ILayoutGroupItem list in this)
 			{
 				list.Populate(manager, menubar);
 			}
