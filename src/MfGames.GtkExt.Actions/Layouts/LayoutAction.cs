@@ -29,6 +29,7 @@ using System.Xml;
 using Gtk;
 
 using MfGames.GtkExt.Actions.Widgets;
+using MfGames.Reporting;
 
 #endregion
 
@@ -75,11 +76,27 @@ namespace MfGames.GtkExt.Actions.Layouts
 		{
 			// Get the action associated with this.
 			Action action = manager.GetAction(ActionName);
+			MenuItem menuItem;
 
-			// Create a menu item from this action.
-			Widget widget = new ActionMenuItem(manager, action);
-			
-			shell.Add(widget);
+			if (action == null)
+			{
+				// Create a placeholder menu item.
+				menuItem = new MenuItem("<Unknown Action: " + ActionName + ">");
+				menuItem.Sensitive = false;
+
+				// Add it to the errors.
+				manager.Messages.Add(
+					new SeverityMessage(
+						Severity.Error, "Could not find action " + ActionName + " to add to menu."));
+			}
+			else
+			{
+				// Create a menu item from this action.
+				menuItem = new ActionMenuItem(manager, action);
+			}
+
+			// Add the resulting menu item to the list.
+			shell.Add(menuItem);
 		}
 
 		#endregion

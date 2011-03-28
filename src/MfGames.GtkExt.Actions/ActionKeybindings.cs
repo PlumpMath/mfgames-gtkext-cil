@@ -35,6 +35,7 @@ using Gdk;
 using Gtk;
 
 using MfGames.GtkExt.Actions.Keybindings;
+using MfGames.Reporting;
 
 using Action=Gtk.Action;
 using Key=Gdk.Key;
@@ -199,9 +200,20 @@ namespace MfGames.GtkExt.Actions
 			if (action != null)
 			{
 				action.Activate();
+				e.RetVal = true;
 			}
 
-			e.RetVal = true;
+			// Add it to the errors.
+			ActionManager.Messages.Add(
+				new SeverityMessage(
+					Severity.Error,
+					string.Format(
+						"Could not find action {0} to apply keybinding {1}.",
+						actionName,
+						acceleratorPath)));
+
+			// We couldn't find the action so we did nothing.
+			e.RetVal = false;
 		}
 
 		/// <summary>

@@ -79,6 +79,15 @@ namespace MfGames.GtkExt.Actions
 		private readonly SeverityMessageCollection messages;
 
 		/// <summary>
+		/// Gets the collection of messages produced by the action manager.
+		/// </summary>
+		/// <value>The messages.</value>
+		public SeverityMessageCollection Messages
+		{
+			get { return messages; }
+		}
+
+		/// <summary>
 		/// Attaches to the root window and installs the accelerator processing.
 		/// </summary>
 		/// <param name="window"></param>
@@ -183,7 +192,7 @@ namespace MfGames.GtkExt.Actions
 
 			if (newAction is IConfigurableAction)
 			{
-				groupName = ((IConfigurableAction)newAction).GroupName;
+				groupName = ((IConfigurableAction) newAction).GroupName;
 			}
 
 			ActionSet group = GetOrCreateGroup(groupName);
@@ -316,10 +325,12 @@ namespace MfGames.GtkExt.Actions
 		/// Gets the action from the given name.
 		/// </summary>
 		/// <param name="actionName">Name of the action.</param>
-		/// <returns></returns>
+		/// <returns>
+		/// The action, if found, or otherwise <see langword="null"/>.
+		/// </returns>
 		public Action GetAction(string actionName)
 		{
-			return actions[actionName];
+			return actions.ContainsKey(actionName) ? actions[actionName] : null;
 		}
 
 		#endregion

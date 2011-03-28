@@ -2,6 +2,7 @@
 <action-layout xmlns="urn:mfgames.com/mfgames-gtkext-cil/action-layout/0">
 	<layout-group id="Main">
 		<layout-list label="_File">
+			<action name="Unknown Action"/>
 			<action name="Quit"/>
 		</layout-list>
 		<layout-list label="_View" group="View" >
