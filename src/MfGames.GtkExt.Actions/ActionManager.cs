@@ -52,21 +52,22 @@ namespace MfGames.GtkExt.Actions
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ActionManager"/> class.
 		/// </summary>
-		/// <param name="attachToWindow">The widget to attach processing to.</param>
-		public ActionManager(Window attachToWindow)
+		public ActionManager()
 		{
-			// Save the parameters.
-			if (attachToWindow == null)
-			{
-				throw new ArgumentNullException("attachToWindow");
-			}
-
 			// Create the collections we use.
 			messages = new SeverityMessageCollection();
 			actions = new Dictionary<string, Action>();
 			groups = new Dictionary<string, ActionSet>();
 			attachedWindows = new HashSet<Window>();
+		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ActionManager"/> class.
+		/// </summary>
+		/// <param name="attachToWindow">The widget to attach processing to.</param>
+		public ActionManager(Window attachToWindow)
+			: this()
+		{
 			// Attach to the widget.
 			AttachToRootWindow(attachToWindow);
 		}
@@ -93,6 +94,12 @@ namespace MfGames.GtkExt.Actions
 		/// <param name="window"></param>
 		public void AttachToRootWindow(Window window)
 		{
+			// Save the parameters.
+			if (window == null)
+			{
+				throw new ArgumentNullException("window");
+			}
+
 			// Install the accelerator group.
 			//window.AddAccelGroup(AccelGroup);
 
