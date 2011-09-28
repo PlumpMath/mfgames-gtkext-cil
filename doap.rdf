@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	 xmlns:dc="http://purl.org/dc/elements/1.1/"
+	 xmlns:doapext="http://mfgames.com/2009/doap-ext"
+	 xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	 xmlns="http://usefulinc.com/ns/doap#">
+  <doapext:short-name>mfgames-gtkext-cil</doapext:short-name>
+  <name>MfGames GtkExt CIL</name>
+  <homepage rdf:resource="http://mfgames.com/mfgames-gtkext-cil"/>
+
+  <audience>Developers</audience>
+  <license rdf:resource="http://www.opensource.org/licenses/mit-license.php">MIT</license>
+  <programming-language>C#</programming-language>
+
+  <!-- Repositories -->
+  <repository>
+    <GitRepository>
+      <browse rdf:resource="https://github.com/dmoonfire/mfgames-gtkext-cil"/>
+    </GitRepository>
+  </repository>
+</Project>

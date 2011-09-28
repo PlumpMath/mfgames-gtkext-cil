@@ -4,4 +4,5 @@
 	<action name="EditableBuffer" keybinding="/Control+E/1"/>
 	<action name="ReadOnlyBuffer" keybinding="/Control+E/2"/>
 	<action name="ClearBuffer" keybinding="/Control+E/3"/>
+	<action name="Unknown Action" keybinding="/Control+Shift+T"/>
 </action-keybindings>
