@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,25 +30,25 @@ using C5;
 
 namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
-	/// <summary>
-	/// Implements a dictionary for managing block styles.
-	/// </summary>
-	/// <typeparam name="TBlockStyle">The type of the block style.</typeparam>
-	public class BlockStyleDictionary<TBlockStyle>
-		: HashDictionary<string, TBlockStyle>
-		where TBlockStyle: BlockStyle
-	{
-		#region Retrieval
+    /// <summary>
+    /// Implements a dictionary for managing block styles.
+    /// </summary>
+    /// <typeparam name="TBlockStyle">The type of the block style.</typeparam>
+    public class BlockStyleDictionary<TBlockStyle>
+        : HashDictionary<string, TBlockStyle>
+        where TBlockStyle: BlockStyle
+    {
+        #region Retrieval
 
-		/// <summary>
-		/// Gets or sets the <see cref="TBlockStyle"/> with the specified key.
-		/// </summary>
-		public override TBlockStyle this[string key]
-		{
-			get { return Contains(key) ? base[key] : null; }
-			set { base[key] = value; }
-		}
+        /// <summary>
+        /// Gets or sets the <see cref="TBlockStyle"/> with the specified key.
+        /// </summary>
+        public override TBlockStyle this[string key]
+        {
+            get { return Contains(key) ? base[key] : null; }
+            set { base[key] = value; }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

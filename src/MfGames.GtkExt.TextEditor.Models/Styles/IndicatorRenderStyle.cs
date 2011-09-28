@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,19 @@
 
 namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
-	/// <summary>
-	/// Determines the ways indicators are drawn on the bar.
-	/// </summary>
-	public enum IndicatorRenderStyle
-	{
-		/// <summary>
-		/// Indicates that the highest priority indicator is shown.
-		/// </summary>
-		Highest,
+    /// <summary>
+    /// Determines the ways indicators are drawn on the bar.
+    /// </summary>
+    public enum IndicatorRenderStyle
+    {
+        /// <summary>
+        /// Indicates that the highest priority indicator is shown.
+        /// </summary>
+        Highest,
 
-		/// <summary>
-		/// Indicates that a ratio of indicators are displayed on the bar.
-		/// </summary>
-		Ratio,
-	}
+        /// <summary>
+        /// Indicates that a ratio of indicators are displayed on the bar.
+        /// </summary>
+        Ratio,
+    }
 }

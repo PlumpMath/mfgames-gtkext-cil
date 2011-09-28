@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,17 +32,17 @@ using Gtk;
 
 namespace MfGames.GtkExt.Actions
 {
-	/// <summary>
-	/// Identifies a class that can configure one or more multiple user actions
-	/// in a single call.
-	/// </summary>
-	public interface IActionFactory
-	{
-		/// <summary>
-		/// Creates all the <see cref="Action"/> objects associated with the extending
-		/// class.
-		/// </summary>
-		/// <returns></returns>
-		ICollection<Action> CreateActions();
-	}
+    /// <summary>
+    /// Identifies a class that can configure one or more multiple user actions
+    /// in a single call.
+    /// </summary>
+    public interface IActionFactory
+    {
+        /// <summary>
+        /// Creates all the <see cref="Action"/> objects associated with the extending
+        /// class.
+        /// </summary>
+        /// <returns></returns>
+        ICollection<Action> CreateActions();
+    }
 }

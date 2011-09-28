@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,45 +32,45 @@ using MfGames.GtkExt.TextEditor.Interfaces;
 
 namespace MfGames.GtkExt.TextEditor.Visuals
 {
-	/// <summary>
-	/// Implements a basic render context used for rendering various elements
-	/// of the text editor.
-	/// </summary>
-	public class RenderContext : IRenderContext
-	{
-		#region Constructors
+    /// <summary>
+    /// Implements a basic render context used for rendering various elements
+    /// of the text editor.
+    /// </summary>
+    public class RenderContext : IRenderContext
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RenderContext"/> class.
-		/// </summary>
-		/// <param name="cairoContext">The cairo context.</param>
-		public RenderContext(Context cairoContext)
-		{
-			CairoContext = cairoContext;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderContext"/> class.
+        /// </summary>
+        /// <param name="cairoContext">The cairo context.</param>
+        public RenderContext(Context cairoContext)
+        {
+            CairoContext = cairoContext;
+        }
 
-		#endregion
+        #endregion
 
-		#region Render Context
+        #region Render Context
 
-		/// <summary>
-		/// Gets the Cairo context for rendering.
-		/// </summary>
-		/// <value>The cairo context.</value>
-		public Context CairoContext { get; set; }
+        /// <summary>
+        /// Gets the Cairo context for rendering.
+        /// </summary>
+        /// <value>The cairo context.</value>
+        public Context CairoContext { get; set; }
 
-		/// <summary>
-		/// Gets or sets the render region that can be drawn into.
-		/// </summary>
-		/// <value>The render region.</value>
-		public Rectangle RenderRegion { get; set; }
+        /// <summary>
+        /// Gets or sets the render region that can be drawn into.
+        /// </summary>
+        /// <value>The render region.</value>
+        public Rectangle RenderRegion { get; set; }
 
-		/// <summary>
-		/// Gets or sets the vertical adjustment or offset into the viewing area.
-		/// </summary>
-		/// <value>The vertical adjustment.</value>
-		public double VerticalAdjustment { get; set; }
+        /// <summary>
+        /// Gets or sets the vertical adjustment or offset into the viewing area.
+        /// </summary>
+        /// <value>The vertical adjustment.</value>
+        public double VerticalAdjustment { get; set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

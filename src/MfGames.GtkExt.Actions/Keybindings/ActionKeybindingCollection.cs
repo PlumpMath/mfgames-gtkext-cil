@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,20 @@
 
 #region Namespaces
 
-using Gtk;
-
 using MfGames.Collections;
 
 #endregion
 
 namespace MfGames.GtkExt.Actions.Keybindings
 {
-	/// <summary>
-	/// Implements a keybinding collection that has the individual levels of a
-	/// chained keybinding at each level. For example, a keybinding of "Ctrl+Q"
-	/// would be at the top level, but "Ctrl+M, M" would have "Ctrl+M" at the first
-	/// level and "M" at the second.
-	/// </summary>
-	public class ActionKeybindingCollection
-		: HierarchicalPathTreeCollection<string>
-	{
-	}
+    /// <summary>
+    /// Implements a keybinding collection that has the individual levels of a
+    /// chained keybinding at each level. For example, a keybinding of "Ctrl+Q"
+    /// would be at the top level, but "Ctrl+M, M" would have "Ctrl+M" at the first
+    /// level and "M" at the second.
+    /// </summary>
+    public class ActionKeybindingCollection
+        : HierarchicalPathTreeCollection<string>
+    {
+    }
 }

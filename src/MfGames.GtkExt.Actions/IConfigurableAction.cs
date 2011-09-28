@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,18 @@
 
 namespace MfGames.GtkExt.Actions
 {
-	/// <summary>
-	/// Defines the additional elements of an action that can be configured
-	/// and arranged.
-	/// </summary>
-	public interface IConfigurableAction
-	{
-		/// <summary>
-		/// Gets the name of the action group to associate with this action.
-		/// </summary>
-		/// <value>
-		/// The name of the group.
-		/// </value>
-		string GroupName { get; }
-	}
+    /// <summary>
+    /// Defines the additional elements of an action that can be configured
+    /// and arranged.
+    /// </summary>
+    public interface IConfigurableAction
+    {
+        /// <summary>
+        /// Gets the name of the action group to associate with this action.
+        /// </summary>
+        /// <value>
+        /// The name of the group.
+        /// </value>
+        string GroupName { get; }
+    }
 }

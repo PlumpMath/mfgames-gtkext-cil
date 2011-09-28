@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,39 +30,39 @@ using System.ComponentModel;
 
 namespace GtkExtDemo.TextEditor
 {
-	/// <summary>
-	/// Contains the various line styles used by the demo.
-	/// </summary>
-	public enum DemoLineStyleType
-	{
-		/// <summary>
-		/// Represents the default font style.
-		/// </summary>
-		[Description("Text (T:)")]
-		Default,
+    /// <summary>
+    /// Contains the various line styles used by the demo.
+    /// </summary>
+    public enum DemoLineStyleType
+    {
+        /// <summary>
+        /// Represents the default font style.
+        /// </summary>
+        [Description("Text (T:)")]
+        Default,
 
-		/// <summary>
-		/// Represents a bordered text.
-		/// </summary>
-		[Description("Bordered (B:)")]
-		Borders,
+        /// <summary>
+        /// Represents a bordered text.
+        /// </summary>
+        [Description("Bordered (B:)")]
+        Borders,
 
-		/// <summary>
-		/// Represents a chapter which has borders and non-editable text.
-		/// </summary>
-		[Description("Chapter (C:)")]
-		Chapter,
+        /// <summary>
+        /// Represents a chapter which has borders and non-editable text.
+        /// </summary>
+        [Description("Chapter (C:)")]
+        Chapter,
 
-		/// <summary>
-		/// Represents a heading line.
-		/// </summary>
-		[Description("Heading (H:)")]
-		Heading,
+        /// <summary>
+        /// Represents a heading line.
+        /// </summary>
+        [Description("Heading (H:)")]
+        Heading,
 
-		/// <summary>
-		/// Represents a blank line.
-		/// </summary>
-		[Description("Break")]
-		Break,
-	}
+        /// <summary>
+        /// Represents a blank line.
+        /// </summary>
+        [Description("Break")]
+        Break,
+    }
 }

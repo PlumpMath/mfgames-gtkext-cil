@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,34 +30,34 @@ using Gtk;
 
 namespace GtkExtDemo.Actions
 {
-	/// <summary>
-	/// Represents the quit action.
-	/// </summary>
-	public class QuitAction : Action
-	{
-		#region Constructors
+    /// <summary>
+    /// Represents the quit action.
+    /// </summary>
+    public class QuitAction : Action
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="QuitAction"/> class
-		/// and uses the stock settings for it.
-		/// </summary>
-		public QuitAction()
-			: base("Quit", null, null, Stock.Quit)
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuitAction"/> class
+        /// and uses the stock settings for it.
+        /// </summary>
+        public QuitAction()
+            : base("Quit", null, null, Stock.Quit)
+        {
+        }
 
-		#endregion
+        #endregion
 
-		#region Actions
+        #region Actions
 
-		/// <summary>
-		/// Called when the action is called.
-		/// </summary>
-		protected override void OnActivated()
-		{
-			Application.Quit();
-		}
+        /// <summary>
+        /// Called when the action is called.
+        /// </summary>
+        protected override void OnActivated()
+        {
+            Application.Quit();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

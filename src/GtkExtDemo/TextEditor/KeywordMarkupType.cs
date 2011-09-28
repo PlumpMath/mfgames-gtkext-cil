@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,19 @@
 
 namespace GtkExtDemo.TextEditor
 {
-	/// <summary>
-	/// Defines the types of markups that can show up on the editor.
-	/// </summary>
-	public enum KeywordMarkupType
-	{
-		/// <summary>
-		/// Indicates a warning.
-		/// </summary>
-		Warning,
+    /// <summary>
+    /// Defines the types of markups that can show up on the editor.
+    /// </summary>
+    public enum KeywordMarkupType
+    {
+        /// <summary>
+        /// Indicates a warning.
+        /// </summary>
+        Warning,
 
-		/// <summary>
-		/// Indicates an error.
-		/// </summary>
-		Error,
-	}
+        /// <summary>
+        /// Indicates an error.
+        /// </summary>
+        Error,
+    }
 }

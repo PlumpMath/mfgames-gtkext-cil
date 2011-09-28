@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,119 +36,122 @@ using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 namespace GtkExtDemo.TextEditor
 {
-	/// <summary>
-	/// Wraps around a line buffer and marks up anything with a number of keywords
-	/// with Pango markup.
-	/// </summary>
-	public class KeywordLineBuffer : LineBufferDecorator
-	{
-		#region Constructors
+    /// <summary>
+    /// Wraps around a line buffer and marks up anything with a number of keywords
+    /// with Pango markup.
+    /// </summary>
+    public class KeywordLineBuffer : LineBufferDecorator
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="KeywordLineBuffer"/> class.
-		/// </summary>
-		/// <param name="buffer">The buffer.</param>
-		public KeywordLineBuffer(LineBuffer buffer)
-			: base(buffer)
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeywordLineBuffer"/> class.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        public KeywordLineBuffer(LineBuffer buffer)
+            : base(buffer)
+        {
+        }
 
-		#endregion
+        #endregion
 
-		#region Markup
+        #region Markup
 
-		/// <summary>
-		/// Gets the Pango markup for a given line.
-		/// </summary>
-		/// <param name="lineIndex">The line.</param>
-		/// <returns></returns>
-		public override string GetLineMarkup(
-			int lineIndex,
-			LineContexts lineContexts)
-		{
-			// Get the escaped line markup.
-			string markup = base.GetLineMarkup(lineIndex, lineContexts);
+        /// <summary>
+        /// Gets the Pango markup for a given line.
+        /// </summary>
+        /// <param name="lineIndex">The line.</param>
+        /// <returns></returns>
+        public override string GetLineMarkup(
+            int lineIndex,
+            LineContexts lineContexts)
+        {
+            // Get the escaped line markup.
+            string markup = base.GetLineMarkup(lineIndex, lineContexts);
 
-			// Parse through the markup and get a list of entries. We go through
-			// the list in reverse so we can use the character entries without
-			// adjusting for the text we're adding.
-			ArrayList<KeywordMarkupEntry> entries = KeywordMarkupEntry.ParseText(markup);
+            // Parse through the markup and get a list of entries. We go through
+            // the list in reverse so we can use the character entries without
+            // adjusting for the text we're adding.
+            ArrayList<KeywordMarkupEntry> entries =
+                KeywordMarkupEntry.ParseText(markup);
 
-			entries.Reverse();
+            entries.Reverse();
 
-			foreach (var entry in entries)
-			{
-				// Insert the final span at the end.
-				markup = markup.Insert(entry.EndCharacterIndex, "</span>");
+            foreach (var entry in entries)
+            {
+                // Insert the final span at the end.
+                markup = markup.Insert(entry.EndCharacterIndex, "</span>");
 
-				// Figure out the attributes.
-				string attributes = string.Empty;
+                // Figure out the attributes.
+                string attributes = string.Empty;
 
-				switch (entry.Markup)
-				{
-					case KeywordMarkupType.Error:
-						attributes = "underline='error' underline_color='red' color='red'";
-						break;
+                switch (entry.Markup)
+                {
+                    case KeywordMarkupType.Error:
+                        attributes =
+                            "underline='error' underline_color='red' color='red'";
+                        break;
 
-					case KeywordMarkupType.Warning:
-						attributes = "underline='error' underline_color='orange' color='orange'";
-						break;
-				}
+                    case KeywordMarkupType.Warning:
+                        attributes =
+                            "underline='error' underline_color='orange' color='orange'";
+                        break;
+                }
 
-				// Add in the attributes for the start index.
-				markup = markup.Insert(
-					entry.StartCharacterIndex, "<span " + attributes + ">");
-			}
+                // Add in the attributes for the start index.
+                markup = markup.Insert(
+                    entry.StartCharacterIndex, "<span " + attributes + ">");
+            }
 
-			// Return the resulting markup.
-			return markup;
-		}
+            // Return the resulting markup.
+            return markup;
+        }
 
-		#endregion
+        #endregion
 
-		#region Line Indicators
+        #region Line Indicators
 
-		/// <summary>
-		/// Gets the line indicators for a given character range.
-		/// </summary>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <param name="startCharacterIndex">Start character in the line text.</param>
-		/// <param name="endCharacterIndex">End character in the line text.</param>
-		/// <returns>
-		/// An enumerable with the indicators or <see langword="null"/> for
-		/// none.
-		/// </returns>
-		public override IEnumerable<ILineIndicator> GetLineIndicators(
-			int lineIndex,
-			int startCharacterIndex,
-			int endCharacterIndex)
-		{
-			// Get the escaped line markup.
-			string text = GetLineText(lineIndex, LineContexts.None);
+        /// <summary>
+        /// Gets the line indicators for a given character range.
+        /// </summary>
+        /// <param name="lineIndex">Index of the line.</param>
+        /// <param name="startCharacterIndex">Start character in the line text.</param>
+        /// <param name="endCharacterIndex">End character in the line text.</param>
+        /// <returns>
+        /// An enumerable with the indicators or <see langword="null"/> for
+        /// none.
+        /// </returns>
+        public override IEnumerable<ILineIndicator> GetLineIndicators(
+            int lineIndex,
+            int startCharacterIndex,
+            int endCharacterIndex)
+        {
+            // Get the escaped line markup.
+            string text = GetLineText(lineIndex, LineContexts.None);
 
-			endCharacterIndex = Math.Min(endCharacterIndex, text.Length);
+            endCharacterIndex = Math.Min(endCharacterIndex, text.Length);
 
-			string partialText = text.Substring(
-				startCharacterIndex, endCharacterIndex - startCharacterIndex);
+            string partialText = text.Substring(
+                startCharacterIndex, endCharacterIndex - startCharacterIndex);
 
-			// Parse through the markup and get a list of entries. If we don't
-			// get any out of this, return null.
-			ArrayList<KeywordMarkupEntry> entries =
-				KeywordMarkupEntry.ParseText(partialText);
+            // Parse through the markup and get a list of entries. If we don't
+            // get any out of this, return null.
+            ArrayList<KeywordMarkupEntry> entries =
+                KeywordMarkupEntry.ParseText(partialText);
 
-			if (entries.Count == 0)
-			{
-				return null;
-			}
+            if (entries.Count == 0)
+            {
+                return null;
+            }
 
-			// Return the list of keyword entries which are also indicators.
-			var indicators = new ArrayList<ILineIndicator>(entries.Count);
+            // Return the list of keyword entries which are also indicators.
+            var indicators = new ArrayList<ILineIndicator>(entries.Count);
 
-			indicators.AddAll(entries);
+            indicators.AddAll(entries);
 
-			return indicators;
-		}
+            return indicators;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

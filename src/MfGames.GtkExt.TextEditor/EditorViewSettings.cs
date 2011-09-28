@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,38 +24,38 @@
 
 namespace MfGames.GtkExt.TextEditor
 {
-	/// <summary>
-	/// Contains the settings for the text editor.
-	/// </summary>
-	public class EditorViewSettings
-	{
-		#region Constructors
+    /// <summary>
+    /// Contains the settings for the text editor.
+    /// </summary>
+    public class EditorViewSettings
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="EditorViewSettings"/> class.
-		/// </summary>
-		public EditorViewSettings()
-		{
-			ShowLineNumbers = true;
-			CaretScrollPad = 3;
-			ShowScrollPadding = false;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorViewSettings"/> class.
+        /// </summary>
+        public EditorViewSettings()
+        {
+            ShowLineNumbers = true;
+            CaretScrollPad = 3;
+            ShowScrollPadding = false;
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		public int CaretScrollPad { get; set; }
-		public bool ShowLineNumbers { get; set; }
+        public int CaretScrollPad { get; set; }
+        public bool ShowLineNumbers { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the scroll padding area should be visible.
-		/// </summary>
-		/// <value>
-		///   <c>true</c> if [show scroll padding]; otherwise, <c>false</c>.
-		/// </value>
-		public bool ShowScrollPadding { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether the scroll padding area should be visible.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [show scroll padding]; otherwise, <c>false</c>.
+        /// </value>
+        public bool ShowScrollPadding { get; set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,22 @@ using Cairo;
 
 namespace MfGames.GtkExt.TextEditor.Interfaces
 {
-	/// <summary>
-	/// Contains information a rendering context including the elements needed
-	/// to draw out elements.
-	/// </summary>
-	public interface IRenderContext
-	{
-		/// <summary>
-		/// Gets the Cairo context for rendering.
-		/// </summary>
-		/// <value>The cairo context.</value>
-		Context CairoContext { get; }
+    /// <summary>
+    /// Contains information a rendering context including the elements needed
+    /// to draw out elements.
+    /// </summary>
+    public interface IRenderContext
+    {
+        /// <summary>
+        /// Gets the Cairo context for rendering.
+        /// </summary>
+        /// <value>The cairo context.</value>
+        Context CairoContext { get; }
 
-		/// <summary>
-		/// Gets or sets the render region that can be drawn into.
-		/// </summary>
-		/// <value>The render region.</value>
-		Rectangle RenderRegion { get; set; }
-	}
+        /// <summary>
+        /// Gets or sets the render region that can be drawn into.
+        /// </summary>
+        /// <value>The render region.</value>
+        Rectangle RenderRegion { get; set; }
+    }
 }

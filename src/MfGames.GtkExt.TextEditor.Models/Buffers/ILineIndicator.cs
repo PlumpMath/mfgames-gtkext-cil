@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,15 @@
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
-	/// <summary>
-	/// Defines the functionality of a line indicator.
-	/// </summary>
-	public interface ILineIndicator
-	{
-		/// <summary>
-		/// Gets the style used to draw the line indicator.
-		/// </summary>
-		/// <value>The line indicator style.</value>
-		string LineIndicatorStyle { get; }
-	}
+    /// <summary>
+    /// Defines the functionality of a line indicator.
+    /// </summary>
+    public interface ILineIndicator
+    {
+        /// <summary>
+        /// Gets the style used to draw the line indicator.
+        /// </summary>
+        /// <value>The line indicator style.</value>
+        string LineIndicatorStyle { get; }
+    }
 }

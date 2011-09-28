@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,22 @@ using Gtk;
 
 namespace MfGames.GtkExt.Actions.Layouts
 {
-	/// <summary>
-	/// Represents a separator for the screen.
-	/// </summary>
-	public class LayoutSeparator : ILayoutListItem
-	{
-		/// <summary>
-		/// Populates the specified shell with sub-menus.
-		/// </summary>
-		/// <param name="manager">The manager.</param>
-		/// <param name="shell">The shell.</param>
-		public void Populate(
-			ActionManager manager,
-			MenuShell shell)
-		{
-			var separator = new MenuItem();
-			shell.Add(separator);
-		}
-	}
+    /// <summary>
+    /// Represents a separator for the screen.
+    /// </summary>
+    public class LayoutSeparator : ILayoutListItem
+    {
+        /// <summary>
+        /// Populates the specified shell with sub-menus.
+        /// </summary>
+        /// <param name="manager">The manager.</param>
+        /// <param name="shell">The shell.</param>
+        public void Populate(
+            ActionManager manager,
+            MenuShell shell)
+        {
+            var separator = new MenuItem();
+            shell.Add(separator);
+        }
+    }
 }

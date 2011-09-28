@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 using Gtk;
 
@@ -38,188 +37,189 @@ using MfGames.GtkExt.Actions;
 
 namespace GtkExtDemo
 {
-	/// <summary>
-	/// Primary demo window.
-	/// </summary>
-	public class DemoWindow : Window
-	{
-		/// <summary>
-		/// Constructs a demo object with the appropriate gui.
-		/// </summary>
-		public DemoWindow()
-			: base("Moonfire Games' Gtk Demo")
-		{
-			// Create a window
-			SetDefaultSize(1000, 800);
-			DeleteEvent += OnWindowDelete;
+    /// <summary>
+    /// Primary demo window.
+    /// </summary>
+    public class DemoWindow : Window
+    {
+        /// <summary>
+        /// Constructs a demo object with the appropriate gui.
+        /// </summary>
+        public DemoWindow()
+            : base("Moonfire Games' Gtk Demo")
+        {
+            // Create a window
+            SetDefaultSize(1000, 800);
+            DeleteEvent += OnWindowDelete;
 
-			demoComponents = new DemoComponents();
+            demoComponents = new DemoComponents();
 
-			// Create a user action manager.
-			var actionManager = new ActionManager(this);
-			actionManager.Add(GetType().Assembly);
+            // Create a user action manager.
+            var actionManager = new ActionManager(this);
+            actionManager.Add(GetType().Assembly);
 
-			demoTextEditor = new DemoTextEditor();
-			actionManager.Add(demoTextEditor);
+            demoTextEditor = new DemoTextEditor();
+            actionManager.Add(demoTextEditor);
 
-			demoActions = new DemoActions(actionManager);
+            demoActions = new DemoActions(actionManager);
 
-			// Load the layout from the file system.
-			layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
-			actionManager.SetLayout(layout);
+            // Load the layout from the file system.
+            layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
+            actionManager.SetLayout(layout);
 
-			// Load the keybinding from a file.
-			keybindings = new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
-			actionManager.SetKeybindings(keybindings);
+            // Load the keybinding from a file.
+            keybindings =
+                new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
+            actionManager.SetKeybindings(keybindings);
 
-			// Create the window frame
-			var box = new VBox();
-			Add(box);
+            // Create the window frame
+            var box = new VBox();
+            Add(box);
 
-			// Create the components we need before the menu.
-			notebook = new Notebook();
+            // Create the components we need before the menu.
+            notebook = new Notebook();
 
-			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
-			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
-			actionManager.Add(new SwitchPageAction(notebook, 2, "Actions"));
+            actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
+            actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
+            actionManager.Add(new SwitchPageAction(notebook, 2, "Actions"));
 
-			// Create a notebook
-			notebook.BorderWidth = 5;
+            // Create a notebook
+            notebook.BorderWidth = 5;
 
-			notebook.AppendPage(demoComponents, new Label("Components"));
-			notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
-			notebook.AppendPage(demoActions, new Label("Actions"));
+            notebook.AppendPage(demoComponents, new Label("Components"));
+            notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
+            notebook.AppendPage(demoActions, new Label("Actions"));
 
-			// Add the status bar
-			statusbar = new Statusbar();
-			statusbar.Push(0, "Welcome!");
-			statusbar.HasResizeGrip = true;
+            // Add the status bar
+            statusbar = new Statusbar();
+            statusbar.Push(0, "Welcome!");
+            statusbar.HasResizeGrip = true;
 
-			// Create the menu
-			menubar = new MenuBar();
+            // Create the menu
+            menubar = new MenuBar();
 
-			// Back everything into place.
-			box.PackStart(CreateGuiMenu(), false, false, 0);
-			box.PackStart(notebook, true, true, 0);
-			box.PackStart(statusbar, false, false, 0);
+            // Back everything into place.
+            box.PackStart(CreateGuiMenu(), false, false, 0);
+            box.PackStart(notebook, true, true, 0);
+            box.PackStart(statusbar, false, false, 0);
 
-			// Show everything as the final
-			ShowAll();
-		}
+            // Show everything as the final
+            ShowAll();
+        }
 
-		#region GUI
+        #region GUI
 
-		private static Statusbar statusbar;
-		private readonly DemoComponents demoComponents;
-		private readonly DemoTextEditor demoTextEditor;
-		private readonly DemoActions demoActions;
-		private Notebook notebook;
-		private MenuBar menubar;
-		private ActionLayout layout;
-		private ActionKeybindings keybindings;
+        private static Statusbar statusbar;
+        private readonly DemoActions demoActions;
+        private readonly DemoComponents demoComponents;
+        private readonly DemoTextEditor demoTextEditor;
+        private readonly ActionKeybindings keybindings;
+        private readonly ActionLayout layout;
+        private readonly MenuBar menubar;
+        private readonly Notebook notebook;
 
-		/// <summary>
-		/// Contains the current page.
-		/// </summary>
-		public int CurrentPage
-		{
-			get { return notebook.Page; }
-			set { notebook.Page = value; }
-		}
+        /// <summary>
+        /// Contains the current page.
+        /// </summary>
+        public int CurrentPage
+        {
+            get { return notebook.Page; }
+            set { notebook.Page = value; }
+        }
 
-		/// <summary>
-		/// Contains the statusbar for the demo.
-		/// </summary>
-		public static Statusbar Statusbar
-		{
-			get { return statusbar; }
-		}
+        /// <summary>
+        /// Contains the statusbar for the demo.
+        /// </summary>
+        public static Statusbar Statusbar
+        {
+            get { return statusbar; }
+        }
 
-		private Widget CreateGuiMenu()
-		{
-			// Populate the menubar and return it.
-			layout.Populate(menubar, "Main");
+        private Widget CreateGuiMenu()
+        {
+            // Populate the menubar and return it.
+            layout.Populate(menubar, "Main");
 
-			menubar.ShowAll();
-			return menubar;
-		}
+            menubar.ShowAll();
+            return menubar;
+        }
 
-		/// <summary>
-		/// Sets the initial focus on the current tab.
-		/// </summary>
-		public void SetInitialFocus()
-		{
-			notebook.CurrentPageWidget.ChildFocus(DirectionType.Down);
-		}
+        /// <summary>
+        /// Sets the initial focus on the current tab.
+        /// </summary>
+        public void SetInitialFocus()
+        {
+            notebook.CurrentPageWidget.ChildFocus(DirectionType.Down);
+        }
 
-		#endregion
+        #endregion
 
-		#region Events
+        #region Events
 
-		/// <summary>
-		/// Triggers the quit menu.
-		/// </summary>
-		private static void OnQuitAction(
-			object sender,
-			EventArgs args)
-		{
-			Application.Quit();
-		}
+        /// <summary>
+        /// Triggers the quit menu.
+        /// </summary>
+        private static void OnQuitAction(
+            object sender,
+            EventArgs args)
+        {
+            Application.Quit();
+        }
 
-		/// <summary>
-		/// Called to switch to the components layer.
-		/// <summary>
-		private void OnSwitchComponents(
-			object obj,
-			EventArgs args)
-		{
-			notebook.Page = 0;
-		}
+        /// <summary>
+        /// Called to switch to the components layer.
+        /// <summary>
+        private void OnSwitchComponents(
+            object obj,
+            EventArgs args)
+        {
+            notebook.Page = 0;
+        }
 
-		/// <summary>
-		/// Called to switch to the editor.
-		/// </summary>
-		private void OnSwitchTextEditor(
-			object obj,
-			EventArgs args)
-		{
-			notebook.Page = 1;
-		}
+        /// <summary>
+        /// Called to switch to the editor.
+        /// </summary>
+        private void OnSwitchTextEditor(
+            object obj,
+            EventArgs args)
+        {
+            notebook.Page = 1;
+        }
 
-		/// <summary>
-		/// Fired when the window is closed.
-		/// </summary>
-		private static void OnWindowDelete(
-			object obj,
-			DeleteEventArgs args)
-		{
-			Application.Quit();
-		}
+        /// <summary>
+        /// Fired when the window is closed.
+        /// </summary>
+        private static void OnWindowDelete(
+            object obj,
+            DeleteEventArgs args)
+        {
+            Application.Quit();
+        }
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Main entry point into the system.
-		/// </summary>
-		public static void Main(string[] args)
-		{
-			// Set up Gtk
-			Application.Init();
+        /// <summary>
+        /// Main entry point into the system.
+        /// </summary>
+        public static void Main(string[] args)
+        {
+            // Set up Gtk
+            Application.Init();
 
-			// Create the demo
-			var demo = new DemoWindow();
+            // Create the demo
+            var demo = new DemoWindow();
 
-			// Assign the page if the user requested it.
-			if (args.Length > 0)
-			{
-				int page = Int32.Parse(args[0]);
-				demo.CurrentPage = page;
-			}
+            // Assign the page if the user requested it.
+            if (args.Length > 0)
+            {
+                int page = Int32.Parse(args[0]);
+                demo.CurrentPage = page;
+            }
 
-			demo.SetInitialFocus();
+            demo.SetInitialFocus();
 
-			// Start everything running
-			Application.Run();
-		}
-	}
+            // Start everything running
+            Application.Run();
+        }
+    }
 }

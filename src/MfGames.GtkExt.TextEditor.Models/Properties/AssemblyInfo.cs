@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly:AssemblyTitle("MfGames.GtkExt.TextEditor.Models")]
-[assembly:AssemblyDescription("Models and contracts for working with MfGames.GtkExt.TextEditor.")]
+[assembly:
+    AssemblyDescription(
+        "Models and contracts for working with MfGames.GtkExt.TextEditor.")]
 [assembly:AssemblyConfiguration("")]
 [assembly:AssemblyCompany("Moonfire Games")]
 [assembly:AssemblyProduct("MfGames.GtkExt.TextEditor.Models")]

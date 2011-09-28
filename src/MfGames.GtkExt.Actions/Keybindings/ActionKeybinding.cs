@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,41 +30,41 @@ using System.Xml;
 
 namespace MfGames.GtkExt.Actions.Keybindings
 {
-	/// <summary>
-	/// Represents a single keybinding between an action and an accelerator
-	/// chain. Chains are represented by 
-	/// </summary>
-	public class ActionKeybinding
-	{
-		#region Constructors
+    /// <summary>
+    /// Represents a single keybinding between an action and an accelerator
+    /// chain. Chains are represented by 
+    /// </summary>
+    public class ActionKeybinding
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionKeybinding"/> class.
-		/// </summary>
-		/// <param name="reader">The reader.</param>
-		public ActionKeybinding(XmlReader reader)
-		{
-			ActionName = reader["name"];
-			AcceleratorPath = new HierarchicalPath(reader["keybinding"]);
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActionKeybinding"/> class.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        public ActionKeybinding(XmlReader reader)
+        {
+            ActionName = reader["name"];
+            AcceleratorPath = new HierarchicalPath(reader["keybinding"]);
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		/// Contains the accelerator path for the action.
-		/// </summary>
-		public HierarchicalPath AcceleratorPath { get; private set; }
+        /// <summary>
+        /// Contains the accelerator path for the action.
+        /// </summary>
+        public HierarchicalPath AcceleratorPath { get; private set; }
 
-		/// <summary>
-		/// Gets the name of the action.
-		/// </summary>
-		/// <value>
-		/// The name of the action.
-		/// </value>
-		public string ActionName { get; private set; }
+        /// <summary>
+        /// Gets the name of the action.
+        /// </summary>
+        /// <value>
+        /// The name of the action.
+        /// </value>
+        public string ActionName { get; private set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

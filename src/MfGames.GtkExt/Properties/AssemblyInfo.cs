@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,35 @@
 
 // General assembly information.
 
+#region Namespaces
+
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("MfGames.GtkExt")]
-[assembly: AssemblyDescription("Various widgets, extensions, and helper classes for Gtk#.")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Moonfire Games")]
-[assembly: AssemblyProduct("MfGames")]
-[assembly: AssemblyCopyright("Copyright © 2005-2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+#endregion
+
+[assembly:AssemblyTitle("MfGames.GtkExt")]
+[assembly:
+    AssemblyDescription(
+        "Various widgets, extensions, and helper classes for Gtk#.")]
+[assembly:AssemblyConfiguration("")]
+[assembly:AssemblyCompany("Moonfire Games")]
+[assembly:AssemblyProduct("MfGames")]
+[assembly:AssemblyCopyright("Copyright © 2005-2011")]
+[assembly:AssemblyTrademark("")]
+[assembly:AssemblyCulture("")]
 
 // Compliance attributes.
 
-[assembly: CLSCompliant(false)]
+[assembly:CLSCompliant(false)]
 
 // Attributes for identifying the assembly.
 
-[assembly: ComVisible(false)]
-[assembly: Guid("BE699A0B-3102-4f7c-852E-405C92FC08D0")]
+[assembly:ComVisible(false)]
+[assembly:Guid("BE699A0B-3102-4f7c-852E-405C92FC08D0")]
 
 // File and assembly versions.
 
-[assembly: AssemblyVersion("0.0.0.0")]
-[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly:AssemblyVersion("0.0.0.0")]
+[assembly:AssemblyFileVersion("0.0.0.0")]

@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,79 +28,77 @@ using System;
 
 using C5;
 
-using MfGames.GtkExt.TextEditor.Interfaces;
-
 #endregion
 
 namespace MfGames.GtkExt.TextEditor.Editing
 {
-	/// <summary>
-	/// Contains a single action entry object.
-	/// </summary>
-	public class ActionEntry
-	{
-		#region Constructors
+    /// <summary>
+    /// Contains a single action entry object.
+    /// </summary>
+    public class ActionEntry
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionEntry"/> class.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="action">The action.</param>
-		public ActionEntry(
-			string name,
-			Action<EditorViewController> action)
-		{
-			// Save the action for processing.
-			Action = action;
-			Name = name;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActionEntry"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="action">The action.</param>
+        public ActionEntry(
+            string name,
+            Action<EditorViewController> action)
+        {
+            // Save the action for processing.
+            Action = action;
+            Name = name;
 
-			// Create a list of state types needed.
-			stateTypes = new ArrayList<Type>();
-		}
+            // Create a list of state types needed.
+            stateTypes = new ArrayList<Type>();
+        }
 
-		#endregion
+        #endregion
 
-		#region Actions
+        #region Actions
 
-		private readonly ArrayList<Type> stateTypes;
+        private readonly ArrayList<Type> stateTypes;
 
-		/// <summary>
-		/// Gets the action delegate to perform this action.
-		/// </summary>
-		public Action<EditorViewController> Action;
+        /// <summary>
+        /// Gets the action delegate to perform this action.
+        /// </summary>
+        public Action<EditorViewController> Action;
 
-		/// <summary>
-		/// Gets or sets the name of the action.
-		/// </summary>
-		/// <value>
-		/// The action name.
-		/// </value>
-		public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the name of the action.
+        /// </summary>
+        /// <value>
+        /// The action name.
+        /// </value>
+        public string Name { get; set; }
 
-		/// <summary>
-		/// Gets the type objects that represent the states that this action
-		/// uses.
-		/// </summary>
-		/// <value>The state types.</value>
-		public ArrayList<Type> StateTypes
-		{
-			get { return stateTypes; }
-		}
+        /// <summary>
+        /// Gets the type objects that represent the states that this action
+        /// uses.
+        /// </summary>
+        /// <value>The state types.</value>
+        public ArrayList<Type> StateTypes
+        {
+            get { return stateTypes; }
+        }
 
-		/// <summary>
-		/// Performs the specified action using the context.
-		/// </summary>
-		/// <param name="controller">The action context.</param>
-		public void Perform(EditorViewController controller)
-		{
-			// Start by going through the states and remove anything that isn't
-			// in our state types.
-			controller.States.RemoveAllExcluding(stateTypes);
+        /// <summary>
+        /// Performs the specified action using the context.
+        /// </summary>
+        /// <param name="controller">The action context.</param>
+        public void Perform(EditorViewController controller)
+        {
+            // Start by going through the states and remove anything that isn't
+            // in our state types.
+            controller.States.RemoveAllExcluding(stateTypes);
 
-			// Perform the action itself.
-			Action(controller);
-		}
+            // Perform the action itself.
+            Action(controller);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

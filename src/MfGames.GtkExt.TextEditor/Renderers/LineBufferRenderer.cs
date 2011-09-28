@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,100 +33,100 @@ using MfGames.GtkExt.TextEditor.Models;
 
 namespace MfGames.GtkExt.TextEditor.Renderers
 {
-	/// <summary>
-	/// Implements a <see cref="EditorViewRenderer"/> wrapped around a 
-	/// <see cref="LineBuffer"/>.
-	/// </summary>
-	public class LineBufferRenderer : EditorViewRenderer
-	{
-		#region Constructors
+    /// <summary>
+    /// Implements a <see cref="EditorViewRenderer"/> wrapped around a 
+    /// <see cref="LineBuffer"/>.
+    /// </summary>
+    public class LineBufferRenderer : EditorViewRenderer
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		public LineBufferRenderer(IDisplayContext displayContext)
-			: this(displayContext, null)
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
+        /// </summary>
+        /// <param name="displayContext">The display context.</param>
+        public LineBufferRenderer(IDisplayContext displayContext)
+            : this(displayContext, null)
+        {
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
-		/// </summary>
-		/// <param name="displayContext">The display context.</param>
-		/// <param name="lineBuffer">The line buffer.</param>
-		public LineBufferRenderer(
-			IDisplayContext displayContext,
-			LineBuffer lineBuffer)
-			: base(displayContext)
-		{
-			// Save the buffer in a property.
-			SetLineBuffer(lineBuffer);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorViewRenderer"/> class.
+        /// </summary>
+        /// <param name="displayContext">The display context.</param>
+        /// <param name="lineBuffer">The line buffer.</param>
+        public LineBufferRenderer(
+            IDisplayContext displayContext,
+            LineBuffer lineBuffer)
+            : base(displayContext)
+        {
+            // Save the buffer in a property.
+            SetLineBuffer(lineBuffer);
 
-			// Set up the selection.
-			selectionRenderer = new SelectionRenderer();
-		}
+            // Set up the selection.
+            selectionRenderer = new SelectionRenderer();
+        }
 
-		#endregion
+        #endregion
 
-		#region Buffer
+        #region Buffer
 
-		private LineBuffer lineBuffer;
+        private LineBuffer lineBuffer;
 
-		/// <summary>
-		/// Gets the line buffer associated with this renderer.
-		/// </summary>
-		/// <value>The line buffer.</value>
-		public override LineBuffer LineBuffer
-		{
-			[DebuggerStepThrough]
-			get { return lineBuffer; }
-		}
+        /// <summary>
+        /// Gets the line buffer associated with this renderer.
+        /// </summary>
+        /// <value>The line buffer.</value>
+        public override LineBuffer LineBuffer
+        {
+            [DebuggerStepThrough]
+            get { return lineBuffer; }
+        }
 
-		/// <summary>
-		/// Sets the line buffer.
-		/// </summary>
-		/// <param name="value">The value.</param>
-		public override void SetLineBuffer(LineBuffer value)
-		{
-			// Disconnect the events from the buffer.
-			if (lineBuffer != null)
-			{
-				lineBuffer.LineChanged -= OnLineChanged;
-				lineBuffer.LinesInserted -= OnLinesInserted;
-				lineBuffer.LinesDeleted -= OnLinesDeleted;
-			}
+        /// <summary>
+        /// Sets the line buffer.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        public override void SetLineBuffer(LineBuffer value)
+        {
+            // Disconnect the events from the buffer.
+            if (lineBuffer != null)
+            {
+                lineBuffer.LineChanged -= OnLineChanged;
+                lineBuffer.LinesInserted -= OnLinesInserted;
+                lineBuffer.LinesDeleted -= OnLinesDeleted;
+            }
 
-			// Set the buffer and hook up the events.
-			lineBuffer = value;
+            // Set the buffer and hook up the events.
+            lineBuffer = value;
 
-			// Hook up the events for the buffer.
-			if (lineBuffer != null)
-			{
-				lineBuffer.LineChanged += OnLineChanged;
-				lineBuffer.LinesInserted += OnLinesInserted;
-				lineBuffer.LinesDeleted += OnLinesDeleted;
-			}
-		}
+            // Hook up the events for the buffer.
+            if (lineBuffer != null)
+            {
+                lineBuffer.LineChanged += OnLineChanged;
+                lineBuffer.LinesInserted += OnLinesInserted;
+                lineBuffer.LinesDeleted += OnLinesDeleted;
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Selection
+        #region Selection
 
-		private SelectionRenderer selectionRenderer;
+        private SelectionRenderer selectionRenderer;
 
-		/// <summary>
-		/// Gets or sets the selection renderer.
-		/// </summary>
-		/// <value>The selection renderer.</value>
-		public override SelectionRenderer SelectionRenderer
-		{
-			[DebuggerStepThrough]
-			get { return selectionRenderer; }
-			[DebuggerStepThrough]
-			set { selectionRenderer = value; }
-		}
+        /// <summary>
+        /// Gets or sets the selection renderer.
+        /// </summary>
+        /// <value>The selection renderer.</value>
+        public override SelectionRenderer SelectionRenderer
+        {
+            [DebuggerStepThrough]
+            get { return selectionRenderer; }
+            [DebuggerStepThrough]
+            set { selectionRenderer = value; }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

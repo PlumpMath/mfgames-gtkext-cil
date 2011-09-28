@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,83 +34,83 @@ using MfGames.GtkExt.Actions;
 
 namespace GtkExtDemo
 {
-	/// <summary>
-	/// Contains the various functionality for showing off the actions and
-	/// keybindings.
-	/// </summary>
-	public class DemoActions : DemoTab
-	{
-		#region Constructors
+    /// <summary>
+    /// Contains the various functionality for showing off the actions and
+    /// keybindings.
+    /// </summary>
+    public class DemoActions : DemoTab
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DemoActions"/> class.
-		/// </summary>
-		public DemoActions(ActionManager actionManager)
-		{
-			this.actionManager = actionManager;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DemoActions"/> class.
+        /// </summary>
+        public DemoActions(ActionManager actionManager)
+        {
+            this.actionManager = actionManager;
 
-			// Create a frame with the enable elements.
-			var enableFrame = new Frame("Action Group Sensitivity");
-			var enableBox = new VBox();
+            // Create a frame with the enable elements.
+            var enableFrame = new Frame("Action Group Sensitivity");
+            var enableBox = new VBox();
 
-			enableBox.BorderWidth = 5;
+            enableBox.BorderWidth = 5;
 
-			enableFrame.BorderWidth = 5;
-			enableFrame.Add(enableBox);
+            enableFrame.BorderWidth = 5;
+            enableFrame.Add(enableBox);
 
-			// Add the check buttons.
-			var checkButton = new CheckButton("Enable _Global entries");
-			checkButton.Name = "Global";
-			checkButton.Active = true;
-			checkButton.Toggled += OnGroupSensitivityChanged;
-			enableBox.PackStart(checkButton);
+            // Add the check buttons.
+            var checkButton = new CheckButton("Enable _Global entries");
+            checkButton.Name = "Global";
+            checkButton.Active = true;
+            checkButton.Toggled += OnGroupSensitivityChanged;
+            enableBox.PackStart(checkButton);
 
-			checkButton = new CheckButton("Enable _View entries");
-			checkButton.Name = "View";
-			checkButton.Active = true;
-			checkButton.Toggled += OnGroupSensitivityChanged;
-			enableBox.PackStart(checkButton);
+            checkButton = new CheckButton("Enable _View entries");
+            checkButton.Name = "View";
+            checkButton.Active = true;
+            checkButton.Toggled += OnGroupSensitivityChanged;
+            enableBox.PackStart(checkButton);
 
-			checkButton = new CheckButton("Enable _Editor entries");
-			checkButton.Name = "Editor";
-			checkButton.Active = true;
-			checkButton.Toggled += OnGroupSensitivityChanged;
-			enableBox.PackStart(checkButton);
+            checkButton = new CheckButton("Enable _Editor entries");
+            checkButton.Name = "Editor";
+            checkButton.Active = true;
+            checkButton.Toggled += OnGroupSensitivityChanged;
+            enableBox.PackStart(checkButton);
 
-			// Return it
-			PackStart(enableFrame, false, false, 0);
-			PackStart(new Label(""), true, true, 0);
-		}
+            // Return it
+            PackStart(enableFrame, false, false, 0);
+            PackStart(new Label(""), true, true, 0);
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		private readonly ActionManager actionManager;
+        private readonly ActionManager actionManager;
 
-		#endregion
+        #endregion
 
-		#region Events
+        #region Events
 
-		/// <summary>
-		/// Called when the group sensitivity check button is changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnGroupSensitivityChanged(
-			object sender,
-			EventArgs e)
-		{
-			// Get the name of the group we are enabling or disabling.
-			var button = (CheckButton) sender;
-			string groupName = button.Name;
-			bool enable = button.Active;
+        /// <summary>
+        /// Called when the group sensitivity check button is changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void OnGroupSensitivityChanged(
+            object sender,
+            EventArgs e)
+        {
+            // Get the name of the group we are enabling or disabling.
+            var button = (CheckButton) sender;
+            string groupName = button.Name;
+            bool enable = button.Active;
 
-			// Change the enabled state.
-			var group = actionManager.GetGroup(groupName);
-			group.Sensitive = enable;
-		}
+            // Change the enabled state.
+            var group = actionManager.GetGroup(groupName);
+            group.Sensitive = enable;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,30 @@
 
 namespace MfGames.GtkExt.TextEditor.Interfaces
 {
-	/// <summary>
-	/// Interface that identifies the boundaries between words.
-	/// </summary>
-	public interface IWordSplitter
-	{
-		/// <summary>
-		/// Gets the next word boundary from the given string and character index.
-		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <param name="characterIndex">Index of the character.</param>
-		/// <returns>The character index of the next word or Int32.MaxValue if one
-		/// cannot be found.</returns>
-		int GetNextWordBoundary(
-			string text,
-			int characterIndex);
+    /// <summary>
+    /// Interface that identifies the boundaries between words.
+    /// </summary>
+    public interface IWordSplitter
+    {
+        /// <summary>
+        /// Gets the next word boundary from the given string and character index.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="characterIndex">Index of the character.</param>
+        /// <returns>The character index of the next word or Int32.MaxValue if one
+        /// cannot be found.</returns>
+        int GetNextWordBoundary(
+            string text,
+            int characterIndex);
 
-		/// <summary>
-		/// Gets the previous word boundary from the given string and character index.
-		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <param name="characterIndex">Index of the character.</param>
-		/// <returns></returns>
-		int GetPreviousWordBoundary(
-			string text,
-			int characterIndex);
-	}
+        /// <summary>
+        /// Gets the previous word boundary from the given string and character index.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="characterIndex">Index of the character.</param>
+        /// <returns></returns>
+        int GetPreviousWordBoundary(
+            string text,
+            int characterIndex);
+    }
 }

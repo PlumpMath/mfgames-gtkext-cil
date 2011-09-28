@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,39 +24,39 @@
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
-	/// <summary>
-	/// Contains the results from a line operation, including the new buffer
-	/// position after the operation.
-	/// </summary>
-	public struct LineBufferOperationResults
-	{
-		#region Constructors
+    /// <summary>
+    /// Contains the results from a line operation, including the new buffer
+    /// position after the operation.
+    /// </summary>
+    public struct LineBufferOperationResults
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LineBufferOperationResults"/> struct.
-		/// </summary>
-		/// <param name="bufferPosition">The buffer position.</param>
-		public LineBufferOperationResults(BufferPosition bufferPosition)
-		{
-			this.bufferPosition = bufferPosition;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LineBufferOperationResults"/> struct.
+        /// </summary>
+        /// <param name="bufferPosition">The buffer position.</param>
+        public LineBufferOperationResults(BufferPosition bufferPosition)
+        {
+            this.bufferPosition = bufferPosition;
+        }
 
-		#endregion
+        #endregion
 
-		#region Results
+        #region Results
 
-		private BufferPosition bufferPosition;
+        private BufferPosition bufferPosition;
 
-		/// <summary>
-		/// Gets or sets the buffer position after the operation.
-		/// </summary>
-		/// <value>The position.</value>
-		public BufferPosition BufferPosition
-		{
-			get { return bufferPosition; }
-			set { bufferPosition = value; }
-		}
+        /// <summary>
+        /// Gets or sets the buffer position after the operation.
+        /// </summary>
+        /// <value>The position.</value>
+        public BufferPosition BufferPosition
+        {
+            get { return bufferPosition; }
+            set { bufferPosition = value; }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

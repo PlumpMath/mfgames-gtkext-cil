@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,28 +30,28 @@ using System;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
-	/// <summary>
-	/// Indicates a line changed.
-	/// </summary>
-	public class LineChangedArgs : EventArgs
-	{
-		#region Constructors
+    /// <summary>
+    /// Indicates a line changed.
+    /// </summary>
+    public class LineChangedArgs : EventArgs
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LineChangedArgs"/> class.
-		/// </summary>
-		/// <param name="lineIndex">Index of the line.</param>
-		public LineChangedArgs(int lineIndex)
-		{
-			LineIndex = lineIndex;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LineChangedArgs"/> class.
+        /// </summary>
+        /// <param name="lineIndex">Index of the line.</param>
+        public LineChangedArgs(int lineIndex)
+        {
+            LineIndex = lineIndex;
+        }
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Gets or sets the index of the line for the arguments.
-		/// </summary>
-		/// <value>The index of the line.</value>
-		public int LineIndex { get; set; }
-	}
+        /// <summary>
+        /// Gets or sets the index of the line for the arguments.
+        /// </summary>
+        /// <value>The index of the line.</value>
+        public int LineIndex { get; set; }
+    }
 }

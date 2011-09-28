@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,30 +31,30 @@ using System.Collections.Generic;
 
 namespace MfGames.GtkExt.Actions.Layouts
 {
-	/// <summary>
-	/// A list of <see cref="LayoutGroup"/> objects.
-	/// </summary>
-	public class LayoutGroupCollection : List<LayoutGroup>
-	{
-		/// <summary>
-		/// Gets the <see cref="MfGames.GtkExt.Actions.Layouts.LayoutGroup"/> with the
-		/// specified group name.
-		/// </summary>
-		/// <value></value>
-		public LayoutGroup this[string groupName]
-		{
-			get
-			{
-				foreach (LayoutGroup group in this)
-				{
-					if (group.Id == groupName)
-					{
-						return group;
-					}
-				}
+    /// <summary>
+    /// A list of <see cref="LayoutGroup"/> objects.
+    /// </summary>
+    public class LayoutGroupCollection : List<LayoutGroup>
+    {
+        /// <summary>
+        /// Gets the <see cref="MfGames.GtkExt.Actions.Layouts.LayoutGroup"/> with the
+        /// specified group name.
+        /// </summary>
+        /// <value></value>
+        public LayoutGroup this[string groupName]
+        {
+            get
+            {
+                foreach (LayoutGroup group in this)
+                {
+                    if (group.Id == groupName)
+                    {
+                        return group;
+                    }
+                }
 
-				throw new Exception("Cannot find group " + groupName);
-			}
-		}
-	}
+                throw new Exception("Cannot find group " + groupName);
+            }
+        }
+    }
 }

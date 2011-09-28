@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,17 +28,17 @@
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
-	/// <summary>
-	/// Represents an operation performed on the line buffer.
-	/// </summary>
-	public interface ILineBufferOperation
-	{
-		/// <summary>
-		/// Gets the type of the operation representing this object. The value
-		/// returned by this corresponds to a specific implementing class of
-		/// <see cref="ILineBufferOperation"/>.
-		/// </summary>
-		/// <value>The type of the operation.</value>
-		LineBufferOperationType OperationType { get; }
-	}
+    /// <summary>
+    /// Represents an operation performed on the line buffer.
+    /// </summary>
+    public interface ILineBufferOperation
+    {
+        /// <summary>
+        /// Gets the type of the operation representing this object. The value
+        /// returned by this corresponds to a specific implementing class of
+        /// <see cref="ILineBufferOperation"/>.
+        /// </summary>
+        /// <value>The type of the operation.</value>
+        LineBufferOperationType OperationType { get; }
+    }
 }

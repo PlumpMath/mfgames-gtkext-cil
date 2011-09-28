@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,23 +32,23 @@ using Cairo;
 
 namespace MfGames.GtkExt
 {
-	/// <summary>
-	/// Contains various useful utility methods for Cairo.
-	/// </summary>
-	public static class CairoUtility
-	{
-		/// <summary>
-		/// Converts the Cairo color into a RGB hex string.
-		/// </summary>
-		/// <param name="color">The color.</param>
-		/// <returns></returns>
-		public static string ToRgbHexString(this Color color)
-		{
-			return String.Format(
-				"{0:X2}{1:X2}{2:X2}",
-				(int) Math.Round(color.R * 255),
-				(int) Math.Round(color.G * 255),
-				(int) Math.Round(color.B * 255));
-		}
-	}
+    /// <summary>
+    /// Contains various useful utility methods for Cairo.
+    /// </summary>
+    public static class CairoUtility
+    {
+        /// <summary>
+        /// Converts the Cairo color into a RGB hex string.
+        /// </summary>
+        /// <param name="color">The color.</param>
+        /// <returns></returns>
+        public static string ToRgbHexString(this Color color)
+        {
+            return String.Format(
+                "{0:X2}{1:X2}{2:X2}",
+                (int) Math.Round(color.R * 255),
+                (int) Math.Round(color.G * 255),
+                (int) Math.Round(color.B * 255));
+        }
+    }
 }

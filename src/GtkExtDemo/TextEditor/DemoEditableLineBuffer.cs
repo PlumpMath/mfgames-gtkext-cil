@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,336 +36,344 @@ using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 namespace GtkExtDemo.TextEditor
 {
-	/// <summary>
-	/// Implements a demo editable buffer that is intended to be styled and
-	/// formatted.
-	/// </summary>
-	public class DemoEditableLineBuffer : MemoryLineBuffer
-	{
-		#region Constructors
+    /// <summary>
+    /// Implements a demo editable buffer that is intended to be styled and
+    /// formatted.
+    /// </summary>
+    public class DemoEditableLineBuffer : MemoryLineBuffer
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes the <see cref="DemoEditableLineBuffer"/> class.
-		/// </summary>
-		static DemoEditableLineBuffer()
-		{
-			removeExcessiveSpaces = new Regex(@"\s+", RegexOptions.Singleline);
-		}
+        /// <summary>
+        /// Initializes the <see cref="DemoEditableLineBuffer"/> class.
+        /// </summary>
+        static DemoEditableLineBuffer()
+        {
+            removeExcessiveSpaces = new Regex(@"\s+", RegexOptions.Singleline);
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DemoEditableLineBuffer"/> class.
-		/// </summary>
-		public DemoEditableLineBuffer()
-		{
-			// Set up the line styles.
-			styles = new HashDictionary<int, DemoLineStyleType>();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DemoEditableLineBuffer"/> class.
+        /// </summary>
+        public DemoEditableLineBuffer()
+        {
+            // Set up the line styles.
+            styles = new HashDictionary<int, DemoLineStyleType>();
 
-			// Create the initial lines. There is already one in the buffer before
-			// this insert operates.
-			InsertLines(0, 8);
+            // Create the initial lines. There is already one in the buffer before
+            // this insert operates.
+            InsertLines(0, 8);
 
-			// Set the text on the lines with the prefix so they can be styled
-			// as part of the set operation.
-			int lineIndex = 0;
+            // Set the text on the lines with the prefix so they can be styled
+            // as part of the set operation.
+            int lineIndex = 0;
 
-			SetText(lineIndex++, "C: Name of Chapter");
-			SetText(lineIndex++, "T: Regular Text");
-			SetText(lineIndex++, "H: Heading Line");
-			SetText(lineIndex++, "T: Regular Text");
-			SetText(lineIndex++, "H:");
-			SetText(lineIndex++, "T: Regular Text");
-			SetText(lineIndex++, "T:");
-			SetText(lineIndex++, "T: Regular Text");
-			SetText(lineIndex, "B: Regular Text");
-		}
+            SetText(lineIndex++, "C: Name of Chapter");
+            SetText(lineIndex++, "T: Regular Text");
+            SetText(lineIndex++, "H: Heading Line");
+            SetText(lineIndex++, "T: Regular Text");
+            SetText(lineIndex++, "H:");
+            SetText(lineIndex++, "T: Regular Text");
+            SetText(lineIndex++, "T:");
+            SetText(lineIndex++, "T: Regular Text");
+            SetText(lineIndex, "B: Regular Text");
+        }
 
-		#endregion
+        #endregion
 
-		#region Operations
+        #region Operations
 
-		/// <summary>
-		/// Contains a regular expression for finding multiple spaces.
-		/// </summary>
-		private static readonly Regex removeExcessiveSpaces;
+        /// <summary>
+        /// Contains a regular expression for finding multiple spaces.
+        /// </summary>
+        private static readonly Regex removeExcessiveSpaces;
 
-		/// <summary>
-		/// Checks to see if a line operation caused a style to change.
-		/// </summary>
-		/// <param name="lineIndex">Index of the line.</param>
-		/// <param name="results">The results.</param>
-		/// <returns></returns>
-		private LineBufferOperationResults CheckForStyleChanged(
-			int lineIndex,
-			LineBufferOperationResults results)
-		{
-			// Look to see if the line starts with a style change keyword.
-			string line = GetLineText(lineIndex);
+        /// <summary>
+        /// Checks to see if a line operation caused a style to change.
+        /// </summary>
+        /// <param name="lineIndex">Index of the line.</param>
+        /// <param name="results">The results.</param>
+        /// <returns></returns>
+        private LineBufferOperationResults CheckForStyleChanged(
+            int lineIndex,
+            LineBufferOperationResults results)
+        {
+            // Look to see if the line starts with a style change keyword.
+            string line = GetLineText(lineIndex);
 
-			if (line.Length < 2 || line.Substring(1, 1) != ":")
-			{
-				// We don't have a style change, so just return the results.
-				return results;
-			}
+            if (line.Length < 2 || line.Substring(1, 1) != ":")
+            {
+                // We don't have a style change, so just return the results.
+                return results;
+            }
 
-			// Check to see if we have a style change prefix.
-			bool changed = false;
+            // Check to see if we have a style change prefix.
+            bool changed = false;
 
-			switch (Char.ToUpper(line[0]))
-			{
-				case 'T':
-					styles.Remove(lineIndex);
-					changed = true;
-					break;
+            switch (Char.ToUpper(line[0]))
+            {
+                case 'T':
+                    styles.Remove(lineIndex);
+                    changed = true;
+                    break;
 
-				case 'B':
-					styles[lineIndex] = DemoLineStyleType.Borders;
-					changed = true;
-					break;
+                case 'B':
+                    styles[lineIndex] = DemoLineStyleType.Borders;
+                    changed = true;
+                    break;
 
-				case 'C':
-					styles[lineIndex] = DemoLineStyleType.Chapter;
-					changed = true;
-					break;
+                case 'C':
+                    styles[lineIndex] = DemoLineStyleType.Chapter;
+                    changed = true;
+                    break;
 
-				case 'H':
-					styles[lineIndex] = DemoLineStyleType.Heading;
-					changed = true;
-					break;
-			}
+                case 'H':
+                    styles[lineIndex] = DemoLineStyleType.Heading;
+                    changed = true;
+                    break;
+            }
 
-			// If we didn't change anything, then just return the unaltered
-			// results.
-			if (!changed)
-			{
-				return results;
-			}
+            // If we didn't change anything, then just return the unaltered
+            // results.
+            if (!changed)
+            {
+                return results;
+            }
 
-			// Figure out what the line would look like without the prefix.
-			string newLine = line.Substring(2).TrimStart(' ');
-			int difference = line.Length - newLine.Length;
+            // Figure out what the line would look like without the prefix.
+            string newLine = line.Substring(2).TrimStart(' ');
+            int difference = line.Length - newLine.Length;
 
-			// Set the line text.
-			SetText(lineIndex, newLine);
+            // Set the line text.
+            SetText(lineIndex, newLine);
 
-			// Adjust the buffer position and return it.
-			results.BufferPosition = new BufferPosition(
-				results.BufferPosition.LineIndex,
-				Math.Max(0, results.BufferPosition.CharacterIndex - difference));
+            // Adjust the buffer position and return it.
+            results.BufferPosition =
+                new BufferPosition(
+                    results.BufferPosition.LineIndex,
+                    Math.Max(
+                        0, results.BufferPosition.CharacterIndex - difference));
 
-			return results;
-		}
+            return results;
+        }
 
-		/// <summary>
-		/// Trims and removes duplicate spaces from the line.
-		/// </summary>
-		/// <param name="operation">The operation.</param>
-		/// <returns></returns>
-		protected override LineBufferOperationResults Do(ExitLineOperation operation)
-		{
-			// Get the line in question.
-			string lineText = GetLineText(operation.LineIndex);
+        /// <summary>
+        /// Trims and removes duplicate spaces from the line.
+        /// </summary>
+        /// <param name="operation">The operation.</param>
+        /// <returns></returns>
+        protected override LineBufferOperationResults Do(
+            ExitLineOperation operation)
+        {
+            // Get the line in question.
+            string lineText = GetLineText(operation.LineIndex);
 
-			// Perform clean up operations on the line to see if it changed.
-			string newText = removeExcessiveSpaces.Replace(lineText.Trim(), " ");
+            // Perform clean up operations on the line to see if it changed.
+            string newText = removeExcessiveSpaces.Replace(lineText.Trim(), " ");
 
-			// If the text isn't the same, update the line.
-			if (lineText != newText)
-			{
-				SetText(operation.LineIndex, newText);
-			}
+            // If the text isn't the same, update the line.
+            if (lineText != newText)
+            {
+                SetText(operation.LineIndex, newText);
+            }
 
-			// Return an empty operation results.
-			return new LineBufferOperationResults();
-		}
+            // Return an empty operation results.
+            return new LineBufferOperationResults();
+        }
 
-		/// <summary>
-		/// Performs the set text operation on the buffer.
-		/// </summary>
-		/// <param name="operation">The operation to perform.</param>
-		/// <returns>
-		/// The results to the changes to the buffer.
-		/// </returns>
-		protected override LineBufferOperationResults Do(SetTextOperation operation)
-		{
-			LineBufferOperationResults results = base.Do(operation);
+        /// <summary>
+        /// Performs the set text operation on the buffer.
+        /// </summary>
+        /// <param name="operation">The operation to perform.</param>
+        /// <returns>
+        /// The results to the changes to the buffer.
+        /// </returns>
+        protected override LineBufferOperationResults Do(
+            SetTextOperation operation)
+        {
+            LineBufferOperationResults results = base.Do(operation);
 
-			return CheckForStyleChanged(operation.LineIndex, results);
-		}
+            return CheckForStyleChanged(operation.LineIndex, results);
+        }
 
-		/// <summary>
-		/// Performs the given operation on the line buffer. This will raise any
-		/// events that were appropriate for the operation.
-		/// </summary>
-		/// <param name="operation">The operation to perform.</param>
-		/// <returns>
-		/// The results to the changes to the buffer.
-		/// </returns>
-		protected override LineBufferOperationResults Do(
-			InsertTextOperation operation)
-		{
-			LineBufferOperationResults results = base.Do(operation);
+        /// <summary>
+        /// Performs the given operation on the line buffer. This will raise any
+        /// events that were appropriate for the operation.
+        /// </summary>
+        /// <param name="operation">The operation to perform.</param>
+        /// <returns>
+        /// The results to the changes to the buffer.
+        /// </returns>
+        protected override LineBufferOperationResults Do(
+            InsertTextOperation operation)
+        {
+            LineBufferOperationResults results = base.Do(operation);
 
-			return CheckForStyleChanged(operation.BufferPosition.LineIndex, results);
-		}
+            return CheckForStyleChanged(
+                operation.BufferPosition.LineIndex, results);
+        }
 
-		/// <summary>
-		/// Deletes text from the buffer.
-		/// </summary>
-		/// <param name="operation">The operation to perform.</param>
-		/// <returns>
-		/// The results to the changes to the buffer.
-		/// </returns>
-		protected override LineBufferOperationResults Do(
-			DeleteTextOperation operation)
-		{
-			LineBufferOperationResults results = base.Do(operation);
+        /// <summary>
+        /// Deletes text from the buffer.
+        /// </summary>
+        /// <param name="operation">The operation to perform.</param>
+        /// <returns>
+        /// The results to the changes to the buffer.
+        /// </returns>
+        protected override LineBufferOperationResults Do(
+            DeleteTextOperation operation)
+        {
+            LineBufferOperationResults results = base.Do(operation);
 
-			return CheckForStyleChanged(operation.LineIndex, results);
-		}
+            return CheckForStyleChanged(operation.LineIndex, results);
+        }
 
-		/// <summary>
-		/// Performs the insert lines operation on the buffer.
-		/// </summary>
-		/// <param name="operation">The operation to perform.</param>
-		/// <returns>
-		/// The results to the changes to the buffer.
-		/// </returns>
-		protected override LineBufferOperationResults Do(
-			InsertLinesOperation operation)
-		{
-			// First shift the style lines up for the new ones. We go from the
-			// bottom to avoid overlapping the line numbers.
-			for (int lineIndex = LineCount - 1; lineIndex >= 0; lineIndex--)
-			{
-				// If we have a key, shift it.
-				if (lineIndex >= operation.LineIndex && styles.Contains(lineIndex))
-				{
-					styles[lineIndex + operation.Count] = styles[lineIndex];
-					styles.Remove(lineIndex);
-				}
-			}
+        /// <summary>
+        /// Performs the insert lines operation on the buffer.
+        /// </summary>
+        /// <param name="operation">The operation to perform.</param>
+        /// <returns>
+        /// The results to the changes to the buffer.
+        /// </returns>
+        protected override LineBufferOperationResults Do(
+            InsertLinesOperation operation)
+        {
+            // First shift the style lines up for the new ones. We go from the
+            // bottom to avoid overlapping the line numbers.
+            for (int lineIndex = LineCount - 1; lineIndex >= 0; lineIndex--)
+            {
+                // If we have a key, shift it.
+                if (lineIndex >= operation.LineIndex &&
+                    styles.Contains(lineIndex))
+                {
+                    styles[lineIndex + operation.Count] = styles[lineIndex];
+                    styles.Remove(lineIndex);
+                }
+            }
 
-			// Now, perform the operation on the buffer.
-			return base.Do(operation);
-		}
+            // Now, perform the operation on the buffer.
+            return base.Do(operation);
+        }
 
-		/// <summary>
-		/// Performs the delete lines operation on the buffer.
-		/// </summary>
-		/// <param name="operation">The operation to perform.</param>
-		/// <returns>
-		/// The results to the changes to the buffer.
-		/// </returns>
-		protected override LineBufferOperationResults Do(
-			DeleteLinesOperation operation)
-		{
-			// Shift the styles down for the deleted lines.
-			for (int lineIndex = 0; lineIndex < LineCount; lineIndex++)
-			{
-				// If we have a key, shift it.
-				if (lineIndex >= operation.LineIndex && styles.Contains(lineIndex))
-				{
-					styles[lineIndex - operation.Count] = styles[lineIndex];
-					styles.Remove(lineIndex);
-				}
-			}
+        /// <summary>
+        /// Performs the delete lines operation on the buffer.
+        /// </summary>
+        /// <param name="operation">The operation to perform.</param>
+        /// <returns>
+        /// The results to the changes to the buffer.
+        /// </returns>
+        protected override LineBufferOperationResults Do(
+            DeleteLinesOperation operation)
+        {
+            // Shift the styles down for the deleted lines.
+            for (int lineIndex = 0; lineIndex < LineCount; lineIndex++)
+            {
+                // If we have a key, shift it.
+                if (lineIndex >= operation.LineIndex &&
+                    styles.Contains(lineIndex))
+                {
+                    styles[lineIndex - operation.Count] = styles[lineIndex];
+                    styles.Remove(lineIndex);
+                }
+            }
 
-			// Now, perform the operation on the buffer.
-			return base.Do(operation);
-		}
+            // Now, perform the operation on the buffer.
+            return base.Do(operation);
+        }
 
-		#endregion
+        #endregion
 
-		#region Buffers
+        #region Buffers
 
-		private readonly HashDictionary<int, DemoLineStyleType> styles;
+        private readonly HashDictionary<int, DemoLineStyleType> styles;
 
-		/// <summary>
-		/// Gets the name of the line style based on the settings.
-		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer or
-		/// Int32.MaxValue for the last line.</param>
-		/// <param name="lineContexts">The line contexts.</param>
-		/// <returns></returns>
-		public override string GetLineStyleName(
-			int lineIndex,
-			LineContexts lineContexts)
-		{
-			// See if we have the line in the styles.
-			DemoLineStyleType lineType = DemoLineStyleType.Default;
+        /// <summary>
+        /// Gets the name of the line style based on the settings.
+        /// </summary>
+        /// <param name="lineIndex">The line index in the buffer or
+        /// Int32.MaxValue for the last line.</param>
+        /// <param name="lineContexts">The line contexts.</param>
+        /// <returns></returns>
+        public override string GetLineStyleName(
+            int lineIndex,
+            LineContexts lineContexts)
+        {
+            // See if we have the line in the styles.
+            DemoLineStyleType lineType = DemoLineStyleType.Default;
 
-			if (styles.Contains(lineIndex))
-			{
-				// If this is a heading line, and it has no value, and it is
-				// not the current line, we color it differently to make it
-				// obvious we are adding dynamic data.
-				lineType = styles[lineIndex];
+            if (styles.Contains(lineIndex))
+            {
+                // If this is a heading line, and it has no value, and it is
+                // not the current line, we color it differently to make it
+                // obvious we are adding dynamic data.
+                lineType = styles[lineIndex];
 
-				if (lineType == DemoLineStyleType.Heading &&
-				    base.GetLineLength(lineIndex, LineContexts.None) == 0)
-				{
-					return "Inactive Heading";
-				}
-			}
+                if (lineType == DemoLineStyleType.Heading &&
+                    base.GetLineLength(lineIndex, LineContexts.None) == 0)
+                {
+                    return "Inactive Heading";
+                }
+            }
 
-			// If we are a default and the text is blank, we have a break.
-			if (lineType == DemoLineStyleType.Default &&
-			    GetLineText(lineIndex).Trim().Length == 0)
-			{
-				lineType = DemoLineStyleType.Break;
-			}
+            // If we are a default and the text is blank, we have a break.
+            if (lineType == DemoLineStyleType.Default &&
+                GetLineText(lineIndex).Trim().Length == 0)
+            {
+                lineType = DemoLineStyleType.Break;
+            }
 
-			// Otherwise, return the normal style name.
-			return lineType.ToString();
-		}
+            // Otherwise, return the normal style name.
+            return lineType.ToString();
+        }
 
-		/// <summary>
-		/// Gets the text of a given line in the buffer.
-		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
-		/// <param name="characters">The character range to pull the text.</param>
-		/// <param name="lineContexts">The line contexts.</param>
-		/// <returns></returns>
-		public override string GetLineText(
-			int lineIndex,
-			CharacterRange characters,
-			LineContexts lineContexts)
-		{
-			// If we have a request for unformatted, return it directly.
-			if ((lineContexts & LineContexts.Unformatted) == LineContexts.Unformatted)
-			{
-				return base.GetLineText(lineIndex, characters, lineContexts);
-			}
+        /// <summary>
+        /// Gets the text of a given line in the buffer.
+        /// </summary>
+        /// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
+        /// <param name="characters">The character range to pull the text.</param>
+        /// <param name="lineContexts">The line contexts.</param>
+        /// <returns></returns>
+        public override string GetLineText(
+            int lineIndex,
+            CharacterRange characters,
+            LineContexts lineContexts)
+        {
+            // If we have a request for unformatted, return it directly.
+            if ((lineContexts & LineContexts.Unformatted) ==
+                LineContexts.Unformatted)
+            {
+                return base.GetLineText(lineIndex, characters, lineContexts);
+            }
 
-			// Get the style of the line, defaulting to default if we don't have
-			// it in the hash.
-			DemoLineStyleType lineType = DemoLineStyleType.Default;
-			int lineLength = base.GetLineLength(lineIndex, LineContexts.Unformatted);
+            // Get the style of the line, defaulting to default if we don't have
+            // it in the hash.
+            DemoLineStyleType lineType = DemoLineStyleType.Default;
+            int lineLength = base.GetLineLength(
+                lineIndex, LineContexts.Unformatted);
 
-			if (styles.Contains(lineIndex))
-			{
-				// If this is a heading line, and it has no value, and it is
-				// not the current line, we put in different text for a
-				// placeholder.
-				lineType = styles[lineIndex];
+            if (styles.Contains(lineIndex))
+            {
+                // If this is a heading line, and it has no value, and it is
+                // not the current line, we put in different text for a
+                // placeholder.
+                lineType = styles[lineIndex];
 
-				if (lineType == DemoLineStyleType.Heading &&
-				    lineLength == 0)
-				{
-					return "<Heading>";
-				}
-			}
+                if (lineType == DemoLineStyleType.Heading && lineLength == 0)
+                {
+                    return "<Heading>";
+                }
+            }
 
-			// Check to see if we are default with no text.
-			if (lineType == DemoLineStyleType.Default && lineLength == 0)
-			{
-				return "\u25E6 \u25E6 \u25E6";
-			}
+            // Check to see if we are default with no text.
+            if (lineType == DemoLineStyleType.Default && lineLength == 0)
+            {
+                return "\u25E6 \u25E6 \u25E6";
+            }
 
-			// We don't have a special case, so just return the base.
-			return base.GetLineText(lineIndex, characters, lineContexts);
-		}
+            // We don't have a special case, so just return the base.
+            return base.GetLineText(lineIndex, characters, lineContexts);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

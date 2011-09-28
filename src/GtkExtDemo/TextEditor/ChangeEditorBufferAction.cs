@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,81 +30,81 @@ using MfGames.GtkExt.Actions;
 using MfGames.GtkExt.TextEditor;
 using MfGames.GtkExt.TextEditor.Models;
 
-using Action=Gtk.Action;
+using Action = Gtk.Action;
 
 #endregion
 
 namespace GtkExtDemo.TextEditor
 {
-	/// <summary>
-	/// Implements an action that changes the buffer.
-	/// </summary>
-	public class ChangeEditorBufferAction : Action, IConfigurableAction
-	{
-		#region Constructors
+    /// <summary>
+    /// Implements an action that changes the buffer.
+    /// </summary>
+    public class ChangeEditorBufferAction : Action, IConfigurableAction
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ChangeEditorBufferAction"/>
-		/// class.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="label">The label.</param>
-		/// <param name="editorView">The editor view.</param>
-		/// <param name="index">The index.</param>
-		/// <param name="action">The action to perform while loading.</param>
-		public ChangeEditorBufferAction(
-			string name,
-			string label,
-			EditorView editorView,
-			int index,
-			Func<LineBuffer> action)
-			: base(name, label)
-		{
-			if (editorView == null)
-			{
-				throw new ArgumentNullException("editorView");
-			}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChangeEditorBufferAction"/>
+        /// class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="label">The label.</param>
+        /// <param name="editorView">The editor view.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="action">The action to perform while loading.</param>
+        public ChangeEditorBufferAction(
+            string name,
+            string label,
+            EditorView editorView,
+            int index,
+            Func<LineBuffer> action)
+            : base(name, label)
+        {
+            if (editorView == null)
+            {
+                throw new ArgumentNullException("editorView");
+            }
 
-			this.editorView = editorView;
-			this.action = action;
-		}
+            this.editorView = editorView;
+            this.action = action;
+        }
 
-		#endregion
+        #endregion
 
-		#region Action
+        #region Action
 
-		private readonly Func<LineBuffer> action;
-		private readonly EditorView editorView;
+        private readonly Func<LineBuffer> action;
+        private readonly EditorView editorView;
 
-		/// <summary>
-		/// Gets the name of the action group to associate with this action.
-		/// </summary>
-		/// <value>
-		/// The name of the group.
-		/// </value>
-		public string GroupName
-		{
-			get { return "Editor"; }
-		}
+        /// <summary>
+        /// Gets the name of the action group to associate with this action.
+        /// </summary>
+        /// <value>
+        /// The name of the group.
+        /// </value>
+        public string GroupName
+        {
+            get { return "Editor"; }
+        }
 
-		/// <summary>
-		/// Called when the menu item is activated.
-		/// </summary>
-		protected override void OnActivated()
-		{
-			// Check to see if we don't have an action.
-			if (action == null)
-			{
-				// Clear out the line buffer.
-				editorView.ClearLineBuffer();
-			}
-			else
-			{
-				// Create the buffer and set it.
-				editorView.SetLineBuffer(action());
-			}
-		}
+        /// <summary>
+        /// Called when the menu item is activated.
+        /// </summary>
+        protected override void OnActivated()
+        {
+            // Check to see if we don't have an action.
+            if (action == null)
+            {
+                // Clear out the line buffer.
+                editorView.ClearLineBuffer();
+            }
+            else
+            {
+                // Create the buffer and set it.
+                editorView.SetLineBuffer(action());
+            }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

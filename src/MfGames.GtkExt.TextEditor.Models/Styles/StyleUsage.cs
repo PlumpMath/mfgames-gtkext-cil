@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,25 @@
 
 namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
-	/// <summary>
-	/// Determines the usage of a style and can be used for filtering or
-	/// controlling modifications.
-	/// </summary>
-	public enum StyleUsage : byte
-	{
-		/// <summary>
-		/// Indicates that the style is required by the text editor.
-		/// </summary>
-		Editor,
+    /// <summary>
+    /// Determines the usage of a style and can be used for filtering or
+    /// controlling modifications.
+    /// </summary>
+    public enum StyleUsage : byte
+    {
+        /// <summary>
+        /// Indicates that the style is required by the text editor.
+        /// </summary>
+        Editor,
 
-		/// <summary>
-		/// Indicates that the style is application-specific.
-		/// </summary>
-		Application,
+        /// <summary>
+        /// Indicates that the style is application-specific.
+        /// </summary>
+        Application,
 
-		/// <summary>
-		/// Indicates that the style is user-created.
-		/// </summary>
-		User,
-	}
+        /// <summary>
+        /// Indicates that the style is user-created.
+        /// </summary>
+        User,
+    }
 }

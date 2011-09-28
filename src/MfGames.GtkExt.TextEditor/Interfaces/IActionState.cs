@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,25 @@
 
 namespace MfGames.GtkExt.TextEditor.Interfaces
 {
-	/// <summary>
-	/// Interface that defines the properties and methods that are common
-	/// among all action states. These classes are used to remember conditions
-	/// of actions and are automatically removed by actions that don't use the
-	/// same state.
-	/// </summary>
-	public interface IActionState
-	{
-		#region Action State
+    /// <summary>
+    /// Interface that defines the properties and methods that are common
+    /// among all action states. These classes are used to remember conditions
+    /// of actions and are automatically removed by actions that don't use the
+    /// same state.
+    /// </summary>
+    public interface IActionState
+    {
+        #region Action State
 
-		/// <summary>
-		/// Determines whether this action state can be removed. This is also
-		/// an opportunity for the action to clean up before removed.
-		/// </summary>
-		/// <returns>
-		///   <c>true</c> if this instance can remove; otherwise, <c>false</c>.
-		/// </returns>
-		bool CanRemove();
+        /// <summary>
+        /// Determines whether this action state can be removed. This is also
+        /// an opportunity for the action to clean up before removed.
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance can remove; otherwise, <c>false</c>.
+        /// </returns>
+        bool CanRemove();
 
-		#endregion
-	}
+        #endregion
+    }
 }

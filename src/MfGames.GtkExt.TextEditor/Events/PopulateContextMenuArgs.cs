@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,23 +34,23 @@ using MfGames.GtkExt.TextEditor.Editing;
 
 namespace MfGames.GtkExt.TextEditor.Events
 {
-	/// <summary>
-	/// Arguments for when the text editor needs to populate the context
-	/// menu with contextual elements. Listeners are able to add elements based
-	/// on the current buffer position.
-	/// </summary>
-	public class PopulateContextMenuArgs : EventArgs
-	{
-		/// <summary>
-		/// Gets or sets the action context for this context.
-		/// </summary>
-		/// <value>The action context.</value>
-		public EditorViewController Controller { get; set; }
+    /// <summary>
+    /// Arguments for when the text editor needs to populate the context
+    /// menu with contextual elements. Listeners are able to add elements based
+    /// on the current buffer position.
+    /// </summary>
+    public class PopulateContextMenuArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets or sets the action context for this context.
+        /// </summary>
+        /// <value>The action context.</value>
+        public EditorViewController Controller { get; set; }
 
-		/// <summary>
-		/// Contains the menu that will be shown to the user. If this is set to 
-		/// <see langword="null"/>, then no menu will be shown.
-		/// </summary>
-		public Menu Menu { get; set; }
-	}
+        /// <summary>
+        /// Contains the menu that will be shown to the user. If this is set to 
+        /// <see langword="null"/>, then no menu will be shown.
+        /// </summary>
+        public Menu Menu { get; set; }
+    }
 }

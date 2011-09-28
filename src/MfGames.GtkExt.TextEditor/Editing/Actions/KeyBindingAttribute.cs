@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,52 +32,52 @@ using Gdk;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
-	/// <summary>
-	/// Defines a default key binding into the text editor.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-	public class KeyBindingAttribute : Attribute
-	{
-		#region Constructors
+    /// <summary>
+    /// Defines a default key binding into the text editor.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public class KeyBindingAttribute : Attribute
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		public KeyBindingAttribute(Key key)
-		{
-			Key = key;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public KeyBindingAttribute(Key key)
+        {
+            Key = key;
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <param name="modifier">The modifier.</param>
-		public KeyBindingAttribute(
-			Key key,
-			ModifierType modifier)
-			: this(key)
-		{
-			Modifier = modifier;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyBindingAttribute"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="modifier">The modifier.</param>
+        public KeyBindingAttribute(
+            Key key,
+            ModifierType modifier)
+            : this(key)
+        {
+            Modifier = modifier;
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		/// Gets or sets the key code associated with this binding.
-		/// </summary>
-		/// <value>The key.</value>
-		public Key Key { get; private set; }
+        /// <summary>
+        /// Gets or sets the key code associated with this binding.
+        /// </summary>
+        /// <value>The key.</value>
+        public Key Key { get; private set; }
 
-		/// <summary>
-		/// Gets or sets the modifier associated with this binding.
-		/// </summary>
-		/// <value>The modifier.</value>
-		public ModifierType Modifier { get; private set; }
+        /// <summary>
+        /// Gets or sets the modifier associated with this binding.
+        /// </summary>
+        /// <value>The modifier.</value>
+        public ModifierType Modifier { get; private set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

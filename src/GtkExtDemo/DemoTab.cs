@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,10 @@ using Gtk;
 
 namespace GtkExtDemo
 {
-	/// <summary>
-	/// Represents the common functionality of all the demo notebook tab.
-	/// </summary>
-	public abstract class DemoTab : VBox
-	{
-	}
+    /// <summary>
+    /// Represents the common functionality of all the demo notebook tab.
+    /// </summary>
+    public abstract class DemoTab : VBox
+    {
+    }
 }

@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,59 +30,59 @@ using C5;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
-	/// <summary>
-	/// Implements a command, which is a collection of operations both
-	/// to perform the command and undo it.
-	/// </summary>
-	public class Command
-	{
-		#region Constructors
+    /// <summary>
+    /// Implements a command, which is a collection of operations both
+    /// to perform the command and undo it.
+    /// </summary>
+    public class Command
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Command"/> class.
-		/// </summary>
-		public Command()
-		{
-			Operations = new ArrayList<ILineBufferOperation>();
-			UndoOperations = new ArrayList<ILineBufferOperation>();
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Command"/> class.
+        /// </summary>
+        public Command()
+        {
+            Operations = new ArrayList<ILineBufferOperation>();
+            UndoOperations = new ArrayList<ILineBufferOperation>();
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Command"/> class.
-		/// </summary>
-		/// <param name="startPosition">The start position.</param>
-		public Command(BufferPosition startPosition)
-			: this()
-		{
-			EndPosition = StartPosition = startPosition;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Command"/> class.
+        /// </summary>
+        /// <param name="startPosition">The start position.</param>
+        public Command(BufferPosition startPosition)
+            : this()
+        {
+            EndPosition = StartPosition = startPosition;
+        }
 
-		#endregion
+        #endregion
 
-		#region Operations
+        #region Operations
 
-		/// <summary>
-		/// Gets or sets the position at the end of the operations.
-		/// </summary>
-		/// <value>The end position.</value>
-		public BufferPosition EndPosition { get; set; }
+        /// <summary>
+        /// Gets or sets the position at the end of the operations.
+        /// </summary>
+        /// <value>The end position.</value>
+        public BufferPosition EndPosition { get; set; }
 
-		/// <summary>
-		/// Gets the operations for the command.
-		/// </summary>
-		public ArrayList<ILineBufferOperation> Operations { get; private set; }
+        /// <summary>
+        /// Gets the operations for the command.
+        /// </summary>
+        public ArrayList<ILineBufferOperation> Operations { get; private set; }
 
-		/// <summary>
-		/// Gets or sets the position for the start of the operations.
-		/// </summary>
-		/// <value>The operation position.</value>
-		public BufferPosition StartPosition { get; set; }
+        /// <summary>
+        /// Gets or sets the position for the start of the operations.
+        /// </summary>
+        /// <value>The operation position.</value>
+        public BufferPosition StartPosition { get; set; }
 
-		/// <summary>
-		/// Gets the undo operations for this command.
-		/// </summary>
-		public ArrayList<ILineBufferOperation> UndoOperations { get; private set; }
+        /// <summary>
+        /// Gets the undo operations for this command.
+        /// </summary>
+        public ArrayList<ILineBufferOperation> UndoOperations { get; private set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

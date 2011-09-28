@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,43 +32,43 @@ using MfGames.GtkExt.TextEditor.Interfaces;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
-	/// <summary>
-	/// Attribute that indicates the types of objects that are used to maintain
-	/// state for this method. All other states are requested to be removed
-	/// before the method is called.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-	public class ActionStateAttribute : Attribute
-	{
-		#region Constructors
+    /// <summary>
+    /// Attribute that indicates the types of objects that are used to maintain
+    /// state for this method. All other states are requested to be removed
+    /// before the method is called.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public class ActionStateAttribute : Attribute
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionStateAttribute"/> class.
-		/// </summary>
-		/// <param name="stateType">Type of state object to leave in the action states.</param>
-		public ActionStateAttribute(Type stateType)
-		{
-			// Save the state to be retrieved later.
-			StateType = stateType;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActionStateAttribute"/> class.
+        /// </summary>
+        /// <param name="stateType">Type of state object to leave in the action states.</param>
+        public ActionStateAttribute(Type stateType)
+        {
+            // Save the state to be retrieved later.
+            StateType = stateType;
 
-			// Make sure the state extends the proper class.
-			if (!typeof(IActionState).IsAssignableFrom(StateType))
-			{
-				throw new Exception(
-					"Can only assign an IActionState type of ActionState attributes");
-			}
-		}
+            // Make sure the state extends the proper class.
+            if (!typeof(IActionState).IsAssignableFrom(StateType))
+            {
+                throw new Exception(
+                    "Can only assign an IActionState type of ActionState attributes");
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		/// Gets the type object that represents an action state.
-		/// </summary>
-		/// <value>The type of the state.</value>
-		public Type StateType { get; private set; }
+        /// <summary>
+        /// Gets the type object that represents an action state.
+        /// </summary>
+        /// <value>The type of the state.</value>
+        public Type StateType { get; private set; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

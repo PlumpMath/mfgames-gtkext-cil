@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,48 +30,48 @@ using System.Text;
 
 namespace MfGames.GtkExt
 {
-	/// <summary>
-	/// Utility functions for dealing with Pango.
-	/// </summary>
-	public class PangoUtility
-	{
-		/// <summary>
-		/// Escapes the specified input for Pango.
-		/// </summary>
-		/// <param name="input">The input.</param>
-		/// <returns></returns>
-		public static string Escape(string input)
-		{
-			// If we have a blank or null string, just pass it on.
-			if (string.IsNullOrEmpty(input))
-			{
-				return input;
-			}
+    /// <summary>
+    /// Utility functions for dealing with Pango.
+    /// </summary>
+    public class PangoUtility
+    {
+        /// <summary>
+        /// Escapes the specified input for Pango.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
+        public static string Escape(string input)
+        {
+            // If we have a blank or null string, just pass it on.
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
 
-			// Go through the string and come out with a marked up version.
-			var buffer = new StringBuilder();
+            // Go through the string and come out with a marked up version.
+            var buffer = new StringBuilder();
 
-			foreach (char c in input)
-			{
-				switch (c)
-				{
-					case '&':
-						buffer.Append("&amp;");
-						break;
-					case '<':
-						buffer.Append("&lt;");
-						break;
-					case '>':
-						buffer.Append("&gt;");
-						break;
-					default:
-						buffer.Append(c);
-						break;
-				}
-			}
+            foreach (char c in input)
+            {
+                switch (c)
+                {
+                    case '&':
+                        buffer.Append("&amp;");
+                        break;
+                    case '<':
+                        buffer.Append("&lt;");
+                        break;
+                    case '>':
+                        buffer.Append("&gt;");
+                        break;
+                    default:
+                        buffer.Append(c);
+                        break;
+                }
+            }
 
-			// Return the resulting buffer.
-			return buffer.ToString();
-		}
-	}
+            // Return the resulting buffer.
+            return buffer.ToString();
+        }
+    }
 }

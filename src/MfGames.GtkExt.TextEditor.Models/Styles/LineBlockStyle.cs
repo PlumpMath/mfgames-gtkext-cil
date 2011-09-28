@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,98 +32,97 @@ using C5;
 
 namespace MfGames.GtkExt.TextEditor.Models.Styles
 {
-	/// <summary>
-	/// Represents the various style elements of the text editor. This is based
-	/// on CSS styles in that if a style isn't defined at this level, the
-	/// parent elements are checked. This allows for simple changes at higher
-	/// levels to cascade down to child elements.
-	/// </summary>
-	public class LineBlockStyle : BlockStyle
-	{
-		#region Constructors
+    /// <summary>
+    /// Represents the various style elements of the text editor. This is based
+    /// on CSS styles in that if a style isn't defined at this level, the
+    /// parent elements are checked. This allows for simple changes at higher
+    /// levels to cascade down to child elements.
+    /// </summary>
+    public class LineBlockStyle : BlockStyle
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LineBlockStyle"/> class.
-		/// </summary>
-		public LineBlockStyle()
-		{
-			children = new LinkedList<LineBlockStyle>();
-			MarginStyles = new MarginBlockStyleCollection(this);
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LineBlockStyle"/> class.
+        /// </summary>
+        public LineBlockStyle()
+        {
+            children = new LinkedList<LineBlockStyle>();
+            MarginStyles = new MarginBlockStyleCollection(this);
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LineBlockStyle"/> class.
-		/// </summary>
-		/// <param name="parent">The parent.</param>
-		public LineBlockStyle(LineBlockStyle parent)
-			: this()
-		{
-			Parent = parent;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LineBlockStyle"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        public LineBlockStyle(LineBlockStyle parent)
+            : this()
+        {
+            Parent = parent;
+        }
 
-		#endregion
+        #endregion
 
-		#region Cascading
+        #region Cascading
 
-		private readonly C5.LinkedList<LineBlockStyle> children;
-		private LineBlockStyle parent;
+        private readonly LinkedList<LineBlockStyle> children;
+        private LineBlockStyle parent;
 
-		/// <summary>
-		/// Gets the children styles associated with this one.
-		/// </summary>
-		/// <value>The children.</value>
-		public C5.LinkedList<LineBlockStyle> Children
-		{
-			[DebuggerStepThrough]
-			get { return children; }
-		}
+        /// <summary>
+        /// Gets the children styles associated with this one.
+        /// </summary>
+        /// <value>The children.</value>
+        public LinkedList<LineBlockStyle> Children
+        {
+            [DebuggerStepThrough]
+            get { return children; }
+        }
 
-		/// <summary>
-		/// Gets or sets the parent selector style. Setting the parent will
-		/// also establish a corresponding link in the parent's children styles
-		/// into this one. Setting to null will remove any cascading.
-		/// </summary>
-		/// <value>The parent.</value>
-		public LineBlockStyle Parent
-		{
-			[DebuggerStepThrough]
-			get { return parent; }
-			set
-			{
-				if (parent != null)
-				{
-					parent.Children.Remove(this);
-				}
+        /// <summary>
+        /// Gets or sets the parent selector style. Setting the parent will
+        /// also establish a corresponding link in the parent's children styles
+        /// into this one. Setting to null will remove any cascading.
+        /// </summary>
+        /// <value>The parent.</value>
+        public LineBlockStyle Parent
+        {
+            [DebuggerStepThrough]
+            get { return parent; }
+            set
+            {
+                if (parent != null)
+                {
+                    parent.Children.Remove(this);
+                }
 
-				parent = value;
+                parent = value;
 
-				if (parent != null)
-				{
-					parent.Children.Add(this);
-				}
-			}
-		}
+                if (parent != null)
+                {
+                    parent.Children.Add(this);
+                }
+            }
+        }
 
-		/// <summary>
-		/// Gets the parent block style for this element.
-		/// </summary>
-		/// <value>The parent block style.</value>
-		protected override BlockStyle ParentBlockStyle
-		{
-			get { return parent; }
-		}
+        /// <summary>
+        /// Gets the parent block style for this element.
+        /// </summary>
+        /// <value>The parent block style.</value>
+        protected override BlockStyle ParentBlockStyle
+        {
+            get { return parent; }
+        }
 
-		#endregion
+        #endregion
 
-		#region Margins
+        #region Margins
 
-		/// <summary>
-		/// Gets the margin styles.
-		/// </summary>
-		/// <value>The margin styles.</value>
-		public MarginBlockStyleCollection MarginStyles { get; private set; }
+        /// <summary>
+        /// Gets the margin styles.
+        /// </summary>
+        /// <value>The margin styles.</value>
+        public MarginBlockStyleCollection MarginStyles { get; private set; }
 
-		#endregion
-
-	}
+        #endregion
+    }
 }

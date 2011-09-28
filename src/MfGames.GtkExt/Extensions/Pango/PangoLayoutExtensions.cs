@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,23 +30,23 @@ using Pango;
 
 namespace MfGames.GtkExt.Extensions.Pango
 {
-	/// <summary>
-	/// Contains various utility extensions for Layout.
-	/// </summary>
-	public static class PangoLayoutExtensions
-	{
-		/// <summary>
-		/// Gets the pixel height of a layout.
-		/// </summary>
-		/// <param name="layout">The layout.</param>
-		/// <returns></returns>
-		public static int GetPixelHeight(this Layout layout)
-		{
-			int width, height;
+    /// <summary>
+    /// Contains various utility extensions for Layout.
+    /// </summary>
+    public static class PangoLayoutExtensions
+    {
+        /// <summary>
+        /// Gets the pixel height of a layout.
+        /// </summary>
+        /// <param name="layout">The layout.</param>
+        /// <returns></returns>
+        public static int GetPixelHeight(this Layout layout)
+        {
+            int width, height;
 
-			layout.GetPixelSize(out width, out height);
+            layout.GetPixelSize(out width, out height);
 
-			return height;
-		}
-	}
+            return height;
+        }
+    }
 }

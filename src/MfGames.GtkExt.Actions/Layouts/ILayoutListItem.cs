@@ -1,6 +1,6 @@
 #region Copyright and License
 
-// Copyright (c) 2009-2011, Moonfire Games
+// Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,22 @@ using Gtk;
 
 namespace MfGames.GtkExt.Actions.Layouts
 {
-	/// <summary>
-	/// Represents the common functionality for all layout items.
-	/// </summary>
-	public interface ILayoutListItem
-	{
-		#region Population
+    /// <summary>
+    /// Represents the common functionality for all layout items.
+    /// </summary>
+    public interface ILayoutListItem
+    {
+        #region Population
 
-		/// <summary>
-		/// Populates the specified shell with sub-menus.
-		/// </summary>
-		/// <param name="manager">The manager.</param>
-		/// <param name="shell">The shell.</param>
-		void Populate(
-			ActionManager manager,
-			MenuShell shell);
+        /// <summary>
+        /// Populates the specified shell with sub-menus.
+        /// </summary>
+        /// <param name="manager">The manager.</param>
+        /// <param name="shell">The shell.</param>
+        void Populate(
+            ActionManager manager,
+            MenuShell shell);
 
-		#endregion
-	}
+        #endregion
+    }
 }
