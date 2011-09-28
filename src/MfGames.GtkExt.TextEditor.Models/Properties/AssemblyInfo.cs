@@ -34,11 +34,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly:AssemblyTitle("MfGames.GtkExt.TextEditor.Models")]
-[assembly:AssemblyDescription("")]
+[assembly:AssemblyDescription("Models and contracts for working with MfGames.GtkExt.TextEditor.")]
 [assembly:AssemblyConfiguration("")]
-[assembly:AssemblyCompany("")]
+[assembly:AssemblyCompany("Moonfire Games")]
 [assembly:AssemblyProduct("MfGames.GtkExt.TextEditor.Models")]
-[assembly:AssemblyCopyright("Copyright ©  2011")]
+[assembly:AssemblyCopyright("Copyright © 2005-2011")]
 [assembly:AssemblyTrademark("")]
 [assembly:AssemblyCulture("")]
 
