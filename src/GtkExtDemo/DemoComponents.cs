@@ -61,7 +61,9 @@ namespace GtkExtDemo
             testEnumCombo = new EnumComboBox(typeof(ExampleEnumeration));
             testEnumCombo.Changed += OnTestEnumChanged;
             table.Attach(
-                row++, "Enum.ComboBox ExampleEnumeration", testEnumCombo);
+                row++,
+                "ExampleEnumeration",
+                testEnumCombo);
 
             // Add the string entry
             var sle = new StringListEntry();
