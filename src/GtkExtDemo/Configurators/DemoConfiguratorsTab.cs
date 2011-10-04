@@ -22,33 +22,34 @@
 
 #endregion
 
-#region Namespaces
-
-using System;
-
 using Gtk;
 
-#endregion
+using MfGames.Collections;
+using MfGames.GtkExt.Configurators;
 
-namespace MfGames.GtkExt.Configurators
+namespace GtkExtDemo.Configurators
 {
-    /// <summary>
-    /// Describes the signature for configurators that provide Gtk# panel
-    /// for user configuration. Configurator panels are organized using 
-    /// hierarchial path to create the nested tree.
-    /// 
-    /// When a configurator is first shown, the container panel will call
-    /// CreateConfiguratorWidget(). When the container is closed, the Dispose()
-    /// method of this interface will be called.
-    /// </summary>
-    public interface IGtkConfigurator : IDisposable
-    {
-        /// <summary>
-        /// Creates a widget to be placed at the configurator tree as given
-        /// by the path. The created widget should be destroyed as part of the
-        /// Dispose() method.
-        /// </summary>
-        /// <returns></returns>
-        Widget CreateConfiguratorWidget();
-    }
+	/// <summary>
+	/// Encapsulates the demostration of a configurator tab.
+	/// </summary>
+	public class DemoConfiguratorsTab : DemoTab
+	{
+		#region Constructors
+
+		public DemoConfiguratorsTab()
+		{
+			// Set up the configuration tab with a default configurators.
+			var configurators = new HierarchicalPathTreeCollection<IGtkConfigurator>();
+			configurators.Add("/Text Editor/Styles", new TextEditorStylesConfigurator());
+			configurators.Add("/Text Editor/Display", new TextEditorDisplayConfigurator());
+
+			// Create the configuration view.
+			var panel = new ConfiguratorPanel(configurators);
+
+			// Add the panel to ourselves.
+			PackStart(panel, true, true, 2);
+		}
+
+		#endregion
+	}
 }

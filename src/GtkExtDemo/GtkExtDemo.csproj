@@ -49,6 +49,9 @@
   <ItemGroup>
     <Compile Include="Actions\QuitAction.cs" />
     <Compile Include="Actions\SwitchPageAction.cs" />
+    <Compile Include="Configurators\DemoConfiguratorsTab.cs" />
+    <Compile Include="Configurators\TextEditorDisplayConfigurator.cs" />
+    <Compile Include="Configurators\TextEditorStylesConfigurator.cs" />
     <Compile Include="DemoActions.cs" />
     <Compile Include="DemoWindow.cs" />
     <Compile Include="DemoComponents.cs" />
@@ -67,6 +70,10 @@
     <ProjectReference Include="..\MfGames.GtkExt.Actions\MfGames.GtkExt.Actions.csproj">
       <Project>{E0A0DD4B-5D5D-41BD-81C3-FFDB3981263A}</Project>
       <Name>MfGames.GtkExt.Actions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MfGames.GtkExt.Configurators\MfGames.GtkExt.Configurators.csproj">
+      <Project>{BBB2BB6A-1FA3-449D-B390-9206D2CBC126}</Project>
+      <Name>MfGames.GtkExt.Configurators</Name>
     </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj">
       <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>

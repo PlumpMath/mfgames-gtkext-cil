@@ -205,8 +205,7 @@ namespace MfGames.GtkExt.Actions
 
             // Grab the accelerator for this key. If we don't have an item, then
             // this is going to be a continued chain.
-            var actionTree = keybindings.Get(acceleratorPath);
-            string actionName = actionTree.Item;
+            string actionName = keybindings.Get(acceleratorPath);
 
             if (actionName == null)
             {

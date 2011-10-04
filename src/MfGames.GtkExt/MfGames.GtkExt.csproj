@@ -92,6 +92,7 @@
     <Compile Include="CairoUtility.cs" />
     <Compile Include="EnumComboBox.cs" />
     <Compile Include="Extensions\Cairo\CairoRectangleExtensions.cs" />
+    <Compile Include="Extensions\MfGames\Collections\HierarchicalPathTreeCollectionExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutLineExtensions.cs" />
     <Compile Include="FontDescriptionCache.cs" />
@@ -122,6 +123,7 @@
     <None Include="MfGames.GtkExt.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
 </Project>
