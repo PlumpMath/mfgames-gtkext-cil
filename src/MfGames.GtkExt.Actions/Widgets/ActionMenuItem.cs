@@ -30,6 +30,8 @@ using Gdk;
 
 using Gtk;
 
+using MfGames.HierarchicalPaths;
+
 using Action = Gtk.Action;
 using Image = Gtk.Image;
 

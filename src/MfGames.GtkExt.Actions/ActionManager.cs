@@ -33,6 +33,7 @@ using GLib;
 
 using Gtk;
 
+using MfGames.HierarchicalPaths;
 using MfGames.Reporting;
 
 using Action = Gtk.Action;

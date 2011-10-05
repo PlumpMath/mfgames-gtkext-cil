@@ -95,6 +95,7 @@
     <Compile Include="Extensions\MfGames\Collections\HierarchicalPathTreeCollectionExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutLineExtensions.cs" />
+    <Compile Include="Extensions\System\Collections\Generic\SystemCollectionsGenericIListExtensions.cs" />
     <Compile Include="FontDescriptionCache.cs" />
     <Compile Include="GdkUtility.cs" />
     <Compile Include="LabelWidgetTable.cs" />

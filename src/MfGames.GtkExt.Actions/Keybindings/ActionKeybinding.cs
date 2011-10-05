@@ -26,6 +26,8 @@
 
 using System.Xml;
 
+using MfGames.HierarchicalPaths;
+
 #endregion
 
 namespace MfGames.GtkExt.Actions.Keybindings

@@ -35,6 +35,7 @@ using Gdk;
 using Gtk;
 
 using MfGames.GtkExt.Actions.Keybindings;
+using MfGames.HierarchicalPaths;
 using MfGames.Reporting;
 
 using Action = Gtk.Action;

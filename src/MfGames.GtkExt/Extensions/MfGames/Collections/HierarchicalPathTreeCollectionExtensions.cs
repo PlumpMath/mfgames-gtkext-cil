@@ -27,6 +27,7 @@
 using Gtk;
 
 using MfGames.Collections;
+using MfGames.HierarchicalPaths;
 
 #endregion
 
