@@ -94,10 +94,11 @@ namespace MfGames.GtkExt.Configurators.Widgets
 		/// the selectors.
 		/// </summary>
 		/// <returns></returns>
-		protected Widget CreateSelectorArea()
+		protected virtual Widget CreateSelectorArea()
 		{
 			// The selector can be fairly big, so create a scrolled window.
 			var scroll = new ScrolledWindow();
+			scroll.ShadowType = ShadowType.In;
 
 			// Create the tree model from the configurator list.
 			TreeStore treeStore = selectorTreeStore;
@@ -105,6 +106,7 @@ namespace MfGames.GtkExt.Configurators.Widgets
 			// Create the tree view for inside the scroll.
 			var treeView = new TreeView(treeStore);
 
+			treeView.HeadersVisible = false;
 			treeView.AppendColumn("Configurator", new CellRendererText(), "text", 0);
 
 			// Return the scrolled window.
