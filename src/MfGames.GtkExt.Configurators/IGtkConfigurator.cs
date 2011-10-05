@@ -47,8 +47,9 @@ namespace MfGames.GtkExt.Configurators
     {
         /// <summary>
         /// Creates a widget to be placed at the configurator tree as given
-        /// by the path. The created widget should be destroyed as part of the
-        /// Dispose() method.
+        /// by the path. For a given instance, this must always return the
+        /// same widget. The created widget should be destroyed as part of the
+        /// Dispose() method of this class.
         /// </summary>
         /// <returns></returns>
         Widget CreateConfiguratorWidget();

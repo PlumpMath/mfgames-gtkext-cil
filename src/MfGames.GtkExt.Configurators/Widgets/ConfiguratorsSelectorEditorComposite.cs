@@ -65,6 +65,8 @@ namespace MfGames.GtkExt.Configurators.Widgets
 		#region Configurators
 
 		private readonly TreeStore selectorTreeStore;
+		private Frame configuratorFrame;
+		private TreeView treeView;
 
 		/// <summary>
 		/// Gets the configurator selector tree store.
@@ -86,7 +88,10 @@ namespace MfGames.GtkExt.Configurators.Widgets
 		/// <returns></returns>
 		private Widget CreateConfiguratorArea()
 		{
-			return new Label("Bob");
+			configuratorFrame = new Frame();
+			configuratorFrame.Shadow = ShadowType.None;
+
+			return configuratorFrame;
 		}
 
 		/// <summary>
@@ -98,15 +103,17 @@ namespace MfGames.GtkExt.Configurators.Widgets
 		{
 			// The selector can be fairly big, so create a scrolled window.
 			var scroll = new ScrolledWindow();
-			scroll.ShadowType = ShadowType.In;
+			scroll.ShadowType = ShadowType.EtchedIn;
 
 			// Create the tree model from the configurator list.
 			TreeStore treeStore = selectorTreeStore;
 
 			// Create the tree view for inside the scroll.
-			var treeView = new TreeView(treeStore);
-
+			treeView = new TreeView(treeStore);
+			treeView.EnableTreeLines = true;
 			treeView.HeadersVisible = false;
+			treeView.Selection.Mode = SelectionMode.Single;
+			treeView.Selection.Changed += OnSelectionChanged;
 			treeView.AppendColumn("Configurator", new CellRendererText(), "text", 0);
 
 			// Return the scrolled window.
@@ -134,6 +141,38 @@ namespace MfGames.GtkExt.Configurators.Widgets
 
 			// Pack the widget into ourselves.
 			PackStart(pane, true, true, 0);
+		}
+
+		#endregion
+
+		#region Events
+
+		/// <summary>
+		/// Called when a tree row is activated.
+		/// </summary>
+		/// <param name="sender">The o.</param>
+		/// <param name="e">The args.</param>
+		private void OnSelectionChanged(
+			object sender,
+			EventArgs e)
+		{
+			// Clear out the configurator frame.
+			configuratorFrame.Remove(configuratorFrame.Child);
+
+			// Figure out what the selection is.
+			TreeIter treeIter;
+
+			if (treeView.Selection.GetSelected(out treeIter))
+			{
+				// Get the configurator for the selected row.
+				var configurator = (IGtkConfigurator) selectorTreeStore.GetValue(treeIter, 2);
+
+				// If the configurator is not null, then we get the widget and set the frame.
+				if (configurator != null)
+				{
+					configuratorFrame.ShowAll();
+				}
+			}
 		}
 
 		#endregion
