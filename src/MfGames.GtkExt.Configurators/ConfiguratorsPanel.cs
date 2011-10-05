@@ -28,8 +28,7 @@ using System;
 
 using Gtk;
 
-using MfGames.GtkExt.Extensions.MfGames.Collections;
-using MfGames.Collections;
+using MfGames.GtkExt.Configurators.Widgets;
 
 #endregion
 
@@ -38,45 +37,52 @@ namespace MfGames.GtkExt.Configurators
 	/// <summary>
 	/// A composite widget to display, manage, and edit configurators.
 	/// </summary>
-	public class ConfiguratorPanel : VBox
+	public class ConfiguratorsPanel : VBox
 	{
 		#region Constructors
 
-		public ConfiguratorPanel(HierarchicalPathTreeCollection<IGtkConfigurator> configurators)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConfiguratorsPanel"/> class.
+		/// </summary>
+		/// <param name="selectorTreeStore">The selector tree store.</param>
+		public ConfiguratorsPanel(TreeStore selectorTreeStore)
 		{
 			// Save the various parameters as member variables.
-			if (configurators == null)
+			if (selectorTreeStore == null)
 			{
-				throw new ArgumentNullException("configurators");
+				throw new ArgumentNullException("selectorTreeStore");
 			}
 
-			this.configurators = configurators;
-
 			// Set up the widget.
-			InitializeWidget();
+			InitializeWidget(selectorTreeStore);
 		}
 
 		#endregion
 
-		#region Configurators
-
-		private HierarchicalPathTreeCollection<IGtkConfigurator> configurators;
- 
-		#endregion
-
 		#region Layout
+
+		private ConfiguratorsSelectorEditorComposite configuratorArea;
+
+		/// <summary>
+		/// Creates the button bar on the bottom of the screen.
+		/// </summary>
+		protected Widget CreateButtonBar()
+		{
+			return new Label("Buttons");
+		}
 
 		/// <summary>
 		/// Initializes the entire widget and lays out the class.
 		/// </summary>
-		private void InitializeWidget()
+		private void InitializeWidget(TreeStore selectorTreeStore)
 		{
 			// Start by doing the VBox stuff to arrange the top levels, a
 			// separator bar, and the button bar below.
 			var verticalLayout = new VBox();
 
 			// Set up the configurator area.
-			Widget configuratorArea = CreateWorkingArea();
+			configuratorArea = new ConfiguratorsSelectorEditorComposite(
+				selectorTreeStore);
 
 			verticalLayout.PackStart(configuratorArea, true, true, 0);
 
@@ -94,66 +100,6 @@ namespace MfGames.GtkExt.Configurators
 
 			// Add the vertical layout to the bin.
 			PackStart(verticalLayout);
-		}
-
-		/// <summary>
-		/// Creates the area on the screen that contains both the configurator
-		/// selector and the configurator working area.
-		/// </summary>
-		/// <returns></returns>
-		protected Widget CreateWorkingArea()
-		{
-			// The configuration area is split horizontally by a resizable pane.
-			var pane = new HPaned();
-			
-			// On the left is the selector area.
-			pane.Add1(CreateSelectorArea());
-			
-			// On the right is the configurator area.
-			pane.Add2(CreateConfiguratorArea());
-
-			// Set the default position of the pane to 200 px for the selector.
-			pane.Position = 200;
-
-			// Return the pane.
-			return pane;
-		}
-
-		private Widget CreateConfiguratorArea()
-		{
-			return new Label("Bob");
-		}
-
-		/// <summary>
-		/// Create the selector area which typically has the tree view of
-		/// the selectors.
-		/// </summary>
-		/// <returns></returns>
-		protected Widget CreateSelectorArea()
-		{
-			// The selector can be fairly big, so create a scrolled window.
-			var scroll = new ScrolledWindow();
-
-			// Create the tree model from the configurator list.
-			TreeStore treeStore = configurators.ToTreeStore();
-
-			// Create the tree view for inside the scroll.
-			var treeView = new TreeView(treeStore);
-
-			treeView.AppendColumn("Configurator", new CellRendererText(), "text", 0);
-
-			// Return the scrolled window.
-			scroll.Add(treeView);
-
-			return scroll;
-		}
-
-		/// <summary>
-		/// Creates the button bar on the bottom of the screen.
-		/// </summary>
-		protected Widget CreateButtonBar()
-		{
-			return new Label("Buttons");
 		}
 
 		#endregion

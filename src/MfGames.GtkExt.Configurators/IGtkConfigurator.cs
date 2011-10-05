@@ -28,6 +28,8 @@ using System;
 
 using Gtk;
 
+using MfGames.HierarchicalPaths;
+
 #endregion
 
 namespace MfGames.GtkExt.Configurators
@@ -41,7 +43,7 @@ namespace MfGames.GtkExt.Configurators
     /// CreateConfiguratorWidget(). When the container is closed, the Dispose()
     /// method of this interface will be called.
     /// </summary>
-    public interface IGtkConfigurator : IDisposable
+    public interface IGtkConfigurator : IDisposable, IHierarchicalPathContainer
     {
         /// <summary>
         /// Creates a widget to be placed at the configurator tree as given

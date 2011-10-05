@@ -1,6 +1,7 @@
 using Gtk;
 
 using MfGames.GtkExt.Configurators;
+using MfGames.HierarchicalPaths;
 
 namespace GtkExtDemo.Configurators
 {
@@ -8,6 +9,11 @@ namespace GtkExtDemo.Configurators
 	{
 		public void Dispose()
 		{
+		}
+
+		public HierarchicalPath HierarchicalPath
+		{
+			get { return new HierarchicalPath("/Text Editor/Display"); }
 		}
 
 		public Widget CreateConfiguratorWidget()

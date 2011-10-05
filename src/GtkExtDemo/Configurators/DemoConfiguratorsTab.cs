@@ -22,10 +22,13 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 using Gtk;
 
 using MfGames.Collections;
 using MfGames.GtkExt.Configurators;
+using MfGames.GtkExt.Extensions.System.Collections.Generic;
 
 namespace GtkExtDemo.Configurators
 {
@@ -39,12 +42,15 @@ namespace GtkExtDemo.Configurators
 		public DemoConfiguratorsTab()
 		{
 			// Set up the configuration tab with a default configurators.
-			var configurators = new HierarchicalPathTreeCollection<IGtkConfigurator>();
-			configurators.Add("/Text Editor/Styles", new TextEditorStylesConfigurator());
-			configurators.Add("/Text Editor/Display", new TextEditorDisplayConfigurator());
+			var configurators = new List<IGtkConfigurator>();
+			configurators.Add(new TextEditorStylesConfigurator());
+			configurators.Add(new TextEditorDisplayConfigurator());
+
+			// Create the tree store from the list.
+			TreeStore treeStore = configurators.ToTreeStore();
 
 			// Create the configuration view.
-			var panel = new ConfiguratorPanel(configurators);
+			var panel = new ConfiguratorsPanel(treeStore);
 
 			// Add the panel to ourselves.
 			PackStart(panel, true, true, 2);
