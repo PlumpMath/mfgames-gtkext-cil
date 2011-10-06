@@ -284,8 +284,25 @@ namespace MfGames.GtkExt.Configurators.Widgets
 					2);
 
 				// If the configurator is not null, then we get the widget and set the frame.
-				if (configurator != null)
+				if (configurator == null)
 				{
+					// This is a null configurator, we want to move down to the
+					// the first valid configurator instead.
+					TreeIter childTreeIter;
+
+					if (SelectorTreeStore.IterChildren(out childTreeIter, treeIter))
+					{
+						// We have a child tree element, make sure it is visible.
+						TreePath treePath = SelectorTreeStore.GetPath(treeIter);
+						treeView.ExpandToPath(treePath);
+
+						// Select this child element.
+						treeView.Selection.SelectIter(childTreeIter);
+					}
+				}
+				else
+				{
+					// We have a configurator, so select and show it.
 					Widget configuratorWidget = configurator.CreateConfiguratorWidget();
 
 					configuratorFrame.Add(configuratorWidget);
