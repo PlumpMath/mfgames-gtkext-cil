@@ -5,6 +5,9 @@
 			<action name="Unknown Action"/>
 			<action name="Quit"/>
 		</layout-list>
+    <layout-list label="_Edit">
+      <action name="Preferences" />
+    </layout-list>"
 		<layout-list label="_View" group="View" >
 			<action name="SwitchPage0"/>
       <action name="SwitchPage1"/>

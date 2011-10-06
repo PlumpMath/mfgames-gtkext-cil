@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="ApplyMode.cs" />
     <Compile Include="ConfiguratorsPanel.cs" />
+    <Compile Include="ConfiguratorDialog.cs" />
     <Compile Include="IGtkConfigurator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Widgets\ConfiguratorsSelectorEditorComposite.cs" />

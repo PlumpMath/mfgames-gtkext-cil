@@ -50,6 +50,7 @@
     <Compile Include="Actions\QuitAction.cs" />
     <Compile Include="Actions\SwitchPageAction.cs" />
     <Compile Include="Configurators\DemoConfiguratorsTab.cs" />
+    <Compile Include="Configurators\ShowPreferencesAction.cs" />
     <Compile Include="Configurators\TextEditorDisplayConfigurator.cs" />
     <Compile Include="Configurators\TextEditorStylesConfigurator.cs" />
     <Compile Include="DemoActions.cs" />

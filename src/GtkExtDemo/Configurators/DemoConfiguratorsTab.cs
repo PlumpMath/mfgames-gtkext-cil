@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Gtk;
 
 using MfGames.Collections;
+using MfGames.GtkExt.Actions;
 using MfGames.GtkExt.Configurators;
 using MfGames.GtkExt.Extensions.System.Collections.Generic;
 
@@ -35,19 +36,18 @@ namespace GtkExtDemo.Configurators
 	/// <summary>
 	/// Encapsulates the demostration of a configurator tab.
 	/// </summary>
-	public class DemoConfiguratorsTab : DemoTab
+	public class DemoConfiguratorsTab : DemoTab, IActionFactory
 	{
 		#region Constructors
 
-		public DemoConfiguratorsTab()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DemoConfiguratorsTab"/> class.
+		/// </summary>
+		public DemoConfiguratorsTab(Window window)
 		{
-			// Set up the configuration tab with a default configurators.
-			var configurators = new List<IGtkConfigurator>();
-			configurators.Add(new TextEditorStylesConfigurator());
-			configurators.Add(new TextEditorDisplayConfigurator());
-
-			// Create the tree store from the list.
-			TreeStore treeStore = configurators.ToTreeStore();
+			// Create the configurators in a tree store.
+			treeStore = CreateTreeStore();
+			this.window = window;
 
 			// Create the configuration view.
 			var panel = new ConfiguratorsPanel(treeStore);
@@ -57,5 +57,53 @@ namespace GtkExtDemo.Configurators
 		}
 
 		#endregion
+
+		#region Configurators
+
+		/// <summary>
+		/// Creates the tree store which contains the configurators.
+		/// </summary>
+		/// <returns></returns>
+		private TreeStore CreateTreeStore()
+		{
+			// Set up the configuration tab with a default configurators.
+			var configurators = new List<IGtkConfigurator>();
+			configurators.Add(new TextEditorStylesConfigurator());
+			configurators.Add(new TextEditorDisplayConfigurator());
+
+			// Create the tree store from the list.
+			TreeStore store = configurators.ToTreeStore();
+			return store;
+		}
+
+		#endregion
+
+
+		#region IActionFactory
+
+		private readonly Window window;
+		private readonly TreeStore treeStore;
+
+		/// <summary>
+		/// Creates all the <see cref="Action"/> objects associated with the extending
+		/// class.
+		/// </summary>
+		/// <returns></returns>
+		public ICollection<Action> CreateActions()
+		{
+			var actions = new List<Action>();
+
+			actions.Add(
+				new ShowPreferencesAction(
+					"Preferences",
+					"_Preferences",
+					window,
+					CreateTreeStore()));
+
+			return actions;
+		}
+
+		#endregion
+
 	}
 }

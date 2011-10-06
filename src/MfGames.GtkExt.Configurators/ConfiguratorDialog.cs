@@ -35,20 +35,30 @@ using MfGames.GtkExt.Configurators.Widgets;
 namespace MfGames.GtkExt.Configurators
 {
 	/// <summary>
-	/// A composite widget to display, manage, and edit configurators.
+	/// Implements a configuration screen as a dialog box.
 	/// </summary>
-	public class ConfiguratorsPanel : VBox
+	public class ConfiguratorDialog : Dialog
 	{
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfiguratorsPanel"/> class.
+		/// Initializes a new instance of the <see cref="ConfiguratorDialog"/> class.
 		/// </summary>
-		/// <param name="treeStore">The selector tree store.</param>
-		/// <param name="showCloseButton">if set to <c>true</c> [show close button].</param>
-		public ConfiguratorsPanel(
+		/// <param name="treeStore">The tree store.</param>
+		/// <param name="dialogTitle">The dialog title.</param>
+		/// <param name="parentWindow">The parent window.</param>
+		/// <param name="flags">The flags.</param>
+		/// <param name="buttonData">The button data.</param>
+		public ConfiguratorDialog(
 			TreeStore treeStore,
-			bool showCloseButton = true)
+			string dialogTitle = "Configuration",
+			Window parentWindow = null,
+			DialogFlags flags = DialogFlags.DestroyWithParent,
+			params object[] buttonData)
+			: base(dialogTitle,
+			       parentWindow,
+			       flags,
+			       buttonData)
 		{
 			// Save the various parameters as member variables.
 			if (treeStore == null)
@@ -57,9 +67,7 @@ namespace MfGames.GtkExt.Configurators
 			}
 
 			// Set up the widget.
-			InitializeWidget(
-				treeStore,
-				showCloseButton);
+			InitializeWidget(treeStore);
 		}
 
 		#endregion
@@ -69,24 +77,23 @@ namespace MfGames.GtkExt.Configurators
 		private ConfiguratorsSelectorEditorComposite configuratorArea;
 
 		/// <summary>
-		/// Creates the button bar on the bottom of the screen.
+		/// Initializes the entire widget and lays out the class.
 		/// </summary>
-		/// <param name="showCloseButton"></param>
-		protected Widget CreateButtonBar(bool showCloseButton)
+		/// <param name="selectorTreeStore">The selector tree store.</param>
+		private void InitializeWidget(TreeStore selectorTreeStore)
 		{
-			// If we don't show the close button and we are instant apply, we
-			// don't have any buttons to show.
-			if (!showCloseButton && configuratorArea.ApplyMode == ApplyMode.Instant)
-			{
-				// Nothing to see here, return a null so it isn't added.
-				return null;
-			}
+			// Set up the configurator area.
+			configuratorArea = new ConfiguratorsSelectorEditorComposite(
+				selectorTreeStore);
 
-			// Create a horizontal button bar.
-			var buttons = new HBox();
+			VBox.PackStart(
+				configuratorArea,
+				true,
+				true,
+				0);
 
 			// Add in the spacer for the left.
-			buttons.PackStart(
+			ActionArea.PackStart(
 				new Label(),
 				true,
 				true,
@@ -98,7 +105,7 @@ namespace MfGames.GtkExt.Configurators
 				var applyButton = new Button(Stock.Apply);
 				applyButton.Clicked += OnApplyClicked;
 
-				buttons.PackStart(
+				ActionArea.PackStart(
 					applyButton,
 					false,
 					false,
@@ -107,23 +114,20 @@ namespace MfGames.GtkExt.Configurators
 				var cancelButton = new Button(Stock.Cancel);
 				cancelButton.Clicked += OnCancelClicked;
 
-				buttons.PackStart(
+				ActionArea.PackStart(
 					cancelButton,
 					false,
 					false,
 					6);
+				
+				var okButton = new Button(Stock.Ok);
+				okButton.Clicked += OnCloseClicked;
 
-				if (showCloseButton)
-				{
-					var okButton = new Button(Stock.Ok);
-					okButton.Clicked += OnCloseClicked;
-
-					buttons.PackStart(
-						okButton,
-						false,
-						false,
-						6);
-				}
+				ActionArea.PackStart(
+					okButton,
+					false,
+					false,
+					6);
 			}
 			else
 			{
@@ -132,63 +136,12 @@ namespace MfGames.GtkExt.Configurators
 				var closeButton = new Button(Stock.Close);
 				closeButton.Clicked += OnCloseClicked;
 
-				buttons.PackStart(
+				ActionArea.PackStart(
 					closeButton,
 					false,
 					false,
 					0);
 			}
-
-			// Return the resulting buttons.
-			return buttons;
-		}
-
-		/// <summary>
-		/// Initializes the entire widget and lays out the class.
-		/// </summary>
-		/// <param name="selectorTreeStore">The selector tree store.</param>
-		/// <param name="showCloseButton">if set to <c>true</c> [show close button].</param>
-		private void InitializeWidget(
-			TreeStore selectorTreeStore,
-			bool showCloseButton)
-		{
-			// Start by doing the VBox stuff to arrange the top levels, a
-			// separator bar, and the button bar below.
-			var verticalLayout = new VBox();
-
-			// Set up the configurator area.
-			configuratorArea = new ConfiguratorsSelectorEditorComposite(
-				selectorTreeStore);
-
-			verticalLayout.PackStart(
-				configuratorArea,
-				true,
-				true,
-				0);
-
-			// Create the button bar on the bottom.
-			Widget buttonBar = CreateButtonBar(showCloseButton);
-
-			if (buttonBar != null)
-			{
-				// Create the vertical separator. The 12 pixel spacing comes from
-				// the Gnome HIG.
-				verticalLayout.PackStart(
-					new HSeparator(),
-					false,
-					false,
-					12);
-
-				// Add the buttons to the list.
-				verticalLayout.PackStart(
-					buttonBar,
-					false,
-					false,
-					0);
-			}
-
-			// Add the vertical layout to the bin.
-			PackStart(verticalLayout);
 		}
 
 		#endregion

@@ -60,11 +60,13 @@ namespace GtkExtDemo
 			actionManager.Add(GetType().Assembly);
 
 			demoTextEditor = new DemoTextEditor();
+			demoConfiguratorsTab = new DemoConfiguratorsTab(this);
+
 			actionManager.Add(demoTextEditor);
+			actionManager.Add(demoConfiguratorsTab);
 
 			demoActions = new DemoActions(actionManager);
 
-			demoConfiguratorsTab = new DemoConfiguratorsTab();
 
 			// Load the layout from the file system.
 			layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
