@@ -25,7 +25,7 @@
 #region Namespaces
 
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 using Gtk;
 
@@ -54,27 +54,133 @@ namespace MfGames.GtkExt.Configurators.Widgets
 				throw new ArgumentNullException("selectorTreeStore");
 			}
 
-			this.selectorTreeStore = selectorTreeStore;
+			SelectorTreeStore = selectorTreeStore;
 
-			// Set up the widget.
+			// Create the configurator list.
+			configurators = new List<IGtkConfigurator>();
+
+			// Verify that the configuration setup is acceptable.
+			VerifyConfigurators();
+
+			// Set up the widget and the configurators.
 			InitializeWidget();
+			InitializeConfigurators();
 		}
 
 		#endregion
 
 		#region Configurators
 
-		private readonly TreeStore selectorTreeStore;
+		private readonly List<IGtkConfigurator> configurators;
 		private Frame configuratorFrame;
 		private TreeView treeView;
 
 		/// <summary>
 		/// Gets the configurator selector tree store.
 		/// </summary>
-		public TreeStore SelectorTreeStore
+		public TreeStore SelectorTreeStore { get; private set; }
+
+		/// <summary>
+		/// Sets the selector tree store.
+		/// </summary>
+		private void VerifyConfigurators()
 		{
-			[DebuggerStepThrough]
-			get { return selectorTreeStore; }
+			// Go through the tree store and make sure the settings are
+			// correct and that we don't have a conflict with the buttons. We
+			// use a delegate to avoid creating a member variable.
+			ApplyMode? localApplyMode = null;
+
+			SelectorTreeStore.Foreach(
+				delegate(TreeModel model,
+				         TreePath path,
+				         TreeIter iter)
+				{
+					// Pull out the configurator which may be null.
+					var configurator = (IGtkConfigurator) model.GetValue(
+						iter,
+						2);
+
+					if (configurator == null)
+					{
+						// Continue parsing through the store.
+						return false;
+					}
+
+					// Add the configurator to the list.
+					configurators.Add(configurator);
+
+					// Get the apply mode and look for conflicts with the
+					// other existing configurators.
+					ApplyMode configuratorApplyMode = configurator.ApplyMode;
+
+					if (!localApplyMode.HasValue)
+					{
+						localApplyMode = configuratorApplyMode;
+					}
+
+					if (localApplyMode.Value != configuratorApplyMode)
+					{
+						throw new InvalidOperationException(
+							string.Format(
+								"Cannot add configurator \"{0}\" because of a conflicting apply mode of {1}.",
+								configurator.HierarchicalPath,
+								configurator.ApplyMode));
+					}
+
+					// Continue parsing through the store.
+					return false;
+				});
+
+			// If we don't have an apply mode at this point, we didn't get a
+			// configurator.
+			if (!localApplyMode.HasValue)
+			{
+				throw new InvalidOperationException(
+					"Cannot verify without at least one configurator in the tree store.");
+			}
+
+			// Set the apply mode, which is used with the initialization.
+			ApplyMode = localApplyMode.Value;
+		}
+
+		#endregion
+
+		#region Lifecycle
+
+		/// <summary>
+		/// Gets the apply mode which all the configurators in the composite
+		/// use.
+		/// </summary>
+		public ApplyMode ApplyMode { get; private set; }
+
+		/// <summary>
+		/// Tells each of the configurators to apply their changes.
+		/// </summary>
+		public void ApplyConfigurators()
+		{
+			if (ApplyMode == ApplyMode.Explicit)
+			{
+				configurators.ForEach(configurator => configurator.ApplyConfigurator());
+			}
+		}
+
+		/// <summary>
+		/// Cancels each of the configurators and restores the state.
+		/// </summary>
+		public void CancelConfigurators()
+		{
+			if (ApplyMode == ApplyMode.Explicit)
+			{
+				configurators.ForEach(configurator => configurator.CancelConfigurator());
+			}
+		}
+
+		/// <summary>
+		/// Initializes the configurators in this composite.
+		/// </summary>
+		private void InitializeConfigurators()
+		{
+			configurators.ForEach(configurator => configurator.InitializeConfigurator());
 		}
 
 		#endregion
@@ -106,7 +212,7 @@ namespace MfGames.GtkExt.Configurators.Widgets
 			scroll.ShadowType = ShadowType.EtchedIn;
 
 			// Create the tree model from the configurator list.
-			TreeStore treeStore = selectorTreeStore;
+			TreeStore treeStore = SelectorTreeStore;
 
 			// Create the tree view for inside the scroll.
 			treeView = new TreeView(treeStore);
@@ -114,7 +220,11 @@ namespace MfGames.GtkExt.Configurators.Widgets
 			treeView.HeadersVisible = false;
 			treeView.Selection.Mode = SelectionMode.Single;
 			treeView.Selection.Changed += OnSelectionChanged;
-			treeView.AppendColumn("Configurator", new CellRendererText(), "text", 0);
+			treeView.AppendColumn(
+				"Configurator",
+				new CellRendererText(),
+				"text",
+				0);
 
 			// Return the scrolled window.
 			scroll.Add(treeView);
@@ -140,7 +250,11 @@ namespace MfGames.GtkExt.Configurators.Widgets
 			pane.Position = 200;
 
 			// Pack the widget into ourselves.
-			PackStart(pane, true, true, 0);
+			PackStart(
+				pane,
+				true,
+				true,
+				0);
 		}
 
 		#endregion
@@ -165,11 +279,16 @@ namespace MfGames.GtkExt.Configurators.Widgets
 			if (treeView.Selection.GetSelected(out treeIter))
 			{
 				// Get the configurator for the selected row.
-				var configurator = (IGtkConfigurator) selectorTreeStore.GetValue(treeIter, 2);
+				var configurator = (IGtkConfigurator) SelectorTreeStore.GetValue(
+					treeIter,
+					2);
 
 				// If the configurator is not null, then we get the widget and set the frame.
 				if (configurator != null)
 				{
+					Widget configuratorWidget = configurator.CreateConfiguratorWidget();
+
+					configuratorFrame.Add(configuratorWidget);
 					configuratorFrame.ShowAll();
 				}
 			}

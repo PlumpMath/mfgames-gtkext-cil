@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplyMode.cs" />
     <Compile Include="ConfiguratorsPanel.cs" />
     <Compile Include="IGtkConfigurator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

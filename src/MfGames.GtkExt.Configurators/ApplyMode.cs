@@ -1,5 +1,4 @@
-#region Copyright and License
-
+﻿#region Copyright and License
 // Copyright (c) 2005-2011, Moonfire Games
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,63 +18,30 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 #endregion
 
-#region Namespaces
-
-using System;
-
-using Gtk;
-
-using MfGames.GtkExt.Configurators;
-using MfGames.HierarchicalPaths;
-
-#endregion
-
-namespace GtkExtDemo.Configurators
+namespace MfGames.GtkExt.Configurators
 {
-	public class TextEditorDisplayConfigurator : IGtkConfigurator
+	/// <summary>
+	/// Describes the types of apply modes that both regular Gtk dialog
+	/// boxes and configurators use.
+	/// </summary>
+	public enum ApplyMode
 	{
-		private Label label;
+		/// <summary>
+		/// Indicates the configurator applies all changes immediately. This
+		/// means the window/panel will only have a "close" button. If there
+		/// is a section that needs (effectively) explicit apply, that group
+		/// should have a seperate and dedicated apply button.
+		/// </summary>
+		Instant,
 
-		public ApplyMode ApplyMode
-		{
-			get { return ApplyMode.Instant; }
-		}
-
-		public HierarchicalPath HierarchicalPath
-		{
-			get { return new HierarchicalPath("/Text Editor/Display"); }
-		}
-
-		public void ApplyConfigurator()
-		{
-			throw new InvalidOperationException();
-		}
-
-		public void CancelConfigurator()
-		{
-			throw new InvalidOperationException();
-		}
-
-		public Widget CreateConfiguratorWidget()
-		{
-			if (label == null)
-			{
-				label = new Label("Display");
-			}
-
-			return label;
-		}
-
-		public void Dispose()
-		{
-			label.Dispose();
-		}
-
-		public void InitializeConfigurator()
-		{
-		}
+		/// <summary>
+		/// Indicates the configurator is an "explicit" apply which means
+		/// the configurator has an "apply", "cancel", and "ok" button. When
+		/// a configuration uses this mode, the configurator panel will call
+		/// Apply or Cancel on the IGtkConfigurator interface.
+		/// </summary>
+		Explicit,
 	}
 }
