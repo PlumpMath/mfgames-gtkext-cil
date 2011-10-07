@@ -22,21 +22,26 @@
 
 #endregion
 
+#region Namespaces
+
 using System.Collections.Generic;
 
 using Gtk;
 
-using MfGames.Collections;
 using MfGames.GtkExt.Actions;
 using MfGames.GtkExt.Configurators;
 using MfGames.GtkExt.Extensions.System.Collections.Generic;
+
+#endregion
 
 namespace GtkExtDemo.Configurators
 {
 	/// <summary>
 	/// Encapsulates the demostration of a configurator tab.
 	/// </summary>
-	public class DemoConfiguratorsTab : DemoTab, IActionFactory
+	public class DemoConfiguratorsTab
+		: DemoTab,
+		  IActionFactory
 	{
 		#region Constructors
 
@@ -53,7 +58,11 @@ namespace GtkExtDemo.Configurators
 			var panel = new ConfiguratorsPanel(treeStore);
 
 			// Add the panel to ourselves.
-			PackStart(panel, true, true, 2);
+			PackStart(
+				panel,
+				true,
+				true,
+				2);
 		}
 
 		#endregion
@@ -78,11 +87,10 @@ namespace GtkExtDemo.Configurators
 
 		#endregion
 
-
 		#region IActionFactory
 
-		private readonly Window window;
 		private readonly TreeStore treeStore;
+		private readonly Window window;
 
 		/// <summary>
 		/// Creates all the <see cref="Action"/> objects associated with the extending
@@ -104,6 +112,5 @@ namespace GtkExtDemo.Configurators
 		}
 
 		#endregion
-
 	}
 }

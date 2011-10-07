@@ -246,8 +246,8 @@ namespace MfGames.GtkExt.Configurators.Widgets
 			// On the right is the configurator area.
 			pane.Add2(CreateConfiguratorArea());
 
-			// Set the default position of the pane to 200 px for the selector.
-			pane.Position = 200;
+			// Set the default position of the pane to 100 px for the selector.
+			pane.Position = 100;
 
 			// Pack the widget into ourselves.
 			PackStart(

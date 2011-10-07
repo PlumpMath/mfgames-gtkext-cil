@@ -26,6 +26,7 @@
 
 using Gtk;
 
+using MfGames.GtkExt;
 using MfGames.GtkExt.Configurators;
 
 #endregion
@@ -70,11 +71,16 @@ namespace GtkExtDemo.Configurators
 		/// </summary>
 		protected override void OnActivated()
 		{
+			// Create a new configurator dialog.
 			var dialog = new ConfiguratorDialog(
 				treeStore,
 				"Preferences",
 				parentWindow);
 
+			// Use the saved settings, if there is one.
+			WindowStateSettings.Instance.RestoreState(dialog, "Preferences", true);
+
+			// Show the dialog to the user.
 			dialog.ShowAll();
 		}
 

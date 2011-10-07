@@ -118,6 +118,7 @@
     </Content>
     <Content Include="ActionLayout1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>

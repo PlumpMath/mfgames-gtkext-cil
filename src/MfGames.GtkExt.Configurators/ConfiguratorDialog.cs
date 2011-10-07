@@ -26,9 +26,13 @@
 
 using System;
 
+using Gdk;
+
 using Gtk;
 
 using MfGames.GtkExt.Configurators.Widgets;
+
+using Window = Gtk.Window;
 
 #endregion
 
@@ -68,6 +72,9 @@ namespace MfGames.GtkExt.Configurators
 
 			// Set up the widget.
 			InitializeWidget(treeStore);
+
+			// Set up the default
+			DefaultSize = new Size(400, 250);
 		}
 
 		#endregion
@@ -92,56 +99,27 @@ namespace MfGames.GtkExt.Configurators
 				true,
 				0);
 
-			// Add in the spacer for the left.
-			ActionArea.PackStart(
-				new Label(),
-				true,
-				true,
-				0);
+			// Depending on the mood determines the buttons we'll have.
+			Response += OnResponse;
 
-			// For explict apply, add in the apply, cancel, and ok buttons.
 			if (configuratorArea.ApplyMode == ApplyMode.Explicit)
 			{
-				var applyButton = new Button(Stock.Apply);
-				applyButton.Clicked += OnApplyClicked;
-
-				ActionArea.PackStart(
-					applyButton,
-					false,
-					false,
-					0);
-
-				var cancelButton = new Button(Stock.Cancel);
-				cancelButton.Clicked += OnCancelClicked;
-
-				ActionArea.PackStart(
-					cancelButton,
-					false,
-					false,
-					6);
-				
-				var okButton = new Button(Stock.Ok);
-				okButton.Clicked += OnCloseClicked;
-
-				ActionArea.PackStart(
-					okButton,
-					false,
-					false,
-					6);
+				// For explict apply, add in the apply, cancel, and ok buttons.
+				AddButton("Apply", ResponseType.Apply);
+				AddButton("Cancel", ResponseType.Cancel);
+				AddButton("Ok", ResponseType.Ok);
 			}
 			else
 			{
-				// We don't have to check for showCloseButton again since we
-				// had a check at the beginning of this method.
-				var closeButton = new Button(Stock.Close);
-				closeButton.Clicked += OnCloseClicked;
-
-				ActionArea.PackStart(
-					closeButton,
-					false,
-					false,
-					0);
+				// For instant apply, just have a close button.
+				AddButton("Close", ResponseType.Close);
 			}
+
+			// Set up spacing.
+			BorderWidth = 6;
+			VBox.Spacing = 12;
+			ActionArea.Spacing = 12;
+			ActionArea.BorderWidth = 6;
 		}
 
 		#endregion
@@ -149,37 +127,29 @@ namespace MfGames.GtkExt.Configurators
 		#region Events
 
 		/// <summary>
-		/// Activated when the apply button is clicked.
+		/// Called when a dialog button is clicked.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnApplyClicked(
-			object sender,
-			EventArgs e)
+		/// <param name="sender">The sender of the vent.</param>
+		/// <param name="e">The event arguments.</param>
+		private void OnResponse(object sender,
+						ResponseArgs e)
 		{
-			configuratorArea.ApplyConfigurators();
-		}
-
-		/// <summary>
-		/// Activated when the cancel button is clicked.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void OnCancelClicked(
-			object sender,
-			EventArgs e)
-		{
-		}
-
-		/// <summary>
-		/// Activated when the close or ok button is clicked.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnCloseClicked(
-			object sender,
-			EventArgs e)
-		{
+			switch (e.ResponseId)
+			{
+				case ResponseType.Apply:
+					configuratorArea.ApplyConfigurators();
+					break;
+				case ResponseType.Cancel:
+					configuratorArea.CancelConfigurators();
+					break;
+				case ResponseType.Ok:
+					configuratorArea.ApplyConfigurators();
+					Destroy();
+					break;
+				case ResponseType.Close:
+					Destroy();
+					break;
+			}
 		}
 
 		#endregion
