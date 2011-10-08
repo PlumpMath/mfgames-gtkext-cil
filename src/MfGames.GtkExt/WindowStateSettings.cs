@@ -26,6 +26,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 using Gdk;
 
@@ -45,7 +48,7 @@ namespace MfGames.GtkExt
 	/// settings object, it can be persistent between multiple instances of the
 	/// application.
 	/// </summary>
-	public class WindowStateSettings
+	public class WindowStateSettings : IXmlSerializable
 	{
 		#region Constructors
 
@@ -250,7 +253,9 @@ namespace MfGames.GtkExt
 				bool attachToWindow)
 			{
 				// Set the window state.
-				targetWindow.DefaultSize = new Size(width, height);
+				targetWindow.DefaultSize = new Size(
+					width,
+					height);
 
 				// If we are attaching, then attach to the events so we can
 				// track the window sizes.
@@ -260,7 +265,7 @@ namespace MfGames.GtkExt
 					window = targetWindow;
 
 					// Enable the events and attach to them.
-					window.AddEvents((int) Gdk.EventMask.AllEventsMask);
+					window.AddEvents((int) EventMask.AllEventsMask);
 					window.ConfigureEvent += OnUpdateWindowState;
 					window.DeleteEvent += OnDestroyWindow;
 				}
@@ -282,18 +287,6 @@ namespace MfGames.GtkExt
 			#region Events
 
 			/// <summary>
-			/// Called when the window state changes.
-			/// </summary>
-			/// <param name="sender">The sender.</param>
-			/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-			private void OnUpdateWindowState(
-				object sender,
-				EventArgs e)
-			{
-				Save(window);
-			}
-
-			/// <summary>
 			/// Called when the window is destroyed.
 			/// </summary>
 			/// <param name="sender">The sender.</param>
@@ -306,8 +299,95 @@ namespace MfGames.GtkExt
 				Detach();
 			}
 
-			#endregion
+			/// <summary>
+			/// Called when the window state changes.
+			/// </summary>
+			/// <param name="sender">The sender.</param>
+			/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+			private void OnUpdateWindowState(
+				object sender,
+				EventArgs e)
+			{
+				Save(window);
+			}
 
+			#endregion
+		}
+
+		#endregion
+
+		#region XML Serialization
+
+		/// <summary>
+		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
+		/// </summary>
+		/// <returns>
+		/// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
+		/// </returns>
+		public XmlSchema GetSchema()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Generates an object from its XML representation.
+		/// </summary>
+		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
+		public void ReadXml(XmlReader reader)
+		{
+			// Go through the reader until we run out of nodes.
+			while (reader.Read())
+			{
+				// If we got the end element, break out.
+				if (reader.LocalName == "WindowStates" &&
+				    (reader.NodeType == XmlNodeType.EndElement || reader.IsEmptyElement))
+				{
+					break;
+				}
+
+				if (reader.LocalName == "WindowState" &&
+				    reader.NodeType == XmlNodeType.Element)
+				{
+					var state = new WindowState();
+					string name = reader["Name"];
+
+					state.Height = Convert.ToInt32(reader["Height"]);
+					state.Width = Convert.ToInt32(reader["Width"]);
+
+					windowStates[name] = state;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Converts an object into its XML representation.
+		/// </summary>
+		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
+		public void WriteXml(XmlWriter writer)
+		{
+			// Write out a start element.
+			writer.WriteStartElement("WindowStates");
+
+			// Go through the dictionary and write out each element.
+			foreach (string name in windowStates.Keys)
+			{
+				WindowState state = windowStates[name];
+
+				writer.WriteStartElement("WindowState");
+				writer.WriteAttributeString(
+					"Name",
+					name);
+				writer.WriteAttributeString(
+					"Height",
+					state.Height.ToString());
+				writer.WriteAttributeString(
+					"Width",
+					state.Width.ToString());
+				writer.WriteEndElement();
+			}
+
+			// Finish up the XML.
+			writer.WriteEndElement();
 		}
 
 		#endregion

@@ -32,7 +32,13 @@ using Gtk;
 using GtkExtDemo.Actions;
 using GtkExtDemo.Configurators;
 
+using MfGames;
+using MfGames.Extensions.System.IO;
+using MfGames.GtkExt;
 using MfGames.GtkExt.Actions;
+using MfGames.GtkExt.Extensions.Gtk;
+using MfGames.HierarchicalPaths;
+using MfGames.Settings;
 
 #endregion
 
@@ -50,7 +56,9 @@ namespace GtkExtDemo
 			: base("Moonfire Games' Gtk Demo")
 		{
 			// Create a window
-			SetDefaultSize(1000, 800);
+			SetDefaultSize(
+				1000,
+				800);
 			DeleteEvent += OnWindowDelete;
 
 			demoComponents = new DemoComponents();
@@ -67,14 +75,12 @@ namespace GtkExtDemo
 
 			demoActions = new DemoActions(actionManager);
 
-
 			// Load the layout from the file system.
 			layout = new ActionLayout(new FileInfo("ActionLayout1.xml"));
 			actionManager.SetLayout(layout);
 
 			// Load the keybinding from a file.
-			keybindings =
-				new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
+			keybindings = new ActionKeybindings(new FileInfo("ActionKeybindings1.xml"));
 			actionManager.SetKeybindings(keybindings);
 
 			// Create the window frame
@@ -84,34 +90,69 @@ namespace GtkExtDemo
 			// Create the components we need before the menu.
 			notebook = new Notebook();
 
-			actionManager.Add(new SwitchPageAction(notebook, 0, "Components"));
-			actionManager.Add(new SwitchPageAction(notebook, 1, "Text Editor"));
-			actionManager.Add(new SwitchPageAction(notebook, 2, "Actions"));
-			actionManager.Add(new SwitchPageAction(notebook, 3, "Configurators"));
+			actionManager.Add(
+				new SwitchPageAction(
+					notebook,
+					0,
+					"Components"));
+			actionManager.Add(
+				new SwitchPageAction(
+					notebook,
+					1,
+					"Text Editor"));
+			actionManager.Add(
+				new SwitchPageAction(
+					notebook,
+					2,
+					"Actions"));
+			actionManager.Add(
+				new SwitchPageAction(
+					notebook,
+					3,
+					"Configurators"));
 
 			// Create a notebook
 			notebook.BorderWidth = 5;
 
-			notebook.AppendPage(demoComponents, new Label("Components"));
-			notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
-			notebook.AppendPage(demoActions, new Label("Actions"));
-			notebook.AppendPage(demoConfiguratorsTab, new Label("Configurators"));
+			notebook.AppendPage(
+				demoComponents,
+				new Label("Components"));
+			notebook.AppendPage(
+				demoTextEditor,
+				new Label("Line Text Editor"));
+			notebook.AppendPage(
+				demoActions,
+				new Label("Actions"));
+			notebook.AppendPage(
+				demoConfiguratorsTab,
+				new Label("Configurators"));
 
 			// Add the status bar
 			statusbar = new Statusbar();
-			statusbar.Push(0, "Welcome!");
+			statusbar.Push(
+				0,
+				"Welcome!");
 			statusbar.HasResizeGrip = true;
 
 			// Create the menu
 			menubar = new MenuBar();
 
 			// Back everything into place.
-			box.PackStart(CreateGuiMenu(), false, false, 0);
-			box.PackStart(notebook, true, true, 0);
-			box.PackStart(statusbar, false, false, 0);
-
-			// Show everything as the final
-			ShowAll();
+			box.PackStart(
+				CreateGuiMenu(),
+				false,
+				false,
+				0);
+			box.PackStart(
+				notebook,
+				true,
+				true,
+				0);
+			box.PackStart(
+				statusbar,
+				false,
+				false,
+				0);
 		}
 
 		#region GUI
@@ -119,8 +160,8 @@ namespace GtkExtDemo
 		private static Statusbar statusbar;
 		private readonly DemoActions demoActions;
 		private readonly DemoComponents demoComponents;
-		private readonly DemoTextEditor demoTextEditor;
 		private readonly DemoConfiguratorsTab demoConfiguratorsTab;
+		private readonly DemoTextEditor demoTextEditor;
 		private readonly ActionKeybindings keybindings;
 		private readonly ActionLayout layout;
 		private readonly MenuBar menubar;
@@ -146,7 +187,9 @@ namespace GtkExtDemo
 		private Widget CreateGuiMenu()
 		{
 			// Populate the menubar and return it.
-			layout.Populate(menubar, "Main");
+			layout.Populate(
+				menubar,
+				"Main");
 
 			menubar.ShowAll();
 			return menubar;
@@ -211,6 +254,33 @@ namespace GtkExtDemo
 		/// </summary>
 		public static void Main(string[] args)
 		{
+			// Set up the configuration settings. This gives us a directory in
+			// the user's directory (.config/MfGames/GtkExtDemo on Linux,
+			// %APPDATA%\Mfgames\GtkExtDemo on Windows) that we can store
+			// preferences.
+			DirectoryInfo configDirectory = ConfigStorage.GetDirectoryInfo(
+				true,
+				"MfGames",
+				"GtkExtDemo");
+
+			// Get the settings file inside the config storage and load the
+			// settings file from it.
+			var settingsManager = new SettingsManager();
+			FileInfo settingsFile = configDirectory.GetFileInfo("Settings.xml");
+
+			if (settingsFile.Exists)
+			{
+				settingsManager.Load(settingsFile);
+			}
+
+			// Set up the window state manager to save the size and position of
+			// windows as the user closes them. If we don't set this, then a
+			// default implementation will remember the settings for this instance
+			// of the application, but won't remember for the next.
+			WindowStateSettings.Load(
+				settingsManager,
+				new HierarchicalPath("/Windows"));
+
 			// Set up Gtk
 			Application.Init();
 
@@ -224,10 +294,15 @@ namespace GtkExtDemo
 				demo.CurrentPage = page;
 			}
 
-			demo.SetInitialFocus();
-
 			// Start everything running
+			demo.RestoreState("MainWindow", true);
+			demo.ShowAll();
+			demo.SetInitialFocus();
 			Application.Run();
+
+			// When the application quits, we'll drop back here. Save the settings
+			// so we have it available when we come back to it.
+			settingsManager.Save(settingsFile);
 		}
 	}
 }

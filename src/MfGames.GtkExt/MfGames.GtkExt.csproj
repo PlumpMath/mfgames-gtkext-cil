@@ -87,11 +87,13 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CairoUtility.cs" />
     <Compile Include="EnumComboBox.cs" />
     <Compile Include="Extensions\Cairo\CairoRectangleExtensions.cs" />
+    <Compile Include="Extensions\Gtk\GtkWindowExtensions.cs" />
     <Compile Include="Extensions\MfGames\Collections\HierarchicalPathTreeCollectionExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutExtensions.cs" />
     <Compile Include="Extensions\Pango\PangoLayoutLineExtensions.cs" />
