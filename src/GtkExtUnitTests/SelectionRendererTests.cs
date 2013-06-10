@@ -1,37 +1,11 @@
-#region Copyright and License
-
-// Copyright (c) 2009-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
-
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Renderers;
-
 using NUnit.Framework;
-
-#endregion
 
 namespace MfGames.GtkExt.TextEditor.Tests
 {
@@ -41,7 +15,7 @@ namespace MfGames.GtkExt.TextEditor.Tests
 	[TestFixture]
 	public class SelectionRendererTests
 	{
-		#region Simple Tests
+		#region Methods
 
 		/// <summary>
 		/// Tests how the selection helper handles blank strings.
@@ -79,26 +53,87 @@ namespace MfGames.GtkExt.TextEditor.Tests
 			Assert.IsNull(output);
 		}
 
-		#endregion
-
-		#region Plain Markup
-
-		/// <summary>
-		/// Test rendering a selection at the very end of a line.
-		/// </summary>
 		[Test]
-		public void PlainEmptySelectionAtEndOfLine()
+		public void MarkupContaining()
 		{
 			// Setup
-			const string markup = "this";
+			const string markup = "this i<span>s</span> a string";
 			var selectionRenderer = new SelectionRenderer();
-			var characters = new CharacterRange(5, Int32.MaxValue);
+			var characters = new CharacterRange(5, 9);
 
 			// Operation
 			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
 
 			// Verification
-			Assert.AreEqual("this", output);
+			Assert.AreEqual(
+				"this <span background='#CCCCFF'>i<span>s</span> a</span> string", output);
+		}
+
+		[Test]
+		public void MarkupExact()
+		{
+			// Setup
+			const string markup = "this <span>is a</span> string";
+			var selectionRenderer = new SelectionRenderer();
+			var characters = new CharacterRange(5, 9);
+
+			// Operation
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
+
+			// Verification
+			Assert.AreEqual(
+				"this <span background='#CCCCFF'><span>is a</span></span> string", output);
+		}
+
+		[Test]
+		public void MarkupLeading()
+		{
+			// Setup
+			const string markup = "thi<span>s is</span> a string";
+			var selectionRenderer = new SelectionRenderer();
+			var characters = new CharacterRange(5, 9);
+
+			// Operation
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
+
+			// Verification
+			Assert.AreEqual(
+				"thi<span>s </span><span background='#CCCCFF'><span>is</span> a</span> string",
+				output);
+		}
+
+		[Test]
+		public void MarkupOuter()
+		{
+			// Setup
+			const string markup = "thi<span>s is a str</span>ing";
+			var selectionRenderer = new SelectionRenderer();
+			var characters = new CharacterRange(5, 9);
+
+			// Operation
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
+
+			// Verification
+			Assert.AreEqual(
+				"thi<span>s </span><span background='#CCCCFF'><span>is a</span></span><span> str</span>ing",
+				output);
+		}
+
+		[Test]
+		public void MarkupTrailing()
+		{
+			// Setup
+			const string markup = "this i<span>s a str</span>ing";
+			var selectionRenderer = new SelectionRenderer();
+			var characters = new CharacterRange(5, 9);
+
+			// Operation
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
+
+			// Verification
+			Assert.AreEqual(
+				"this <span background='#CCCCFF'>i<span>s a</span></span><span> str</span>ing",
+				output);
 		}
 
 		[Test]
@@ -129,6 +164,24 @@ namespace MfGames.GtkExt.TextEditor.Tests
 
 			// Verification
 			Assert.AreEqual("t<span background='#CCCCFF'>his is a</span> string", output);
+		}
+
+		/// <summary>
+		/// Test rendering a selection at the very end of a line.
+		/// </summary>
+		[Test]
+		public void PlainEmptySelectionAtEndOfLine()
+		{
+			// Setup
+			const string markup = "this";
+			var selectionRenderer = new SelectionRenderer();
+			var characters = new CharacterRange(5, Int32.MaxValue);
+
+			// Operation
+			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
+
+			// Verification
+			Assert.AreEqual("this", output);
 		}
 
 		[Test]
@@ -223,93 +276,6 @@ namespace MfGames.GtkExt.TextEditor.Tests
 
 			// Verification
 			Assert.AreEqual("this <span background='#CCCCFF'>is a</span> string", output);
-		}
-
-		#endregion
-
-		#region Markup Tests
-
-		[Test]
-		public void MarkupContaining()
-		{
-			// Setup
-			const string markup = "this i<span>s</span> a string";
-			var selectionRenderer = new SelectionRenderer();
-			var characters = new CharacterRange(5, 9);
-
-			// Operation
-			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
-
-			// Verification
-			Assert.AreEqual(
-				"this <span background='#CCCCFF'>i<span>s</span> a</span> string", output);
-		}
-
-		[Test]
-		public void MarkupExact()
-		{
-			// Setup
-			const string markup = "this <span>is a</span> string";
-			var selectionRenderer = new SelectionRenderer();
-			var characters = new CharacterRange(5, 9);
-
-			// Operation
-			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
-
-			// Verification
-			Assert.AreEqual(
-				"this <span background='#CCCCFF'><span>is a</span></span> string", output);
-		}
-
-		[Test]
-		public void MarkupLeading()
-		{
-			// Setup
-			const string markup = "thi<span>s is</span> a string";
-			var selectionRenderer = new SelectionRenderer();
-			var characters = new CharacterRange(5, 9);
-
-			// Operation
-			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
-
-			// Verification
-			Assert.AreEqual(
-				"thi<span>s </span><span background='#CCCCFF'><span>is</span> a</span> string",
-				output);
-		}
-
-		[Test]
-		public void MarkupOuter()
-		{
-			// Setup
-			const string markup = "thi<span>s is a str</span>ing";
-			var selectionRenderer = new SelectionRenderer();
-			var characters = new CharacterRange(5, 9);
-
-			// Operation
-			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
-
-			// Verification
-			Assert.AreEqual(
-				"thi<span>s </span><span background='#CCCCFF'><span>is a</span></span><span> str</span>ing",
-				output);
-		}
-
-		[Test]
-		public void MarkupTrailing()
-		{
-			// Setup
-			const string markup = "this i<span>s a str</span>ing";
-			var selectionRenderer = new SelectionRenderer();
-			var characters = new CharacterRange(5, 9);
-
-			// Operation
-			string output = selectionRenderer.GetSelectionMarkup(markup, characters);
-
-			// Verification
-			Assert.AreEqual(
-				"this <span background='#CCCCFF'>i<span>s a</span></span><span> str</span>ing",
-				output);
 		}
 
 		#endregion

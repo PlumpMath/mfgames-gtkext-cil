@@ -1,43 +1,16 @@
-﻿#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+﻿// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-
 using Gdk;
-
 using MfGames.HierarchicalPaths;
 using MfGames.Settings;
-
 using Window = Gtk.Window;
-
-#endregion
 
 namespace MfGames.GtkExt
 {
@@ -48,34 +21,9 @@ namespace MfGames.GtkExt
 	/// settings object, it can be persistent between multiple instances of the
 	/// application.
 	/// </summary>
-	public class WindowStateSettings : IXmlSerializable
+	public class WindowStateSettings: IXmlSerializable
 	{
-		#region Constructors
-
-		/// <summary>
-		/// Initializes the <see cref="WindowStateSettings"/> class.
-		/// </summary>
-		static WindowStateSettings()
-		{
-			// Ensure we have a local instance so the settings always work.
-			localInstance = new WindowStateSettings();
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WindowStateSettings"/> class.
-		/// </summary>
-		public WindowStateSettings()
-		{
-			windowStates = new Dictionary<string, WindowState>();
-		}
-
-		#endregion
-
-		#region Instance and Backing
-
-		private static WindowStateSettings localInstance;
-		private static SettingsManager settingsManager;
-		private static HierarchicalPath settingsPath;
+		#region Properties
 
 		/// <summary>
 		/// Gets the static singleton instance of the settings. If
@@ -93,6 +41,21 @@ namespace MfGames.GtkExt
 
 				return settingsManager.Get<WindowStateSettings>(settingsPath);
 			}
+		}
+
+		#endregion
+
+		#region Methods
+
+		/// <summary>
+		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
+		/// </summary>
+		/// <returns>
+		/// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
+		/// </returns>
+		public XmlSchema GetSchema()
+		{
+			return null;
 		}
 
 		/// <summary>
@@ -117,11 +80,35 @@ namespace MfGames.GtkExt
 			localInstance = null;
 		}
 
-		#endregion
+		/// <summary>
+		/// Generates an object from its XML representation.
+		/// </summary>
+		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
+		public void ReadXml(XmlReader reader)
+		{
+			// Go through the reader until we run out of nodes.
+			while (reader.Read())
+			{
+				// If we got the end element, break out.
+				if (reader.LocalName == "WindowStates"
+					&& (reader.NodeType == XmlNodeType.EndElement || reader.IsEmptyElement))
+				{
+					break;
+				}
 
-		#region Window State
+				if (reader.LocalName == "WindowState"
+					&& reader.NodeType == XmlNodeType.Element)
+				{
+					var state = new WindowState();
+					string name = reader["Name"];
 
-		private readonly Dictionary<string, WindowState> windowStates;
+					state.Height = Convert.ToInt32(reader["Height"]);
+					state.Width = Convert.ToInt32(reader["Width"]);
+
+					windowStates[name] = state;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Restores the state of a window.
@@ -145,16 +132,12 @@ namespace MfGames.GtkExt
 				}
 
 				// Create a new state by saving this one.
-				SaveState(
-					window,
-					windowName);
+				SaveState(window, windowName);
 			}
 
 			// Set the state of the window.
 			WindowState state = windowStates[windowName];
-			state.Restore(
-				window,
-				attachToWindow);
+			state.Restore(window, attachToWindow);
 		}
 
 		/// <summary>
@@ -178,40 +161,72 @@ namespace MfGames.GtkExt
 			windowStates[windowName] = state;
 		}
 
+		/// <summary>
+		/// Converts an object into its XML representation.
+		/// </summary>
+		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
+		public void WriteXml(XmlWriter writer)
+		{
+			// Write out a start element.
+			writer.WriteStartElement("WindowStates");
+
+			// Go through the dictionary and write out each element.
+			foreach (string name in windowStates.Keys)
+			{
+				WindowState state = windowStates[name];
+
+				writer.WriteStartElement("WindowState");
+				writer.WriteAttributeString("Name", name);
+				writer.WriteAttributeString("Height", state.Height.ToString());
+				writer.WriteAttributeString("Width", state.Width.ToString());
+				writer.WriteEndElement();
+			}
+
+			// Finish up the XML.
+			writer.WriteEndElement();
+		}
+
 		#endregion
 
-		#region Window State
+		#region Constructors
+
+		/// <summary>
+		/// Initializes the <see cref="WindowStateSettings"/> class.
+		/// </summary>
+		static WindowStateSettings()
+		{
+			// Ensure we have a local instance so the settings always work.
+			localInstance = new WindowStateSettings();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WindowStateSettings"/> class.
+		/// </summary>
+		public WindowStateSettings()
+		{
+			windowStates = new Dictionary<string, WindowState>();
+		}
+
+		#endregion
+
+		#region Fields
+
+		private static WindowStateSettings localInstance;
+		private static SettingsManager settingsManager;
+		private static HierarchicalPath settingsPath;
+
+		private readonly Dictionary<string, WindowState> windowStates;
+
+		#endregion
+
+		#region Nested Type: WindowState
 
 		/// <summary>
 		/// Encapsulates the state of a single stored window.
 		/// </summary>
 		public class WindowState
 		{
-			#region Constructors
-
-			/// <summary>
-			/// Initializes a new instance of the <see cref="WindowState"/> class.
-			/// </summary>
-			public WindowState()
-			{
-			}
-
-			/// <summary>
-			/// Initializes a new instance of the <see cref="WindowState"/> class.
-			/// </summary>
-			/// <param name="window">The window.</param>
-			public WindowState(Window window)
-			{
-				Save(window);
-			}
-
-			#endregion
-
-			#region Window State
-
-			private int height;
-			private int width;
-			private Window window;
+			#region Properties
 
 			/// <summary>
 			/// Gets or sets the height of the window.
@@ -230,6 +245,10 @@ namespace MfGames.GtkExt
 				get { return width; }
 				set { width = value; }
 			}
+
+			#endregion
+
+			#region Methods
 
 			/// <summary>
 			/// Detaches this instance from the window, if one is attached.
@@ -253,9 +272,7 @@ namespace MfGames.GtkExt
 				bool attachToWindow)
 			{
 				// Set the window state.
-				targetWindow.DefaultSize = new Size(
-					width,
-					height);
+				targetWindow.DefaultSize = new Size(width, height);
 
 				// If we are attaching, then attach to the events so we can
 				// track the window sizes.
@@ -270,21 +287,6 @@ namespace MfGames.GtkExt
 					window.DeleteEvent += OnDestroyWindow;
 				}
 			}
-
-			/// <summary>
-			/// Saves the specified window state.
-			/// </summary>
-			/// <param name="targetWindow">The target window.</param>
-			private void Save(Window targetWindow)
-			{
-				targetWindow.GetSize(
-					out width,
-					out height);
-			}
-
-			#endregion
-
-			#region Events
 
 			/// <summary>
 			/// Called when the window is destroyed.
@@ -311,83 +313,44 @@ namespace MfGames.GtkExt
 				Save(window);
 			}
 
+			/// <summary>
+			/// Saves the specified window state.
+			/// </summary>
+			/// <param name="targetWindow">The target window.</param>
+			private void Save(Window targetWindow)
+			{
+				targetWindow.GetSize(out width, out height);
+			}
+
 			#endregion
-		}
 
-		#endregion
+			#region Constructors
 
-		#region XML Serialization
-
-		/// <summary>
-		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
-		/// </summary>
-		/// <returns>
-		/// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
-		/// </returns>
-		public XmlSchema GetSchema()
-		{
-			return null;
-		}
-
-		/// <summary>
-		/// Generates an object from its XML representation.
-		/// </summary>
-		/// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. </param>
-		public void ReadXml(XmlReader reader)
-		{
-			// Go through the reader until we run out of nodes.
-			while (reader.Read())
+			/// <summary>
+			/// Initializes a new instance of the <see cref="WindowState"/> class.
+			/// </summary>
+			public WindowState()
 			{
-				// If we got the end element, break out.
-				if (reader.LocalName == "WindowStates" &&
-				    (reader.NodeType == XmlNodeType.EndElement || reader.IsEmptyElement))
-				{
-					break;
-				}
-
-				if (reader.LocalName == "WindowState" &&
-				    reader.NodeType == XmlNodeType.Element)
-				{
-					var state = new WindowState();
-					string name = reader["Name"];
-
-					state.Height = Convert.ToInt32(reader["Height"]);
-					state.Width = Convert.ToInt32(reader["Width"]);
-
-					windowStates[name] = state;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Converts an object into its XML representation.
-		/// </summary>
-		/// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. </param>
-		public void WriteXml(XmlWriter writer)
-		{
-			// Write out a start element.
-			writer.WriteStartElement("WindowStates");
-
-			// Go through the dictionary and write out each element.
-			foreach (string name in windowStates.Keys)
-			{
-				WindowState state = windowStates[name];
-
-				writer.WriteStartElement("WindowState");
-				writer.WriteAttributeString(
-					"Name",
-					name);
-				writer.WriteAttributeString(
-					"Height",
-					state.Height.ToString());
-				writer.WriteAttributeString(
-					"Width",
-					state.Width.ToString());
-				writer.WriteEndElement();
 			}
 
-			// Finish up the XML.
-			writer.WriteEndElement();
+			/// <summary>
+			/// Initializes a new instance of the <see cref="WindowState"/> class.
+			/// </summary>
+			/// <param name="window">The window.</param>
+			public WindowState(Window window)
+			{
+				Save(window);
+			}
+
+			#endregion
+
+			#region Fields
+
+			private int height;
+			private int width;
+			private Window window;
+
+			#endregion
 		}
 
 		#endregion

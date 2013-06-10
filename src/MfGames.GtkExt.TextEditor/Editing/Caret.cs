@@ -1,156 +1,132 @@
-#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System.Diagnostics;
-
 using Cairo;
-
 using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Renderers;
 
-#endregion
-
 namespace MfGames.GtkExt.TextEditor.Editing
 {
-    /// <summary>
-    /// Represents the elements needed for displaying and rendering the caret.
-    /// </summary>
-    public class Caret
-    {
-        #region Constructors
+	/// <summary>
+	/// Represents the elements needed for displaying and rendering the caret.
+	/// </summary>
+	public class Caret
+	{
+		#region Properties
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Caret"/> class.
-        /// </summary>
-        /// <param name="displayContext">The display context.</param>
-        public Caret(IDisplayContext displayContext)
-        {
-            this.displayContext = displayContext;
-        }
+		/// <summary>
+		/// Gets or sets the buffer position of the caret.
+		/// </summary>
+		/// <value>The buffer position.</value>
+		public BufferPosition Position
+		{
+			[DebuggerStepThrough] get { return Selection.TailPosition; }
 
-        #endregion
+			[DebuggerStepThrough]
+			set
+			{
+				Selection.TailPosition = value;
+				Selection.AnchorPosition = value;
+			}
+		}
 
-        #region Position and Range
+		#endregion
 
-        private readonly IDisplayContext displayContext;
+		#region Methods
 
-        /// <summary>
-        /// Contains the selection of the caret.
-        /// </summary>
-        public BufferSegment Selection;
+		/// <summary>
+		/// Draws the caret using the given context objects.
+		/// </summary>
+		/// <param name="renderContext">The render context.</param>
+		public void Draw(IRenderContext renderContext)
+		{
+			// Get the draw region.
+			Rectangle drawRegion = GetDrawRegion();
 
-        /// <summary>
-        /// Gets or sets the buffer position of the caret.
-        /// </summary>
-        /// <value>The buffer position.</value>
-        public BufferPosition Position
-        {
-            [DebuggerStepThrough]
-            get { return Selection.TailPosition; }
+			// Make sure the render area intersects with the caret.
+			if (!renderContext.RenderRegion.IntersectsWith(drawRegion))
+			{
+				// Not visible, don't show anything.
+				return;
+			}
 
-            [DebuggerStepThrough]
-            set
-            {
-                Selection.TailPosition = value;
-                Selection.AnchorPosition = value;
-            }
-        }
+			// Turn off antialiasing for a sharper, thin line.
+			Context context = renderContext.CairoContext;
 
-        #endregion
+			Antialias oldAntialias = context.Antialias;
+			context.Antialias = Antialias.None;
 
-        #region Rendering
+			// Draw the caret on the screen.
+			try
+			{
+				context.LineWidth = 1;
+				context.Color = new Color(0, 0, 0, 1);
 
-        /// <summary>
-        /// Draws the caret using the given context objects.
-        /// </summary>
-        /// <param name="renderContext">The render context.</param>
-        public void Draw(IRenderContext renderContext)
-        {
-            // Get the draw region.
-            Rectangle drawRegion = GetDrawRegion();
+				context.MoveTo(drawRegion.X, drawRegion.Y);
+				context.LineTo(drawRegion.X, drawRegion.Y + drawRegion.Height);
+				context.Stroke();
+			}
+			finally
+			{
+				// Restore the context.
+				context.Antialias = oldAntialias;
+			}
+		}
 
-            // Make sure the render area intersects with the caret.
-            if (!renderContext.RenderRegion.IntersectsWith(drawRegion))
-            {
-                // Not visible, don't show anything.
-                return;
-            }
+		/// <summary>
+		/// Gets the region that the caret would be drawn in.
+		/// </summary>
+		/// <returns></returns>
+		public Rectangle GetDrawRegion()
+		{
+			// Get the coordinates on the screen and the height of the current line.
+			int lineHeight;
+			PointD point = Position.ToScreenCoordinates(displayContext, out lineHeight);
+			double x = point.X;
+			double y = point.Y;
 
-            // Turn off antialiasing for a sharper, thin line.
-            Context context = renderContext.CairoContext;
+			// Translate the buffer coordinates into the screen visible coordinates.
+			y -= displayContext.BufferOffsetY;
 
-            Antialias oldAntialias = context.Antialias;
-            context.Antialias = Antialias.None;
+			// Shift the contents to compenstate for the margins.
+			x += displayContext.TextX;
+			x +=
+				displayContext.Renderer.GetLineStyle(Position.LineIndex, LineContexts.None)
+				              .Left;
 
-            // Draw the caret on the screen.
-            try
-            {
-                context.LineWidth = 1;
-                context.Color = new Color(0, 0, 0, 1);
+			// Return the resulting rectangle.
+			return new Rectangle(x, y, 1, lineHeight);
+		}
 
-                context.MoveTo(drawRegion.X, drawRegion.Y);
-                context.LineTo(drawRegion.X, drawRegion.Y + drawRegion.Height);
-                context.Stroke();
-            }
-            finally
-            {
-                // Restore the context.
-                context.Antialias = oldAntialias;
-            }
-        }
+		#endregion
 
-        /// <summary>
-        /// Gets the region that the caret would be drawn in.
-        /// </summary>
-        /// <returns></returns>
-        public Rectangle GetDrawRegion()
-        {
-            // Get the coordinates on the screen and the height of the current line.
-            int lineHeight;
-            PointD point = Position.ToScreenCoordinates(
-                displayContext, out lineHeight);
-            double x = point.X;
-            double y = point.Y;
+		#region Constructors
 
-            // Translate the buffer coordinates into the screen visible coordinates.
-            y -= displayContext.BufferOffsetY;
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Caret"/> class.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		public Caret(IDisplayContext displayContext)
+		{
+			this.displayContext = displayContext;
+		}
 
-            // Shift the contents to compenstate for the margins.
-            x += displayContext.TextX;
-            x +=
-                displayContext.Renderer.GetLineStyle(
-                    Position.LineIndex, LineContexts.None).Left;
+		#endregion
 
-            // Return the resulting rectangle.
-            return new Rectangle(x, y, 1, lineHeight);
-        }
+		#region Fields
 
-        #endregion
-    }
+		/// <summary>
+		/// Contains the selection of the caret.
+		/// </summary>
+		public BufferSegment Selection;
+
+		private readonly IDisplayContext displayContext;
+
+		#endregion
+	}
 }

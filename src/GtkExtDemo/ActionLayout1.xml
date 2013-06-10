@@ -1,26 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <action-layout xmlns="urn:mfgames.com/mfgames-gtkext-cil/action-layout/0">
-	<layout-group id="Main">
-		<layout-list label="_File">
-			<action name="Unknown Action"/>
-			<action name="Quit"/>
-		</layout-list>
+  <layout-group id="Main">
+    <layout-list label="_File">
+      <action name="Unknown Action"/>
+      <action name="Quit"/>
+    </layout-list>
     <layout-list label="_Edit">
-      <action name="Preferences" />
-    </layout-list>"
-		<layout-list label="_View" group="View" >
-			<action name="SwitchPage0"/>
+      <action name="Preferences"/>
+    </layout-list>
+    "
+    <layout-list label="_View" group="View">
+      <action name="SwitchPage0"/>
       <action name="SwitchPage1"/>
       <action name="SwitchPage2"/>
-		</layout-list>
-		<layout-list label="_Editor" group="Editor" >
-			<action name="EditableBuffer"/>
-			<action name="ReadOnlyBuffer"/>
+    </layout-list>
+    <layout-list label="_Editor" group="Editor">
+      <action name="EditableBuffer"/>
+      <action name="ReadOnlyBuffer"/>
       <separator/>
-			<action name="ClearBuffer"/>
-		</layout-list>
+      <action name="ClearBuffer"/>
+    </layout-list>
     <separator/>
     <layout-list label="_Help" right-aligned="True">
     </layout-list>
-	</layout-group>
+  </layout-group>
 </action-layout>

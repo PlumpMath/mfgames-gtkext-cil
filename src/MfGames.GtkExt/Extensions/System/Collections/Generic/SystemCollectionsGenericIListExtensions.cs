@@ -1,37 +1,11 @@
-﻿#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+﻿// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System.Collections.Generic;
-
 using Gtk;
-
 using MfGames.Extensions.System.Collections.Generic;
 using MfGames.HierarchicalPaths;
-
-#endregion
 
 namespace MfGames.GtkExt.Extensions.System.Collections.Generic
 {
@@ -40,7 +14,7 @@ namespace MfGames.GtkExt.Extensions.System.Collections.Generic
 	/// </summary>
 	public static class SystemCollectionsGenericIListExtensions
 	{
-		#region ToTreeStore
+		#region Methods
 
 		/// <summary>
 		/// Converts the given list of path containers into a Gtk.TreeStore.
@@ -52,10 +26,10 @@ namespace MfGames.GtkExt.Extensions.System.Collections.Generic
 		/// <typeparam name="TItem">The type of the item.</typeparam>
 		/// <param name="list">The list.</param>
 		/// <returns></returns>
-		public static TreeStore ToTreeStore<TItem>(
-			this IList<TItem> list) where TItem: IHierarchicalPathContainer
+		public static TreeStore ToTreeStore<TItem>(this IList<TItem> list)
+			where TItem: IHierarchicalPathContainer
 		{
-			return ToTreeStore<TItem>(list, false);
+			return ToTreeStore(list, false);
 		}
 
 		/// <summary>
@@ -75,7 +49,7 @@ namespace MfGames.GtkExt.Extensions.System.Collections.Generic
 		{
 			// Create a new tree store to populate.
 			var store = new TreeStore(
-				typeof(string), typeof(HierarchicalPath), typeof(TItem));
+				typeof (string), typeof (HierarchicalPath), typeof (TItem));
 
 			// If we are not reordering the list in place, then create a new one
 			// that we can reorder.
@@ -100,7 +74,9 @@ namespace MfGames.GtkExt.Extensions.System.Collections.Generic
 				HierarchicalPath path = item.HierarchicalPath;
 
 				// Roll up the list to a common root.
-				while (lastPath != null && lastPath.Count > 0 && !path.StartsWith(lastPath))
+				while (lastPath != null
+					&& lastPath.Count > 0
+					&& !path.StartsWith(lastPath))
 				{
 					// We don't have a common root, so move up a level.
 					iterPath.RemoveLast();

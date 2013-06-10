@@ -1,8 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<action-keybindings xmlns="urn:mfgames.com/mfgames-gtkext-cil/action-keybindings/0">
-	<action name="Quit" keybinding="/Control+Q"/>
-	<action name="EditableBuffer" keybinding="/Control+E/1"/>
-	<action name="ReadOnlyBuffer" keybinding="/Control+E/2"/>
-	<action name="ClearBuffer" keybinding="/Control+E/3"/>
-	<action name="Unknown Action" keybinding="/Control+Shift+T"/>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<action-keybindings
+  xmlns="urn:mfgames.com/mfgames-gtkext-cil/action-keybindings/0">
+  <action name="Quit" keybinding="/Control+Q"/>
+  <action name="EditableBuffer" keybinding="/Control+E/1"/>
+  <action name="ReadOnlyBuffer" keybinding="/Control+E/2"/>
+  <action name="ClearBuffer" keybinding="/Control+E/3"/>
+  <action name="Unknown Action" keybinding="/Control+Shift+T"/>
 </action-keybindings>

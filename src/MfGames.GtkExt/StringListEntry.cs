@@ -1,282 +1,258 @@
-#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
 using System.Collections;
-
 using Gtk;
-
-#endregion
 
 namespace MfGames.GtkExt
 {
-    /// <summary>
-    /// Encapsulates into a single widget that handles text entry,
-    /// including text completion.
-    /// </summary>
-    public class StringListEntry : Table
-    {
-        private readonly Button add;
+	/// <summary>
+	/// Encapsulates into a single widget that handles text entry,
+	/// including text completion.
+	/// </summary>
+	public class StringListEntry: Table
+	{
+		#region Properties
 
-        private readonly ListStore completionStore =
-            new ListStore(typeof(string));
+		/// <summary>
+		/// Contains a read-only store for entry completion. The first
+		/// column is a typeof(string) and contains the entries.
+		/// </summary>
+		public ListStore CompletionStore
+		{
+			get { return completionStore; }
+		}
 
-        private readonly Entry entry;
-        private readonly TreeView list;
-        private readonly Button remove;
-        private readonly ListStore store;
+		/// <summary>
+		/// Contains the array of strings used for population.
+		/// </summary>
+		public string[] Values
+		{
+			get { return (string[]) strings.ToArray(typeof (string)); }
+			set
+			{
+				strings = new ArrayList(value);
+				strings.Sort();
+				Refresh();
+			}
+		}
 
-        /// <summary>
-        /// Constructs a blank string list entry.
-        /// </summary>
-        public StringListEntry()
-            : base(2, 2, false)
-        {
-            // Set up our internals
-            ColumnSpacing = 5;
+		#endregion
 
-            // Create the text entry
-            entry = new Entry();
-            entry.Changed += OnEntryChanged;
-            entry.Completion = new EntryCompletion();
-            entry.Completion.Model = CompletionStore;
-            entry.Completion.TextColumn = 0;
-            Attach(
-                entry,
-                0,
-                1,
-                0,
-                1,
-                AttachOptions.Fill | AttachOptions.Expand,
-                AttachOptions.Fill | AttachOptions.Expand,
-                0,
-                0);
+		#region Methods
 
-            // Create the text list
-            list = new TreeView();
-            store = new ListStore(typeof(string));
-            list.Model = store;
-            list.HeadersVisible = false;
-            list.Selection.Mode = SelectionMode.Multiple;
-            list.RowActivated += OnSelectionChanged;
-            list.CursorChanged += OnSelectionChanged;
-            list.ToggleCursorRow += OnSelectionChanged;
-            list.AppendColumn("Strings", new CellRendererText(), "text", 0);
+		/// <summary>
+		/// Rebuilds the list of strings.
+		/// </summary>
+		public void Refresh()
+		{
+			// Sort the strings
+			strings.Sort();
 
-            var sw = new ScrolledWindow();
-            sw.Add(list);
-            sw.ShadowType = ShadowType.In;
-            Attach(
-                sw,
-                0,
-                1,
-                1,
-                2,
-                AttachOptions.Fill | AttachOptions.Expand,
-                AttachOptions.Fill | AttachOptions.Expand,
-                0,
-                0);
+			// Clear it out and add them
+			store.Clear();
 
-            // Create the add button
-            add = new Button(Stock.Add);
-            add.Sensitive = false;
-            add.Clicked += OnAddClicked;
-            Attach(
-                add,
-                1,
-                2,
-                0,
-                1,
-                AttachOptions.Fill,
-                AttachOptions.Fill | AttachOptions.Expand,
-                0,
-                0);
+			foreach (string str in strings)
+			{
+				store.AppendValues(str);
+			}
+		}
 
-            // Create the remove button
-            var box = new VBox();
-            remove = new Button(Stock.Remove);
-            remove.Sensitive = false;
-            remove.Clicked += OnRemoveClicked;
-            box.PackStart(remove, false, false, 0);
-            box.PackStart(new Label(), true, true, 0);
-            Attach(
-                box,
-                1,
-                2,
-                1,
-                2,
-                AttachOptions.Fill,
-                AttachOptions.Fill | AttachOptions.Expand,
-                0,
-                0);
-        }
+		/// <summary>
+		/// Triggered when the add button is clicked.
+		/// </summary>
+		protected void OnAddClicked(
+			object sender,
+			EventArgs args)
+		{
+			// Add it
+			strings.Add(entry.Text);
+			Refresh();
+			entry.Text = "";
 
-        #region Events
+			// Fire the event
+			OnEntryAdded(sender, args);
+		}
 
-        public EventHandler EntryAdded;
-        public EventHandler EntryRemoved;
+		/// <summary>
+		/// This is the default operation when a new entry is added.
+		/// </summary>
+		protected void OnEntryAdded(
+			object sender,
+			EventArgs args)
+		{
+			if (EntryAdded != null)
+			{
+				EntryAdded(sender, args);
+			}
+		}
 
-        /// <summary>
-        /// Triggered when the add button is clicked.
-        /// </summary>
-        protected void OnAddClicked(
-            object sender,
-            EventArgs args)
-        {
-            // Add it
-            strings.Add(entry.Text);
-            Refresh();
-            entry.Text = "";
+		/// <summary>
+		/// This function is called when the entry is changed.
+		/// </summary>
+		protected void OnEntryChanged(
+			object sender,
+			EventArgs args)
+		{
+			add.Sensitive = entry.Text != "";
+		}
 
-            // Fire the event
-            OnEntryAdded(sender, args);
-        }
+		/// <summary>
+		/// This is the default operation when an entry is removed.
+		/// </summary>
+		protected void OnEntryRemoved(
+			object sender,
+			EventArgs args)
+		{
+			if (EntryRemoved != null)
+			{
+				EntryRemoved(sender, args);
+			}
+		}
 
-        /// <summary>
-        /// This is the default operation when a new entry is added.
-        /// </summary>
-        protected void OnEntryAdded(
-            object sender,
-            EventArgs args)
-        {
-            if (EntryAdded != null)
-            {
-                EntryAdded(sender, args);
-            }
-        }
+		/// <summary>
+		/// Triggered when the remove button is clicked.
+		/// </summary>
+		protected void OnRemoveClicked(
+			object sender,
+			EventArgs args)
+		{
+			// Go through the selection
+			foreach (TreePath tp in list.Selection.GetSelectedRows())
+			{
+				// Get the iter
+				TreeIter iter;
 
-        /// <summary>
-        /// This function is called when the entry is changed.
-        /// </summary>
-        protected void OnEntryChanged(
-            object sender,
-            EventArgs args)
-        {
-            add.Sensitive = entry.Text != "";
-        }
+				store.GetIter(out iter, tp);
+				var str = (string) store.GetValue(iter, 0);
+				strings.Remove(str);
 
-        /// <summary>
-        /// This is the default operation when an entry is removed.
-        /// </summary>
-        protected void OnEntryRemoved(
-            object sender,
-            EventArgs args)
-        {
-            if (EntryRemoved != null)
-            {
-                EntryRemoved(sender, args);
-            }
-        }
+				// Fire the event
+				OnEntryRemoved(sender, args);
+			}
 
-        /// <summary>
-        /// Triggered when the remove button is clicked.
-        /// </summary>
-        protected void OnRemoveClicked(
-            object sender,
-            EventArgs args)
-        {
-            // Go through the selection
-            foreach (TreePath tp in list.Selection.GetSelectedRows())
-            {
-                // Get the iter
-                TreeIter iter;
+			// Refresh the list
+			remove.Sensitive = false;
+			Refresh();
+		}
 
-                store.GetIter(out iter, tp);
-                var str = (string) store.GetValue(iter, 0);
-                strings.Remove(str);
+		/// <summary>
+		/// If the row is activated, enable the remove button.
+		/// </summary>
+		protected virtual void OnSelectionChanged(
+			object sender,
+			EventArgs args)
+		{
+			remove.Sensitive = list.Selection.CountSelectedRows() > 0;
+		}
 
-                // Fire the event
-                OnEntryRemoved(sender, args);
-            }
+		#endregion
 
-            // Refresh the list
-            remove.Sensitive = false;
-            Refresh();
-        }
+		#region Constructors
 
-        /// <summary>
-        /// If the row is activated, enable the remove button.
-        /// </summary>
-        protected virtual void OnSelectionChanged(
-            object sender,
-            EventArgs args)
-        {
-            remove.Sensitive = list.Selection.CountSelectedRows() > 0;
-        }
+		/// <summary>
+		/// Constructs a blank string list entry.
+		/// </summary>
+		public StringListEntry()
+			: base(2, 2, false)
+		{
+			// Set up our internals
+			ColumnSpacing = 5;
 
-        #endregion
+			// Create the text entry
+			entry = new Entry();
+			entry.Changed += OnEntryChanged;
+			entry.Completion = new EntryCompletion();
+			entry.Completion.Model = CompletionStore;
+			entry.Completion.TextColumn = 0;
+			Attach(
+				entry,
+				0,
+				1,
+				0,
+				1,
+				AttachOptions.Fill | AttachOptions.Expand,
+				AttachOptions.Fill | AttachOptions.Expand,
+				0,
+				0);
 
-        #region Properties
+			// Create the text list
+			list = new TreeView();
+			store = new ListStore(typeof (string));
+			list.Model = store;
+			list.HeadersVisible = false;
+			list.Selection.Mode = SelectionMode.Multiple;
+			list.RowActivated += OnSelectionChanged;
+			list.CursorChanged += OnSelectionChanged;
+			list.ToggleCursorRow += OnSelectionChanged;
+			list.AppendColumn("Strings", new CellRendererText(), "text", 0);
 
-        /// <summary>
-        /// Contains a read-only store for entry completion. The first
-        /// column is a typeof(string) and contains the entries.
-        /// </summary>
-        public ListStore CompletionStore
-        {
-            get { return completionStore; }
-        }
+			var sw = new ScrolledWindow();
+			sw.Add(list);
+			sw.ShadowType = ShadowType.In;
+			Attach(
+				sw,
+				0,
+				1,
+				1,
+				2,
+				AttachOptions.Fill | AttachOptions.Expand,
+				AttachOptions.Fill | AttachOptions.Expand,
+				0,
+				0);
 
-        #endregion
+			// Create the add button
+			add = new Button(Stock.Add);
+			add.Sensitive = false;
+			add.Clicked += OnAddClicked;
+			Attach(
+				add,
+				1,
+				2,
+				0,
+				1,
+				AttachOptions.Fill,
+				AttachOptions.Fill | AttachOptions.Expand,
+				0,
+				0);
 
-        #region Strings
+			// Create the remove button
+			var box = new VBox();
+			remove = new Button(Stock.Remove);
+			remove.Sensitive = false;
+			remove.Clicked += OnRemoveClicked;
+			box.PackStart(remove, false, false, 0);
+			box.PackStart(new Label(), true, true, 0);
+			Attach(
+				box,
+				1,
+				2,
+				1,
+				2,
+				AttachOptions.Fill,
+				AttachOptions.Fill | AttachOptions.Expand,
+				0,
+				0);
+		}
 
-        private ArrayList strings = new ArrayList();
+		#endregion
 
-        /// <summary>
-        /// Contains the array of strings used for population.
-        /// </summary>
-        public string[] Values
-        {
-            get { return (string[]) strings.ToArray(typeof(string)); }
-            set
-            {
-                strings = new ArrayList(value);
-                strings.Sort();
-                Refresh();
-            }
-        }
+		#region Fields
 
-        /// <summary>
-        /// Rebuilds the list of strings.
-        /// </summary>
-        public void Refresh()
-        {
-            // Sort the strings
-            strings.Sort();
+		public EventHandler EntryAdded;
+		public EventHandler EntryRemoved;
+		private readonly Button add;
 
-            // Clear it out and add them
-            store.Clear();
+		private readonly ListStore completionStore = new ListStore(typeof (string));
 
-            foreach (string str in strings)
-            {
-                store.AppendValues(str);
-            }
-        }
+		private readonly Entry entry;
+		private readonly TreeView list;
+		private readonly Button remove;
+		private readonly ListStore store;
+		private ArrayList strings = new ArrayList();
 
-        #endregion
-    }
+		#endregion
+	}
 }

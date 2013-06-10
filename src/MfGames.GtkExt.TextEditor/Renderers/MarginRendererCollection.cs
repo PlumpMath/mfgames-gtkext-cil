@@ -1,225 +1,202 @@
-#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
 using System.Diagnostics;
-
 using C5;
-
 using Cairo;
-
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 using MfGames.GtkExt.TextEditor.Renderers;
 
-#endregion
-
 namespace MfGames.GtkExt.TextEditor.Margins
 {
-    /// <summary>
-    /// Encapsulates a list of margin renderers. This handles the packing code
-    /// and processing visbility, widths, and heights.
-    /// </summary>
-    public class MarginRendererCollection : LinkedList<MarginRenderer>
-    {
-        #region Size and Width
+	/// <summary>
+	/// Encapsulates a list of margin renderers. This handles the packing code
+	/// and processing visbility, widths, and heights.
+	/// </summary>
+	public class MarginRendererCollection: LinkedList<MarginRenderer>
+	{
+		#region Properties
 
-        private bool supressEvents;
-        private int width;
+		/// <summary>
+		/// Gets the width of the entire collection.
+		/// </summary>
+		/// <value>The width.</value>
+		public int Width
+		{
+			[DebuggerStepThrough] get { return width; }
+		}
 
-        /// <summary>
-        /// Gets the width of the entire collection.
-        /// </summary>
-        /// <value>The width.</value>
-        public int Width
-        {
-            [DebuggerStepThrough]
-            get { return width; }
-        }
+		#endregion
 
-        /// <summary>
-        /// Fires the <see cref="WidthChanged"/> event.
-        /// </summary>
-        private void FireWidthChanged()
-        {
-            if (WidthChanged != null && !supressEvents)
-            {
-                WidthChanged(this, EventArgs.Empty);
-            }
-        }
+		#region Events
 
-        /// <summary>
-        /// Resets all the individual margin renderers in the collection.
-        /// </summary>
-        public void Reset()
-        {
-            supressEvents = true;
+		/// <summary>
+		/// Occurs when the width or visiblity of the margin changes.
+		/// </summary>
+		public event EventHandler WidthChanged;
 
-            try
-            {
-                foreach (MarginRenderer marginRenderer in this)
-                {
-                    marginRenderer.Reset();
-                }
-            }
-            finally
-            {
-                supressEvents = false;
-            }
-        }
+		#endregion
 
-        /// <summary>
-        /// Resizes the margins to fit the new line buffer.
-        /// </summary>
-        /// <param name="editorView">The text editor.</param>
-        public void Resize(EditorView editorView)
-        {
-            Reset();
+		#region Methods
 
-            foreach (MarginRenderer marginRenderer in this)
-            {
-                marginRenderer.Resize(editorView);
-            }
-        }
+		public override bool Add(MarginRenderer item)
+		{
+			item.WidthChanged += OnWidthChanged;
+			RecalculateWidth();
+			return base.Add(item);
+		}
 
-        /// <summary>
-        /// Occurs when the width or visiblity of the margin changes.
-        /// </summary>
-        public event EventHandler WidthChanged;
+		/// <summary>
+		/// Draws the margins at the given position.
+		/// </summary>
+		/// <param name="displayContext">The display context.</param>
+		/// <param name="renderContext">The render context.</param>
+		/// <param name="lineIndex">The line index being rendered.</param>
+		/// <param name="point">The point of the specific line number.</param>
+		/// <param name="height">The height of the rendered line.</param>
+		/// <param name="lineBlockStyle">The line block style.</param>
+		public void Draw(
+			IDisplayContext displayContext,
+			IRenderContext renderContext,
+			int lineIndex,
+			PointD point,
+			double height,
+			LineBlockStyle lineBlockStyle)
+		{
+			// Go through the margins and draw each one so they don't overlap.
+			double dx = point.X;
 
-        #endregion
+			foreach (MarginRenderer marginRenderer in this)
+			{
+				// If it isn't visible, then we do nothing.
+				if (!marginRenderer.Visible)
+				{
+					continue;
+				}
 
-        #region Collection
+				// Draw out the individual margin.
+				marginRenderer.Draw(
+					displayContext,
+					renderContext,
+					lineIndex,
+					new PointD(dx, point.Y),
+					height,
+					lineBlockStyle);
 
-        public override bool Add(MarginRenderer item)
-        {
-            item.WidthChanged += OnWidthChanged;
-            RecalculateWidth();
-            return base.Add(item);
-        }
+				// Add to the x coordinate so we don't overlap the renders.
+				dx += marginRenderer.Width;
+			}
+		}
 
-        public override void Insert(
-            int i,
-            MarginRenderer item)
-        {
-            item.WidthChanged += OnWidthChanged;
-            RecalculateWidth();
-            base.Insert(i, item);
-        }
+		public override void Insert(
+			int i,
+			MarginRenderer item)
+		{
+			item.WidthChanged += OnWidthChanged;
+			RecalculateWidth();
+			base.Insert(i, item);
+		}
 
-        /// <summary>
-        /// Called when the width of a child element is changed.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void OnWidthChanged(
-            object sender,
-            EventArgs e)
-        {
-            RecalculateWidth();
-        }
+		public override bool Remove(MarginRenderer item)
+		{
+			item.WidthChanged -= OnWidthChanged;
+			RecalculateWidth();
+			return base.Remove(item);
+		}
 
-        /// <summary>
-        /// Recalculates the width of the entire collection by adding up the
-        /// widths of all the margins within it.
-        /// </summary>
-        private void RecalculateWidth()
-        {
-            // Gather up the new total width of the collection.
-            int newWidth = 0;
+		/// <summary>
+		/// Resets all the individual margin renderers in the collection.
+		/// </summary>
+		public void Reset()
+		{
+			supressEvents = true;
 
-            foreach (MarginRenderer marginRenderer in this)
-            {
-                if (marginRenderer.Visible)
-                {
-                    newWidth += marginRenderer.Width;
-                }
-            }
+			try
+			{
+				foreach (MarginRenderer marginRenderer in this)
+				{
+					marginRenderer.Reset();
+				}
+			}
+			finally
+			{
+				supressEvents = false;
+			}
+		}
 
-            // If the width has changed, then fire an event.
-            if (newWidth != width)
-            {
-                width = newWidth;
-                FireWidthChanged();
-            }
-        }
+		/// <summary>
+		/// Resizes the margins to fit the new line buffer.
+		/// </summary>
+		/// <param name="editorView">The text editor.</param>
+		public void Resize(EditorView editorView)
+		{
+			Reset();
 
-        public override bool Remove(MarginRenderer item)
-        {
-            item.WidthChanged -= OnWidthChanged;
-            RecalculateWidth();
-            return base.Remove(item);
-        }
+			foreach (MarginRenderer marginRenderer in this)
+			{
+				marginRenderer.Resize(editorView);
+			}
+		}
 
-        #endregion
+		/// <summary>
+		/// Fires the <see cref="WidthChanged"/> event.
+		/// </summary>
+		private void FireWidthChanged()
+		{
+			if (WidthChanged != null
+				&& !supressEvents)
+			{
+				WidthChanged(this, EventArgs.Empty);
+			}
+		}
 
-        #region Drawing
+		/// <summary>
+		/// Called when the width of a child element is changed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void OnWidthChanged(
+			object sender,
+			EventArgs e)
+		{
+			RecalculateWidth();
+		}
 
-        /// <summary>
-        /// Draws the margins at the given position.
-        /// </summary>
-        /// <param name="displayContext">The display context.</param>
-        /// <param name="renderContext">The render context.</param>
-        /// <param name="lineIndex">The line index being rendered.</param>
-        /// <param name="point">The point of the specific line number.</param>
-        /// <param name="height">The height of the rendered line.</param>
-        /// <param name="lineBlockStyle">The line block style.</param>
-        public void Draw(
-            IDisplayContext displayContext,
-            IRenderContext renderContext,
-            int lineIndex,
-            PointD point,
-            double height,
-            LineBlockStyle lineBlockStyle)
-        {
-            // Go through the margins and draw each one so they don't overlap.
-            double dx = point.X;
+		/// <summary>
+		/// Recalculates the width of the entire collection by adding up the
+		/// widths of all the margins within it.
+		/// </summary>
+		private void RecalculateWidth()
+		{
+			// Gather up the new total width of the collection.
+			int newWidth = 0;
 
-            foreach (MarginRenderer marginRenderer in this)
-            {
-                // If it isn't visible, then we do nothing.
-                if (!marginRenderer.Visible)
-                {
-                    continue;
-                }
+			foreach (MarginRenderer marginRenderer in this)
+			{
+				if (marginRenderer.Visible)
+				{
+					newWidth += marginRenderer.Width;
+				}
+			}
 
-                // Draw out the individual margin.
-                marginRenderer.Draw(
-                    displayContext,
-                    renderContext,
-                    lineIndex,
-                    new PointD(dx, point.Y),
-                    height,
-                    lineBlockStyle);
+			// If the width has changed, then fire an event.
+			if (newWidth != width)
+			{
+				width = newWidth;
+				FireWidthChanged();
+			}
+		}
 
-                // Add to the x coordinate so we don't overlap the renders.
-                dx += marginRenderer.Width;
-            }
-        }
+		#endregion
 
-        #endregion
-    }
+		#region Fields
+
+		private bool supressEvents;
+		private int width;
+
+		#endregion
+	}
 }

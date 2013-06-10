@@ -1,69 +1,45 @@
-#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
-
-#endregion
+// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
-    /// <summary>
-    /// Defines the various operations that a line buffer can receive.
-    /// </summary>
-    public enum LineBufferOperationType : byte
-    {
-        /// <summary>
-        /// Indicates that the associated operation extends <see cref="SetTextOperation"/>.
-        /// </summary>
-        SetText,
+	/// <summary>
+	/// Defines the various operations that a line buffer can receive.
+	/// </summary>
+	public enum LineBufferOperationType: byte
+	{
+		/// <summary>
+		/// Indicates that the associated operation extends <see cref="SetTextOperation"/>.
+		/// </summary>
+		SetText,
 
-        /// <summary>
-        /// Indicates that the associated operation extends 
-        /// <see cref="InsertTextOperation"/>.
-        /// </summary>
-        InsertText,
+		/// <summary>
+		/// Indicates that the associated operation extends 
+		/// <see cref="InsertTextOperation"/>.
+		/// </summary>
+		InsertText,
 
-        /// <summary>
-        /// Indicates that the associated operation extends 
-        /// <see cref="DeleteTextOperation"/>.
-        /// </summary>
-        DeleteText,
+		/// <summary>
+		/// Indicates that the associated operation extends 
+		/// <see cref="DeleteTextOperation"/>.
+		/// </summary>
+		DeleteText,
 
-        /// <summary>
-        /// Indicates that the associated operation extends <see cref="InsertLinesOperation"/>.
-        /// </summary>
-        InsertLines,
+		/// <summary>
+		/// Indicates that the associated operation extends <see cref="InsertLinesOperation"/>.
+		/// </summary>
+		InsertLines,
 
-        /// <summary>
-        /// Indicates that the associated operation extends <see cref="DeleteLinesOperation"/>.
-        /// </summary>
-        DeleteLines,
+		/// <summary>
+		/// Indicates that the associated operation extends <see cref="DeleteLinesOperation"/>.
+		/// </summary>
+		DeleteLines,
 
-        /// <summary>
-        /// Indicates that the user has scrolled off a line. The associated operation
-        /// extends <see cref="ExitLineOperation"/>.
-        /// </summary>
-        ExitLine,
-    }
+		/// <summary>
+		/// Indicates that the user has scrolled off a line. The associated operation
+		/// extends <see cref="ExitLineOperation"/>.
+		/// </summary>
+		ExitLine,
+	}
 }

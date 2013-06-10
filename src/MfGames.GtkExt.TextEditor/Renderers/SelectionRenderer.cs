@@ -1,521 +1,517 @@
-#region Copyright and License
-
-// Copyright (c) 2005-2011, Moonfire Games
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-#endregion
-
-#region Namespaces
+// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
 using System.Text;
-
 using MfGames.GtkExt.TextEditor.Models;
-
-#endregion
 
 namespace MfGames.GtkExt.TextEditor.Renderers
 {
-    /// <summary>
-    /// Utility class for taking Pango markup and applying a selection to it.
-    /// </summary>
-    public class SelectionRenderer
-    {
-        /// <summary>
-        /// Gets the indexes in the markup string for the given character range. This
-        /// handles mapping attributes and entities as zero and one-length characters
-        /// respectively. It also returns information to optimize the search for XML
-        /// tags inside the Pango string.
-        /// </summary>
-        /// <param name="pangoMarkup">The pango markup.</param>
-        /// <param name="characters">The characters.</param>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="endIndex">The end index.</param>
-        /// <param name="leadingXmlDepth">The number of nested XML elements at the
-        /// point of the
-        /// <paramref name="startIndex"/>.
-        /// <param name="leadingXmlIndex">
-        /// The character index of the opening XML tag before the selection. If this
-        /// -1 one, then there is no opening tag and
-        /// <paramref name="leadingXmlDepth"/> will be zero.
-        /// </param></param>
-        /// <param name="leadingXmlIndex">Index of the leading XML.</param>
-        /// <param name="trailingXmlDepth">The number of nested XML elements at the
-        /// point the selection ends.</param>
-        private static void GetMarkupIndexes(
-            string pangoMarkup,
-            CharacterRange characters,
-            out int startIndex,
-            out int endIndex,
-            out int leadingXmlDepth,
-            out int leadingXmlIndex,
-            out int trailingXmlDepth)
-        {
-            // Because of how the loop works, we have to set the startIndex to
-            // a sane default and only check to see if we found the endIndex.
-            startIndex = -1;
-            leadingXmlDepth = 0;
-            trailingXmlDepth = 0;
-            leadingXmlIndex = -1;
+	/// <summary>
+	/// Utility class for taking Pango markup and applying a selection to it.
+	/// </summary>
+	public class SelectionRenderer
+	{
+		#region Methods
 
-            // Check for the selection starting at the beginning.
-            if (characters.StartIndex == 0)
-            {
-                startIndex = 0;
-            }
+		/// <summary>
+		/// Takes the given string (which assumes a valid Pango markup) and
+		/// adds the markup to apply a selection to the string.
+		/// </summary>
+		/// <param name="pangoMarkup">The Pango markup to apply the selection.</param>
+		/// <param name="characters">The range of character to select.</param>
+		/// <returns>A Pango markup string with the selection applied.</returns>
+		public string GetSelectionMarkup(
+			string pangoMarkup,
+			CharacterRange characters)
+		{
+			return GetSelectionMarkup(
+				pangoMarkup, characters, "span", " background='#CCCCFF'");
+		}
 
-            // Loop through the entire markup string. We keep track of two
-            // indexes. The markupIndex is the index inside the markup string.
-            // The character index is the logical characters, treating XML tags
-            // as zero-width characters, and is used to match against characters.
-            for (int markupIndex = 0, characterIndex = 0;
-                 markupIndex < pangoMarkup.Length;
-                 markupIndex++)
-            {
-                // Keep track of the starting markup index since we'll use that
-                // to find the beginning of an XML tag or entity.
-                int markupIndexAnchor = markupIndex;
+		/// <summary>
+		/// Takes the given string (which assumes a valid Pango markup) and
+		/// adds the markup to apply a selection to the string.
+		/// </summary>
+		/// <param name="markup">The markup.</param>
+		/// <param name="characters">The range of character to select.</param>
+		/// <param name="selectionTag">The selection tag to use.</param>
+		/// <param name="selectionAttributes">The selection attributes to use.</param>
+		/// <returns>
+		/// A Pango markup string with the selection applied.
+		/// </returns>
+		public string GetSelectionMarkup(
+			string markup,
+			CharacterRange characters,
+			string selectionTag,
+			string selectionAttributes)
+		{
+			// Check for nulls and invalid strings.
+			if (String.IsNullOrEmpty(markup))
+			{
+				// We can't really do anything with this.
+				return markup;
+			}
 
-                // Grab the character at this position.
-                char c = pangoMarkup[markupIndex];
+			// If the selection covers the entire string, we have an optimized
+			// case and we can just return a selection that covers the entire
+			// string.
+			if (characters.StartIndex == 0
+				&& characters.EndIndex == markup.Length)
+			{
+				return string.Format(
+					"<{0}{1}>{2}</{3}>",
+					selectionTag,
+					selectionAttributes,
+					markup,
+					selectionTag);
+			}
 
-                // Use the character to determine if we have an entity or tag.
-                switch (c)
-                {
-                    case '&':
-                        // Treat the entire entity as a single character.
-                        while (c != ';')
-                        {
-                            markupIndex++;
-                            c = pangoMarkup[markupIndex];
-                        }
+			// The primary concern for applying the selection is that we already
+			// have Pango markup in the string and we have to maintain that
+			// markup while adjusting it. Pango doesn't allow for non-XML rules
+			// such as nested spans, so we go through the string and keep track
+			// of the spans as they apply. When we get to the selection, we
+			// disable those spans and replace them with ones of our own.
+			//
+			// In addition, the character range does not apply to entities such
+			// as &amp; so the entity is treated as a single string.
 
-                        // We don't include the final markupIndex because of
-                        // the for loop increment.
+			// To start with, we need to get the index in the string for the
+			// selection.
+			int startIndex,
+				endIndex,
+				leadingXmlDepth,
+				leadingXmlIndex,
+				trailingXmlDepth;
 
-                        break;
+			GetMarkupIndexes(
+				markup,
+				characters,
+				out startIndex,
+				out endIndex,
+				out leadingXmlDepth,
+				out leadingXmlIndex,
+				out trailingXmlDepth);
 
-                    case '<':
-                        // Grab the next character to see if we have an opening
-                        // or closing tag.
-                        markupIndex++;
-                        c = pangoMarkup[markupIndex];
+			// If we have a startIndex of -1, that means that the selection is
+			// the end of the line and we have nothing.
+			if (startIndex < 0)
+			{
+				return markup;
+			}
 
-                        if (c == '/')
-                        {
-                            // If we are still looking for the start index,
-                            // process the leading elements.
-                            if (startIndex == -1)
-                            {
-                                // If we are closing the outer-most tag, then clear
-                                // the index since we don't need to process it.
-                                if (leadingXmlDepth == 1)
-                                {
-                                    leadingXmlIndex = -1;
-                                }
+			// Use a string builder and build up the selection markup, this way
+			// we avoid as much object creation as possible.
+			var buffer = new StringBuilder();
 
-                                // Decrement the depth.
-                                leadingXmlDepth--;
-                            }
+			// Add in all the text before the selection.
+			string leadingMarkup = markup.Substring(0, startIndex);
 
-                            // Decrement the depth of trailing.
-                            trailingXmlDepth--;
-                        }
-                        else
-                        {
-                            // If we are still looking for the start index,
-                            // process the leading elements.
-                            if (startIndex == -1)
-                            {
-                                // We need to first check to see if we are at
-                                // the selection point. If we are, then we want
-                                // to start before we open a new tag.
-                                if (characterIndex == characters.StartIndex)
-                                {
-                                    // Save the start index for the selection.
-                                    startIndex = markupIndexAnchor;
-                                }
-                                else
-                                {
-                                    // Increment the depth of the tag.
-                                    leadingXmlDepth++;
+			buffer.Append(leadingMarkup);
 
-                                    // If we are the outer-most tag, then keep track
-                                    // of the start index.
-                                    if (leadingXmlDepth == 1)
-                                    {
-                                        leadingXmlIndex = markupIndexAnchor;
-                                    }
-                                }
-                            }
-                            else if (characterIndex == characters.EndIndex)
-                            {
-                                // This is right before the selection ends.
-                                // Since this is an opening tag, we want to
-                                // stop here.
-                                endIndex = markupIndexAnchor;
-                                return;
-                            }
+			// Get all the tags that were opened at the point the selection
+			// starts and close them.
+			TagInfo[] leadingTags = null;
 
-                            // Increment the trailing XML depth.
-                            trailingXmlDepth++;
-                        }
+			if (leadingXmlDepth > 0)
+			{
+				// Allocate space equal to the depth since we won't get any
+				// larger than that.
+				leadingTags = new TagInfo[leadingXmlDepth];
 
-                        // Skip over the entire XML tag.
-                        while (c != '>')
-                        {
-                            markupIndex++;
-                            c = pangoMarkup[markupIndex];
-                        }
+				// Get all the tags in the leading markup.
+				GetOpenTags(leadingMarkup, leadingXmlIndex, startIndex, 0, ref leadingTags);
 
-                        // We continue since we want to treat XML tags as
-                        // zero-width characters.
-                        continue;
-                }
+				// Close all the leading tags in reverse order.
+				for (int index = leadingXmlDepth - 1;
+					index >= 0;
+					index--)
+				{
+					buffer.AppendFormat("</{0}>", leadingTags[index].Name);
+				}
+			}
 
-                // Check to see if we have the start index.
-                if (startIndex == -1 && characterIndex == characters.StartIndex)
-                {
-                    startIndex = markupIndexAnchor;
-                }
+			// Add the selection tag itself.
+			buffer.AppendFormat("<{0}{1}>", selectionTag, selectionAttributes);
 
-                // Check to see if we are done processing.
-                if (characterIndex == characters.EndIndex)
-                {
-                    endIndex = markupIndexAnchor;
-                    return;
-                }
+			// Open up the tags that were open before the selection.
+			if (leadingTags != null)
+			{
+				// Close all the leading tags in reverse order.
+				for (int index = 0;
+					index < leadingXmlDepth;
+					index++)
+				{
+					buffer.Append(leadingTags[index].ToString());
+				}
+			}
 
-                // Increment the character index.
-                characterIndex++;
-            }
+			// Add in the text inside the selection.
+			string innerSelectionMarkup = markup.Substring(
+				startIndex, endIndex - startIndex);
 
-            // If we got this far, we hit the end of the line, so just mark the
-            // end as the last character in the string.
-            endIndex = pangoMarkup.Length;
-        }
+			buffer.Append(innerSelectionMarkup);
 
-        /// <summary>
-        /// Scans through the markup from the start to end index and gathers all the
-        /// open tags at the point of the <paramref name="endIndex"/>.
-        /// </summary>
-        /// <param name="markup">The markup to scan through.</param>
-        /// <param name="startIndex">The character start index.</param>
-        /// <param name="endIndex">The character end index.</param>
-        /// <param name="depth">The depth of the XML tags to start with.</param>
-        /// <param name="tags">A reference to the open tags, this is already
-        /// allocated.</param>
-        private static void GetOpenTags(
-            string markup,
-            int startIndex,
-            int endIndex,
-            int depth,
-            ref TagInfo[] tags)
-        {
-            // Loop through the markup from the start to stop index.
-            for (int index = startIndex; index < endIndex; index++)
-            {
-                // Get the character at this point.
-                char c = markup[index];
+			// Get the tags that were inside the selection so we can close them.
+			TagInfo[] trailingTags = null;
 
-                // If we aren't an XML, we can skip it since the indexes are
-                // given with entities and tag lengths already processed.
-                if (c != '<')
-                {
-                    continue;
-                }
+			if (trailingXmlDepth > 0)
+			{
+				// Allocate space equal to the depth since we won't get any
+				// larger than that.
+				trailingTags = new TagInfo[trailingXmlDepth];
 
-                // This is an XML tag, so first check to see if we have a closing
-                // tag or not.
-                index++;
-                c = markup[index];
+				// Copy in any of the tags from the leading to fill the space.
+				if (leadingTags != null)
+				{
+					int total = Math.Min(trailingXmlDepth, leadingXmlDepth);
 
-                if (c == '/')
-                {
-                    // This is a closing tag, so we can just decrement the depth.
-                    depth--;
-                    continue;
-                }
+					for (int index = 0;
+						index < total;
+						index++)
+					{
+						trailingTags[index] = leadingTags[index];
+					}
+				}
 
-                // If the tag would be deeper than the depth, we already know it
-                // will be closed before we parse it.
-                if (depth >= tags.Length)
-                {
-                    depth++;
-                    continue;
-                }
+				// Get all the tags in the leading markup.
+				GetOpenTags(
+					innerSelectionMarkup,
+					0,
+					endIndex - startIndex,
+					leadingXmlDepth,
+					ref trailingTags);
 
-                // We aren't a closing tag, so gather up the entire tag and split
-                // it into the two components.
-                var tag = new TagInfo();
-                var buffer = new StringBuilder();
-                bool inName = true;
+				// Close all the leading tags in reverse order.
+				for (int index = trailingXmlDepth - 1;
+					index >= 0;
+					index--)
+				{
+					buffer.AppendFormat("</{0}>", trailingTags[index].Name);
+				}
+			}
 
-                while (c != '>')
-                {
-                    // If we are a space and we are processing the name, then
-                    // save the name and start processing the attributes.
-                    if (c == ' ' && inName)
-                    {
-                        inName = false;
-                        tag.Name = buffer.ToString();
-                        buffer.Length = 0;
-                    }
+			// Close the selection tag.
+			buffer.AppendFormat("</{0}>", selectionTag);
 
-                    // Add the character to the buffer.
-                    buffer.Append(c);
+			// Open up the tags that were open before the selection ended.
+			if (trailingTags != null)
+			{
+				// Close all the leading tags in reverse order.
+				for (int index = 0;
+					index < trailingXmlDepth;
+					index++)
+				{
+					buffer.Append(trailingTags[index].ToString());
+				}
+			}
 
-                    // Advance the position in the string.
-                    index++;
-                    c = markup[index];
-                }
+			// Add everything after the markup.
+			buffer.Append(markup.Substring(endIndex));
 
-                // Append the buffer to the appropriate place.
-                if (inName)
-                {
-                    tag.Name = buffer.ToString();
-                }
-                else
-                {
-                    tag.Attributes = buffer.ToString();
-                }
+			// Combine the list together and return it.
+			string selectionMarkup = buffer.ToString();
 
-                // Set the tag in the array.
-                tags[depth] = tag;
-                depth++;
-            }
-        }
+			return selectionMarkup;
+		}
 
-        /// <summary>
-        /// Takes the given string (which assumes a valid Pango markup) and
-        /// adds the markup to apply a selection to the string.
-        /// </summary>
-        /// <param name="pangoMarkup">The Pango markup to apply the selection.</param>
-        /// <param name="characters">The range of character to select.</param>
-        /// <returns>A Pango markup string with the selection applied.</returns>
-        public string GetSelectionMarkup(
-            string pangoMarkup,
-            CharacterRange characters)
-        {
-            return GetSelectionMarkup(
-                pangoMarkup, characters, "span", " background='#CCCCFF'");
-        }
+		/// <summary>
+		/// Gets the indexes in the markup string for the given character range. This
+		/// handles mapping attributes and entities as zero and one-length characters
+		/// respectively. It also returns information to optimize the search for XML
+		/// tags inside the Pango string.
+		/// </summary>
+		/// <param name="pangoMarkup">The pango markup.</param>
+		/// <param name="characters">The characters.</param>
+		/// <param name="startIndex">The start index.</param>
+		/// <param name="endIndex">The end index.</param>
+		/// <param name="leadingXmlDepth">The number of nested XML elements at the
+		/// point of the
+		/// <paramref name="startIndex"/>.
+		/// <param name="leadingXmlIndex">
+		/// The character index of the opening XML tag before the selection. If this
+		/// -1 one, then there is no opening tag and
+		/// <paramref name="leadingXmlDepth"/> will be zero.
+		/// </param></param>
+		/// <param name="leadingXmlIndex">Index of the leading XML.</param>
+		/// <param name="trailingXmlDepth">The number of nested XML elements at the
+		/// point the selection ends.</param>
+		private static void GetMarkupIndexes(
+			string pangoMarkup,
+			CharacterRange characters,
+			out int startIndex,
+			out int endIndex,
+			out int leadingXmlDepth,
+			out int leadingXmlIndex,
+			out int trailingXmlDepth)
+		{
+			// Because of how the loop works, we have to set the startIndex to
+			// a sane default and only check to see if we found the endIndex.
+			startIndex = -1;
+			leadingXmlDepth = 0;
+			trailingXmlDepth = 0;
+			leadingXmlIndex = -1;
 
-        /// <summary>
-        /// Takes the given string (which assumes a valid Pango markup) and
-        /// adds the markup to apply a selection to the string.
-        /// </summary>
-        /// <param name="markup">The markup.</param>
-        /// <param name="characters">The range of character to select.</param>
-        /// <param name="selectionTag">The selection tag to use.</param>
-        /// <param name="selectionAttributes">The selection attributes to use.</param>
-        /// <returns>
-        /// A Pango markup string with the selection applied.
-        /// </returns>
-        public string GetSelectionMarkup(
-            string markup,
-            CharacterRange characters,
-            string selectionTag,
-            string selectionAttributes)
-        {
-            // Check for nulls and invalid strings.
-            if (String.IsNullOrEmpty(markup))
-            {
-                // We can't really do anything with this.
-                return markup;
-            }
+			// Check for the selection starting at the beginning.
+			if (characters.StartIndex == 0)
+			{
+				startIndex = 0;
+			}
 
-            // If the selection covers the entire string, we have an optimized
-            // case and we can just return a selection that covers the entire
-            // string.
-            if (characters.StartIndex == 0 &&
-                characters.EndIndex == markup.Length)
-            {
-                return string.Format(
-                    "<{0}{1}>{2}</{3}>",
-                    selectionTag,
-                    selectionAttributes,
-                    markup,
-                    selectionTag);
-            }
+			// Loop through the entire markup string. We keep track of two
+			// indexes. The markupIndex is the index inside the markup string.
+			// The character index is the logical characters, treating XML tags
+			// as zero-width characters, and is used to match against characters.
+			for (int markupIndex = 0,
+				characterIndex = 0;
+				markupIndex < pangoMarkup.Length;
+				markupIndex++)
+			{
+				// Keep track of the starting markup index since we'll use that
+				// to find the beginning of an XML tag or entity.
+				int markupIndexAnchor = markupIndex;
 
-            // The primary concern for applying the selection is that we already
-            // have Pango markup in the string and we have to maintain that
-            // markup while adjusting it. Pango doesn't allow for non-XML rules
-            // such as nested spans, so we go through the string and keep track
-            // of the spans as they apply. When we get to the selection, we
-            // disable those spans and replace them with ones of our own.
-            //
-            // In addition, the character range does not apply to entities such
-            // as &amp; so the entity is treated as a single string.
+				// Grab the character at this position.
+				char c = pangoMarkup[markupIndex];
 
-            // To start with, we need to get the index in the string for the
-            // selection.
-            int startIndex,
-                endIndex,
-                leadingXmlDepth,
-                leadingXmlIndex,
-                trailingXmlDepth;
+				// Use the character to determine if we have an entity or tag.
+				switch (c)
+				{
+					case '&':
+						// Treat the entire entity as a single character.
+						while (c != ';')
+						{
+							markupIndex++;
+							c = pangoMarkup[markupIndex];
+						}
 
-            GetMarkupIndexes(
-                markup,
-                characters,
-                out startIndex,
-                out endIndex,
-                out leadingXmlDepth,
-                out leadingXmlIndex,
-                out trailingXmlDepth);
+						// We don't include the final markupIndex because of
+						// the for loop increment.
 
-            // If we have a startIndex of -1, that means that the selection is
-            // the end of the line and we have nothing.
-            if (startIndex < 0)
-            {
-                return markup;
-            }
+						break;
 
-            // Use a string builder and build up the selection markup, this way
-            // we avoid as much object creation as possible.
-            var buffer = new StringBuilder();
+					case '<':
+						// Grab the next character to see if we have an opening
+						// or closing tag.
+						markupIndex++;
+						c = pangoMarkup[markupIndex];
 
-            // Add in all the text before the selection.
-            string leadingMarkup = markup.Substring(0, startIndex);
+						if (c == '/')
+						{
+							// If we are still looking for the start index,
+							// process the leading elements.
+							if (startIndex == -1)
+							{
+								// If we are closing the outer-most tag, then clear
+								// the index since we don't need to process it.
+								if (leadingXmlDepth == 1)
+								{
+									leadingXmlIndex = -1;
+								}
 
-            buffer.Append(leadingMarkup);
+								// Decrement the depth.
+								leadingXmlDepth--;
+							}
 
-            // Get all the tags that were opened at the point the selection
-            // starts and close them.
-            TagInfo[] leadingTags = null;
+							// Decrement the depth of trailing.
+							trailingXmlDepth--;
+						}
+						else
+						{
+							// If we are still looking for the start index,
+							// process the leading elements.
+							if (startIndex == -1)
+							{
+								// We need to first check to see if we are at
+								// the selection point. If we are, then we want
+								// to start before we open a new tag.
+								if (characterIndex == characters.StartIndex)
+								{
+									// Save the start index for the selection.
+									startIndex = markupIndexAnchor;
+								}
+								else
+								{
+									// Increment the depth of the tag.
+									leadingXmlDepth++;
 
-            if (leadingXmlDepth > 0)
-            {
-                // Allocate space equal to the depth since we won't get any
-                // larger than that.
-                leadingTags = new TagInfo[leadingXmlDepth];
+									// If we are the outer-most tag, then keep track
+									// of the start index.
+									if (leadingXmlDepth == 1)
+									{
+										leadingXmlIndex = markupIndexAnchor;
+									}
+								}
+							}
+							else if (characterIndex == characters.EndIndex)
+							{
+								// This is right before the selection ends.
+								// Since this is an opening tag, we want to
+								// stop here.
+								endIndex = markupIndexAnchor;
+								return;
+							}
 
-                // Get all the tags in the leading markup.
-                GetOpenTags(
-                    leadingMarkup,
-                    leadingXmlIndex,
-                    startIndex,
-                    0,
-                    ref leadingTags);
+							// Increment the trailing XML depth.
+							trailingXmlDepth++;
+						}
 
-                // Close all the leading tags in reverse order.
-                for (int index = leadingXmlDepth - 1; index >= 0; index--)
-                {
-                    buffer.AppendFormat("</{0}>", leadingTags[index].Name);
-                }
-            }
+						// Skip over the entire XML tag.
+						while (c != '>')
+						{
+							markupIndex++;
+							c = pangoMarkup[markupIndex];
+						}
 
-            // Add the selection tag itself.
-            buffer.AppendFormat("<{0}{1}>", selectionTag, selectionAttributes);
+						// We continue since we want to treat XML tags as
+						// zero-width characters.
+						continue;
+				}
 
-            // Open up the tags that were open before the selection.
-            if (leadingTags != null)
-            {
-                // Close all the leading tags in reverse order.
-                for (int index = 0; index < leadingXmlDepth; index++)
-                {
-                    buffer.Append(leadingTags[index].ToString());
-                }
-            }
+				// Check to see if we have the start index.
+				if (startIndex == -1
+					&& characterIndex == characters.StartIndex)
+				{
+					startIndex = markupIndexAnchor;
+				}
 
-            // Add in the text inside the selection.
-            string innerSelectionMarkup = markup.Substring(
-                startIndex, endIndex - startIndex);
+				// Check to see if we are done processing.
+				if (characterIndex == characters.EndIndex)
+				{
+					endIndex = markupIndexAnchor;
+					return;
+				}
 
-            buffer.Append(innerSelectionMarkup);
+				// Increment the character index.
+				characterIndex++;
+			}
 
-            // Get the tags that were inside the selection so we can close them.
-            TagInfo[] trailingTags = null;
+			// If we got this far, we hit the end of the line, so just mark the
+			// end as the last character in the string.
+			endIndex = pangoMarkup.Length;
+		}
 
-            if (trailingXmlDepth > 0)
-            {
-                // Allocate space equal to the depth since we won't get any
-                // larger than that.
-                trailingTags = new TagInfo[trailingXmlDepth];
+		/// <summary>
+		/// Scans through the markup from the start to end index and gathers all the
+		/// open tags at the point of the <paramref name="endIndex"/>.
+		/// </summary>
+		/// <param name="markup">The markup to scan through.</param>
+		/// <param name="startIndex">The character start index.</param>
+		/// <param name="endIndex">The character end index.</param>
+		/// <param name="depth">The depth of the XML tags to start with.</param>
+		/// <param name="tags">A reference to the open tags, this is already
+		/// allocated.</param>
+		private static void GetOpenTags(
+			string markup,
+			int startIndex,
+			int endIndex,
+			int depth,
+			ref TagInfo[] tags)
+		{
+			// Loop through the markup from the start to stop index.
+			for (int index = startIndex;
+				index < endIndex;
+				index++)
+			{
+				// Get the character at this point.
+				char c = markup[index];
 
-                // Copy in any of the tags from the leading to fill the space.
-                if (leadingTags != null)
-                {
-                    int total = Math.Min(trailingXmlDepth, leadingXmlDepth);
+				// If we aren't an XML, we can skip it since the indexes are
+				// given with entities and tag lengths already processed.
+				if (c != '<')
+				{
+					continue;
+				}
 
-                    for (int index = 0; index < total; index++)
-                    {
-                        trailingTags[index] = leadingTags[index];
-                    }
-                }
+				// This is an XML tag, so first check to see if we have a closing
+				// tag or not.
+				index++;
+				c = markup[index];
 
-                // Get all the tags in the leading markup.
-                GetOpenTags(
-                    innerSelectionMarkup,
-                    0,
-                    endIndex - startIndex,
-                    leadingXmlDepth,
-                    ref trailingTags);
+				if (c == '/')
+				{
+					// This is a closing tag, so we can just decrement the depth.
+					depth--;
+					continue;
+				}
 
-                // Close all the leading tags in reverse order.
-                for (int index = trailingXmlDepth - 1; index >= 0; index--)
-                {
-                    buffer.AppendFormat("</{0}>", trailingTags[index].Name);
-                }
-            }
+				// If the tag would be deeper than the depth, we already know it
+				// will be closed before we parse it.
+				if (depth >= tags.Length)
+				{
+					depth++;
+					continue;
+				}
 
-            // Close the selection tag.
-            buffer.AppendFormat("</{0}>", selectionTag);
+				// We aren't a closing tag, so gather up the entire tag and split
+				// it into the two components.
+				var tag = new TagInfo();
+				var buffer = new StringBuilder();
+				bool inName = true;
 
-            // Open up the tags that were open before the selection ended.
-            if (trailingTags != null)
-            {
-                // Close all the leading tags in reverse order.
-                for (int index = 0; index < trailingXmlDepth; index++)
-                {
-                    buffer.Append(trailingTags[index].ToString());
-                }
-            }
+				while (c != '>')
+				{
+					// If we are a space and we are processing the name, then
+					// save the name and start processing the attributes.
+					if (c == ' ' && inName)
+					{
+						inName = false;
+						tag.Name = buffer.ToString();
+						buffer.Length = 0;
+					}
 
-            // Add everything after the markup.
-            buffer.Append(markup.Substring(endIndex));
+					// Add the character to the buffer.
+					buffer.Append(c);
 
-            // Combine the list together and return it.
-            string selectionMarkup = buffer.ToString();
+					// Advance the position in the string.
+					index++;
+					c = markup[index];
+				}
 
-            return selectionMarkup;
-        }
+				// Append the buffer to the appropriate place.
+				if (inName)
+				{
+					tag.Name = buffer.ToString();
+				}
+				else
+				{
+					tag.Attributes = buffer.ToString();
+				}
 
-        #region Nested type: TagInfo
+				// Set the tag in the array.
+				tags[depth] = tag;
+				depth++;
+			}
+		}
 
-        /// <summary>
-        /// Contains information about a single tag in memory.
-        /// </summary>
-        private struct TagInfo
-        {
-            public string Attributes;
-            public string Name;
+		#endregion
 
-            public override string ToString()
-            {
-                return String.Format("<{0}{1}>", Name, Attributes);
-            }
-        }
+		#region Nested Type: TagInfo
 
-        #endregion
-    }
+		/// <summary>
+		/// Contains information about a single tag in memory.
+		/// </summary>
+		private struct TagInfo
+		{
+			#region Methods
+
+			public override string ToString()
+			{
+				return String.Format("<{0}{1}>", Name, Attributes);
+			}
+
+			#endregion
+
+			#region Fields
+
+			public string Attributes;
+			public string Name;
+
+			#endregion
+		}
+
+		#endregion
+	}
 }
