@@ -71,21 +71,12 @@ namespace MfGames.GtkExt.TextEditor.Models
 			return lines[lineIndex];
 		}
 
-		/// <summary>
-		/// Gets the text of a given line in the buffer.
-		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
-		/// <param name="characters">The character range to pull the text.</param>
-		/// <param name="lineContexts">The line contexts.</param>
-		/// <returns></returns>
 		public override string GetLineText(
 			int lineIndex,
-			CharacterRange characters,
 			LineContexts lineContexts)
 		{
 			string text = lines[lineIndex];
-
-			return characters.Substring(text);
+			return text;
 		}
 
 		/// <summary>
@@ -256,8 +247,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 				line < lineCount;
 				line++)
 			{
-				lines.Add(
-					buffer.GetLineText(line, new CharacterRange(0), LineContexts.None));
+				lines.Add(buffer.GetLineText(line, LineContexts.None));
 			}
 		}
 

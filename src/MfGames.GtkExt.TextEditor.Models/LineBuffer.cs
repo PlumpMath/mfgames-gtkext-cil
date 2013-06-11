@@ -167,8 +167,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 			int lineIndex,
 			LineContexts lineContexts)
 		{
-			string text = GetLineText(
-				lineIndex, new CharacterRange(0), LineContexts.None);
+			string text = GetLineText(lineIndex, LineContexts.None);
 
 			return PangoUtility.Escape(text);
 		}
@@ -209,23 +208,8 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="lineContexts">The line contexts.</param>
 		/// <returns></returns>
-		public string GetLineText(
-			int lineIndex,
-			LineContexts lineContexts)
-		{
-			return GetLineText(lineIndex, new CharacterRange(0), lineContexts);
-		}
-
-		/// <summary>
-		/// Gets the text of a given line in the buffer.
-		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
-		/// <param name="characters">The character range to pull the text.</param>
-		/// <param name="lineContexts">The line contexts.</param>
-		/// <returns></returns>
 		public abstract string GetLineText(
 			int lineIndex,
-			CharacterRange characters,
 			LineContexts lineContexts);
 
 		/// <summary>

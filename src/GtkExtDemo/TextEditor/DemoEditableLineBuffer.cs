@@ -57,22 +57,14 @@ namespace GtkExtDemo.TextEditor
 			return lineType.ToString();
 		}
 
-		/// <summary>
-		/// Gets the text of a given line in the buffer.
-		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
-		/// <param name="characters">The character range to pull the text.</param>
-		/// <param name="lineContexts">The line contexts.</param>
-		/// <returns></returns>
 		public override string GetLineText(
 			int lineIndex,
-			CharacterRange characters,
 			LineContexts lineContexts)
 		{
 			// If we have a request for unformatted, return it directly.
 			if ((lineContexts & LineContexts.Unformatted) == LineContexts.Unformatted)
 			{
-				return base.GetLineText(lineIndex, characters, lineContexts);
+				return base.GetLineText(lineIndex, lineContexts);
 			}
 
 			// Get the style of the line, defaulting to default if we don't have
@@ -102,7 +94,7 @@ namespace GtkExtDemo.TextEditor
 			}
 
 			// We don't have a special case, so just return the base.
-			return base.GetLineText(lineIndex, characters, lineContexts);
+			return base.GetLineText(lineIndex, lineContexts);
 		}
 
 		/// <summary>

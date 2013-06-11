@@ -70,18 +70,11 @@ namespace GtkExtDemo.TextEditor
 			return (lineIndex + 1).ToString();
 		}
 
-		/// <summary>
-		/// Gets the text of a given line in the buffer.
-		/// </summary>
-		/// <param name="lineIndex">The line index in the buffer. If the index is beyond the end of the buffer, the last line is used.</param>
-		/// <param name="characters">The character range to pull the text.</param>
-		/// <returns></returns>
 		public override string GetLineText(
 			int lineIndex,
-			CharacterRange characters,
 			LineContexts lineContexts)
 		{
-			return characters.Substring(GenerateText(lineIndex));
+			return GenerateText(lineIndex);
 		}
 
 		/// <summary>
