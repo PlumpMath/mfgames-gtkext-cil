@@ -42,7 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandController.cs" />
+    <Compile Include="ICommandController.cs" />
+    <Compile Include="UndoRedoCommandController.cs" />
     <Compile Include="CommandReference.cs" />
     <Compile Include="CommandViewManager.cs" />
     <Compile Include="ICommand.cs" />

@@ -1,6 +1,7 @@
 ﻿// Copyright 2011-2013 Moonfire Games
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
+
 namespace MfGames.Commands
 {
 	/// <summary>
@@ -10,6 +11,8 @@ namespace MfGames.Commands
 	/// </summary>
 	public interface ICommandView
 	{
+		#region Methods
+
 		/// <summary>
 		/// Retrives a short, descriptive name of the command for the user. This should
 		/// be translated appropriately before returning.
@@ -17,5 +20,7 @@ namespace MfGames.Commands
 		/// <param name="data">The ICommand.Data object of the registered command.</param>
 		/// <returns>A string suitable for display to the user.</returns>
 		string GetDisplayName(object data);
+
+		#endregion
 	}
 }

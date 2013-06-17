@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
+
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.Commands
@@ -14,18 +13,9 @@ namespace MfGames.Commands
 	/// popups while still expanding into a (potentially translated) description with
 	/// toolkit-specific icons and elements.
 	/// </summary>
-    public class CommandViewManager
-    {
-		/// <summary>
-		/// Registers a command view for a given <c>ICommand.Key</c> reference.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="commandView"></param>
-		public void Register(
-			HierarchicalPath key,
-			ICommandView commandView)
-		{
-		}
+	public class CommandViewManager
+	{
+		#region Methods
 
 		/// <summary>
 		/// Retrives a short, descriptive name of the command for the user. This should
@@ -37,5 +27,18 @@ namespace MfGames.Commands
 		{
 			return null;
 		}
-    }
+
+		/// <summary>
+		/// Registers a command view for a given <c>ICommand.Key</c> reference.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="commandView"></param>
+		public void Register(
+			HierarchicalPath key,
+			ICommandView commandView)
+		{
+		}
+
+		#endregion
+	}
 }
