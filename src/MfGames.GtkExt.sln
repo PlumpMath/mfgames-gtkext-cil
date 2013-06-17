@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{94993FB2-3AB7-4F80-9881-2F2D3CCA39B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt", "MfGames.GtkExt\MfGames.GtkExt.csproj", "{DC4BE5FB-0A89-4210-BC19-B4D01E5D901F}"
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.Actions", "MfGames.GtkExt.Actions\MfGames.GtkExt.Actions.csproj", "{E0A0DD4B-5D5D-41BD-81C3-FFDB3981263A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.GtkExt.Configurators", "MfGames.GtkExt.Configurators\MfGames.GtkExt.Configurators.csproj", "{BBB2BB6A-1FA3-449D-B390-9206D2CBC126}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MfGames.Commands", "MfGames.Commands\MfGames.Commands.csproj", "{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,12 @@ Global
 		{BBB2BB6A-1FA3-449D-B390-9206D2CBC126}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBB2BB6A-1FA3-449D-B390-9206D2CBC126}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBB2BB6A-1FA3-449D-B390-9206D2CBC126}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E517018-C1D3-46AD-AA1D-E6FB45165A3F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
