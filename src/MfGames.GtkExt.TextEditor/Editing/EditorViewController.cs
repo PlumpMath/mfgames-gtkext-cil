@@ -625,20 +625,22 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			keyBindings = new HashDictionary<int, ActionEntry>();
 			actions = new HashDictionary<string, ActionEntry>();
 
-			BindActions();
-
 			// Bind the action states.
 			states = new ActionStateCollection();
 			Commands = new CommandManager();
 			CommandController =
 				new UndoRedoCommandController<LineBufferOperationResults?>();
-			CommandFactory = new CommandFactoryManager();
+			CommandFactory =
+				new CommandFactoryManager<LineBufferOperationResults?>(CommandController);
+
+			// Bind the default actions for the editor.
+			BindActions();
 		}
 
 		/// <summary>
 		/// Contains the command factory for processing commands.
 		/// </summary>
-		protected CommandFactoryManager CommandFactory { get; private set; }
+		public CommandFactoryManager<LineBufferOperationResults?> CommandFactory { get; private set; }
 
 		#endregion
 

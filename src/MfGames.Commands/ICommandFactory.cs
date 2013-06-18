@@ -10,16 +10,16 @@ namespace MfGames.Commands
 	/// <summary>
 	/// Describes a command factory, a class that encapsulates logic that affects the
 	/// state of the system, typically by generating one or more commands in response
-	/// to a CommandReference request. The command factory also is responsible for
+	/// to a CommandFactoryReference request. The command factory also is responsible for
 	/// the basic formatting of a command by providing the enabled and visible state for
 	/// command references along with descriptive text.
 	/// </summary>
-	public interface ICommandFactory
+	public interface ICommandFactory<TStatus>
 	{
 		#region Properties
 
 		/// <summary>
-		/// Retrieves a list of all view keys associated with the view.
+		/// Retrieves a list of all view keys associated with the factory.
 		/// </summary>
 		IEnumerable<HierarchicalPath> Keys { get; }
 
@@ -29,23 +29,25 @@ namespace MfGames.Commands
 
 		/// <summary>
 		/// Executes the logic for a given command references (as identified by the
-		/// CommandReference.Key) using the given context for information.
+		/// CommandFactoryReference.Key) using the given context for information.
 		/// </summary>
 		/// <param name="context">The context of the request. This will typically be a widget or graphical element that has the focus when the command reference is activated.</param>
-		/// <param name="commandReference">The command reference to be activated or used.</param>
-		void Do(
+		/// <param name="commandFactoryReference">The command reference to be activated or used.</param>
+		TStatus Do(
 			object context,
-			CommandReference commandReference);
+			CommandFactoryReference commandFactoryReference,
+			CommandFactoryManager<TStatus> controller);
 
 		/// <summary>
 		/// Retrives a short, descriptive name of the command for the user. This should
-		/// be translated appropriately before returning.
+		/// be translated appropriately before returning. Because the title is used in
+		/// GUI elements, a single "&" in front of the preferred character is encouraged.
 		/// </summary>
-		/// <param name="commandReference">
+		/// <param name="commandFactoryReference">
 		/// A command reference that contains a path and an optional data object.
 		/// </param>
 		/// <returns>A string suitable for display to the user.</returns>
-		string GetDisplayName(CommandReference commandReference);
+		string GetTitle(CommandFactoryReference commandFactoryReference);
 
 		#endregion
 	}

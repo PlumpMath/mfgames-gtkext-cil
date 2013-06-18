@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using MfGames.Commands;
+using MfGames.GtkExt.TextEditor.Interfaces;
+using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Renderers;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
@@ -13,7 +17,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 	/// <summary>
 	/// Implements the command factory for handling the "delete left" (backspace).
 	/// </summary>
-	public class DeleteLeftCommandFactory: ICommandFactory
+	public class DeleteLeftCommandFactory:
+		ICommandFactory<LineBufferOperationResults?>
 	{
 		#region Properties
 
@@ -37,17 +42,54 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Methods
 
-		public void Do(
+		public LineBufferOperationResults? Do(
 			object context,
-			CommandReference commandReference)
+			CommandFactoryReference commandFactoryReference,
+			CommandFactoryManager<LineBufferOperationResults?> commandFactoryManager)
 		{
 			// Ensure the code contracts for this state.
 			Contract.Requires<ArgumentNullException>(context != null);
-			Contract.Requires<InvalidCastException>(context is EditorView);
-			Contract.Requires<ArgumentNullException>(commandReference != null);
+			Contract.Requires<InvalidCastException>(context is EditorViewController);
+			Contract.Requires<ArgumentNullException>(commandFactoryReference != null);
+
+			// Pull out some useful variables for processing.
+			var controller = (EditorViewController) context;
+			IDisplayContext displayContext = controller.DisplayContext;
+			BufferPosition position = displayContext.Caret.Position;
+
+			// Figure out which command we'll be passing the operation to.
+			CommandFactoryReference nextCommand;
+
+			if (!displayContext.Caret.Selection.IsEmpty)
+			{
+				// If we have a selection, then we use the Delete Selection command.
+				//nextCommand = new CommandFactoryReference(DeleteSelectionCommandFactory.Key);
+				return null;
+			}
+			else if (position.IsBeginningOfBuffer(controller.DisplayContext))
+			{
+				// If we are the beginning of the buffer, then we can't delete anything.
+				return null;
+			}
+			else if (position.CharacterIndex == 0)
+			{
+				// If we are at the beginning of the line, then we are combining paragraphs.
+				//nextCommand = new CommandFactoryReference(JoinPreviousParagraphCommandFactory.Key);
+				return null;
+			}
+			else
+			{
+				//nextCommand = new CommandFactoryReference(DeleteLeftCharacterCommandFactory.Key);
+				return null;
+			}
+
+			// Execute the command and pass the results to calling method.
+			LineBufferOperationResults? results = commandFactoryManager.Do(
+				context, nextCommand);
+			return results;
 		}
 
-		public string GetDisplayName(CommandReference commandReference)
+		public string GetTitle(CommandFactoryReference commandFactoryReference)
 		{
 			return "Delete Left";
 		}

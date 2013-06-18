@@ -3,17 +3,17 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
+using System.Diagnostics.Contracts;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.Commands
 {
 	/// <summary>
-	/// Describes a reference to a command object via a <see cref="HierarchicalPath"/>
-	/// with an optional argument. This is an immutable class, once set it cannot be
-	/// changed, though the Data property may have inner properties changed (though
-	/// this is highly discouraged).
+	/// Describes a reference to a command factory via a <see cref="HierarchicalPath"/>
+	/// with an optional argument. This is an immutable class though the Data property
+	/// may have inner properties changed (though this is highly discouraged).
 	/// </summary>
-	public class CommandReference
+	public class CommandFactoryReference
 	{
 		#region Properties
 
@@ -34,15 +34,12 @@ namespace MfGames.Commands
 
 		#region Constructors
 
-		public CommandReference(
+		public CommandFactoryReference(
 			HierarchicalPath key,
 			object data = null)
 		{
 			// Make sure we have a sane state.
-			if (key == null)
-			{
-				throw new ArgumentNullException("key");
-			}
+			Contract.Requires<ArgumentNullException>(key != null);
 
 			// Store the values for later.
 			Key = key;

@@ -52,9 +52,6 @@ namespace MfGames.Commands
 		/// <param name="command">The command to execute.</param>
 		public void Do(ICommand<TState> command)
 		{
-			// Establish the code contracts.
-			Contract.Requires<ArgumentNullException>(command != null);
-
 			// Determine if this command is undoable or not.
 			if (!command.CanUndo)
 			{
