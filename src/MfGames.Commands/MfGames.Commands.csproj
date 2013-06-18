@@ -45,9 +45,9 @@
     <Compile Include="ICommandController.cs" />
     <Compile Include="UndoRedoCommandController.cs" />
     <Compile Include="CommandReference.cs" />
-    <Compile Include="CommandViewManager.cs" />
+    <Compile Include="CommandFactoryManager.cs" />
     <Compile Include="ICommand.cs" />
-    <Compile Include="ICommandView.cs" />
+    <Compile Include="ICommandFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,8 @@ using System;
 using System.Text;
 using Gdk;
 using Gtk;
+using MfGames.Commands;
+using MfGames.GtkExt.TextEditor.Editing.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
@@ -124,6 +126,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.BackSpace)]
 		public static void DeleteLeft(EditorViewController controller)
 		{
+			// Bridge into the new command controller subsystem.
+			var commandReference = new CommandReference(DeleteLeftCommandFactory.Key);
+			controller.CommandFactory.Do(controller, commandReference);
+			controller.CommandController.Do(controller, commandReference);
+
 			// If we have a selection, then we simply delete that selection.
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;

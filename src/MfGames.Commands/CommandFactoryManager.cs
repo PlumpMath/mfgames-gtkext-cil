@@ -2,6 +2,8 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using System;
+using System.Diagnostics.Contracts;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.Commands
@@ -13,7 +15,7 @@ namespace MfGames.Commands
 	/// popups while still expanding into a (potentially translated) description with
 	/// toolkit-specific icons and elements.
 	/// </summary>
-	public class CommandViewManager
+	public class CommandFactoryManager
 	{
 		#region Methods
 
@@ -29,14 +31,32 @@ namespace MfGames.Commands
 		}
 
 		/// <summary>
+		/// Registers all of the known paths in a command view with the manager.
+		/// </summary>
+		/// <param name="commandFactory"></param>
+		public void Register(ICommandFactory commandFactory)
+		{
+			// Ensure our code contract.
+			Contract.Requires<ArgumentNullException>(commandFactory != null);
+
+			// Go through the the keys inside the view.
+			foreach (HierarchicalPath key in commandFactory.Keys)
+			{
+				Register(key, commandFactory);
+			}
+		}
+
+		/// <summary>
 		/// Registers a command view for a given <c>ICommand.Key</c> reference.
 		/// </summary>
 		/// <param name="key"></param>
-		/// <param name="commandView"></param>
+		/// <param name="commandFactory"></param>
 		public void Register(
 			HierarchicalPath key,
-			ICommandView commandView)
+			ICommandFactory commandFactory)
 		{
+			// Ensure our code contracts.
+			Contract.Requires<ArgumentNullException>(commandFactory != null);
 		}
 
 		#endregion
