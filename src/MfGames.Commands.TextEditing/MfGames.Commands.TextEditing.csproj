@@ -78,6 +78,7 @@
     <Compile Include="IDeleteLineCommand.cs" />
     <Compile Include="IInsertTextCommand.cs" />
     <Compile Include="IInsertTextFromTextRangeCommand.cs" />
+    <Compile Include="ITextEditingCommand.cs" />
     <Compile Include="ITextEditingCommandController.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="TextPosition.cs" />

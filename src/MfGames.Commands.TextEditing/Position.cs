@@ -11,6 +11,25 @@ namespace MfGames.Commands.TextEditing
 	/// </summary>
 	public struct Position
 	{
+		#region Methods
+
+		public int Normalize(string lineText)
+		{
+			if (Index >= 0)
+			{
+				return Index;
+			}
+
+			if (Index == End.Index)
+			{
+				return lineText.Length;
+			}
+
+			throw new IndexOutOfRangeException("Encountered an invalid index: " + Index);
+		}
+
+		#endregion
+
 		#region Operators
 
 		public static explicit operator Position(int index)
@@ -55,18 +74,5 @@ namespace MfGames.Commands.TextEditing
 		public int Index;
 
 		#endregion
-
-		public int Normalize(string lineText)
-		{
-			if (Index >= 0)
-				return Index;
-
-			if (Index == End.Index)
-			{
-				return lineText.Length;
-			}
-
-			throw new IndexOutOfRangeException("Encountered an invalid index: " + Index);
-		}
 	}
 }

@@ -16,11 +16,11 @@ namespace MfGames.Commands
 	/// popups while still expanding into a (potentially translated) description with
 	/// toolkit-specific icons and elements.
 	/// </summary>
-	public class CommandFactoryManager<TStatus>
+	public class CommandFactoryManager<TContext>
 	{
 		#region Properties
 
-		public ICommandController<TStatus> CommandController { get; private set; }
+		public ICommandController<TContext> CommandController { get; private set; }
 
 		#endregion
 
@@ -34,7 +34,7 @@ namespace MfGames.Commands
 			Contract.Requires<ArgumentNullException>(commandFactoryReference != null);
 
 			// Grab the factory for the key pass the request to the factory.
-			ICommandFactory<TStatus> factory = GetFactory(commandFactoryReference.Key);
+			ICommandFactory<TContext> factory = GetFactory(commandFactoryReference.Key);
 			factory.Do(context, commandFactoryReference, this);
 		}
 
@@ -50,7 +50,7 @@ namespace MfGames.Commands
 			Contract.Requires<ArgumentNullException>(commandFactoryReference != null);
 
 			// Grab the factory for the key and return the title.
-			ICommandFactory<TStatus> factory = GetFactory(commandFactoryReference.Key);
+			ICommandFactory<TContext> factory = GetFactory(commandFactoryReference.Key);
 			string results = factory.GetTitle(commandFactoryReference);
 			return results;
 		}
@@ -59,7 +59,7 @@ namespace MfGames.Commands
 		/// Registers all of the known paths in a command view with the manager.
 		/// </summary>
 		/// <param name="commandFactory"></param>
-		public void Register(ICommandFactory<TStatus> commandFactory)
+		public void Register(ICommandFactory<TContext> commandFactory)
 		{
 			// Ensure our code contract.
 			Contract.Requires<ArgumentNullException>(commandFactory != null);
@@ -78,7 +78,7 @@ namespace MfGames.Commands
 		/// <param name="commandFactory"></param>
 		public void Register(
 			HierarchicalPath key,
-			ICommandFactory<TStatus> commandFactory)
+			ICommandFactory<TContext> commandFactory)
 		{
 			// Ensure our code contracts.
 			Contract.Requires<ArgumentNullException>(commandFactory != null);
@@ -91,13 +91,13 @@ namespace MfGames.Commands
 		/// Retrieves the factory associated with a given key, or throws an exception
 		/// if one cannot be found.
 		/// </summary>
-		private ICommandFactory<TStatus> GetFactory(HierarchicalPath key)
+		private ICommandFactory<TContext> GetFactory(HierarchicalPath key)
 		{
 			// Establish our contracts.
 			Contract.Requires<ArgumentNullException>(key != null);
 
 			// If we have the command factory registered, then grab it and return it.
-			ICommandFactory<TStatus> commandFactory;
+			ICommandFactory<TContext> commandFactory;
 
 			if (factories.TryGetValue(key, out commandFactory))
 			{
@@ -113,7 +113,7 @@ namespace MfGames.Commands
 
 		#region Constructors
 
-		public CommandFactoryManager(ICommandController<TStatus> commandController)
+		public CommandFactoryManager(ICommandController<TContext> commandController)
 		{
 			// Establish our code contracts.
 			Contract.Requires<ArgumentNullException>(commandController != null);
@@ -122,14 +122,14 @@ namespace MfGames.Commands
 			CommandController = commandController;
 
 			// Set up the internal collections.
-			factories = new Dictionary<HierarchicalPath, ICommandFactory<TStatus>>();
+			factories = new Dictionary<HierarchicalPath, ICommandFactory<TContext>>();
 		}
 
 		#endregion
 
 		#region Fields
 
-		private readonly Dictionary<HierarchicalPath, ICommandFactory<TStatus>>
+		private readonly Dictionary<HierarchicalPath, ICommandFactory<TContext>>
 			factories;
 
 		#endregion

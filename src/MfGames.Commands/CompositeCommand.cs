@@ -18,22 +18,12 @@ namespace MfGames.Commands
 		public List<IUndoableCommand<TContext>> Commands { get; private set; }
 		public bool IsTransient { get; private set; }
 
-		/// <summary>
-		/// Contains the command which will provide the final state for the
-		/// command while executing. If this is null, then the last command
-		/// executed will provide the state.
-		/// </summary>
-		public IUndoableCommand<TContext> StateCommand { get; set; }
-
 		#endregion
 
 		#region Methods
 
 		public void Do(TContext state)
 		{
-			// We always grab the initial state and keep it so we can restore it.
-			initialState = state;
-
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
 			// command executed.
@@ -86,12 +76,6 @@ namespace MfGames.Commands
 			// Initialize the collection.
 			Commands = new List<IUndoableCommand<TContext>>();
 		}
-
-		#endregion
-
-		#region Fields
-
-		private TContext initialState;
 
 		#endregion
 	}

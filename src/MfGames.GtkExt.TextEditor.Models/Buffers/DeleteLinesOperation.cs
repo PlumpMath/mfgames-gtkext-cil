@@ -10,26 +10,17 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// <summary>
 	/// Indicates an operation that inserts lines into a line buffer.
 	/// </summary>
-	public class DeleteLinesOperation: ILineBufferOperation,
+	public class DeleteLinesOperation: TextEditingOperation,
+		ILineBufferOperation,
 		IDeleteLineCommand<OperationContext>
 	{
 		#region Properties
-
-		public bool CanUndo
-		{
-			get { return true; }
-		}
 
 		/// <summary>
 		/// Gets the number of lines to delete.
 		/// </summary>
 		/// <value>The count.</value>
 		public int Count { get; private set; }
-
-		public bool IsTransient
-		{
-			get { return false; }
-		}
 
 		/// <summary>
 		/// Gets the index of the first line to start deleting.
@@ -50,18 +41,18 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		#region Methods
 
-		public void Do(OperationContext state)
+		public override void Do(OperationContext state)
 		{
 			// Delete the line from the buffer.
 			state.LineBuffer.DeleteLines(Line, 1);
 		}
 
-		public void Redo(OperationContext state)
+		public override void Redo(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Undo(OperationContext state)
+		public override void Undo(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}

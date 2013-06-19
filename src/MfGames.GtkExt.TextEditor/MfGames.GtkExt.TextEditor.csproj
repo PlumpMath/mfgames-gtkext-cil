@@ -159,7 +159,7 @@
     <Compile Include="Editing\Actions\KeyBindingAttribute.cs" />
     <Compile Include="Editing\Commands\DeleteLeftCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinPreviousParagraphCommandFactory.cs" />
-    <Compile Include="Editing\InsertTextFromTextRangeOperation.cs" />
+    <Compile Include="Editing\Commands\TextEditingCommandFactory.cs" />
     <Compile Include="Editing\LineBufferCommandController.cs" />
     <Compile Include="Renderers\BufferPositionHelper.cs" />
     <Compile Include="Renderers\Cache\CachedLine.cs" />

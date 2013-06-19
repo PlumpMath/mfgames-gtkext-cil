@@ -4,7 +4,7 @@
 
 namespace MfGames.Commands.TextEditing
 {
-	public interface IInsertTextCommand<TStatus>: IUndoableCommand<TStatus>
+	public interface IInsertTextCommand<in TContext>: ITextEditingCommand<TContext>
 	{
 	}
 }

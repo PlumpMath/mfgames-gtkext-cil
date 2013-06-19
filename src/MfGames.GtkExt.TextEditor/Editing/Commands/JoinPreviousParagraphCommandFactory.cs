@@ -2,9 +2,7 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 using MfGames.Commands.TextEditing.Composites;
@@ -14,8 +12,7 @@ using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
-	public class JoinPreviousParagraphCommandFactory:
-		ICommandFactory<OperationContext>
+	public class JoinPreviousParagraphCommandFactory: TextEditingCommandFactory
 	{
 		#region Properties
 
@@ -24,7 +21,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		/// </summary>
 		public static HierarchicalPath Key { get; private set; }
 
-		public IEnumerable<HierarchicalPath> Keys
+		public override IEnumerable<HierarchicalPath> Keys
 		{
 			get
 			{
@@ -39,34 +36,32 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Methods
 
-		public void Do(
-			object context,
-			CommandFactoryReference commandFactoryReference,
-			CommandFactoryManager<OperationContext> commandFactoryManager)
+		public override string GetTitle(
+			CommandFactoryReference commandFactoryReference)
 		{
-			// Ensure the code contracts for this state.
-			Contract.Requires<ArgumentNullException>(context != null);
-			Contract.Requires<InvalidCastException>(context is EditorViewController);
-			Contract.Requires<ArgumentNullException>(commandFactoryReference != null);
+			return "Join Previous Paragraph";
+		}
 
-			// Pull out some useful variables for processing.
-			var controller = (EditorViewController) context;
-			IDisplayContext displayContext = controller.DisplayContext;
-			BufferPosition position = displayContext.Caret.Position;
-
-			// Create the join previous paragraph command.
-			var operationContext =
-				new OperationContext(controller.DisplayContext.LineBuffer);
+		protected override void Do(
+			object context,
+			CommandFactoryManager<OperationContext> commandFactory,
+			OperationContext operationContext,
+			EditorViewController controller,
+			IDisplayContext displayContext,
+			BufferPosition position)
+		{
 			var command =
 				new JoinPreviousParagraphCommand<OperationContext>(
 					controller.CommandController, (Position) position.LineIndex);
 
 			controller.CommandController.Do(command, operationContext);
-		}
 
-		public string GetTitle(CommandFactoryReference commandFactoryReference)
-		{
-			return "Join Previous Paragraph";
+			// If we have a text position, we need to set it.
+			if (operationContext.Results.HasValue)
+			{
+				displayContext.Caret.Position =
+					operationContext.Results.Value.BufferPosition;
+			}
 		}
 
 		#endregion

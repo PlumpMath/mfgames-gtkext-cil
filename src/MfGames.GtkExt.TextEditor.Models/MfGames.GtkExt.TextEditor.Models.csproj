@@ -126,6 +126,7 @@
     <Compile Include="Buffers\ILineBufferOperation.cs" />
     <Compile Include="Buffers\ILineIndicator.cs" />
     <Compile Include="Buffers\InsertLinesOperation.cs" />
+    <Compile Include="Buffers\InsertTextFromTextRangeOperation.cs" />
     <Compile Include="Buffers\InsertTextOperation.cs" />
     <Compile Include="Buffers\LineBufferDecorator.cs" />
     <Compile Include="Buffers\LineBufferOperationType.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Buffers\LineRangeEventArgs.cs" />
     <Compile Include="Buffers\MultiplexedOperationLineBuffer.cs" />
     <Compile Include="Buffers\SetTextOperation.cs" />
+    <Compile Include="Buffers\TextEditingOperation.cs" />
     <Compile Include="CharacterRange.cs" />
     <Compile Include="LineBuffer.cs" />
     <Compile Include="LineRange.cs" />

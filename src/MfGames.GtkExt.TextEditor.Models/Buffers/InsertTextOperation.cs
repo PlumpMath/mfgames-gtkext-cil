@@ -14,7 +14,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// <see cref="SetTextOperation"/>, this inserts text into a specific position
 	/// and returns the buffer position for the end of the insert.
 	/// </summary>
-	public class InsertTextOperation: ILineBufferOperation,
+	public class InsertTextOperation: TextEditingOperation,
+		ILineBufferOperation,
 		IInsertTextCommand<OperationContext>
 	{
 		#region Properties
@@ -24,16 +25,6 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// </summary>
 		/// <value>The buffer position.</value>
 		public TextPosition BufferPosition { get; private set; }
-
-		public bool CanUndo
-		{
-			get { return true; }
-		}
-
-		public bool IsTransient
-		{
-			get { return false; }
-		}
 
 		/// <summary>
 		/// Gets the type of the operation representing this object.
@@ -54,12 +45,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		#region Methods
 
-		public void Do(OperationContext state)
+		public override void Do(OperationContext state)
 		{
 			// Grab the line from the line buffer.
 			string lineText = state.LineBuffer.GetLineText(
-				BufferPosition.Line,
-				LineContexts.Unformatted);
+				BufferPosition.Line, LineContexts.Unformatted);
 			var buffer = new StringBuilder(lineText);
 
 			// Normalize the character ranges.
@@ -70,14 +60,22 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			// Set the line in the buffer.
 			lineText = buffer.ToString();
 			state.LineBuffer.SetText(BufferPosition.Line, lineText);
+
+			// If we are updating the position, we need to do it here.
+			if (UpdateTextPosition)
+			{
+				state.Results =
+					new LineBufferOperationResults(
+						new BufferPosition(BufferPosition.Line, characterIndex + Text.Length));
+			}
 		}
 
-		public void Redo(OperationContext state)
+		public override void Redo(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Undo(OperationContext state)
+		public override void Undo(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}

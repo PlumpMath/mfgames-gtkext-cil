@@ -2,9 +2,7 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using MfGames.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
@@ -16,7 +14,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 	/// <summary>
 	/// Implements the command factory for handling the "delete left" (backspace).
 	/// </summary>
-	public class DeleteLeftCommandFactory: ICommandFactory<OperationContext>
+	public class DeleteLeftCommandFactory: TextEditingCommandFactory
 	{
 		#region Properties
 
@@ -25,7 +23,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		/// </summary>
 		public static HierarchicalPath Key { get; private set; }
 
-		public IEnumerable<HierarchicalPath> Keys
+		public override IEnumerable<HierarchicalPath> Keys
 		{
 			get
 			{
@@ -40,21 +38,20 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Methods
 
-		public void Do(
-			object context,
-			CommandFactoryReference commandFactoryReference,
-			CommandFactoryManager<OperationContext> commandFactoryManager)
+		public override string GetTitle(
+			CommandFactoryReference commandFactoryReference)
 		{
-			// Ensure the code contracts for this state.
-			Contract.Requires<ArgumentNullException>(context != null);
-			Contract.Requires<InvalidCastException>(context is EditorViewController);
-			Contract.Requires<ArgumentNullException>(commandFactoryReference != null);
+			return "Delete Left";
+		}
 
-			// Pull out some useful variables for processing.
-			var controller = (EditorViewController) context;
-			IDisplayContext displayContext = controller.DisplayContext;
-			BufferPosition position = displayContext.Caret.Position;
-
+		protected override void Do(
+			object context,
+			CommandFactoryManager<OperationContext> commandFactory,
+			OperationContext operationContext,
+			EditorViewController controller,
+			IDisplayContext displayContext,
+			BufferPosition position)
+		{
 			// Figure out which command we'll be passing the operation to.
 			HierarchicalPath key;
 			if (!displayContext.Caret.Selection.IsEmpty)
@@ -81,12 +78,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 			// Execute the command and pass the results to calling method.
 			var nextCommand = new CommandFactoryReference(key);
-			commandFactoryManager.Do(context, nextCommand);
-		}
-
-		public string GetTitle(CommandFactoryReference commandFactoryReference)
-		{
-			return "Delete Left";
+			commandFactory.Do(context, nextCommand);
 		}
 
 		#endregion

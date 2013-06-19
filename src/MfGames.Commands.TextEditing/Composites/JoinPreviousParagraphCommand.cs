@@ -35,6 +35,7 @@ namespace MfGames.Commands.TextEditing.Composites
 			IInsertTextCommand<TContext> whitespaceCommand =
 				controller.CreateInsertTextCommand(
 					new TextPosition(joinedLine, Position.End), " ");
+			whitespaceCommand.UpdateTextPosition = true;
 
 			// Insert the text from the line into the prvious line.
 			IInsertTextFromTextRangeCommand<TContext> insertCommand =
@@ -53,8 +54,6 @@ namespace MfGames.Commands.TextEditing.Composites
 			Commands.Add(whitespaceCommand);
 			Commands.Add(insertCommand);
 			Commands.Add(deleteCommand);
-
-			StateCommand = whitespaceCommand;
 		}
 
 		#endregion

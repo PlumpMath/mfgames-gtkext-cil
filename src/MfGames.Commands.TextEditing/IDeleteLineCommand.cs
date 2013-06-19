@@ -4,7 +4,7 @@
 
 namespace MfGames.Commands.TextEditing
 {
-	public interface IDeleteLineCommand<TStatus>: IUndoableCommand<TStatus>
+	public interface IDeleteLineCommand<in TContext>: ITextEditingCommand<TContext>
 	{
 	}
 }

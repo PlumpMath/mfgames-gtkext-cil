@@ -37,6 +37,20 @@ namespace MfGames.GtkExt.TextEditor.Models
 
 		#region Methods
 
+		public override LineBufferOperationResults DeleteLines(
+			int lineIndex,
+			int count)
+		{
+			// Delete the lines from the buffer.
+			lines.RemoveRange(lineIndex, count);
+
+			// Fire an delete line change.
+			RaiseLinesDeleted(new LineRangeEventArgs(lineIndex, count));
+
+			// Return the appropriate results.
+			return new LineBufferOperationResults(new BufferPosition(lineIndex, 0));
+		}
+
 		/// <summary>
 		/// Gets the length of the line.
 		/// </summary>
@@ -149,20 +163,6 @@ namespace MfGames.GtkExt.TextEditor.Models
 					new BufferPosition(lineIndex, operation.CharacterRange.StartIndex));
 		}
 
-		public override LineBufferOperationResults DeleteLines(int lineIndex,int count)
-		{
-			// Delete the lines from the buffer.
-			lines.RemoveRange(lineIndex, count);
-
-			// Fire an delete line change.
-			RaiseLinesDeleted(
-				new LineRangeEventArgs(lineIndex,count));
-
-			// Return the appropriate results.
-			return
-				new LineBufferOperationResults(new BufferPosition(lineIndex,0));
-		}
-
 		/// <summary>
 		/// Performs the set text operation on the buffer.
 		/// </summary>
@@ -198,12 +198,10 @@ namespace MfGames.GtkExt.TextEditor.Models
 			lines.RemoveRange(operation.Line, operation.Count);
 
 			// Fire an delete line change.
-			RaiseLinesDeleted(
-				new LineRangeEventArgs(operation.Line, operation.Count));
+			RaiseLinesDeleted(new LineRangeEventArgs(operation.Line, operation.Count));
 
 			// Return the appropriate results.
-			return
-				new LineBufferOperationResults(new BufferPosition(operation.Line, 0));
+			return new LineBufferOperationResults(new BufferPosition(operation.Line, 0));
 		}
 
 		/// <summary>

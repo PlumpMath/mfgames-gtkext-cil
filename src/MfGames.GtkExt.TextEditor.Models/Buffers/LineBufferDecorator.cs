@@ -14,11 +14,6 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// </summary>
 	public abstract class LineBufferDecorator: LineBuffer
 	{
-		public override LineBufferOperationResults DeleteLines(int lineIndex,int count)
-		{
-			LineBufferOperationResults results = LineBuffer.DeleteLines(lineIndex, count);
-			return results;
-		}
 		#region Properties
 
 		/// <summary>
@@ -51,6 +46,14 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		#endregion
 
 		#region Methods
+
+		public override LineBufferOperationResults DeleteLines(
+			int lineIndex,
+			int count)
+		{
+			LineBufferOperationResults results = LineBuffer.DeleteLines(lineIndex, count);
+			return results;
+		}
 
 		/// <summary>
 		/// Performs the given operation on the line buffer. This will raise any

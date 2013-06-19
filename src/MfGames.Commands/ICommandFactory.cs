@@ -14,7 +14,7 @@ namespace MfGames.Commands
 	/// the basic formatting of a command by providing the enabled and visible state for
 	/// command references along with descriptive text.
 	/// </summary>
-	public interface ICommandFactory<TStatus>
+	public interface ICommandFactory<TContext>
 	{
 		#region Properties
 
@@ -33,10 +33,11 @@ namespace MfGames.Commands
 		/// </summary>
 		/// <param name="context">The context of the request. This will typically be a widget or graphical element that has the focus when the command reference is activated.</param>
 		/// <param name="commandFactoryReference">The command reference to be activated or used.</param>
+		/// <param name="controller"></param>
 		void Do(
 			object context,
 			CommandFactoryReference commandFactoryReference,
-			CommandFactoryManager<TStatus> controller);
+			CommandFactoryManager<TContext> controller);
 
 		/// <summary>
 		/// Retrives a short, descriptive name of the command for the user. This should

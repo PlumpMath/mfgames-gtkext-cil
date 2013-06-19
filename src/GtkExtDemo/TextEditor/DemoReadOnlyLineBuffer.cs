@@ -39,6 +39,13 @@ namespace GtkExtDemo.TextEditor
 
 		#region Methods
 
+		public override LineBufferOperationResults DeleteLines(
+			int lineIndex,
+			int count)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// Performs the given operation, raising any events for changing.
 		/// </summary>
@@ -77,10 +84,6 @@ namespace GtkExtDemo.TextEditor
 			return GenerateText(lineIndex);
 		}
 
-		public override LineBufferOperationResults DeleteLines(int lineIndex,int count)
-		{
-			throw new NotImplementedException();
-		}
 		/// <summary>
 		/// Generates random text using the line index as a seed.
 		/// </summary>
