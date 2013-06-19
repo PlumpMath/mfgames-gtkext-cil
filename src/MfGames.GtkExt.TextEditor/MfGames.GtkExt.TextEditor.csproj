@@ -158,6 +158,8 @@
     <Compile Include="Editing\Actions\ActionStateAttribute.cs" />
     <Compile Include="Editing\Actions\KeyBindingAttribute.cs" />
     <Compile Include="Editing\Commands\DeleteLeftCommandFactory.cs" />
+    <Compile Include="Editing\Commands\JoinPreviousParagraphCommandFactory.cs" />
+    <Compile Include="Editing\LineBufferCommandController.cs" />
     <Compile Include="Renderers\BufferPositionHelper.cs" />
     <Compile Include="Renderers\Cache\CachedLine.cs" />
     <Compile Include="Renderers\Cache\CachedTextRenderer.cs" />
@@ -188,6 +190,10 @@
     <Compile Include="EditorView.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MfGames.Commands.TextEditing\MfGames.Commands.TextEditing.csproj">
+      <Project>{E3991D2E-B9D7-4C7D-9FF6-5420006C23DD}</Project>
+      <Name>MfGames.Commands.TextEditing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MfGames.Commands\MfGames.Commands.csproj">
       <Project>{9e517018-c1d3-46ad-aa1d-e6fb45165a3f}</Project>
       <Name>MfGames.Commands</Name>

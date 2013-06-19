@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using MfGames.Commands;
+using MfGames.Commands.TextEditing;
+using MfGames.Commands.TextEditing.Composites;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
@@ -14,10 +16,7 @@ using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
-	/// <summary>
-	/// Implements the command factory for handling the "delete left" (backspace).
-	/// </summary>
-	public class DeleteLeftCommandFactory:
+	public class JoinPreviousParagraphCommandFactory:
 		ICommandFactory<LineBufferOperationResults?>
 	{
 		#region Properties
@@ -57,6 +56,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			IDisplayContext displayContext = controller.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 
+			// Create the join previous paragraph command.
+			var command =
+				new JoinPreviousParagraphCommand<LineBufferOperationResults?>(
+					controller.CommandController, (Position) position.LineIndex);
+
 			// Figure out which command we'll be passing the operation to.
 			HierarchicalPath key;
 			if (!displayContext.Caret.Selection.IsEmpty)
@@ -73,7 +77,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			else if (position.CharacterIndex == 0)
 			{
 				// If we are at the beginning of the line, then we are combining paragraphs.
-				key = JoinPreviousParagraphCommandFactory.Key;
+				key = Key;
+				return null;
 			}
 			else
 			{
@@ -90,17 +95,18 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		public string GetTitle(CommandFactoryReference commandFactoryReference)
 		{
-			return "Delete Left";
+			return "Join Previous Paragraph";
 		}
 
 		#endregion
 
 		#region Constructors
 
-		static DeleteLeftCommandFactory()
+		static JoinPreviousParagraphCommandFactory()
 		{
 			Key = new HierarchicalPath(
-				"/Text Editor/Delete Left", HierarchicalPathOptions.InternStrings);
+				"/Text Editor/Join Previous Paragraph",
+				HierarchicalPathOptions.InternStrings);
 		}
 
 		#endregion

@@ -10,6 +10,7 @@ using Cairo;
 using Gdk;
 using Gtk;
 using MfGames.Commands;
+using MfGames.Commands.TextEditing;
 using MfGames.Extensions.System;
 using MfGames.Extensions.System.Reflection;
 using MfGames.GtkExt.TextEditor.Editing.Actions;
@@ -36,7 +37,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// Contains the command controller used to execute commands on
 		/// the line buffer associated with this controller.
 		/// </summary>
-		public ICommandController<LineBufferOperationResults?> CommandController { get; private set; }
+		public ITextEditingCommandController<LineBufferOperationResults?>
+			CommandController { get; private set; }
 
 		/// <summary>
 		/// Contains the command factory for processing commands.
@@ -127,6 +129,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 
 			// Register our known command factories.
 			CommandFactory.Register(new DeleteLeftCommandFactory());
+			CommandFactory.Register(new JoinPreviousParagraphCommandFactory());
 
 			// Go through the types in the assembly.
 			foreach (Type type in assembly.GetTypes())
@@ -633,8 +636,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			// Bind the action states.
 			states = new ActionStateCollection();
 			Commands = new CommandManager();
-			CommandController =
-				new UndoRedoCommandController<LineBufferOperationResults?>();
+			CommandController = new LineBufferCommandController();
 			CommandFactory =
 				new CommandFactoryManager<LineBufferOperationResults?>(CommandController);
 

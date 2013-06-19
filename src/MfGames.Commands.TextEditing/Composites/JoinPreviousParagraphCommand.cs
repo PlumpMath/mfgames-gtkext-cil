@@ -13,11 +13,11 @@ namespace MfGames.Commands.TextEditing.Composites
 	/// a space between the two lines.
 	/// </summary>
 	/// <typeparam name="TState"></typeparam>
-	public class JoinLeftParagraphCommand<TState>: CompositeCommand<TState>
+	public class JoinPreviousParagraphCommand<TState>: CompositeCommand<TState>
 	{
 		#region Constructors
 
-		public JoinLeftParagraphCommand(
+		public JoinPreviousParagraphCommand(
 			ITextEditingCommandController<TState> controller,
 			Position line)
 			: base(true, false)
