@@ -12,10 +12,10 @@ namespace MfGames.Commands
 	/// controller handles undo and redo functionality, performing the actions, and
 	/// keeping track of the last state of the executing command.
 	/// </summary>
-	/// <typeparam name="TState">
+	/// <typeparam name="TContext">
 	/// The type of state object needed to be updated with the execution of commands.
 	/// </typeparam>
-	public class UndoRedoCommandController<TState>: ICommandController<TState>
+	public class UndoRedoCommandController<TContext>: ICommandController<TContext>
 	{
 		#region Properties
 
@@ -39,7 +39,7 @@ namespace MfGames.Commands
 		/// Contains the state of the last command executed, regardless if it was a Do(),
 		/// Undo(), or Redo().
 		/// </summary>
-		public TState State { get; private set; }
+		public TContext State { get; private set; }
 
 		#endregion
 
@@ -50,11 +50,11 @@ namespace MfGames.Commands
 		/// </summary>
 		/// <param name="command">The command to execute.</param>
 		public void Do(
-			ICommand<TState> command,
-			TState state)
+			ICommand<TContext> command,
+			TContext state)
 		{
 			// Determine if this command is undoable or not.
-			var undoableCommand = command as IUndoableCommand<TState>;
+			var undoableCommand = command as IUndoableCommand<TContext>;
 
 			if (undoableCommand == null
 				|| !undoableCommand.CanUndo)
@@ -76,13 +76,13 @@ namespace MfGames.Commands
 		/// <summary>
 		/// Re-performs a command that was recently undone.
 		/// </summary>
-		public void Redo(TState state)
+		public void Redo(TContext state)
 		{
 			// Make sure we're in a known and valid state.
 			Contract.Assert(CanRedo);
 
 			// Pull off the first command from the redo buffer and perform it.
-			ICommand<TState> command = redoCommands[0];
+			ICommand<TContext> command = redoCommands[0];
 			redoCommands.RemoveAt(0);
 			Do(command, state, false, true);
 		}
@@ -90,14 +90,14 @@ namespace MfGames.Commands
 		/// <summary>
 		/// Undoes a command that was recently done, either through the Do() or Redo().
 		/// </summary>
-		public void Undo(TState state)
+		public void Undo(TContext state)
 		{
 			// Make sure we're in a known and valid state.
 			Contract.Assert(CanUndo);
 
 			// Pull off the first undo command, get its inverse operation, and
 			// perform it.
-			ICommand<TState> command = undoCommands[0];
+			ICommand<TContext> command = undoCommands[0];
 			undoCommands.RemoveAt(0);
 			Do(command, state, true, true);
 		}
@@ -112,13 +112,13 @@ namespace MfGames.Commands
 		/// <param name="useUndo">if set to <c>true</c> [use inverse].</param>
 		/// <param name="ignoreDeferredCommands">if set to <c>true</c> [ignore deferred commands].</param>
 		private void Do(
-			ICommand<TState> command,
-			TState state,
+			ICommand<TContext> command,
+			TContext state,
 			bool useUndo,
 			bool ignoreDeferredCommands)
 		{
 			// Perform the action based on undo or redo.
-			var undoableCommand = command as IUndoableCommand<TState>;
+			var undoableCommand = command as IUndoableCommand<TContext>;
 
 			if (undoableCommand == null
 				|| !useUndo)
@@ -160,12 +160,12 @@ namespace MfGames.Commands
 			{
 				// Copy the list and clear it out in case any of these actions
 				// add any more deferred commands.
-				var commands = new List<ICommand<TState>>(deferredCommands);
+				var commands = new List<ICommand<TContext>>(deferredCommands);
 
 				deferredCommands.Clear();
 
 				// Go through the commands and process each one.
-				foreach (ICommand<TState> deferredCommand in commands)
+				foreach (ICommand<TContext> deferredCommand in commands)
 				{
 					Do(deferredCommand, state);
 				}
@@ -178,18 +178,18 @@ namespace MfGames.Commands
 
 		public UndoRedoCommandController()
 		{
-			undoCommands = new List<ICommand<TState>>();
-			redoCommands = new List<ICommand<TState>>();
-			deferredCommands = new List<ICommand<TState>>();
+			undoCommands = new List<ICommand<TContext>>();
+			redoCommands = new List<ICommand<TContext>>();
+			deferredCommands = new List<ICommand<TContext>>();
 		}
 
 		#endregion
 
 		#region Fields
 
-		private readonly List<ICommand<TState>> deferredCommands;
-		private readonly List<ICommand<TState>> redoCommands;
-		private readonly List<ICommand<TState>> undoCommands;
+		private readonly List<ICommand<TContext>> deferredCommands;
+		private readonly List<ICommand<TContext>> redoCommands;
+		private readonly List<ICommand<TContext>> undoCommands;
 
 		#endregion
 	}

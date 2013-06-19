@@ -9,13 +9,13 @@ namespace MfGames.Commands
 	/// <summary>
 	/// A command that consists of an order list of inner commands.
 	/// </summary>
-	/// <typeparam name="TState"></typeparam>
-	public class CompositeCommand<TState>: IUndoableCommand<TState>
+	/// <typeparam name="TContext"></typeparam>
+	public class CompositeCommand<TContext>: IUndoableCommand<TContext>
 	{
 		#region Properties
 
 		public bool CanUndo { get; private set; }
-		public List<IUndoableCommand<TState>> Commands { get; private set; }
+		public List<IUndoableCommand<TContext>> Commands { get; private set; }
 		public bool IsTransient { get; private set; }
 
 		/// <summary>
@@ -23,13 +23,13 @@ namespace MfGames.Commands
 		/// command while executing. If this is null, then the last command
 		/// executed will provide the state.
 		/// </summary>
-		public IUndoableCommand<TState> StateCommand { get; set; }
+		public IUndoableCommand<TContext> StateCommand { get; set; }
 
 		#endregion
 
 		#region Methods
 
-		public void Do(TState state)
+		public void Do(TContext state)
 		{
 			// We always grab the initial state and keep it so we can restore it.
 			initialState = state;
@@ -37,37 +37,37 @@ namespace MfGames.Commands
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
 			// command executed.
-			foreach (IUndoableCommand<TState> command in Commands)
+			foreach (IUndoableCommand<TContext> command in Commands)
 			{
 				// Execut the command and get its state.
 				command.Do(state);
 			}
 		}
 
-		public void Redo(TState state)
+		public void Redo(TContext state)
 		{
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
 			// command executed.
-			foreach (IUndoableCommand<TState> command in Commands)
+			foreach (IUndoableCommand<TContext> command in Commands)
 			{
 				// Execut the command and get its state.
 				command.Redo(state);
 			}
 		}
 
-		public void Undo(TState state)
+		public void Undo(TContext state)
 		{
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
 			// command executed.
-			List<IUndoableCommand<TState>> commands = Commands;
+			List<IUndoableCommand<TContext>> commands = Commands;
 
 			for (int index = commands.Count - 1;
 				index >= commands.Count;
 				index--)
 			{
-				IUndoableCommand<TState> command = commands[index];
+				IUndoableCommand<TContext> command = commands[index];
 			}
 		}
 
@@ -84,14 +84,14 @@ namespace MfGames.Commands
 			IsTransient = isTransient;
 
 			// Initialize the collection.
-			Commands = new List<IUndoableCommand<TState>>();
+			Commands = new List<IUndoableCommand<TContext>>();
 		}
 
 		#endregion
 
 		#region Fields
 
-		private TState initialState;
+		private TContext initialState;
 
 		#endregion
 	}

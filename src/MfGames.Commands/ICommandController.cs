@@ -8,10 +8,10 @@ namespace MfGames.Commands
 	/// Describes the interface for a command controller, the system for executing
 	/// commands.
 	/// </summary>
-	/// <typeparam name="TState">
+	/// <typeparam name="TContext">
 	/// The type of object that would represent the state of the system after executing a command.
 	/// </typeparam>
-	public interface ICommandController<TState>
+	public interface ICommandController<TContext>
 	{
 		#region Properties
 
@@ -29,7 +29,7 @@ namespace MfGames.Commands
 		/// Contains the state of the last command executed, regardless if it was a Do(),
 		/// Undo(), or Redo().
 		/// </summary>
-		TState State { get; }
+		TContext State { get; }
 
 		#endregion
 
@@ -40,18 +40,18 @@ namespace MfGames.Commands
 		/// </summary>
 		/// <param name="command">The command to execute.</param>
 		void Do(
-			ICommand<TState> command,
-			TState state);
+			ICommand<TContext> command,
+			TContext state);
 
 		/// <summary>
 		/// Re-performs a command that was recently undone.
 		/// </summary>
-		void Redo(TState state);
+		void Redo(TContext state);
 
 		/// <summary>
 		/// Undoes a command that was recently done, either through the Do() or Redo().
 		/// </summary>
-		void Undo(TState state);
+		void Undo(TContext state);
 
 		#endregion
 	}

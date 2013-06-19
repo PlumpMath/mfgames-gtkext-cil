@@ -8,8 +8,8 @@ namespace MfGames.Commands
 	/// A command that can be undone and redone, with various controls to dictate
 	/// when this is available.
 	/// </summary>
-	/// <typeparam name="TState"></typeparam>
-	public interface IUndoableCommand<in TState>: ICommand<TState>
+	/// <typeparam name="TContext"></typeparam>
+	public interface IUndoableCommand<in TContext>: ICommand<TContext>
 	{
 		#region Properties
 
@@ -39,7 +39,7 @@ namespace MfGames.Commands
 		/// to the state at the point of the initial Do().
 		/// </summary>
 		/// <returns>The state of the system after executing.</returns>
-		void Redo(TState state);
+		void Redo(TContext state);
 
 		/// <summary>
 		/// Undoes the command to return the system to the state before the command
@@ -48,7 +48,7 @@ namespace MfGames.Commands
 		/// only be called if <see cref="CanUndo"/> is true.
 		/// </summary>
 		/// <returns>The state of the system after executing.</returns>
-		void Undo(TState state);
+		void Undo(TContext state);
 
 		#endregion
 	}

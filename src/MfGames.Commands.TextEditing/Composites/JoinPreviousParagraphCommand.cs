@@ -12,13 +12,13 @@ namespace MfGames.Commands.TextEditing.Composites
 	/// It sets the cursor/caret position to the end of the previous line and adds
 	/// a space between the two lines.
 	/// </summary>
-	/// <typeparam name="TState"></typeparam>
-	public class JoinPreviousParagraphCommand<TState>: CompositeCommand<TState>
+	/// <typeparam name="TContext"></typeparam>
+	public class JoinPreviousParagraphCommand<TContext>: CompositeCommand<TContext>
 	{
 		#region Constructors
 
 		public JoinPreviousParagraphCommand(
-			ITextEditingCommandController<TState> controller,
+			ITextEditingCommandController<TContext> controller,
 			Position line)
 			: base(true, false)
 		{
@@ -32,12 +32,12 @@ namespace MfGames.Commands.TextEditing.Composites
 			// We start by appending the whitespace to the end of the first line.
 			var joinedLine = new Position(line - 1);
 
-			IInsertTextCommand<TState> whitespaceCommand =
+			IInsertTextCommand<TContext> whitespaceCommand =
 				controller.CreateInsertTextCommand(
 					new TextPosition(joinedLine, Position.End), " ");
 
 			// Insert the text from the line into the prvious line.
-			IInsertTextFromTextRangeCommand<TState> insertCommand =
+			IInsertTextFromTextRangeCommand<TContext> insertCommand =
 				controller.CreateInsertTextFromTextRangeCommand(
 					new TextPosition(joinedLine, Position.End),
 					new TextRange(
@@ -45,7 +45,7 @@ namespace MfGames.Commands.TextEditing.Composites
 						new TextPosition(line, Position.End)));
 
 			// Finally, delete the current line since we merged it.
-			IDeleteLineCommand<TState> deleteCommand =
+			IDeleteLineCommand<TContext> deleteCommand =
 				controller.CreateDeleteLineCommand(line);
 
 			// Add the commands into the composite and indicate that the whitespace
