@@ -3,14 +3,19 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
+using System.Text;
 using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Models;
+using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 namespace MfGames.GtkExt.TextEditor.Editing
 {
 	public class InsertTextFromTextRangeOperation:
 		IInsertTextFromTextRangeCommand<OperationContext>
 	{
+		public TextPosition DestinationPosition { get; private set; }
+		public TextRange SourceRange { get; private set; }
+
 		#region Properties
 
 		public bool CanUndo
@@ -29,7 +34,26 @@ namespace MfGames.GtkExt.TextEditor.Editing
 
 		public void Do(OperationContext state)
 		{
-			throw new NotImplementedException();
+			// Grab the text from the source line.
+			string sourceLine = state.LineBuffer.GetLineText(
+				SourceRange.Begin.Line,LineContexts.Unformatted);
+			int sourceBegin = SourceRange.Begin.Character.Normalize(sourceLine);
+			int sourceEnd = SourceRange.End.Character.Normalize(sourceLine);
+			string sourceText = sourceLine.Substring(
+				sourceBegin, sourceEnd - sourceBegin);
+
+			// Insert the text from the source line into the destination.
+			string destinationLine = state.LineBuffer.GetLineText(
+				DestinationPosition.Line,
+				LineContexts.Unformatted);
+			var buffer = new StringBuilder(destinationLine);
+			int characterIndex = DestinationPosition.Character.Normalize(destinationLine);
+
+			buffer.Insert(characterIndex,sourceText);
+
+			// Set the line in the buffer.
+			destinationLine = buffer.ToString();
+			state.LineBuffer.SetText(DestinationPosition.Line, destinationLine);
 		}
 
 		public void Redo(OperationContext state)
@@ -50,6 +74,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			TextPosition destinationPosition,
 			TextRange sourceRange)
 		{
+			DestinationPosition = destinationPosition;
+			SourceRange = sourceRange;
 		}
 
 		#endregion

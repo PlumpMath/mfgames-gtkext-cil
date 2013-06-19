@@ -77,6 +77,10 @@ namespace GtkExtDemo.TextEditor
 			return GenerateText(lineIndex);
 		}
 
+		public override LineBufferOperationResults DeleteLines(int lineIndex,int count)
+		{
+			throw new NotImplementedException();
+		}
 		/// <summary>
 		/// Generates random text using the line index as a seed.
 		/// </summary>

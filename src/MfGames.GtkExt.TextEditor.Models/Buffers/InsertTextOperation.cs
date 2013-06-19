@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -55,7 +56,20 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		public void Do(OperationContext state)
 		{
-			throw new NotImplementedException();
+			// Grab the line from the line buffer.
+			string lineText = state.LineBuffer.GetLineText(
+				BufferPosition.Line,
+				LineContexts.Unformatted);
+			var buffer = new StringBuilder(lineText);
+
+			// Normalize the character ranges.
+			int characterIndex = BufferPosition.Character.Normalize(lineText);
+
+			buffer.Insert(characterIndex, Text);
+
+			// Set the line in the buffer.
+			lineText = buffer.ToString();
+			state.LineBuffer.SetText(BufferPosition.Line, lineText);
 		}
 
 		public void Redo(OperationContext state)

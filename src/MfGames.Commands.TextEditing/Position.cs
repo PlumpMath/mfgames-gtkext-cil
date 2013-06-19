@@ -2,6 +2,8 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using System;
+
 namespace MfGames.Commands.TextEditing
 {
 	/// <summary>
@@ -53,5 +55,18 @@ namespace MfGames.Commands.TextEditing
 		public int Index;
 
 		#endregion
+
+		public int Normalize(string lineText)
+		{
+			if (Index >= 0)
+				return Index;
+
+			if (Index == End.Index)
+			{
+				return lineText.Length;
+			}
+
+			throw new IndexOutOfRangeException("Encountered an invalid index: " + Index);
+		}
 	}
 }

@@ -35,7 +35,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// Gets the index of the first line to start deleting.
 		/// </summary>
 		/// <value>The index of the line.</value>
-		public int LineIndex { get; private set; }
+		public int Line { get; private set; }
 
 		/// <summary>
 		/// Gets the type of the operation representing this object.
@@ -52,7 +52,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		public void Do(OperationContext state)
 		{
-			throw new NotImplementedException();
+			// Delete the line from the buffer.
+			state.LineBuffer.DeleteLines(Line, 1);
 		}
 
 		public void Redo(OperationContext state)
@@ -78,7 +79,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			int lineIndex,
 			int count)
 		{
-			LineIndex = lineIndex;
+			Line = lineIndex;
 			Count = count;
 		}
 

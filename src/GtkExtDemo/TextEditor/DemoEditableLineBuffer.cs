@@ -210,7 +210,7 @@ namespace GtkExtDemo.TextEditor
 				lineIndex++)
 			{
 				// If we have a key, shift it.
-				if (lineIndex >= operation.LineIndex
+				if (lineIndex >= operation.Line
 					&& styles.Contains(lineIndex))
 				{
 					styles[lineIndex - operation.Count] = styles[lineIndex];

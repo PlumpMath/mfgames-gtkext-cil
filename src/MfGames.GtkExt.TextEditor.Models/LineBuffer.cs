@@ -57,12 +57,9 @@ namespace MfGames.GtkExt.TextEditor.Models
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="count">The count.</param>
-		public LineBufferOperationResults DeleteLines(
+		public abstract LineBufferOperationResults DeleteLines(
 			int lineIndex,
-			int count)
-		{
-			return Do(new DeleteLinesOperation(lineIndex, count));
-		}
+			int count);
 
 		/// <summary>
 		/// Deletes the text from the buffer using a <see cref="DeleteTextOperation"/>.
