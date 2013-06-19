@@ -109,20 +109,26 @@ namespace MfGames.Commands
 		/// </summary>
 		/// <param name="command">The command.</param>
 		/// <param name="state"></param>
-		/// <param name="useDo">if set to <c>true</c> [use inverse].</param>
+		/// <param name="useUndo">if set to <c>true</c> [use inverse].</param>
 		/// <param name="ignoreDeferredCommands">if set to <c>true</c> [ignore deferred commands].</param>
-		private void Do(ICommand<TState> command,
+		private void Do(
+			ICommand<TState> command,
 			TState state,
-			bool useDo,
+			bool useUndo,
 			bool ignoreDeferredCommands)
 		{
 			// Perform the action based on undo or redo.
 			var undoableCommand = command as IUndoableCommand<TState>;
 
-			if (undoableCommand == null || useDo)
+			if (undoableCommand == null
+				|| !useUndo)
+			{
 				command.Do(state);
+			}
 			else
+			{
 				undoableCommand.Undo(state);
+			}
 
 			// Add the action to the appropriate buffer. This assumes that the undo
 			// and redo operations have been properly managed before this method is
@@ -132,7 +138,7 @@ namespace MfGames.Commands
 				&& undoableCommand.CanUndo
 				&& !undoableCommand.IsTransient)
 			{
-				if (useDo)
+				if (useUndo)
 				{
 					redoCommands.Insert(0, command);
 				}

@@ -100,10 +100,10 @@ namespace MfGames.GtkExt.TextEditor.Models
 			InsertTextOperation operation)
 		{
 			// Get the text from the buffer, insert the text, and put it back.
-			int lineIndex = operation.BufferPosition.LineIndex;
+			int lineIndex = operation.BufferPosition.Line;
 			string line = lines[lineIndex];
 			int characterIndex = Math.Min(
-				operation.BufferPosition.CharacterIndex, line.Length);
+				operation.BufferPosition.Character, line.Length);
 
 			string newLine = line.Insert(characterIndex, operation.Text);
 

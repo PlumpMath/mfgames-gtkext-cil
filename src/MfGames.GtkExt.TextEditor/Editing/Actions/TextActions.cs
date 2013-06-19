@@ -7,6 +7,7 @@ using System.Text;
 using Gdk;
 using Gtk;
 using MfGames.Commands;
+using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Editing.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
@@ -417,8 +418,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			}
 
 			// Create the operation to change the text.
-			var insertTextOperation = new InsertTextOperation(
-				position, unicode.ToString());
+			var insertTextOperation =
+				new InsertTextOperation(
+					(Position) position.LineIndex,
+					(Position) position.CharacterIndex,
+					unicode.ToString());
 
 			// Figure out if we are doing a new command or joining into the
 			// previous one. If we are joining, then we just perform the operations

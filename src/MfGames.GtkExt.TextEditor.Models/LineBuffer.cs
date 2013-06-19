@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 namespace MfGames.GtkExt.TextEditor.Models
@@ -247,7 +248,12 @@ namespace MfGames.GtkExt.TextEditor.Models
 			BufferPosition bufferPosition,
 			string text)
 		{
-			return Do(new InsertTextOperation(bufferPosition, text));
+			return
+				Do(
+					new InsertTextOperation(
+						(Position) bufferPosition.LineIndex,
+						(Position) bufferPosition.CharacterIndex,
+						text));
 		}
 
 		/// <summary>

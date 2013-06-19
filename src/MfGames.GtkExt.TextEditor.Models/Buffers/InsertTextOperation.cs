@@ -22,7 +22,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// Gets or sets the buffer position for the insert operation.
 		/// </summary>
 		/// <value>The buffer position.</value>
-		public BufferPosition BufferPosition { get; private set; }
+		public TextPosition BufferPosition { get; private set; }
 
 		public bool CanUndo
 		{
@@ -79,10 +79,10 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <param name="characterIndex">Index of the character.</param>
 		/// <param name="text">The text.</param>
 		public InsertTextOperation(
-			int lineIndex,
-			int characterIndex,
+			Position lineIndex,
+			Position characterIndex,
 			string text)
-			: this(new BufferPosition(lineIndex, characterIndex), text)
+			: this(new TextPosition(lineIndex, characterIndex), text)
 		{
 		}
 
@@ -92,7 +92,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <param name="bufferPosition">The buffer position.</param>
 		/// <param name="text">The text.</param>
 		public InsertTextOperation(
-			BufferPosition bufferPosition,
+			TextPosition bufferPosition,
 			string text)
 		{
 			if (text == null)

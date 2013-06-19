@@ -37,8 +37,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// Contains the command controller used to execute commands on
 		/// the line buffer associated with this controller.
 		/// </summary>
-		public ITextEditingCommandController<OperationContext>
-			CommandController { get; private set; }
+		public ITextEditingCommandController<OperationContext> CommandController { get; private set; }
 
 		/// <summary>
 		/// Contains the command factory for processing commands.

@@ -15,15 +15,14 @@ namespace MfGames.GtkExt.TextEditor.Editing
 	{
 		#region Methods
 
-		public IDeleteLineCommand<OperationContext> CreateDeleteLineCommand
-			(Position line)
+		public IDeleteLineCommand<OperationContext> CreateDeleteLineCommand(
+			Position line)
 		{
 			var operation = new DeleteLinesOperation(line, 1);
 			return operation;
 		}
 
-		public IInsertTextCommand<OperationContext> CreateInsertTextCommand
-			(
+		public IInsertTextCommand<OperationContext> CreateInsertTextCommand(
 			TextPosition textPosition,
 			string text)
 		{

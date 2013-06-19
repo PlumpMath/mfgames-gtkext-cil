@@ -8,12 +8,20 @@ namespace MfGames.GtkExt.TextEditor.Models
 {
 	public class OperationContext
 	{
+		#region Properties
+
+		public LineBuffer LineBuffer { get; private set; }
+		public LineBufferOperationResults? Results { get; set; }
+
+		#endregion
+
+		#region Constructors
+
 		public OperationContext(LineBuffer lineBuffer)
 		{
 			LineBuffer = lineBuffer;
 		}
 
-		public LineBufferOperationResults? Results { get; set; }
-		public LineBuffer LineBuffer { get; private set; }
+		#endregion
 	}
 }

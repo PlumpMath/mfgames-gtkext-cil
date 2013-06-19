@@ -8,7 +8,6 @@ using System.Diagnostics.Contracts;
 using MfGames.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
-using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Renderers;
 using MfGames.HierarchicalPaths;
 
@@ -17,8 +16,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 	/// <summary>
 	/// Implements the command factory for handling the "delete left" (backspace).
 	/// </summary>
-	public class DeleteLeftCommandFactory:
-		ICommandFactory<OperationContext>
+	public class DeleteLeftCommandFactory: ICommandFactory<OperationContext>
 	{
 		#region Properties
 

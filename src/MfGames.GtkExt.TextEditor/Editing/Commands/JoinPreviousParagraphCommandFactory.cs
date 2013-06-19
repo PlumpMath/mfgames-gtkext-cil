@@ -10,8 +10,6 @@ using MfGames.Commands.TextEditing;
 using MfGames.Commands.TextEditing.Composites;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
-using MfGames.GtkExt.TextEditor.Models.Buffers;
-using MfGames.GtkExt.TextEditor.Renderers;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
@@ -57,38 +55,13 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			BufferPosition position = displayContext.Caret.Position;
 
 			// Create the join previous paragraph command.
+			var operationContext =
+				new OperationContext(controller.DisplayContext.LineBuffer);
 			var command =
 				new JoinPreviousParagraphCommand<OperationContext>(
 					controller.CommandController, (Position) position.LineIndex);
 
-			// Figure out which command we'll be passing the operation to.
-			HierarchicalPath key;
-			if (!displayContext.Caret.Selection.IsEmpty)
-			{
-				// If we have a selection, then we use the Delete Selection command.
-				//key = DeleteSelectionCommandFactory.Key;
-				return;
-			}
-			else if (position.IsBeginningOfBuffer(controller.DisplayContext))
-			{
-				// If we are the beginning of the buffer, then we can't delete anything.
-				return;
-			}
-			else if (position.CharacterIndex == 0)
-			{
-				// If we are at the beginning of the line, then we are combining paragraphs.
-				key = Key;
-				return;
-			}
-			else
-			{
-				//key = DeleteLeftCharacterCommandFactory.Key;
-				return;
-			}
-
-			// Execute the command and pass the results to calling method.
-			var nextCommand = new CommandFactoryReference(key);
-			commandFactoryManager.Do(context, nextCommand);
+			controller.CommandController.Do(command, operationContext);
 		}
 
 		public string GetTitle(CommandFactoryReference commandFactoryReference)
