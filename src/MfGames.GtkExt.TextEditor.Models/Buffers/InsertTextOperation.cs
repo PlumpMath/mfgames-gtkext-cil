@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
@@ -12,7 +13,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// <see cref="SetTextOperation"/>, this inserts text into a specific position
 	/// and returns the buffer position for the end of the insert.
 	/// </summary>
-	public class InsertTextOperation: ILineBufferOperation
+	public class InsertTextOperation: ILineBufferOperation,
+		IInsertTextCommand<LineBufferOperationResults?>
 	{
 		#region Properties
 
@@ -21,6 +23,16 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// </summary>
 		/// <value>The buffer position.</value>
 		public BufferPosition BufferPosition { get; private set; }
+
+		public bool CanUndo
+		{
+			get { return true; }
+		}
+
+		public bool IsTransient
+		{
+			get { return false; }
+		}
 
 		/// <summary>
 		/// Gets the type of the operation representing this object.
@@ -36,6 +48,25 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// </summary>
 		/// <value>The text.</value>
 		public string Text { get; set; }
+
+		#endregion
+
+		#region Methods
+
+		public LineBufferOperationResults? Do(LineBufferOperationResults? state)
+		{
+			throw new NotImplementedException();
+		}
+
+		public LineBufferOperationResults? Redo(LineBufferOperationResults? state)
+		{
+			throw new NotImplementedException();
+		}
+
+		public LineBufferOperationResults? Undo(LineBufferOperationResults? state)
+		{
+			throw new NotImplementedException();
+		}
 
 		#endregion
 

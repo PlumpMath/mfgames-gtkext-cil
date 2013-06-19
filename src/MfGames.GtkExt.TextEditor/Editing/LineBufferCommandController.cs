@@ -2,7 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
 using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
@@ -18,7 +17,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		public IDeleteLineCommand<LineBufferOperationResults?> CreateDeleteLineCommand
 			(Position line)
 		{
-			throw new NotImplementedException();
+			var operation = new DeleteLinesOperation(line, 1);
+			return operation;
 		}
 
 		public IInsertTextCommand<LineBufferOperationResults?> CreateInsertTextCommand
@@ -26,7 +26,9 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			TextPosition textPosition,
 			string text)
 		{
-			throw new NotImplementedException();
+			var operation = new InsertTextOperation(
+				textPosition.Line, textPosition.Character, text);
+			return operation;
 		}
 
 		public IInsertTextFromTextRangeCommand<LineBufferOperationResults?>
@@ -34,7 +36,9 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			TextPosition destinationPosition,
 			TextRange sourceRange)
 		{
-			throw new NotImplementedException();
+			var operation = new InsertTextFromTextRangeOperation(
+				destinationPosition, sourceRange);
+			return operation;
 		}
 
 		#endregion

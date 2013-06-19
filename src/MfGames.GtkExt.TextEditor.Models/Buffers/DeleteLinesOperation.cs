@@ -2,20 +2,34 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using System;
+using MfGames.Commands.TextEditing;
+
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Indicates an operation that inserts lines into a line buffer.
 	/// </summary>
-	public class DeleteLinesOperation: ILineBufferOperation
+	public class DeleteLinesOperation: ILineBufferOperation,
+		IDeleteLineCommand<LineBufferOperationResults?>
 	{
 		#region Properties
+
+		public bool CanUndo
+		{
+			get { return true; }
+		}
 
 		/// <summary>
 		/// Gets the number of lines to delete.
 		/// </summary>
 		/// <value>The count.</value>
 		public int Count { get; private set; }
+
+		public bool IsTransient
+		{
+			get { return false; }
+		}
 
 		/// <summary>
 		/// Gets the index of the first line to start deleting.
@@ -30,6 +44,25 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		public LineBufferOperationType OperationType
 		{
 			get { return LineBufferOperationType.DeleteLines; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		public LineBufferOperationResults? Do(LineBufferOperationResults? state)
+		{
+			throw new NotImplementedException();
+		}
+
+		public LineBufferOperationResults? Redo(LineBufferOperationResults? state)
+		{
+			throw new NotImplementedException();
+		}
+
+		public LineBufferOperationResults? Undo(LineBufferOperationResults? state)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion
