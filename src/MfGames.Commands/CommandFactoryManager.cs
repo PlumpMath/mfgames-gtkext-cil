@@ -26,7 +26,7 @@ namespace MfGames.Commands
 
 		#region Methods
 
-		public TStatus Do(
+		public void Do(
 			object context,
 			CommandFactoryReference commandFactoryReference)
 		{
@@ -35,8 +35,7 @@ namespace MfGames.Commands
 
 			// Grab the factory for the key pass the request to the factory.
 			ICommandFactory<TStatus> factory = GetFactory(commandFactoryReference.Key);
-			TStatus results = factory.Do(context, commandFactoryReference, this);
-			return results;
+			factory.Do(context, commandFactoryReference, this);
 		}
 
 		/// <summary>

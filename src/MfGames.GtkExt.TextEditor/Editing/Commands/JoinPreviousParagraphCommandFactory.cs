@@ -17,7 +17,7 @@ using MfGames.HierarchicalPaths;
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
 	public class JoinPreviousParagraphCommandFactory:
-		ICommandFactory<LineBufferOperationResults?>
+		ICommandFactory<OperationContext>
 	{
 		#region Properties
 
@@ -41,10 +41,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Methods
 
-		public LineBufferOperationResults? Do(
+		public void Do(
 			object context,
 			CommandFactoryReference commandFactoryReference,
-			CommandFactoryManager<LineBufferOperationResults?> commandFactoryManager)
+			CommandFactoryManager<OperationContext> commandFactoryManager)
 		{
 			// Ensure the code contracts for this state.
 			Contract.Requires<ArgumentNullException>(context != null);
@@ -58,7 +58,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 			// Create the join previous paragraph command.
 			var command =
-				new JoinPreviousParagraphCommand<LineBufferOperationResults?>(
+				new JoinPreviousParagraphCommand<OperationContext>(
 					controller.CommandController, (Position) position.LineIndex);
 
 			// Figure out which command we'll be passing the operation to.
@@ -67,30 +67,28 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			{
 				// If we have a selection, then we use the Delete Selection command.
 				//key = DeleteSelectionCommandFactory.Key;
-				return null;
+				return;
 			}
 			else if (position.IsBeginningOfBuffer(controller.DisplayContext))
 			{
 				// If we are the beginning of the buffer, then we can't delete anything.
-				return null;
+				return;
 			}
 			else if (position.CharacterIndex == 0)
 			{
 				// If we are at the beginning of the line, then we are combining paragraphs.
 				key = Key;
-				return null;
+				return;
 			}
 			else
 			{
 				//key = DeleteLeftCharacterCommandFactory.Key;
-				return null;
+				return;
 			}
 
 			// Execute the command and pass the results to calling method.
 			var nextCommand = new CommandFactoryReference(key);
-			LineBufferOperationResults? results = commandFactoryManager.Do(
-				context, nextCommand);
-			return results;
+			commandFactoryManager.Do(context, nextCommand);
 		}
 
 		public string GetTitle(CommandFactoryReference commandFactoryReference)

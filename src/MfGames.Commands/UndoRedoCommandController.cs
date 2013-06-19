@@ -49,7 +49,7 @@ namespace MfGames.Commands
 		/// Executes a command in the system and manages the resulting state.
 		/// </summary>
 		/// <param name="command">The command to execute.</param>
-		public TState Do(
+		public void Do(
 			ICommand<TState> command,
 			TState state)
 		{
@@ -70,14 +70,13 @@ namespace MfGames.Commands
 			redoCommands.Clear();
 
 			// Perform the operation.
-			TState newState = Do(command, state, false, false);
-			return newState;
+			Do(command, state, false, false);
 		}
 
 		/// <summary>
 		/// Re-performs a command that was recently undone.
 		/// </summary>
-		public TState Redo(TState state)
+		public void Redo(TState state)
 		{
 			// Make sure we're in a known and valid state.
 			Contract.Assert(CanRedo);
@@ -85,14 +84,13 @@ namespace MfGames.Commands
 			// Pull off the first command from the redo buffer and perform it.
 			ICommand<TState> command = redoCommands[0];
 			redoCommands.RemoveAt(0);
-			state = Do(command, state, false, true);
-			return state;
+			Do(command, state, false, true);
 		}
 
 		/// <summary>
 		/// Undoes a command that was recently done, either through the Do() or Redo().
 		/// </summary>
-		public TState Undo(TState state)
+		public void Undo(TState state)
 		{
 			// Make sure we're in a known and valid state.
 			Contract.Assert(CanUndo);
@@ -101,8 +99,7 @@ namespace MfGames.Commands
 			// perform it.
 			ICommand<TState> command = undoCommands[0];
 			undoCommands.RemoveAt(0);
-			state = Do(command, state, true, true);
-			return state;
+			Do(command, state, true, true);
 		}
 
 		/// <summary>
@@ -111,10 +108,10 @@ namespace MfGames.Commands
 		/// list.
 		/// </summary>
 		/// <param name="command">The command.</param>
+		/// <param name="state"></param>
 		/// <param name="useDo">if set to <c>true</c> [use inverse].</param>
 		/// <param name="ignoreDeferredCommands">if set to <c>true</c> [ignore deferred commands].</param>
-		private TState Do(
-			ICommand<TState> command,
+		private void Do(ICommand<TState> command,
 			TState state,
 			bool useDo,
 			bool ignoreDeferredCommands)
@@ -122,9 +119,10 @@ namespace MfGames.Commands
 			// Perform the action based on undo or redo.
 			var undoableCommand = command as IUndoableCommand<TState>;
 
-			state = undoableCommand == null || useDo
-				? command.Do(state)
-				: undoableCommand.Undo(state);
+			if (undoableCommand == null || useDo)
+				command.Do(state);
+			else
+				undoableCommand.Undo(state);
 
 			// Add the action to the appropriate buffer. This assumes that the undo
 			// and redo operations have been properly managed before this method is
@@ -163,12 +161,9 @@ namespace MfGames.Commands
 				// Go through the commands and process each one.
 				foreach (ICommand<TState> deferredCommand in commands)
 				{
-					state = Do(deferredCommand, state);
+					Do(deferredCommand, state);
 				}
 			}
-
-			// Return the resulting state.
-			return state;
 		}
 
 		#endregion

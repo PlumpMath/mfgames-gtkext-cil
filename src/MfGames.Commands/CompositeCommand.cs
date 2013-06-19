@@ -29,7 +29,7 @@ namespace MfGames.Commands
 
 		#region Methods
 
-		public TState Do(TState state)
+		public void Do(TState state)
 		{
 			// We always grab the initial state and keep it so we can restore it.
 			initialState = state;
@@ -37,64 +37,26 @@ namespace MfGames.Commands
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
 			// command executed.
-			TState returnedState = default(TState);
-
 			foreach (IUndoableCommand<TState> command in Commands)
 			{
 				// Execut the command and get its state.
-				TState newState = command.Do(returnedState);
-
-				// If the StateCommand is set, then we only keep the state if
-				// the commands match. Otherwise, we keep the last state.
-				if (StateCommand == null)
-				{
-					returnedState = newState;
-				}
-				else
-				{
-					if (StateCommand == command)
-					{
-						returnedState = newState;
-					}
-				}
+				command.Do(state);
 			}
-
-			// Return the final state.
-			return returnedState;
 		}
 
-		public TState Redo(TState state)
+		public void Redo(TState state)
 		{
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
 			// command executed.
-			TState returnedState = default(TState);
-
 			foreach (IUndoableCommand<TState> command in Commands)
 			{
 				// Execut the command and get its state.
-				state = command.Redo(state);
-
-				// If the StateCommand is set, then we only keep the state if
-				// the commands match. Otherwise, we keep the last state.
-				if (StateCommand == null)
-				{
-					returnedState = state;
-				}
-				else
-				{
-					if (StateCommand == command)
-					{
-						returnedState = state;
-					}
-				}
+				command.Redo(state);
 			}
-
-			// Return the final state.
-			return returnedState;
 		}
 
-		public TState Undo(TState state)
+		public void Undo(TState state)
 		{
 			// To implement the command, simply iterate through the list
 			// of commands and execute each one. The state comes from the last
@@ -106,11 +68,7 @@ namespace MfGames.Commands
 				index--)
 			{
 				IUndoableCommand<TState> command = commands[index];
-				state = command.Undo(state);
 			}
-
-			// Return the final state.
-			return initialState;
 		}
 
 		#endregion

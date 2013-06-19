@@ -139,6 +139,7 @@
     <Compile Include="LineBuffer.cs" />
     <Compile Include="LineRange.cs" />
     <Compile Include="MemoryLineBuffer.cs" />
+    <Compile Include="OperationContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Styles\BlockStyle.cs" />
     <Compile Include="Styles\BlockStyleDictionary.cs" />

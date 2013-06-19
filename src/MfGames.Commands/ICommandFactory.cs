@@ -33,7 +33,7 @@ namespace MfGames.Commands
 		/// </summary>
 		/// <param name="context">The context of the request. This will typically be a widget or graphical element that has the focus when the command reference is activated.</param>
 		/// <param name="commandFactoryReference">The command reference to be activated or used.</param>
-		TStatus Do(
+		void Do(
 			object context,
 			CommandFactoryReference commandFactoryReference,
 			CommandFactoryManager<TStatus> controller);

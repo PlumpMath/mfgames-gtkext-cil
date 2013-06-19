@@ -4,24 +4,25 @@
 
 using MfGames.Commands;
 using MfGames.Commands.TextEditing;
+using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 namespace MfGames.GtkExt.TextEditor.Editing
 {
 	public class LineBufferCommandController:
-		UndoRedoCommandController<LineBufferOperationResults?>,
-		ITextEditingCommandController<LineBufferOperationResults?>
+		UndoRedoCommandController<OperationContext>,
+		ITextEditingCommandController<OperationContext>
 	{
 		#region Methods
 
-		public IDeleteLineCommand<LineBufferOperationResults?> CreateDeleteLineCommand
+		public IDeleteLineCommand<OperationContext> CreateDeleteLineCommand
 			(Position line)
 		{
 			var operation = new DeleteLinesOperation(line, 1);
 			return operation;
 		}
 
-		public IInsertTextCommand<LineBufferOperationResults?> CreateInsertTextCommand
+		public IInsertTextCommand<OperationContext> CreateInsertTextCommand
 			(
 			TextPosition textPosition,
 			string text)
@@ -31,7 +32,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			return operation;
 		}
 
-		public IInsertTextFromTextRangeCommand<LineBufferOperationResults?>
+		public IInsertTextFromTextRangeCommand<OperationContext>
 			CreateInsertTextFromTextRangeCommand(
 			TextPosition destinationPosition,
 			TextRange sourceRange)

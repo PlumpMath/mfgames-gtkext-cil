@@ -10,7 +10,7 @@ namespace MfGames.Commands
 	/// <typeparam name="TState">
 	/// The type of state object needed to be updated with the execution of commands.
 	/// </typeparam>
-	public interface ICommand<TState>
+	public interface ICommand<in TState>
 	{
 		#region Methods
 
@@ -19,7 +19,7 @@ namespace MfGames.Commands
 		/// </summary>
 		/// <param name="state">The initial state of the system.</param>
 		/// <returns>The state of the system after executing.</returns>
-		TState Do(TState state);
+		void Do(TState state);
 
 		#endregion
 	}

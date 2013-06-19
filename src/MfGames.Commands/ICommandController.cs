@@ -39,19 +39,19 @@ namespace MfGames.Commands
 		/// Executes a command in the system and manages the resulting state.
 		/// </summary>
 		/// <param name="command">The command to execute.</param>
-		TState Do(
+		void Do(
 			ICommand<TState> command,
 			TState state);
 
 		/// <summary>
 		/// Re-performs a command that was recently undone.
 		/// </summary>
-		TState Redo(TState state);
+		void Redo(TState state);
 
 		/// <summary>
 		/// Undoes a command that was recently done, either through the Do() or Redo().
 		/// </summary>
-		TState Undo(TState state);
+		void Undo(TState state);
 
 		#endregion
 	}

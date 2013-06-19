@@ -11,7 +11,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// Indicates an operation that inserts lines into a line buffer.
 	/// </summary>
 	public class DeleteLinesOperation: ILineBufferOperation,
-		IDeleteLineCommand<LineBufferOperationResults?>
+		IDeleteLineCommand<OperationContext>
 	{
 		#region Properties
 
@@ -50,17 +50,17 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		#region Methods
 
-		public LineBufferOperationResults? Do(LineBufferOperationResults? state)
+		public void Do(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}
 
-		public LineBufferOperationResults? Redo(LineBufferOperationResults? state)
+		public void Redo(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}
 
-		public LineBufferOperationResults? Undo(LineBufferOperationResults? state)
+		public void Undo(OperationContext state)
 		{
 			throw new NotImplementedException();
 		}

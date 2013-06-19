@@ -18,7 +18,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 	/// Implements the command factory for handling the "delete left" (backspace).
 	/// </summary>
 	public class DeleteLeftCommandFactory:
-		ICommandFactory<LineBufferOperationResults?>
+		ICommandFactory<OperationContext>
 	{
 		#region Properties
 
@@ -42,10 +42,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Methods
 
-		public LineBufferOperationResults? Do(
+		public void Do(
 			object context,
 			CommandFactoryReference commandFactoryReference,
-			CommandFactoryManager<LineBufferOperationResults?> commandFactoryManager)
+			CommandFactoryManager<OperationContext> commandFactoryManager)
 		{
 			// Ensure the code contracts for this state.
 			Contract.Requires<ArgumentNullException>(context != null);
@@ -63,12 +63,12 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			{
 				// If we have a selection, then we use the Delete Selection command.
 				//key = DeleteSelectionCommandFactory.Key;
-				return null;
+				return;
 			}
 			else if (position.IsBeginningOfBuffer(controller.DisplayContext))
 			{
 				// If we are the beginning of the buffer, then we can't delete anything.
-				return null;
+				return;
 			}
 			else if (position.CharacterIndex == 0)
 			{
@@ -78,14 +78,12 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			else
 			{
 				//key = DeleteLeftCharacterCommandFactory.Key;
-				return null;
+				return;
 			}
 
 			// Execute the command and pass the results to calling method.
 			var nextCommand = new CommandFactoryReference(key);
-			LineBufferOperationResults? results = commandFactoryManager.Do(
-				context, nextCommand);
-			return results;
+			commandFactoryManager.Do(context, nextCommand);
 		}
 
 		public string GetTitle(CommandFactoryReference commandFactoryReference)

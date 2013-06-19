@@ -9,7 +9,7 @@ namespace MfGames.Commands
 	/// when this is available.
 	/// </summary>
 	/// <typeparam name="TState"></typeparam>
-	public interface IUndoableCommand<TState>: ICommand<TState>
+	public interface IUndoableCommand<in TState>: ICommand<TState>
 	{
 		#region Properties
 
@@ -39,7 +39,7 @@ namespace MfGames.Commands
 		/// to the state at the point of the initial Do().
 		/// </summary>
 		/// <returns>The state of the system after executing.</returns>
-		TState Redo(TState state);
+		void Redo(TState state);
 
 		/// <summary>
 		/// Undoes the command to return the system to the state before the command
@@ -48,7 +48,7 @@ namespace MfGames.Commands
 		/// only be called if <see cref="CanUndo"/> is true.
 		/// </summary>
 		/// <returns>The state of the system after executing.</returns>
-		TState Undo(TState state);
+		void Undo(TState state);
 
 		#endregion
 	}
