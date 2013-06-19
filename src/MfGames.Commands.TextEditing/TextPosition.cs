@@ -1,0 +1,41 @@
+﻿// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
+
+namespace MfGames.Commands.TextEditing
+{
+	/// <summary>
+	/// An immutable class that represents a position inside a text buffer. This
+	/// is a vector of line index and character indent, both zero-based. The index
+	/// is always to the left of the character with the last possible line being
+	/// a character index equal to the length.
+	/// </summary>
+	public class TextPosition
+	{
+		#region Properties
+
+		/// <summary>
+		/// Contains the zero-based character index.
+		/// </summary>
+		public int Character { get; private set; }
+
+		/// <summary>
+		/// Contains the zero-based line index.
+		/// </summary>
+		public int Line { get; private set; }
+
+		#endregion
+
+		#region Constructors
+
+		public TextPosition(
+			int line,
+			int character)
+		{
+			Line = line;
+			Character = character;
+		}
+
+		#endregion
+	}
+}

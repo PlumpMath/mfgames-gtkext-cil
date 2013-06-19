@@ -58,12 +58,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			BufferPosition position = displayContext.Caret.Position;
 
 			// Figure out which command we'll be passing the operation to.
-			CommandFactoryReference nextCommand;
-
+			HierarchicalPath key;
 			if (!displayContext.Caret.Selection.IsEmpty)
 			{
 				// If we have a selection, then we use the Delete Selection command.
-				//nextCommand = new CommandFactoryReference(DeleteSelectionCommandFactory.Key);
+				//key = DeleteSelectionCommandFactory.Key;
 				return null;
 			}
 			else if (position.IsBeginningOfBuffer(controller.DisplayContext))
@@ -74,16 +73,17 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			else if (position.CharacterIndex == 0)
 			{
 				// If we are at the beginning of the line, then we are combining paragraphs.
-				//nextCommand = new CommandFactoryReference(JoinPreviousParagraphCommandFactory.Key);
+				//key = JoinPreviousParagraphCommandFactory.Key;
 				return null;
 			}
 			else
 			{
-				//nextCommand = new CommandFactoryReference(DeleteLeftCharacterCommandFactory.Key);
+				//key = DeleteLeftCharacterCommandFactory.Key;
 				return null;
 			}
 
 			// Execute the command and pass the results to calling method.
+			var nextCommand = new CommandFactoryReference(key);
 			LineBufferOperationResults? results = commandFactoryManager.Do(
 				context, nextCommand);
 			return results;
