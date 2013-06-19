@@ -9,6 +9,11 @@ namespace MfGames.Commands.TextEditing
 	/// is a vector of line index and character indent, both zero-based. The index
 	/// is always to the left of the character with the last possible line being
 	/// a character index equal to the length.
+	/// 
+	/// The system in general assumes that line index refers to full lines, not the
+	/// broken up lines that would resulting from word wrapping. In many cases, this
+	/// would be paragraphs and headers instead of multiple lines of a very long
+	/// paragraph.
 	/// </summary>
 	public class TextPosition
 	{

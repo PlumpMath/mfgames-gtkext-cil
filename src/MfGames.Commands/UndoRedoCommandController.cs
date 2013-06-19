@@ -2,7 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 

@@ -33,6 +33,17 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		#region Properties
 
 		/// <summary>
+		/// Contains the command controller used to execute commands on
+		/// the line buffer associated with this controller.
+		/// </summary>
+		public ICommandController<LineBufferOperationResults?> CommandController { get; private set; }
+
+		/// <summary>
+		/// Contains the command factory for processing commands.
+		/// </summary>
+		public CommandFactoryManager<LineBufferOperationResults?> CommandFactory { get; private set; }
+
+		/// <summary>
 		/// Gets the commands for the text editor.
 		/// </summary>
 		public CommandManager Commands { get; private set; }
@@ -227,12 +238,6 @@ namespace MfGames.GtkExt.TextEditor.Editing
 
 			return displayContext.LineBuffer.Do(operation);
 		}
-
-		/// <summary>
-		/// Contains the command controller used to execute commands on
-		/// the line buffer associated with this controller.
-		/// </summary>
-		public ICommandController<LineBufferOperationResults?> CommandController { get; private set; }
 
 		/// <summary>
 		/// Performs the given command on the line buffer.
@@ -636,11 +641,6 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			// Bind the default actions for the editor.
 			BindActions();
 		}
-
-		/// <summary>
-		/// Contains the command factory for processing commands.
-		/// </summary>
-		public CommandFactoryManager<LineBufferOperationResults?> CommandFactory { get; private set; }
 
 		#endregion
 

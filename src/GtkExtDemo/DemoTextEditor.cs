@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using Cairo;
 using Gtk;
 using GtkExtDemo.TextEditor;
 using MfGames.GtkExt;
@@ -16,7 +17,6 @@ using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Models.Styles;
 using Action = Gtk.Action;
 using Alignment = Pango.Alignment;
-using Color = Cairo.Color;
 
 namespace GtkExtDemo
 {
@@ -30,7 +30,7 @@ namespace GtkExtDemo
 		#region Methods
 
 		/// <summary>
-		/// Creates all the <see cref="Action"/> objects associated with the extending
+		/// Creates all the <see cref="Gtk.Action"/> objects associated with the extending
 		/// class.
 		/// </summary>
 		/// <returns></returns>

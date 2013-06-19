@@ -18,44 +18,13 @@ namespace MfGames.Commands
 	/// </summary>
 	public class CommandFactoryManager<TStatus>
 	{
+		#region Properties
+
 		public ICommandController<TStatus> CommandController { get; private set; }
-		private Dictionary<HierarchicalPath, ICommandFactory<TStatus>> factories; 
 
-		public CommandFactoryManager(ICommandController<TStatus> commandController)
-		{
-			// Establish our code contracts.
-			Contract.Requires<ArgumentNullException>(commandController != null);
-
-			// Save the member variables for later.
-			CommandController = commandController;
-
-			// Set up the internal collections.
-			factories = new Dictionary<HierarchicalPath, ICommandFactory<TStatus>>();
-		}
+		#endregion
 
 		#region Methods
-
-		/// <summary>
-		/// Retrieves the factory associated with a given key, or throws an exception
-		/// if one cannot be found.
-		/// </summary>
-		private ICommandFactory<TStatus> GetFactory(HierarchicalPath key)
-		{
-			// Establish our contracts.
-			Contract.Requires<ArgumentNullException>(key != null);
-
-			// If we have the command factory registered, then grab it and return it.
-			ICommandFactory<TStatus> commandFactory;
-
-			if (factories.TryGetValue(key, out commandFactory))
-			{
-				return commandFactory;
-			}
-
-			// If we get this far, we don't have the registered factory.
-			throw new KeyNotFoundException(
-				"Cannot find a command factory registered under " + key);
-		}
 
 		public TStatus Do(
 			object context,
@@ -118,6 +87,51 @@ namespace MfGames.Commands
 			// Register the factory for the given key.
 			factories[key] = commandFactory;
 		}
+
+		/// <summary>
+		/// Retrieves the factory associated with a given key, or throws an exception
+		/// if one cannot be found.
+		/// </summary>
+		private ICommandFactory<TStatus> GetFactory(HierarchicalPath key)
+		{
+			// Establish our contracts.
+			Contract.Requires<ArgumentNullException>(key != null);
+
+			// If we have the command factory registered, then grab it and return it.
+			ICommandFactory<TStatus> commandFactory;
+
+			if (factories.TryGetValue(key, out commandFactory))
+			{
+				return commandFactory;
+			}
+
+			// If we get this far, we don't have the registered factory.
+			throw new KeyNotFoundException(
+				"Cannot find a command factory registered under " + key);
+		}
+
+		#endregion
+
+		#region Constructors
+
+		public CommandFactoryManager(ICommandController<TStatus> commandController)
+		{
+			// Establish our code contracts.
+			Contract.Requires<ArgumentNullException>(commandController != null);
+
+			// Save the member variables for later.
+			CommandController = commandController;
+
+			// Set up the internal collections.
+			factories = new Dictionary<HierarchicalPath, ICommandFactory<TStatus>>();
+		}
+
+		#endregion
+
+		#region Fields
+
+		private readonly Dictionary<HierarchicalPath, ICommandFactory<TStatus>>
+			factories;
 
 		#endregion
 	}

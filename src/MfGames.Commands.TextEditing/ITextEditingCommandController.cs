@@ -1,6 +1,7 @@
 ﻿// Copyright 2011-2013 Moonfire Games
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
+
 namespace MfGames.Commands.TextEditing
 {
 	/// <summary>
@@ -9,8 +10,8 @@ namespace MfGames.Commands.TextEditing
 	/// of the core commands.
 	/// </summary>
 	/// <typeparam name="TStatus"></typeparam>
-	public interface ITextEditingCommandController<TStatus>: ICommandController<TStatus>
+	public interface ITextEditingCommandController<TStatus>:
+		ICommandController<TStatus>
 	{
-		 
 	}
 }

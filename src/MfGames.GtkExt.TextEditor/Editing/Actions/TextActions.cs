@@ -127,7 +127,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		public static void DeleteLeft(EditorViewController controller)
 		{
 			// Bridge into the new command controller subsystem.
-			var commandReference = new CommandFactoryReference(DeleteLeftCommandFactory.Key);
+			var commandReference =
+				new CommandFactoryReference(DeleteLeftCommandFactory.Key);
 			controller.CommandFactory.Do(controller, commandReference);
 
 			//// If we have a selection, then we simply delete that selection.
