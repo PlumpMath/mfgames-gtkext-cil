@@ -22,20 +22,20 @@ namespace MfGames.Commands.TextEditing
 		/// <summary>
 		/// Contains the zero-based character index.
 		/// </summary>
-		public int Character { get; private set; }
+		public Position Character { get; private set; }
 
 		/// <summary>
 		/// Contains the zero-based line index.
 		/// </summary>
-		public int Line { get; private set; }
+		public Position Line { get; private set; }
 
 		#endregion
 
 		#region Constructors
 
 		public TextPosition(
-			int line,
-			int character)
+			Position line,
+			Position character)
 		{
 			Line = line;
 			Character = character;

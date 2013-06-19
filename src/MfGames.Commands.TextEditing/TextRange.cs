@@ -8,10 +8,10 @@ using System.Diagnostics.Contracts;
 namespace MfGames.Commands.TextEditing
 {
 	/// <summary>
-	/// A selection in a text buffer with the two anchors of the selection
+	/// A range in a text buffer with the two anchors of the selection
 	/// being represented by <see cref="TextPosition"/>. This is an immutable class.
 	/// </summary>
-	public class TextSelection
+	public class TextRange
 	{
 		#region Properties
 
@@ -29,7 +29,7 @@ namespace MfGames.Commands.TextEditing
 
 		#region Constructors
 
-		public TextSelection(
+		public TextRange(
 			TextPosition begin,
 			TextPosition end)
 		{

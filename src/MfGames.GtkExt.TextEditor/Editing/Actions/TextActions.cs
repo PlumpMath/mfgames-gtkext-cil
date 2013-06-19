@@ -158,6 +158,13 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			//	return;
 			//}
 
+			/*
+			 * JoinLeftParagaph:
+			 *   Insert into previous paragraph, copy text from next
+			 *   Delete next paragraph
+			 *   Set position to end of previous paragraph.
+			 */
+
 			//// This is a single character delete which doesn't combine paragraphs.
 			//LineBuffer lineBuffer = displayContext.LineBuffer;
 			//string lineText = lineBuffer.GetLineText(

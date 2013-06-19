@@ -78,7 +78,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompositeCommand.cs" />
     <Compile Include="ICommandController.cs" />
+    <Compile Include="IUndoableCommand.cs" />
     <Compile Include="UndoRedoCommandController.cs" />
     <Compile Include="CommandFactoryReference.cs" />
     <Compile Include="CommandFactoryManager.cs" />

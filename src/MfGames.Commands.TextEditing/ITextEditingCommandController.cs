@@ -13,5 +13,18 @@ namespace MfGames.Commands.TextEditing
 	public interface ITextEditingCommandController<TStatus>:
 		ICommandController<TStatus>
 	{
+		#region Methods
+
+		IDeleteLineCommand<TStatus> CreateDeleteLineCommand(Position line);
+
+		IInsertTextCommand<TStatus> CreateInsertTextCommand(
+			TextPosition textPosition,
+			string text);
+
+		IInsertTextFromTextRangeCommand<TStatus> CreateInsertTextFromTextRangeCommand(
+			TextPosition destinationPosition,
+			TextRange sourceRange);
+
+		#endregion
 	}
 }

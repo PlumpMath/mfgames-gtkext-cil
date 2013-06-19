@@ -49,10 +49,15 @@ namespace MfGames.Commands
 		/// Executes a command in the system and manages the resulting state.
 		/// </summary>
 		/// <param name="command">The command to execute.</param>
-		public void Do(ICommand<TState> command)
+		public TState Do(
+			ICommand<TState> command,
+			TState state)
 		{
 			// Determine if this command is undoable or not.
-			if (!command.CanUndo)
+			var undoableCommand = command as IUndoableCommand<TState>;
+
+			if (undoableCommand == null
+				|| !undoableCommand.CanUndo)
 			{
 				// Since the command cannot be undone, we need to clear out the undo
 				// buffer, which will make sure CanUndo will return false and we can
@@ -65,13 +70,14 @@ namespace MfGames.Commands
 			redoCommands.Clear();
 
 			// Perform the operation.
-			Do(command, false, false);
+			TState newState = Do(command, state, false, false);
+			return newState;
 		}
 
 		/// <summary>
 		/// Re-performs a command that was recently undone.
 		/// </summary>
-		public void Redo()
+		public TState Redo(TState state)
 		{
 			// Make sure we're in a known and valid state.
 			Contract.Assert(CanRedo);
@@ -79,13 +85,14 @@ namespace MfGames.Commands
 			// Pull off the first command from the redo buffer and perform it.
 			ICommand<TState> command = redoCommands[0];
 			redoCommands.RemoveAt(0);
-			Do(command, false, true);
+			state = Do(command, state, false, true);
+			return state;
 		}
 
 		/// <summary>
 		/// Undoes a command that was recently done, either through the Do() or Redo().
 		/// </summary>
-		public void Undo()
+		public TState Undo(TState state)
 		{
 			// Make sure we're in a known and valid state.
 			Contract.Assert(CanUndo);
@@ -94,20 +101,8 @@ namespace MfGames.Commands
 			// perform it.
 			ICommand<TState> command = undoCommands[0];
 			undoCommands.RemoveAt(0);
-			Do(command, true, true);
-		}
-
-		/// <summary>
-		/// Updates the state object. The default implementation does not update the
-		/// state if the state object is null.
-		/// </summary>
-		/// <param name="state">The new state object to use.</param>
-		protected virtual void UpdateState(TState state)
-		{
-			if (state != null)
-			{
-				State = state;
-			}
+			state = Do(command, state, true, true);
+			return state;
 		}
 
 		/// <summary>
@@ -118,24 +113,26 @@ namespace MfGames.Commands
 		/// <param name="command">The command.</param>
 		/// <param name="useDo">if set to <c>true</c> [use inverse].</param>
 		/// <param name="ignoreDeferredCommands">if set to <c>true</c> [ignore deferred commands].</param>
-		private void Do(
+		private TState Do(
 			ICommand<TState> command,
+			TState state,
 			bool useDo,
 			bool ignoreDeferredCommands)
 		{
 			// Perform the action based on undo or redo.
-			TState newState = useDo
-				? command.Do()
-				: command.Undo();
+			var undoableCommand = command as IUndoableCommand<TState>;
 
-			UpdateState(newState);
+			state = undoableCommand == null || useDo
+				? command.Do(state)
+				: undoableCommand.Undo(state);
 
 			// Add the action to the appropriate buffer. This assumes that the undo
 			// and redo operations have been properly managed before this method is
 			// called. This does not manage the buffers since the undo/redo allows
 			// the user to go back and forth between the two lists.
-			if (command.CanUndo
-				&& !command.IsTransient)
+			if (undoableCommand != null
+				&& undoableCommand.CanUndo
+				&& !undoableCommand.IsTransient)
 			{
 				if (useDo)
 				{
@@ -166,9 +163,12 @@ namespace MfGames.Commands
 				// Go through the commands and process each one.
 				foreach (ICommand<TState> deferredCommand in commands)
 				{
-					Do(deferredCommand);
+					state = Do(deferredCommand, state);
 				}
 			}
+
+			// Return the resulting state.
+			return state;
 		}
 
 		#endregion
