@@ -162,6 +162,8 @@
     <Compile Include="Editing\Commands\DeleteRightCharacterCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteRightCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteSelectionCommandFactory.cs" />
+    <Compile Include="Editing\Commands\InsertCharacterCommandFactory.cs" />
+    <Compile Include="Editing\Commands\InsertKeyCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinNextParagraphCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinPreviousParagraphCommandFactory.cs" />
     <Compile Include="Editing\Commands\RedoCommandFactory.cs" />

@@ -3,13 +3,14 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using MfGames.Commands;
+using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
-	public class UndoCommandFactory: TextEditingCommandFactory
+	public class InsertKeyCommandFactory:TextEditingCommandFactory
 	{
 		#region Properties
 
@@ -18,6 +19,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			get { return Key; }
 		}
 
+		/// <summary>
+		/// Contains the key for the command provided by this factory.
+		/// </summary>
 		public static HierarchicalPath Key { get; private set; }
 
 		#endregion
@@ -27,10 +31,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		public override string GetTitle(
 			CommandFactoryReference commandFactoryReference)
 		{
-			return "Undo";
+			return "Insert Key";
 		}
 
-		protected override void Do(object context,
+		protected override void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,
@@ -38,27 +43,34 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			IDisplayContext displayContext,
 			BufferPosition position)
 		{
-			if (controller.CommandController.CanUndo)
-			{
-				// Request that the previous command be undone.
-				controller.CommandController.Undo(operationContext);
+			// Based on the text, figure out what to do.
+			var key = (char) commandData;
+			CommandFactoryReference command;
 
-				// If we have a text position, we need to set it.
-				if (operationContext.Results.HasValue)
-				{
-					displayContext.Caret.Position =
-						operationContext.Results.Value.BufferPosition;
-				}
+			switch (key)
+			{
+				case '\n':
+				case '\r':
+					return;
+
+				default:
+					command = new CommandFactoryReference(
+						InsertCharacterCommandFactory.Key, key);
+					break;
 			}
+
+			// Execute the command requested.
+			commandFactory.Do(context, command);
 		}
 
 		#endregion
 
 		#region Constructors
 
-		static UndoCommandFactory()
+		static InsertKeyCommandFactory()
 		{
-			Key = new HierarchicalPath("/Undo", HierarchicalPathOptions.InternStrings);
+			Key = new HierarchicalPath(
+				"/Text Editor/Insert Key",HierarchicalPathOptions.InternStrings);
 		}
 
 		#endregion

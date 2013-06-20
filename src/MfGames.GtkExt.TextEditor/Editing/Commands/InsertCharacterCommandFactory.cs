@@ -10,7 +10,7 @@ using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
-	public class DeleteRightCharacterCommandFactory: TextEditingCommandFactory
+	public class InsertCharacterCommandFactory:TextEditingCommandFactory
 	{
 		#region Properties
 
@@ -31,7 +31,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		public override string GetTitle(
 			CommandFactoryReference commandFactoryReference)
 		{
-			return "Delete Right Character";
+			return "Insert Character";
 		}
 
 		protected override void Do(object context,
@@ -42,19 +42,20 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			IDisplayContext displayContext,
 			BufferPosition position)
 		{
-			IDeleteTextCommand<OperationContext> deleteCommand =
-				controller.CommandController.CreateDeleteTextCommand(
-					new SingleLineTextRange(
+			string text = commandData.ToString();
+			var insertCommand =
+				controller.CommandController.CreateInsertTextCommand(
+					new TextPosition(
 						(Position) displayContext.Caret.Position.LineIndex,
-						(Position) (displayContext.Caret.Position.CharacterIndex),
-						(Position) (displayContext.Caret.Position.CharacterIndex + 1)));
-			deleteCommand.UpdateTextPosition = true;
+						(Position) displayContext.Caret.Position.CharacterIndex),
+					text);
+			insertCommand.UpdateTextPosition = true;
 
 			// Execute the command.
-			controller.CommandController.Do(deleteCommand, operationContext);
+			controller.CommandController.Do(insertCommand,operationContext);
 
 			// If we have a text position, we need to set it.
-			if (operationContext.Results.HasValue)
+			if(operationContext.Results.HasValue)
 			{
 				displayContext.Caret.Position =
 					operationContext.Results.Value.BufferPosition;
@@ -65,10 +66,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Constructors
 
-		static DeleteRightCharacterCommandFactory()
+		static InsertCharacterCommandFactory()
 		{
 			Key = new HierarchicalPath(
-				"/Text Editor/Delete Right Character", HierarchicalPathOptions.InternStrings);
+				"/Text Editor/Insert Character",HierarchicalPathOptions.InternStrings);
 		}
 
 		#endregion
