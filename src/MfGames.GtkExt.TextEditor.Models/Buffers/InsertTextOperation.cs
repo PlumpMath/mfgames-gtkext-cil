@@ -141,8 +141,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		#region Fields
 
-		private TextPosition originalPosition;
 		private int originalInsertPoint;
+		private TextPosition originalPosition;
 
 		#endregion
 	}

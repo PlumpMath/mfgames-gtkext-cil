@@ -25,7 +25,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		public static void Redo(EditorViewController controller)
 		{
 			// Bridge into the new command controller subsystem.
-			var commandReference = new CommandFactoryReference(UndoCommandFactory.Key);
+			var commandReference = new CommandFactoryReference(RedoCommandFactory.Key);
 			controller.CommandFactory.Do(controller, commandReference);
 		}
 

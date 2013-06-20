@@ -45,7 +45,7 @@ namespace MfGames.Commands
 				controller.CommandController.Redo(operationContext);
 
 				// If we have a text position, we need to set it.
-				if(operationContext.Results.HasValue)
+				if (operationContext.Results.HasValue)
 				{
 					displayContext.Caret.Position =
 						operationContext.Results.Value.BufferPosition;

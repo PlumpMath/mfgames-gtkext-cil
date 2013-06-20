@@ -157,6 +157,7 @@
     <Compile Include="Editing\Actions\ActionFixtureAttribute.cs" />
     <Compile Include="Editing\Actions\ActionStateAttribute.cs" />
     <Compile Include="Editing\Actions\KeyBindingAttribute.cs" />
+    <Compile Include="Editing\Commands\DeleteLeftCharacterCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteLeftCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteSelectionCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinPreviousParagraphCommandFactory.cs" />

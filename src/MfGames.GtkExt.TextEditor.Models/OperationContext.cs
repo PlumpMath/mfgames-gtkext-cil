@@ -11,15 +11,17 @@ namespace MfGames.GtkExt.TextEditor.Models
 	{
 		#region Properties
 
-		public TextPosition Position { get; private set; }
 		public LineBuffer LineBuffer { get; private set; }
+		public TextPosition Position { get; private set; }
 		public LineBufferOperationResults? Results { get; set; }
 
 		#endregion
 
 		#region Constructors
 
-		public OperationContext(LineBuffer lineBuffer, TextPosition position)
+		public OperationContext(
+			LineBuffer lineBuffer,
+			TextPosition position)
 		{
 			LineBuffer = lineBuffer;
 			Position = position;

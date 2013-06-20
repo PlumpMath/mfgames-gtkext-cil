@@ -65,8 +65,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			}
 			else
 			{
-				//key = DeleteLeftCharacterCommandFactory.Key;
-				return;
+				// Delete the next character only.
+				key = DeleteLeftCharacterCommandFactory.Key;
 			}
 
 			// Execute the command and pass the results to calling method.
