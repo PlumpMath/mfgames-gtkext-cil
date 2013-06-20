@@ -343,6 +343,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			EditorViewController controller,
 			char unicode)
 		{
+			//// Bridge into the new command controller subsystem.
+			//var commandReference =
+			//	new CommandFactoryReference(InsertTextCommandFactory.Key, unicode);
+			//controller.CommandFactory.Do(controller,commandReference);
+
 			// Because InsertText isn't a proper "action", we need to manually
 			// remove all action states.
 			controller.States.RemoveAllExcluding(typeof (InsertTextActionState));

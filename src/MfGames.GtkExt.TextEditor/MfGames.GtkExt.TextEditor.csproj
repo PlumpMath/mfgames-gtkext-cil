@@ -158,6 +158,7 @@
     <Compile Include="Editing\Actions\ActionStateAttribute.cs" />
     <Compile Include="Editing\Actions\KeyBindingAttribute.cs" />
     <Compile Include="Editing\Commands\DeleteLeftCommandFactory.cs" />
+    <Compile Include="Editing\Commands\DeleteSelectionCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinPreviousParagraphCommandFactory.cs" />
     <Compile Include="Editing\Commands\RedoCommandFactory.cs" />
     <Compile Include="Editing\Commands\TextEditingCommandFactory.cs" />

@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Composites\JoinPreviousParagraphCommand.cs" />
     <Compile Include="IDeleteLineCommand.cs" />
+    <Compile Include="IDeleteTextCommand.cs" />
     <Compile Include="IInsertTextCommand.cs" />
     <Compile Include="IInsertTextFromTextRangeCommand.cs" />
     <Compile Include="ITextEditingCommand.cs" />

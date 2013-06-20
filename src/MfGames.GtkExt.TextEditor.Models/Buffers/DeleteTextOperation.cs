@@ -4,6 +4,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
+using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
@@ -12,7 +14,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 	/// <see cref="SetTextOperation"/>, this deletes text at a specific position
 	/// and returns the buffer position for resulting position.
 	/// </summary>
-	public class DeleteTextOperation: ILineBufferOperation
+	public class DeleteTextOperation: TextEditingOperation,
+		ILineBufferOperation,
+		IDeleteTextCommand<OperationContext>
 	{
 		#region Properties
 
@@ -35,6 +39,73 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		public LineBufferOperationType OperationType
 		{
 			[DebuggerStepThrough] get { return LineBufferOperationType.DeleteText; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		public override void Do(OperationContext state)
+		{
+			// Grab the line from the line buffer.
+			string lineText = state.LineBuffer.GetLineText(
+				LineIndex, LineContexts.Unformatted);
+			var buffer = new StringBuilder(lineText);
+
+			// Normalize the character ranges.
+			int startCharacterIndex =
+				new Position(CharacterRange.StartIndex).Normalize(lineText);
+			int endCharacterIndex =
+				new Position(CharacterRange.EndIndex).Normalize(lineText);
+			int length = endCharacterIndex - startCharacterIndex;
+
+			originalText = lineText.Substring(startCharacterIndex, length);
+
+			buffer.Remove(startCharacterIndex, length);
+
+			// Set the line in the buffer.
+			lineText = buffer.ToString();
+			state.LineBuffer.SetText(LineIndex, lineText);
+
+			// If we are updating the position, we need to do it here.
+			if (UpdateTextPosition)
+			{
+				state.Results =
+					new LineBufferOperationResults(
+						new BufferPosition(LineIndex, startCharacterIndex));
+			}
+		}
+
+		public override void Redo(OperationContext state)
+		{
+			Do(state);
+		}
+
+		public override void Undo(OperationContext state)
+		{
+			// Grab the line from the line buffer.
+			string lineText = state.LineBuffer.GetLineText(
+				LineIndex, LineContexts.Unformatted);
+			var buffer = new StringBuilder(lineText);
+
+			// Normalize the character ranges.
+			int startCharacterIndex =
+				new Position(CharacterRange.StartIndex).Normalize(lineText);
+			int endCharacterIndex =
+				new Position(CharacterRange.EndIndex).Normalize(lineText);
+			buffer.Insert(startCharacterIndex, originalText);
+
+			// Set the line in the buffer.
+			lineText = buffer.ToString();
+			state.LineBuffer.SetText(LineIndex, lineText);
+
+			// If we are updating the position, we need to do it here.
+			if (UpdateTextPosition)
+			{
+				state.Results =
+					new LineBufferOperationResults(
+						new BufferPosition(LineIndex, endCharacterIndex));
+			}
 		}
 
 		#endregion
@@ -87,6 +158,12 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			CharacterRange = CharacterRange.FromLength(
 				bufferPosition.CharacterIndex, length);
 		}
+
+		#endregion
+
+		#region Fields
+
+		private string originalText;
 
 		#endregion
 	}

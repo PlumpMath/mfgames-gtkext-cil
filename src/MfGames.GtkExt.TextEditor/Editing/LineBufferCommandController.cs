@@ -22,6 +22,14 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			return operation;
 		}
 
+		public IDeleteTextCommand<OperationContext> CreateDeleteTextCommand(
+			TextRange range)
+		{
+			var operation = new DeleteTextOperation(
+				range.Begin.Line, range.Begin.Character, range.End.Character);
+			return operation;
+		}
+
 		public IInsertTextCommand<OperationContext> CreateInsertTextCommand(
 			TextPosition textPosition,
 			string text)

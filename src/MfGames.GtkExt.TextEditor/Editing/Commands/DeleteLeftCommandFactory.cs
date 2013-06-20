@@ -58,8 +58,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			if (!displayContext.Caret.Selection.IsEmpty)
 			{
 				// If we have a selection, then we use the Delete Selection command.
-				//key = DeleteSelectionCommandFactory.Key;
-				return;
+				key = DeleteSelectionCommandFactory.Key;
 			}
 			else if (position.IsBeginningOfBuffer(controller.DisplayContext))
 			{

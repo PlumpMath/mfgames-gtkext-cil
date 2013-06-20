@@ -131,6 +131,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			CommandFactory.Register(new RedoCommandFactory());
 			CommandFactory.Register(new DeleteLeftCommandFactory());
 			CommandFactory.Register(new JoinPreviousParagraphCommandFactory());
+			CommandFactory.Register(new DeleteSelectionCommandFactory());
 
 			// Go through the types in the assembly.
 			foreach (Type type in assembly.GetTypes())
