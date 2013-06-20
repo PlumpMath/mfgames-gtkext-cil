@@ -40,7 +40,15 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		{
 			if (controller.CommandController.CanUndo)
 			{
+				// Request that the previous command be undone.
 				controller.CommandController.Undo(operationContext);
+
+				// If we have a text position, we need to set it.
+				if(operationContext.Results.HasValue)
+				{
+					displayContext.Caret.Position =
+						operationContext.Results.Value.BufferPosition;
+				}
 			}
 		}
 

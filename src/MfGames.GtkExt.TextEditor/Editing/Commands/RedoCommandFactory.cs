@@ -41,7 +41,15 @@ namespace MfGames.Commands
 		{
 			if (controller.CommandController.CanRedo)
 			{
+				// Request that the previous undone command be redone.
 				controller.CommandController.Redo(operationContext);
+
+				// If we have a text position, we need to set it.
+				if(operationContext.Results.HasValue)
+				{
+					displayContext.Caret.Position =
+						operationContext.Results.Value.BufferPosition;
+				}
 			}
 		}
 

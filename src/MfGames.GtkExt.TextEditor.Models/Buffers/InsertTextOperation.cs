@@ -57,7 +57,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			buffer.Insert(characterIndex, Text);
 
-			originalCharacterIndex = characterIndex;
+			originalInsertPoint = characterIndex;
+			originalPosition = state.Position;
 
 			// Set the line in the buffer.
 			lineText = buffer.ToString();
@@ -85,7 +86,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			var buffer = new StringBuilder(lineText);
 
 			// Normalize the character ranges.
-			buffer.Remove(originalCharacterIndex, Text.Length);
+			buffer.Remove(originalInsertPoint, Text.Length);
 
 			// Set the line in the buffer.
 			lineText = buffer.ToString();
@@ -96,7 +97,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			{
 				state.Results =
 					new LineBufferOperationResults(
-						new BufferPosition(BufferPosition.Line, originalCharacterIndex));
+						new BufferPosition(originalPosition.Line, originalPosition.Character));
 			}
 		}
 
@@ -140,7 +141,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		#region Fields
 
-		private int originalCharacterIndex;
+		private TextPosition originalPosition;
+		private int originalInsertPoint;
 
 		#endregion
 	}

@@ -2,6 +2,7 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 
 namespace MfGames.GtkExt.TextEditor.Models
@@ -10,6 +11,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 	{
 		#region Properties
 
+		public TextPosition Position { get; private set; }
 		public LineBuffer LineBuffer { get; private set; }
 		public LineBufferOperationResults? Results { get; set; }
 
@@ -17,9 +19,10 @@ namespace MfGames.GtkExt.TextEditor.Models
 
 		#region Constructors
 
-		public OperationContext(LineBuffer lineBuffer)
+		public OperationContext(LineBuffer lineBuffer, TextPosition position)
 		{
 			LineBuffer = lineBuffer;
+			Position = position;
 		}
 
 		#endregion

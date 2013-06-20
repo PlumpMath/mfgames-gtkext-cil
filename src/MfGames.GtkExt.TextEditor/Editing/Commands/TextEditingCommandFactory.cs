@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using MfGames.Commands;
+using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.HierarchicalPaths;
@@ -38,8 +39,11 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			BufferPosition position = displayContext.Caret.Position;
 
 			// Set up the operation context for this request.
-			var operationContext =
-				new OperationContext(editViewController.DisplayContext.LineBuffer);
+			var operationContext = new OperationContext(
+				displayContext.LineBuffer,
+				new TextPosition(
+					(Position) displayContext.Caret.Position.LineIndex,
+					(Position) displayContext.Caret.Position.CharacterIndex));
 
 			// Create the commands and execute them.
 			Do(
