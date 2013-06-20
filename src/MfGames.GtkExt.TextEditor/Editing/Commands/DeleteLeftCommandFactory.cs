@@ -37,7 +37,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			return "Delete Left";
 		}
 
-		protected override void Do(object context,
+		protected override void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,

@@ -7,7 +7,6 @@ using System.Text;
 using Gdk;
 using Gtk;
 using MfGames.Commands;
-using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Editing.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
@@ -264,38 +263,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.Return)]
 		public static void InsertParagraph(EditorViewController controller)
 		{
-			// Get the text of the current line.
-			IDisplayContext displayContext = controller.DisplayContext;
-			BufferPosition position = displayContext.Caret.Position;
-			string lineText = displayContext.LineBuffer.GetLineText(
-				position.LineIndex, LineContexts.Unformatted);
-
-			// Split the line based on the character index.
-			string before = lineText.Substring(0, position.CharacterIndex);
-			string after = lineText.Substring(position.CharacterIndex);
-
-			// Create the command and add the operations. To actually composite
-			// the command, we create a new line and set the text of both lines
-			// to the before and after.
-			var command = new Command(position);
-
-			command.Operations.Add(new InsertLinesOperation(position.LineIndex, 1));
-			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
-			command.Operations.Add(new ExitLineOperation(position.LineIndex));
-			command.Operations.Add(new SetTextOperation(position.LineIndex + 1, after));
-
-			// The undo operation deletes the created line and sets the text of
-			// the first line to the original contents.
-			command.UndoOperations.Add(new DeleteLinesOperation(position.LineIndex, 1));
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex, lineText));
-
-			// Change the buffer position.
-			position.LineIndex++;
-			position.CharacterIndex = 0;
-
-			// Perform the operations in the command and set the position.
-			controller.Do(command, position);
+			// Bridge into the new command controller subsystem.
+			var commandReference =
+				new CommandFactoryReference(SplitParagraphCommandFactory.Key);
+			controller.CommandFactory.Do(controller, commandReference);
 		}
 
 		/// <summary>
@@ -309,8 +280,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		{
 			// Bridge into the new command controller subsystem.
 			var commandReference =
-				new CommandFactoryReference(InsertKeyCommandFactory.Key,unicode);
-			controller.CommandFactory.Do(controller,commandReference);
+				new CommandFactoryReference(InsertCharacterCommandFactory.Key, unicode);
+			controller.CommandFactory.Do(controller, commandReference);
 
 			//// Because InsertText isn't a proper "action", we need to manually
 			//// remove all action states.

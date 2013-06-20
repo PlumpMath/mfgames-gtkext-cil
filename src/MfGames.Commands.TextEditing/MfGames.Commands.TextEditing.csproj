@@ -76,8 +76,10 @@
   <ItemGroup>
     <Compile Include="Composites\JoinNextParagraphCommand.cs" />
     <Compile Include="Composites\JoinPreviousParagraphCommand.cs" />
+    <Compile Include="Composites\SplitParagraphCommand.cs" />
     <Compile Include="IDeleteLineCommand.cs" />
     <Compile Include="IDeleteTextCommand.cs" />
+    <Compile Include="IInsertLineCommand.cs" />
     <Compile Include="IInsertTextCommand.cs" />
     <Compile Include="IInsertTextFromTextRangeCommand.cs" />
     <Compile Include="ITextEditingCommand.cs" />

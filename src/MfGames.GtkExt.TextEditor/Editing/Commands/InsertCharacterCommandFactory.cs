@@ -10,7 +10,7 @@ using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
-	public class InsertCharacterCommandFactory:TextEditingCommandFactory
+	public class InsertCharacterCommandFactory: TextEditingCommandFactory
 	{
 		#region Properties
 
@@ -34,7 +34,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			return "Insert Character";
 		}
 
-		protected override void Do(object context,
+		protected override void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,
@@ -43,7 +44,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			BufferPosition position)
 		{
 			string text = commandData.ToString();
-			var insertCommand =
+			IInsertTextCommand<OperationContext> insertCommand =
 				controller.CommandController.CreateInsertTextCommand(
 					new TextPosition(
 						(Position) displayContext.Caret.Position.LineIndex,
@@ -52,10 +53,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			insertCommand.UpdateTextPosition = true;
 
 			// Execute the command.
-			controller.CommandController.Do(insertCommand,operationContext);
+			controller.CommandController.Do(insertCommand, operationContext);
 
 			// If we have a text position, we need to set it.
-			if(operationContext.Results.HasValue)
+			if (operationContext.Results.HasValue)
 			{
 				displayContext.Caret.Position =
 					operationContext.Results.Value.BufferPosition;
@@ -69,7 +70,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		static InsertCharacterCommandFactory()
 		{
 			Key = new HierarchicalPath(
-				"/Text Editor/Insert Character",HierarchicalPathOptions.InternStrings);
+				"/Text Editor/Insert Character", HierarchicalPathOptions.InternStrings);
 		}
 
 		#endregion

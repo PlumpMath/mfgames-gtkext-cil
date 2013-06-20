@@ -31,7 +31,8 @@ namespace MfGames.Commands
 			return "Redo";
 		}
 
-		protected override void Do(object context,
+		protected override void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,

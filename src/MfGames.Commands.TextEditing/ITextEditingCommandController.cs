@@ -20,6 +20,8 @@ namespace MfGames.Commands.TextEditing
 		IDeleteTextCommand<TContext> CreateDeleteTextCommand(
 			SingleLineTextRange range);
 
+		IInsertLineCommand<TContext> CreateInsertLineCommand(Position line);
+
 		IInsertTextCommand<TContext> CreateInsertTextCommand(
 			TextPosition textPosition,
 			string text);

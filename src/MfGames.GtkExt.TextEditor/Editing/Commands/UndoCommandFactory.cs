@@ -30,7 +30,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			return "Undo";
 		}
 
-		protected override void Do(object context,
+		protected override void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,

@@ -4,13 +4,14 @@
 
 using MfGames.Commands;
 using MfGames.Commands.TextEditing;
+using MfGames.Commands.TextEditing.Composites;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Commands
 {
-	public class InsertKeyCommandFactory:TextEditingCommandFactory
+	public class SplitParagraphCommandFactory: TextEditingCommandFactory
 	{
 		#region Properties
 
@@ -31,7 +32,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		public override string GetTitle(
 			CommandFactoryReference commandFactoryReference)
 		{
-			return "Insert Key";
+			return "Split Paragraph";
 		}
 
 		protected override void Do(
@@ -43,34 +44,32 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			IDisplayContext displayContext,
 			BufferPosition position)
 		{
-			// Based on the text, figure out what to do.
-			var key = (char) commandData;
-			CommandFactoryReference command;
+			// Create the command and execute it.
+			var splitCommand =
+				new SplitParagraphCommand<OperationContext>(
+					controller.CommandController,
+					new TextPosition(
+						(Position) displayContext.Caret.Position.LineIndex,
+						(Position) displayContext.Caret.Position.CharacterIndex));
 
-			switch (key)
+			controller.CommandController.Do(splitCommand, operationContext);
+
+			// If we have a text position, we need to set it.
+			if (operationContext.Results.HasValue)
 			{
-				case '\n':
-				case '\r':
-					return;
-
-				default:
-					command = new CommandFactoryReference(
-						InsertCharacterCommandFactory.Key, key);
-					break;
+				displayContext.Caret.Position =
+					operationContext.Results.Value.BufferPosition;
 			}
-
-			// Execute the command requested.
-			commandFactory.Do(context, command);
 		}
 
 		#endregion
 
 		#region Constructors
 
-		static InsertKeyCommandFactory()
+		static SplitParagraphCommandFactory()
 		{
 			Key = new HierarchicalPath(
-				"/Text Editor/Insert Key",HierarchicalPathOptions.InternStrings);
+				"/Text Editor/Split Paragraph", HierarchicalPathOptions.InternStrings);
 		}
 
 		#endregion

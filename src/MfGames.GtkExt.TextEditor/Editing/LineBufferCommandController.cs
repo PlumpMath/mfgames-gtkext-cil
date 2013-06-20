@@ -30,6 +30,13 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			return operation;
 		}
 
+		public IInsertLineCommand<OperationContext> CreateInsertLineCommand(
+			Position line)
+		{
+			var operation = new InsertLinesOperation(line, 1);
+			return operation;
+		}
+
 		public IInsertTextCommand<OperationContext> CreateInsertTextCommand(
 			TextPosition textPosition,
 			string text)

@@ -138,7 +138,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			CommandFactory.Register(new JoinNextParagraphCommandFactory());
 			CommandFactory.Register(new DeleteRightCharacterCommandFactory());
 
-			CommandFactory.Register(new InsertKeyCommandFactory());
+			CommandFactory.Register(new SplitParagraphCommandFactory());
 			CommandFactory.Register(new InsertCharacterCommandFactory());
 
 			// Go through the types in the assembly.

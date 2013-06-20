@@ -35,7 +35,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			return "Join Next Paragraph";
 		}
 
-		protected override void Do(object context,
+		protected override void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,

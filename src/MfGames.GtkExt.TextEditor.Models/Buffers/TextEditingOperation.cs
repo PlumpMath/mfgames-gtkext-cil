@@ -23,6 +23,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		public bool UpdateTextPosition { get; set; }
 		public bool UpdateTextSelection { get; set; }
+		protected TextPosition InitialPosition { get; set; }
 
 		#endregion
 

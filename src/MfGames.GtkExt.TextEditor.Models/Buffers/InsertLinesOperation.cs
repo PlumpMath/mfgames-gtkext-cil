@@ -2,12 +2,16 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using MfGames.Commands.TextEditing;
+
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
 {
 	/// <summary>
 	/// Indicates an operation that inserts lines into a line buffer.
 	/// </summary>
-	public class InsertLinesOperation: ILineBufferOperation
+	public class InsertLinesOperation: TextEditingOperation,
+		ILineBufferOperation,
+		IInsertLineCommand<OperationContext>
 	{
 		#region Properties
 
@@ -30,6 +34,46 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		public LineBufferOperationType OperationType
 		{
 			get { return LineBufferOperationType.InsertLines; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		public override void Do(OperationContext state)
+		{
+			// Save the position, in case we need it.
+			InitialPosition = state.Position;
+
+			// Insert the line into the buffer.
+			state.LineBuffer.InsertLines(LineIndex, 1);
+
+			// If we are updating the position, then set it.
+			if (UpdateTextPosition)
+			{
+				state.Results =
+					new LineBufferOperationResults(new BufferPosition(LineIndex, 0));
+			}
+		}
+
+		public override void Redo(OperationContext state)
+		{
+			Do(state);
+		}
+
+		public override void Undo(OperationContext state)
+		{
+			// Delete the created line.
+			state.LineBuffer.DeleteLines(LineIndex, 1);
+
+			// If we were updating the position, we need to restore it.
+			// If we are updating the position, then set it.
+			if (UpdateTextPosition)
+			{
+				state.Results =
+					new LineBufferOperationResults(
+						new BufferPosition(InitialPosition.Line, InitialPosition.Character));
+			}
 		}
 
 		#endregion

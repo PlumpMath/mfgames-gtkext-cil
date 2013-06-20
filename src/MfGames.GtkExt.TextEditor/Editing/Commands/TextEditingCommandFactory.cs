@@ -59,7 +59,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		public abstract string GetTitle(
 			CommandFactoryReference commandFactoryReference);
 
-		protected abstract void Do(object context,
+		protected abstract void Do(
+			object context,
 			CommandFactoryManager<OperationContext> commandFactory,
 			object commandData,
 			OperationContext operationContext,
