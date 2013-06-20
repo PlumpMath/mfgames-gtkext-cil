@@ -131,56 +131,6 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 			var commandReference =
 				new CommandFactoryReference(DeleteLeftCommandFactory.Key);
 			controller.CommandFactory.Do(controller, commandReference);
-
-			//// If we have a selection, then we simply delete that selection.
-			//IDisplayContext displayContext = controller.DisplayContext;
-			//BufferPosition position = displayContext.Caret.Position;
-			//var command = new Command(position);
-
-			//if (DeleteSelection(controller, command))
-			//{
-			//	// We have a command, so perform it and return.
-			//	controller.Do(command, command.EndPosition);
-			//	return;
-			//}
-
-			//// Get the position in the buffer.
-			//if (position.IsBeginningOfBuffer(controller.DisplayContext))
-			//{
-			//	// We are in the beginning of the buffer, so we don't do anything.
-			//	return;
-			//}
-
-			//// If we are at the beginning of the line, then we are combining paragraphs.
-			//if (position.CharacterIndex == 0)
-			//{
-			//	// Delete the paragraph.
-			//	DeleteLeftParagraph(controller, command);
-			//	return;
-			//}
-
-			/*
-			 * JoinLeftParagaph:
-			 *   Insert into previous paragraph, copy text from next
-			 *   Delete next paragraph
-			 *   Set position to end of previous paragraph.
-			 */
-
-			//// This is a single character delete which doesn't combine paragraphs.
-			//LineBuffer lineBuffer = displayContext.LineBuffer;
-			//string lineText = lineBuffer.GetLineText(
-			//	position.LineIndex, LineContexts.Unformatted);
-
-			//// Create the operation and its undo.
-			//command.Operations.Add(
-			//	new DeleteTextOperation(
-			//		position.LineIndex, position.CharacterIndex - 1, position.CharacterIndex));
-
-			//command.UndoOperations.Add(
-			//	new SetTextOperation(position.LineIndex, lineText));
-
-			//// Perform the command in the context.
-			//controller.Do(command);
 		}
 
 		/// <summary>

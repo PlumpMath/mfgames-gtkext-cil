@@ -93,6 +93,49 @@ namespace MfGames.GtkExt.TextEditor.Models
 			return text;
 		}
 
+		public override LineBufferOperationResults InsertLines(
+			int lineIndex,
+			int count)
+		{
+			// Insert the new lines into the buffer.
+			for (int index = 0;
+				index < count;
+				index++)
+			{
+				lines.Insert(lineIndex, string.Empty);
+			}
+
+			// Fire an insert line change.
+			RaiseLinesInserted(new LineRangeEventArgs(lineIndex, count));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(new BufferPosition(lineIndex + count, 0));
+		}
+
+		public override LineBufferOperationResults InsertText(
+			int lineIndex,
+			int characterIndex,
+			string text)
+		{
+			// Get the text from the buffer, insert the text, and put it back.
+			string line = lines[lineIndex];
+
+			characterIndex = Math.Min(characterIndex, line.Length);
+
+			string newLine = line.Insert(characterIndex, text);
+
+			lines[lineIndex] = newLine;
+
+			// Fire a line changed operation.
+			RaiseLineChanged(new LineChangedArgs(lineIndex));
+
+			// Return the appropriate results.
+			return
+				new LineBufferOperationResults(
+					new BufferPosition(lineIndex, characterIndex + text.Length));
+		}
+
 		/// <summary>
 		/// Sets the read only flag on the buffer.
 		/// </summary>
@@ -113,23 +156,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		protected override LineBufferOperationResults Do(
 			InsertTextOperation operation)
 		{
-			// Get the text from the buffer, insert the text, and put it back.
-			int lineIndex = operation.BufferPosition.Line;
-			string line = lines[lineIndex];
-			int characterIndex = Math.Min(
-				operation.BufferPosition.Character, line.Length);
-
-			string newLine = line.Insert(characterIndex, operation.Text);
-
-			lines[lineIndex] = newLine;
-
-			// Fire a line changed operation.
-			RaiseLineChanged(new LineChangedArgs(lineIndex));
-
-			// Return the appropriate results.
-			return
-				new LineBufferOperationResults(
-					new BufferPosition(lineIndex, characterIndex + operation.Text.Length));
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -194,14 +221,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		protected override LineBufferOperationResults Do(
 			DeleteLinesOperation operation)
 		{
-			// Delete the lines from the buffer.
-			lines.RemoveRange(operation.Line, operation.Count);
-
-			// Fire an delete line change.
-			RaiseLinesDeleted(new LineRangeEventArgs(operation.Line, operation.Count));
-
-			// Return the appropriate results.
-			return new LineBufferOperationResults(new BufferPosition(operation.Line, 0));
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -214,22 +234,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		protected override LineBufferOperationResults Do(
 			InsertLinesOperation operation)
 		{
-			// Insert the new lines into the buffer.
-			for (int index = 0;
-				index < operation.Count;
-				index++)
-			{
-				lines.Insert(operation.LineIndex, string.Empty);
-			}
-
-			// Fire an insert line change.
-			RaiseLinesInserted(
-				new LineRangeEventArgs(operation.LineIndex, operation.Count));
-
-			// Return the appropriate results.
-			return
-				new LineBufferOperationResults(
-					new BufferPosition(operation.LineIndex + operation.Count, 0));
+			throw new NotImplementedException();
 		}
 
 		#endregion

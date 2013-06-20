@@ -53,10 +53,10 @@ namespace MfGames.GtkExt.TextEditor.Models
 		#region Methods
 
 		/// <summary>
-		/// Deletes the lines using a <see cref="DeleteLinesOperation"/>.
+		/// Deletes the lines inside the line buffer.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
-		/// <param name="count">The count.</param>
+		/// <param name="count">The number of lines to delete.</param>
 		public abstract LineBufferOperationResults DeleteLines(
 			int lineIndex,
 			int count);
@@ -211,30 +211,24 @@ namespace MfGames.GtkExt.TextEditor.Models
 			LineContexts lineContexts);
 
 		/// <summary>
-		/// Inserts the lines using a <see cref="InsertLinesOperation"/>.
+		/// Inserts a line inside the line buffer.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="count">The count.</param>
-		public LineBufferOperationResults InsertLines(
+		public abstract LineBufferOperationResults InsertLines(
 			int lineIndex,
-			int count)
-		{
-			return Do(new InsertLinesOperation(lineIndex, count));
-		}
+			int count);
 
 		/// <summary>
-		/// Inserts the text using a <see cref="InsertTextOperation"/>.
+		/// Inserts the text into a line.
 		/// </summary>
 		/// <param name="lineIndex">Index of the line.</param>
 		/// <param name="characterIndex">Index of the character.</param>
 		/// <param name="text">The text.</param>
-		public LineBufferOperationResults InsertText(
+		public abstract LineBufferOperationResults InsertText(
 			int lineIndex,
 			int characterIndex,
-			string text)
-		{
-			return InsertText(new BufferPosition(lineIndex, characterIndex), text);
-		}
+			string text);
 
 		/// <summary>
 		/// Inserts the text using a <see cref="InsertTextOperation"/>.

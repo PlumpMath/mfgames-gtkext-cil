@@ -54,6 +54,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		{
 			// Figure out which command we'll be passing the operation to.
 			HierarchicalPath key;
+
 			if (!displayContext.Caret.Selection.IsEmpty)
 			{
 				// If we have a selection, then we use the Delete Selection command.

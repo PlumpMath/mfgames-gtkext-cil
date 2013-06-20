@@ -2,7 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -43,18 +42,25 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		public override void Do(OperationContext state)
 		{
+			// We need to save the state of the line before we delete it.
+			savedText = state.LineBuffer.GetLineText(Line, LineContexts.Unformatted);
+
 			// Delete the line from the buffer.
 			state.LineBuffer.DeleteLines(Line, 1);
 		}
 
 		public override void Redo(OperationContext state)
 		{
-			throw new NotImplementedException();
+			Do(state);
 		}
 
 		public override void Undo(OperationContext state)
 		{
-			throw new NotImplementedException();
+			// Insert the line back into the buffer.
+			state.LineBuffer.InsertLines(Line, 1);
+
+			// Restore the text in the line.
+			state.LineBuffer.SetText(Line, savedText);
 		}
 
 		#endregion
@@ -73,6 +79,12 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			Line = lineIndex;
 			Count = count;
 		}
+
+		#endregion
+
+		#region Fields
+
+		private string savedText;
 
 		#endregion
 	}

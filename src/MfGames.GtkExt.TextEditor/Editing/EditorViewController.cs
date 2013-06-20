@@ -127,6 +127,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			}
 
 			// Register our known command factories.
+			CommandFactory.Register(new UndoCommandFactory());
+			CommandFactory.Register(new RedoCommandFactory());
 			CommandFactory.Register(new DeleteLeftCommandFactory());
 			CommandFactory.Register(new JoinPreviousParagraphCommandFactory());
 

@@ -2,7 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
 using System.Text;
 using MfGames.Commands.TextEditing;
 
@@ -39,6 +38,10 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			buffer.Insert(characterIndex, sourceText);
 
+			// Save the source text length so we can delete it.
+			sourceLength = sourceText.Length;
+			originalCharacterIndex = characterIndex;
+
 			// Set the line in the buffer.
 			destinationLine = buffer.ToString();
 			state.LineBuffer.SetText(DestinationPosition.Line, destinationLine);
@@ -46,12 +49,30 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		public override void Redo(OperationContext state)
 		{
-			throw new NotImplementedException();
+			Do(state);
 		}
 
 		public override void Undo(OperationContext state)
 		{
-			throw new NotImplementedException();
+			// Grab the line from the line buffer.
+			string lineText = state.LineBuffer.GetLineText(
+				DestinationPosition.Line, LineContexts.Unformatted);
+			var buffer = new StringBuilder(lineText);
+
+			// Normalize the character ranges.
+			buffer.Remove(originalCharacterIndex, sourceLength);
+
+			// Set the line in the buffer.
+			lineText = buffer.ToString();
+			state.LineBuffer.SetText(DestinationPosition.Line, lineText);
+
+			// If we are updating the position, we need to do it here.
+			if (UpdateTextPosition)
+			{
+				state.Results =
+					new LineBufferOperationResults(
+						new BufferPosition(DestinationPosition.Line, originalCharacterIndex));
+			}
 		}
 
 		#endregion
@@ -65,6 +86,13 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			DestinationPosition = destinationPosition;
 			SourceRange = sourceRange;
 		}
+
+		#endregion
+
+		#region Fields
+
+		private int originalCharacterIndex;
+		private int sourceLength;
 
 		#endregion
 	}

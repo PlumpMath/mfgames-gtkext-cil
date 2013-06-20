@@ -134,6 +134,21 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			return LineBuffer.GetLineText(lineIndex, lineContexts);
 		}
 
+		public override LineBufferOperationResults InsertLines(
+			int lineIndex,
+			int count)
+		{
+			return LineBuffer.InsertLines(lineIndex, count);
+		}
+
+		public override LineBufferOperationResults InsertText(
+			int lineIndex,
+			int characterIndex,
+			string text)
+		{
+			return LineBuffer.InsertText(lineIndex, characterIndex, text);
+		}
+
 		private void OnLineChanged(
 			object sender,
 			LineChangedArgs e)

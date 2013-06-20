@@ -54,10 +54,11 @@ namespace MfGames.Commands
 			List<IUndoableCommand<TContext>> commands = Commands;
 
 			for (int index = commands.Count - 1;
-				index >= commands.Count;
+				index >= 0;
 				index--)
 			{
 				IUndoableCommand<TContext> command = commands[index];
+				command.Undo(state);
 			}
 		}
 
