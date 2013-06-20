@@ -129,18 +129,6 @@ namespace MfGames.GtkExt.TextEditor.Models
 			int startIndex,
 			int endIndex)
 		{
-			if (startIndex < 0)
-			{
-				throw new ArgumentOutOfRangeException(
-					"startIndex", "Start index cannot be less than zero.");
-			}
-
-			if (endIndex < startIndex)
-			{
-				throw new ArgumentOutOfRangeException(
-					"endIndex", "End index cannot be less than start index.");
-			}
-
 			this.startIndex = startIndex;
 			this.endIndex = endIndex;
 		}

@@ -1,4 +1,8 @@
-﻿namespace MfGames.Commands.TextEditing
+﻿// Copyright 2011-2013 Moonfire Games
+// Released under the MIT license
+// http://mfgames.com/mfgames-gtkext-cil/license
+
+namespace MfGames.Commands.TextEditing
 {
 	/// <summary>
 	/// Represents a range of characters on a single line.

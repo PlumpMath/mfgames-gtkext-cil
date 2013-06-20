@@ -17,15 +17,17 @@ namespace MfGames.Commands.TextEditing
 
 		IDeleteLineCommand<TContext> CreateDeleteLineCommand(Position line);
 
-		IDeleteTextCommand<TContext> CreateDeleteTextCommand(SingleLineTextRange range);
+		IDeleteTextCommand<TContext> CreateDeleteTextCommand(
+			SingleLineTextRange range);
 
 		IInsertTextCommand<TContext> CreateInsertTextCommand(
 			TextPosition textPosition,
 			string text);
 
 		IInsertTextFromTextRangeCommand<TContext> CreateInsertTextFromTextRangeCommand
-			(TextPosition destinationPosition,
-				SingleLineTextRange sourceRange);
+			(
+			TextPosition destinationPosition,
+			SingleLineTextRange sourceRange);
 
 		#endregion
 	}

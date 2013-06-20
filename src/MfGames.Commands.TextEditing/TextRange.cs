@@ -31,8 +31,10 @@ namespace MfGames.Commands.TextEditing
 
 		public TextRange(SingleLineTextRange singleLineTextRange)
 			: this(
-				new TextPosition(singleLineTextRange.Line, singleLineTextRange.CharacterBegin),
-				new TextPosition(singleLineTextRange.Line, singleLineTextRange.CharacterEnd))
+				new TextPosition(
+					singleLineTextRange.Line, singleLineTextRange.CharacterBegin),
+				new TextPosition(singleLineTextRange.Line, singleLineTextRange.CharacterEnd)
+				)
 		{
 		}
 
