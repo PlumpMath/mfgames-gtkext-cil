@@ -196,46 +196,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.Delete)]
 		public static void DeleteRight(EditorViewController controller)
 		{
-			// If we have a selection, then we simply delete that selection.
-			IDisplayContext displayContext = controller.DisplayContext;
-			BufferPosition position = displayContext.Caret.Position;
-			var command = new Command(position);
-
-			if (DeleteSelection(controller, command))
-			{
-				// We have a command, so perform it and return.
-				controller.Do(command, command.EndPosition);
-				return;
-			}
-
-			// Get the position in the buffer.
-			if (position.IsEndOfBuffer(controller.DisplayContext))
-			{
-				// We are in the end of the buffer, so we don't do anything.
-				return;
-			}
-
-			// If we are at the beginning of the line, then we are combining paragraphs.
-			LineBuffer lineBuffer = displayContext.LineBuffer;
-			string lineText = lineBuffer.GetLineText(
-				position.LineIndex, LineContexts.Unformatted);
-			int deleteIndex = position.CharacterIndex;
-
-			if (deleteIndex == lineText.Length)
-			{
-				DeleteRightParagraph(controller, command);
-				return;
-			}
-
-			// Create the operations for both performing and undoing the command.
-			command.Operations.Add(
-				new DeleteTextOperation(position.LineIndex, deleteIndex, deleteIndex + 1));
-
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex, lineText));
-
-			// Perform the command to the action context.
-			controller.Do(command);
+			// Bridge into the new command controller subsystem.
+			var commandReference =
+				new CommandFactoryReference(DeleteRightCommandFactory.Key);
+			controller.CommandFactory.Do(controller, commandReference);
 		}
 
 		/// <summary>

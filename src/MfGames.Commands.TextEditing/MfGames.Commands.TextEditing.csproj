@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Composites\JoinNextParagraphCommand.cs" />
     <Compile Include="Composites\JoinPreviousParagraphCommand.cs" />
     <Compile Include="IDeleteLineCommand.cs" />
     <Compile Include="IDeleteTextCommand.cs" />
