@@ -13,7 +13,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		#region Properties
 
 		public TextPosition DestinationPosition { get; private set; }
-		public TextRange SourceRange { get; private set; }
+		public SingleLineTextRange SourceRange { get; private set; }
 
 		#endregion
 
@@ -23,9 +23,9 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		{
 			// Grab the text from the source line.
 			string sourceLine = state.LineBuffer.GetLineText(
-				SourceRange.Begin.Line, LineContexts.Unformatted);
-			int sourceBegin = SourceRange.Begin.Character.Normalize(sourceLine);
-			int sourceEnd = SourceRange.End.Character.Normalize(sourceLine);
+				SourceRange.Line, LineContexts.Unformatted);
+			int sourceBegin = SourceRange.CharacterBegin.Normalize(sourceLine);
+			int sourceEnd = SourceRange.CharacterEnd.Normalize(sourceLine);
 			string sourceText = sourceLine.Substring(
 				sourceBegin, sourceEnd - sourceBegin);
 
@@ -81,7 +81,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 		public InsertTextFromTextRangeOperation(
 			TextPosition destinationPosition,
-			TextRange sourceRange)
+			SingleLineTextRange sourceRange)
 		{
 			DestinationPosition = destinationPosition;
 			SourceRange = sourceRange;

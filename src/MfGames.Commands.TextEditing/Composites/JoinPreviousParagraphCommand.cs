@@ -41,9 +41,7 @@ namespace MfGames.Commands.TextEditing.Composites
 			IInsertTextFromTextRangeCommand<TContext> insertCommand =
 				controller.CreateInsertTextFromTextRangeCommand(
 					new TextPosition(joinedLine, Position.End),
-					new TextRange(
-						new TextPosition(line, Position.Begin),
-						new TextPosition(line, Position.End)));
+					new SingleLineTextRange(line, Position.Begin, Position.End));
 
 			// Finally, delete the current line since we merged it.
 			IDeleteLineCommand<TContext> deleteCommand =

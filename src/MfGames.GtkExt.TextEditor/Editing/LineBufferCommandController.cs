@@ -22,11 +22,10 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			return operation;
 		}
 
-		public IDeleteTextCommand<OperationContext> CreateDeleteTextCommand(
-			TextRange range)
+		public IDeleteTextCommand<OperationContext> CreateDeleteTextCommand(SingleLineTextRange range)
 		{
 			var operation = new DeleteTextOperation(
-				range.Begin.Line, range.Begin.Character, range.End.Character);
+				range.Line, range.CharacterBegin, range.CharacterEnd);
 			return operation;
 		}
 
@@ -39,10 +38,8 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			return operation;
 		}
 
-		public IInsertTextFromTextRangeCommand<OperationContext>
-			CreateInsertTextFromTextRangeCommand(
-			TextPosition destinationPosition,
-			TextRange sourceRange)
+		public IInsertTextFromTextRangeCommand<OperationContext> CreateInsertTextFromTextRangeCommand(TextPosition destinationPosition,
+				SingleLineTextRange sourceRange)
 		{
 			var operation = new InsertTextFromTextRangeOperation(
 				destinationPosition, sourceRange);

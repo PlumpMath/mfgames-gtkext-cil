@@ -44,13 +44,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		{
 			IDeleteTextCommand<OperationContext> deleteCommand =
 				controller.CommandController.CreateDeleteTextCommand(
-					new TextRange(
-						new TextPosition(
-							(Position) displayContext.Caret.Position.LineIndex,
-							(Position) (displayContext.Caret.Position.CharacterIndex - 1)),
-						new TextPosition(
-							(Position) displayContext.Caret.Position.LineIndex,
-							(Position) displayContext.Caret.Position.CharacterIndex)));
+					new SingleLineTextRange(
+						(Position) displayContext.Caret.Position.LineIndex,
+						(Position) (displayContext.Caret.Position.CharacterIndex - 1),
+						(Position) displayContext.Caret.Position.CharacterIndex));
 			deleteCommand.UpdateTextPosition = true;
 
 			// Execute the command.

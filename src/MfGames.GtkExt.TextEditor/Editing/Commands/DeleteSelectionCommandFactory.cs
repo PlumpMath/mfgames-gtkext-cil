@@ -45,13 +45,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			BufferSegment selection = displayContext.Caret.Selection;
 			IDeleteTextCommand<OperationContext> deleteCommand =
 				controller.CommandController.CreateDeleteTextCommand(
-					new TextRange(
-						new TextPosition(
-							(Position) selection.StartPosition.LineIndex,
-							(Position) selection.StartPosition.CharacterIndex),
-						new TextPosition(
-							(Position) selection.EndPosition.LineIndex,
-							(Position) selection.EndPosition.CharacterIndex)));
+					new SingleLineTextRange(
+						(Position) selection.StartPosition.LineIndex,
+						(Position) selection.StartPosition.CharacterIndex,
+						(Position) selection.EndPosition.CharacterIndex));
 			deleteCommand.UpdateTextPosition = true;
 
 			// Execute the command.

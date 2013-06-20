@@ -29,6 +29,13 @@ namespace MfGames.Commands.TextEditing
 
 		#region Constructors
 
+		public TextRange(SingleLineTextRange singleLineTextRange)
+			: this(
+				new TextPosition(singleLineTextRange.Line, singleLineTextRange.CharacterBegin),
+				new TextPosition(singleLineTextRange.Line, singleLineTextRange.CharacterEnd))
+		{
+		}
+
 		public TextRange(
 			TextPosition begin,
 			TextPosition end)
