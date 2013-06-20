@@ -126,20 +126,24 @@ namespace MfGames.GtkExt.TextEditor.Editing
 				throw new ArgumentNullException("assembly");
 			}
 
-			// Register our known command factories.
-			CommandFactory.Register(new UndoCommandFactory());
-			CommandFactory.Register(new RedoCommandFactory());
+			// Go through the command factories in this assembly.
+			foreach (Type type in assembly.GetTypes())
+			{
+				// If we can't create it, we don't do anything.
+				if (type.IsAbstract)
+				{
+					continue;
+				}
 
-			CommandFactory.Register(new DeleteSelectionCommandFactory());
-			CommandFactory.Register(new DeleteLeftCommandFactory());
-			CommandFactory.Register(new JoinPreviousParagraphCommandFactory());
-			CommandFactory.Register(new DeleteLeftCharacterCommandFactory());
-			CommandFactory.Register(new DeleteRightCommandFactory());
-			CommandFactory.Register(new JoinNextParagraphCommandFactory());
-			CommandFactory.Register(new DeleteRightCharacterCommandFactory());
-
-			CommandFactory.Register(new SplitParagraphCommandFactory());
-			CommandFactory.Register(new InsertCharacterCommandFactory());
+				// If we are the proper type, create a new one and register it.
+				if (typeof (ICommandFactory<OperationContext>).IsAssignableFrom(type))
+				{
+					// Create a new instance.
+					var commandFactory =
+						(ICommandFactory<OperationContext>) Activator.CreateInstance(type);
+					CommandFactory.Register(commandFactory);
+				}
+			}
 
 			// Go through the types in the assembly.
 			foreach (Type type in assembly.GetTypes())
@@ -593,6 +597,11 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// </summary>
 		private void BindActions()
 		{
+			// Register our known command factories from other assemblies.
+			CommandFactory.Register(new UndoCommandFactory());
+			CommandFactory.Register(new RedoCommandFactory());
+
+			// Bind all the actions from our assembly.
 			BindActions(GetType().Assembly);
 		}
 
