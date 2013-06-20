@@ -3,7 +3,6 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using MfGames.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
@@ -17,7 +16,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 	{
 		#region Properties
 
-		public abstract IEnumerable<HierarchicalPath> Keys { get; }
+		public abstract HierarchicalPath FactoryKey { get; }
 
 		#endregion
 

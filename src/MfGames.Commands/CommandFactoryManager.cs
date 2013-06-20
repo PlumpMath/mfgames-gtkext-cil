@@ -64,11 +64,8 @@ namespace MfGames.Commands
 			// Ensure our code contract.
 			Contract.Requires<ArgumentNullException>(commandFactory != null);
 
-			// Go through the the keys inside the view.
-			foreach (HierarchicalPath key in commandFactory.Keys)
-			{
-				Register(key, commandFactory);
-			}
+			// Register the command factory via the key.
+			Register(commandFactory.FactoryKey, commandFactory);
 		}
 
 		/// <summary>

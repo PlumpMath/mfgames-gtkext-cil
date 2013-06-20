@@ -2,7 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System.Collections.Generic;
 using MfGames.HierarchicalPaths;
 
 namespace MfGames.Commands
@@ -19,9 +18,9 @@ namespace MfGames.Commands
 		#region Properties
 
 		/// <summary>
-		/// Retrieves a list of all view keys associated with the factory.
+		/// Contains the key associated with this command factory.
 		/// </summary>
-		IEnumerable<HierarchicalPath> Keys { get; }
+		HierarchicalPath FactoryKey { get; }
 
 		#endregion
 

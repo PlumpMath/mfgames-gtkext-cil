@@ -2,7 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System.Collections.Generic;
 using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Interfaces;
@@ -15,21 +14,15 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 	{
 		#region Properties
 
+		public override HierarchicalPath FactoryKey
+		{
+			get { return Key; }
+		}
+
 		/// <summary>
 		/// Contains the key for the command provided by this factory.
 		/// </summary>
 		public static HierarchicalPath Key { get; private set; }
-
-		public override IEnumerable<HierarchicalPath> Keys
-		{
-			get
-			{
-				return new[]
-				{
-					Key
-				};
-			}
-		}
 
 		#endregion
 
