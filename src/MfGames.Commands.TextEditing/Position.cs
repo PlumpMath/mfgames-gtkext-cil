@@ -13,18 +13,68 @@ namespace MfGames.Commands.TextEditing
 	{
 		#region Methods
 
-		public int Normalize(string lineText)
+		/// <summary>
+		/// Translates the magic number operations into a character index of
+		/// a text string.
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="lineText"></param>
+		/// <returns></returns>
+		public int Normalize(
+			string lineText,
+			Position position,
+			bool goRight)
 		{
+			// All the magic values are negative, so if we don't have one, there is
+			// nothing to do.
 			if (Index >= 0)
 			{
 				return Index;
 			}
 
+			// If we have the end magic number, then the index is equal to the end
+			// of the text line.
 			if (Index == End.Index)
 			{
 				return lineText.Length;
 			}
 
+			// If we have the word, then we go either left or right.
+			if (Index == Word.Index)
+			{
+				if (goRight)
+				{
+					int index = Math.Min(position.Index + 5, lineText.Length);
+					return index;
+				}
+				else
+				{
+					int index = Math.Max(position.Index - 5, 0);
+					return index;
+				}
+			}
+
+			// If we got this far, we don't know how to process this.
+			throw new IndexOutOfRangeException("Encountered an invalid index: " + Index);
+		}
+
+		public int Normalize(string lineText)
+		{
+			// All the magic values are negative, so if we don't have one, there is
+			// nothing to do.
+			if (Index >= 0)
+			{
+				return Index;
+			}
+
+			// If we have the end magic number, then the index is equal to the end
+			// of the text line.
+			if (Index == End.Index)
+			{
+				return lineText.Length;
+			}
+
+			// If we got this far, we don't know how to process this.
 			throw new IndexOutOfRangeException("Encountered an invalid index: " + Index);
 		}
 
@@ -72,6 +122,11 @@ namespace MfGames.Commands.TextEditing
 		/// Contains the zero-based index for the position.
 		/// </summary>
 		public int Index;
+
+		/// <summary>
+		/// A magic number that represents a word break for the line.
+		/// </summary>
+		public static readonly Position Word = new Position(-1053);
 
 		#endregion
 	}

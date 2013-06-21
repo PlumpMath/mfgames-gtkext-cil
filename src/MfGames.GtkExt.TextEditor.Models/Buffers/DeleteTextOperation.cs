@@ -54,9 +54,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			// Normalize the character ranges.
 			int startCharacterIndex =
-				new Position(CharacterRange.StartIndex).Normalize(lineText);
+				new Position(CharacterRange.StartIndex).Normalize(
+					lineText, (Position) CharacterRange.EndIndex, false);
 			int endCharacterIndex =
-				new Position(CharacterRange.EndIndex).Normalize(lineText);
+				new Position(CharacterRange.EndIndex).Normalize(
+					lineText, (Position) CharacterRange.StartIndex, true);
 			int length = endCharacterIndex - startCharacterIndex;
 
 			originalText = lineText.Substring(startCharacterIndex, length);
@@ -90,9 +92,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			// Normalize the character ranges.
 			int startCharacterIndex =
-				new Position(CharacterRange.StartIndex).Normalize(lineText);
+				new Position(CharacterRange.StartIndex).Normalize(
+					lineText, (Position) CharacterRange.EndIndex, false);
 			int endCharacterIndex =
-				new Position(CharacterRange.EndIndex).Normalize(lineText);
+				new Position(CharacterRange.EndIndex).Normalize(
+					lineText, (Position) CharacterRange.StartIndex, true);
 			buffer.Insert(startCharacterIndex, originalText);
 
 			// Set the line in the buffer.

@@ -24,8 +24,10 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			// Grab the text from the source line.
 			string sourceLine = state.LineBuffer.GetLineText(
 				SourceRange.Line, LineContexts.Unformatted);
-			int sourceBegin = SourceRange.CharacterBegin.Normalize(sourceLine);
-			int sourceEnd = SourceRange.CharacterEnd.Normalize(sourceLine);
+			int sourceBegin = SourceRange.CharacterBegin.Normalize(
+				sourceLine, SourceRange.CharacterEnd, false);
+			int sourceEnd = SourceRange.CharacterEnd.Normalize(
+				sourceLine, SourceRange.CharacterBegin, true);
 			string sourceText = sourceLine.Substring(
 				sourceBegin, sourceEnd - sourceBegin);
 

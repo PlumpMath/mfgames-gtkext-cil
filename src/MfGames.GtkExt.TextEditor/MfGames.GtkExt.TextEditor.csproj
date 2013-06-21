@@ -159,10 +159,14 @@
     <Compile Include="Editing\Actions\KeyBindingAttribute.cs" />
     <Compile Include="Editing\Commands\DeleteLeftCharacterCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteLeftCommandFactory.cs" />
+    <Compile Include="Editing\Commands\DeleteLeftWordCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteRightCharacterCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteRightCommandFactory.cs" />
+    <Compile Include="Editing\Commands\DeleteRightWordCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteSelectionCommandFactory.cs" />
     <Compile Include="Editing\Commands\InsertCharacterCommandFactory.cs" />
+    <Compile Include="Editing\Commands\LargeDeleteLeftCommandFactory.cs" />
+    <Compile Include="Editing\Commands\LargeDeleteRightCommandFactory.cs" />
     <Compile Include="Editing\Commands\PasteCommandFactory.cs" />
     <Compile Include="Editing\Commands\SplitParagraphCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinNextParagraphCommandFactory.cs" />
