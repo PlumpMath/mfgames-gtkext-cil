@@ -131,6 +131,18 @@
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-2.0</Package>
     </Reference>
+    <Reference Include="MfGames, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f4b9b04ed1870f79, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MfGames.4.0\lib\net35\MfGames.dll</HintPath>
+    </Reference>
+    <Reference Include="MfGames.Commands, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MfGames.Commands.0.1\lib\net45\MfGames.Commands.dll</HintPath>
+    </Reference>
+    <Reference Include="MfGames.Commands.TextEditing, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MfGames.Commands.0.1\lib\net45\MfGames.Commands.TextEditing.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cairo, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-2.0</Package>
@@ -138,10 +150,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="MfGames, Version=3.0.0.0, Culture=neutral, PublicKeyToken=f4b9b04ed1870f79">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\MfGames.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -205,14 +213,6 @@
     <Compile Include="EditorView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MfGames.Commands.TextEditing\MfGames.Commands.TextEditing.csproj">
-      <Project>{E3991D2E-B9D7-4C7D-9FF6-5420006C23DD}</Project>
-      <Name>MfGames.Commands.TextEditing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MfGames.Commands\MfGames.Commands.csproj">
-      <Project>{9e517018-c1d3-46ad-aa1d-e6fb45165a3f}</Project>
-      <Name>MfGames.Commands</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj">
       <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>
       <Name>MfGames.GtkExt.TextEditor.Models</Name>
