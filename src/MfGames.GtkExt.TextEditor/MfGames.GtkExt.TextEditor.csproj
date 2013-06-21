@@ -163,6 +163,7 @@
     <Compile Include="Editing\Commands\DeleteRightCommandFactory.cs" />
     <Compile Include="Editing\Commands\DeleteSelectionCommandFactory.cs" />
     <Compile Include="Editing\Commands\InsertCharacterCommandFactory.cs" />
+    <Compile Include="Editing\Commands\PasteCommandFactory.cs" />
     <Compile Include="Editing\Commands\SplitParagraphCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinNextParagraphCommandFactory.cs" />
     <Compile Include="Editing\Commands\JoinPreviousParagraphCommandFactory.cs" />

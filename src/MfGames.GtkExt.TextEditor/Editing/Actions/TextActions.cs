@@ -5,14 +5,12 @@
 using System;
 using System.Text;
 using Gdk;
-using Gtk;
 using MfGames.Commands;
 using MfGames.GtkExt.TextEditor.Editing.Commands;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
 using MfGames.GtkExt.TextEditor.Renderers;
-using Key = Gdk.Key;
 
 namespace MfGames.GtkExt.TextEditor.Editing.Actions
 {
@@ -406,112 +404,9 @@ namespace MfGames.GtkExt.TextEditor.Editing.Actions
 		[KeyBinding(Key.V, ModifierType.ControlMask)]
 		public static void Paste(EditorViewController controller)
 		{
-			// Get the text from the clipboard.
-			IDisplayContext displayContext = controller.DisplayContext;
-			Clipboard clipboard = displayContext.Clipboard;
-
-			clipboard.RequestText(null);
-
-			string clipboardText = clipboard.WaitForText();
-
-			if (string.IsNullOrEmpty(clipboardText))
-			{
-				return;
-			}
-
-			// See if the last character ends in newlines. We need that to figure out how
-			// we'll be pasting the last line.
-			bool lastIsEol = clipboardText[clipboardText.Length - 1] == '\n';
-
-			// Split the clipboard text into different lines.
-			string[] lines = clipboardText.Split('\n');
-
-			// If there is a selection, then we want to delete it using the common
-			// processing for selections.
-			Caret caret = displayContext.Caret;
-			BufferPosition position = caret.Position;
-			var command = new Command();
-			string lineText;
-
-			bool deletedSelection = DeleteSelection(
-				controller, command, ref position, out lineText);
-
-			if (!deletedSelection)
-			{
-				// There is no selection, so get the line text from the buffer.
-				lineText = displayContext.LineBuffer.GetLineText(
-					caret.Position.LineIndex, LineContexts.Unformatted);
-			}
-
-			string nextLineText =
-				displayContext.LineBuffer.GetLineText(
-					caret.Position.LineIndex + 1, LineContexts.Unformatted);
-
-			// The paste will happen in the line, splitting the current line in half.
-			string before = lineText.Substring(0, position.CharacterIndex);
-			string after = lineText.Substring(position.CharacterIndex);
-
-			// Check to see if we only have one line and it doesn't end in a newline.
-			if (lines.Length == 1
-				&& !lastIsEol)
-			{
-				// Just before a set text operation.
-				command.Operations.Add(
-					new SetTextOperation(position.LineIndex, before + lines[0] + after));
-
-				if (!deletedSelection)
-				{
-					command.UndoOperations.Add(
-						new SetTextOperation(position.LineIndex, lineText));
-				}
-
-				// Set the end of the command position.
-				position.CharacterIndex = (before + lines[0]).Length;
-				command.EndPosition = position;
-
-				// Perform the command.
-				controller.Do(command);
-				return;
-			}
-
-			// Insert the number of lines we'll need past the first.
-			int linesNeeded = lines.Length - 1;
-
-			command.Operations.Add(
-				new InsertLinesOperation(position.LineIndex, linesNeeded));
-
-			command.UndoOperations.Add(
-				new DeleteLinesOperation(position.LineIndex + 1, linesNeeded));
-			command.UndoOperations.Add(
-				new SetTextOperation(position.LineIndex + 1, nextLineText));
-
-			if (!deletedSelection)
-			{
-				command.UndoOperations.Add(
-					new SetTextOperation(position.LineIndex, lineText));
-			}
-
-			// The first pasted line will combine with the before text.
-			before += lines[0];
-
-			command.Operations.Add(new SetTextOperation(position.LineIndex, before));
-
-			// Insert the lines between the first and the last one, exclusive.
-			for (int index = 1;
-				index < linesNeeded;
-				index++)
-			{
-				command.Operations.Add(
-					new SetTextOperation(position.LineIndex + index, lines[index]));
-			}
-
-			// If the last does not end in an EOL, then we need to combine it.
-			command.Operations.Add(
-				new SetTextOperation(
-					position.LineIndex + lines.Length - 1, lines[lines.Length - 1] + after));
-
-			// Perform the command.
-			controller.Do(command);
+			// Bridge into the new command controller subsystem.
+			var commandReference = new CommandFactoryReference(PasteCommandFactory.Key);
+			controller.CommandFactory.Do(controller, commandReference);
 		}
 
 		/// <summary>

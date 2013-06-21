@@ -28,23 +28,19 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 		#region Methods
 
-		public override string GetTitle(
-			CommandFactoryReference commandFactoryReference)
-		{
-			return "Join Previous Paragraph";
-		}
-
-		protected override void Do(
-			object context,
-			CommandFactoryManager<OperationContext> commandFactory,
-			object commandData,
-			OperationContext operationContext,
+		/// <summary>
+		/// Creates the command needed for the delete selection.
+		/// </summary>
+		/// <param name="controller"></param>
+		/// <param name="displayContext"></param>
+		/// <returns></returns>
+		public static IUndoableCommand<OperationContext> CreateCommand(
 			EditorViewController controller,
-			IDisplayContext displayContext,
-			BufferPosition position)
+			IDisplayContext displayContext)
 		{
 			// Grab the selection and determine if we are a single line or
 			// multiple line selection.
+			IUndoableCommand<OperationContext> command;
 			BufferSegment selection = displayContext.Caret.Selection;
 
 			if (selection.IsSameLine)
@@ -56,9 +52,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 							(Position) selection.StartPosition.CharacterIndex,
 							(Position) selection.EndPosition.CharacterIndex));
 				deleteCommand.UpdateTextPosition = true;
-
-				// Execute the command.
-				controller.CommandController.Do(deleteCommand, operationContext);
+				command = deleteCommand;
 			}
 			else
 			{
@@ -101,8 +95,34 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 				}
 
 				// Execute the composite command.
-				controller.CommandController.Do(compositeCommand, operationContext);
+				command = compositeCommand;
 			}
+
+			// Return the resulting command.
+			return command;
+		}
+
+		public override string GetTitle(
+			CommandFactoryReference commandFactoryReference)
+		{
+			return "Join Previous Paragraph";
+		}
+
+		protected override void Do(
+			object context,
+			CommandFactoryManager<OperationContext> commandFactory,
+			object commandData,
+			OperationContext operationContext,
+			EditorViewController controller,
+			IDisplayContext displayContext,
+			BufferPosition position)
+		{
+			// Create the delete selection command.
+			ICommand<OperationContext> command = CreateCommand(
+				controller, displayContext);
+
+			// Execute the command.
+			controller.CommandController.Do(command, operationContext);
 
 			// If we have a text position, we need to set it.
 			if (operationContext.Results.HasValue)
