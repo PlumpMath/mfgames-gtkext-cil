@@ -47,10 +47,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			IInsertTextCommand<OperationContext> insertCommand =
 				controller.CommandController.CreateInsertTextCommand(
 					new TextPosition(
-						(Position) displayContext.Caret.Position.LineIndex,
-						(Position) displayContext.Caret.Position.CharacterIndex),
+						displayContext.Caret.Position.LineIndex,
+						displayContext.Caret.Position.CharacterIndex),
 					text);
-			insertCommand.UpdateTextPosition = true;
+			insertCommand.UpdateTextPosition = DoTypes.All;
 
 			// Execute the command.
 			controller.CommandController.Do(insertCommand, operationContext);

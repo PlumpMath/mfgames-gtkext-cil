@@ -42,8 +42,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			var operationContext = new OperationContext(
 				displayContext.LineBuffer,
 				new TextPosition(
-					(Position) displayContext.Caret.Position.LineIndex,
-					(Position) displayContext.Caret.Position.CharacterIndex));
+					displayContext.Caret.Position.LineIndex,
+					displayContext.Caret.Position.CharacterIndex));
 
 			// Create the commands and execute them.
 			Do(

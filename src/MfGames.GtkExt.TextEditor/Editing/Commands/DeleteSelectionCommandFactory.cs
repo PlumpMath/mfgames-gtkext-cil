@@ -48,10 +48,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 				IDeleteTextCommand<OperationContext> deleteCommand =
 					controller.CommandController.CreateDeleteTextCommand(
 						new SingleLineTextRange(
-							(Position) selection.StartPosition.LineIndex,
-							(Position) selection.StartPosition.CharacterIndex,
-							(Position) selection.EndPosition.CharacterIndex));
-				deleteCommand.UpdateTextPosition = true;
+							selection.StartPosition.LineIndex,
+							selection.StartPosition.CharacterIndex,
+							selection.EndPosition.CharacterIndex));
+				deleteCommand.UpdateTextPosition = DoTypes.All;
 				command = deleteCommand;
 			}
 			else
@@ -64,10 +64,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 				IDeleteTextCommand<OperationContext> firstLineCommand =
 					controller.CommandController.CreateDeleteTextCommand(
 						new SingleLineTextRange(
-							(Position) selection.StartPosition.LineIndex,
-							(Position) selection.StartPosition.CharacterIndex,
+							selection.StartPosition.LineIndex,
+							selection.StartPosition.CharacterIndex,
 							Position.End));
-				firstLineCommand.UpdateTextPosition = true;
+				firstLineCommand.UpdateTextPosition = DoTypes.All;
 
 				compositeCommand.Commands.Add(firstLineCommand);
 
@@ -75,11 +75,10 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 				IInsertTextFromTextRangeCommand<OperationContext> secondLineCommand =
 					controller.CommandController.CreateInsertTextFromTextRangeCommand(
 						new TextPosition(
-							(Position) selection.StartPosition.LineIndex,
-							(Position) selection.StartPosition.CharacterIndex),
+							selection.StartPosition.LineIndex, selection.StartPosition.CharacterIndex),
 						new SingleLineTextRange(
-							(Position) selection.EndPosition.LineIndex,
-							(Position) selection.EndPosition.CharacterIndex,
+							selection.EndPosition.LineIndex,
+							selection.EndPosition.CharacterIndex,
 							Position.End));
 
 				compositeCommand.Commands.Add(secondLineCommand);
@@ -90,7 +89,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 					line++)
 				{
 					IDeleteLineCommand<OperationContext> deleteLineCommand =
-						controller.CommandController.CreateDeleteLineCommand((Position) line);
+						controller.CommandController.CreateDeleteLineCommand(line);
 					compositeCommand.Commands.Add(deleteLineCommand);
 				}
 

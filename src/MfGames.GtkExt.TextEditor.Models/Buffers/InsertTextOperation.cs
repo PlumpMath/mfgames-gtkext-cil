@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -65,7 +66,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText(BufferPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if (UpdateTextPosition)
+			if(UpdateTextPosition.HasFlag(DoTypes.Do))
 			{
 				state.Results =
 					new LineBufferOperationResults(
@@ -93,7 +94,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText(BufferPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if (UpdateTextPosition)
+			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(

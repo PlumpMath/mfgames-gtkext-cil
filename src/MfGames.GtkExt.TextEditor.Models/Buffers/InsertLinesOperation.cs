@@ -2,6 +2,7 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -49,7 +50,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.InsertLines(LineIndex, 1);
 
 			// If we are updating the position, then set it.
-			if (UpdateTextPosition)
+			if (UpdateTextPosition.HasFlag(DoTypes.Do))
 			{
 				state.Results =
 					new LineBufferOperationResults(new BufferPosition(LineIndex, 0));
@@ -68,7 +69,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			// If we were updating the position, we need to restore it.
 			// If we are updating the position, then set it.
-			if (UpdateTextPosition)
+			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(

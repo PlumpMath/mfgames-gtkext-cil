@@ -2,6 +2,7 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
+using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -21,8 +22,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			get { return false; }
 		}
 
-		public bool UpdateTextPosition { get; set; }
-		public bool UpdateTextSelection { get; set; }
+		public DoTypes UpdateTextPosition { get; set; }
+		public DoTypes UpdateTextSelection { get; set; }
 		protected TextPosition InitialPosition { get; set; }
 
 		#endregion

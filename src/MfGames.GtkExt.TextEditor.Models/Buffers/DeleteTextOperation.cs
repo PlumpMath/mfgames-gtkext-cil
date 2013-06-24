@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -55,10 +56,10 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			// Normalize the character ranges.
 			int startCharacterIndex =
 				new Position(CharacterRange.StartIndex).Normalize(
-					lineText, (Position) CharacterRange.EndIndex, false);
+					lineText, CharacterRange.EndIndex, false);
 			int endCharacterIndex =
 				new Position(CharacterRange.EndIndex).Normalize(
-					lineText, (Position) CharacterRange.StartIndex, true);
+					lineText, CharacterRange.StartIndex, true);
 			int length = endCharacterIndex - startCharacterIndex;
 
 			originalText = lineText.Substring(startCharacterIndex, length);
@@ -70,7 +71,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText(LineIndex, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if (UpdateTextPosition)
+			if(UpdateTextPosition.HasFlag(DoTypes.Do))
 			{
 				state.Results =
 					new LineBufferOperationResults(
@@ -93,10 +94,10 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			// Normalize the character ranges.
 			int startCharacterIndex =
 				new Position(CharacterRange.StartIndex).Normalize(
-					lineText, (Position) CharacterRange.EndIndex, false);
+					lineText, CharacterRange.EndIndex, false);
 			int endCharacterIndex =
 				new Position(CharacterRange.EndIndex).Normalize(
-					lineText, (Position) CharacterRange.StartIndex, true);
+					lineText, CharacterRange.StartIndex, true);
 			buffer.Insert(startCharacterIndex, originalText);
 
 			// Set the line in the buffer.
@@ -104,7 +105,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText(LineIndex, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if (UpdateTextPosition)
+			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(

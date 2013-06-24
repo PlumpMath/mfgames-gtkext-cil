@@ -49,8 +49,8 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 				new SplitParagraphCommand<OperationContext>(
 					controller.CommandController,
 					new TextPosition(
-						(Position) displayContext.Caret.Position.LineIndex,
-						(Position) displayContext.Caret.Position.CharacterIndex));
+						displayContext.Caret.Position.LineIndex,
+						displayContext.Caret.Position.CharacterIndex));
 
 			controller.CommandController.Do(splitCommand, operationContext);
 

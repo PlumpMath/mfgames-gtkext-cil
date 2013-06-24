@@ -3,7 +3,6 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using MfGames.Commands;
-using MfGames.Commands.TextEditing;
 using MfGames.Commands.TextEditing.Composites;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
@@ -46,7 +45,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 		{
 			var command =
 				new JoinPreviousParagraphCommand<OperationContext>(
-					controller.CommandController, (Position) position.LineIndex);
+					controller.CommandController, position.LineIndex);
 
 			controller.CommandController.Do(command, operationContext);
 

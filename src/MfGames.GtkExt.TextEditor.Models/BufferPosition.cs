@@ -3,6 +3,7 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using System;
+using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models
 {
@@ -222,6 +223,20 @@ namespace MfGames.GtkExt.TextEditor.Models
 		{
 			lineIndex = position.LineIndex;
 			characterIndex = position.CharacterIndex;
+		}
+
+		public BufferPosition(
+			Position line,
+			int characterIndex)
+			: this((int) line, characterIndex)
+		{
+		}
+
+		public BufferPosition(
+			Position line,
+			Position character)
+			: this((int) line, (int) character)
+		{
 		}
 
 		#endregion

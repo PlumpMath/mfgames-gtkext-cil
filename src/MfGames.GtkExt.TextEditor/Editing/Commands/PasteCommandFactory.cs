@@ -65,17 +65,16 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 
 			if (displayContext.Caret.Selection.IsEmpty)
 			{
-				textPosition =
-					new TextPosition(
-						(Position) displayContext.Caret.Position.LineIndex,
-						(Position) displayContext.Caret.Position.CharacterIndex);
+				textPosition = new TextPosition(
+					displayContext.Caret.Position.LineIndex,
+					displayContext.Caret.Position.CharacterIndex);
 			}
 			else
 			{
 				textPosition =
 					new TextPosition(
-						(Position) displayContext.Caret.Selection.StartPosition.LineIndex,
-						(Position) displayContext.Caret.Selection.StartPosition.CharacterIndex);
+						displayContext.Caret.Selection.StartPosition.LineIndex,
+						displayContext.Caret.Selection.StartPosition.CharacterIndex);
 			}
 
 			// Create the paste command for the text.

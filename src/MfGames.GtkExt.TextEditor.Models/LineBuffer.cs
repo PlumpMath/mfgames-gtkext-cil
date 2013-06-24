@@ -210,6 +210,14 @@ namespace MfGames.GtkExt.TextEditor.Models
 			int lineIndex,
 			LineContexts lineContexts);
 
+		public string GetLineText(
+			Position line,
+			LineContexts lineContexts)
+		{
+			string results = GetLineText((int) line, lineContexts);
+			return results;
+		}
+
 		/// <summary>
 		/// Inserts a line inside the line buffer.
 		/// </summary>
@@ -242,9 +250,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 			return
 				Do(
 					new InsertTextOperation(
-						(Position) bufferPosition.LineIndex,
-						(Position) bufferPosition.CharacterIndex,
-						text));
+						bufferPosition.LineIndex, bufferPosition.CharacterIndex, text));
 		}
 
 		/// <summary>
@@ -268,6 +274,13 @@ namespace MfGames.GtkExt.TextEditor.Models
 			string text)
 		{
 			return Do(new SetTextOperation(lineIndex, text));
+		}
+
+		public void SetText(
+			Position line,
+			string text)
+		{
+			SetText((int) line, text);
 		}
 
 		/// <summary>

@@ -147,7 +147,7 @@ namespace GtkExtDemo.TextEditor
 		{
 			LineBufferOperationResults results = base.Do(operation);
 
-			return CheckForStyleChanged(operation.BufferPosition.Line, results);
+			return CheckForStyleChanged((int) operation.BufferPosition.Line, results);
 		}
 
 		/// <summary>

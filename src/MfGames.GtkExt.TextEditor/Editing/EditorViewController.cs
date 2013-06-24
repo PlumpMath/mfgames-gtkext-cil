@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 using C5;
 using Cairo;
@@ -37,7 +38,15 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		/// Contains the command controller used to execute commands on
 		/// the line buffer associated with this controller.
 		/// </summary>
-		public ITextEditingCommandController<OperationContext> CommandController { get; private set; }
+		public ITextEditingCommandController<OperationContext> CommandController
+		{
+			get { return commandController; }
+			set
+			{
+				Contract.Requires<ArgumentNullException>(value != null);
+				commandController = value;
+			}
+		}
 
 		/// <summary>
 		/// Contains the command factory for processing commands.
@@ -668,6 +677,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		#region Fields
 
 		private readonly HashDictionary<string, ActionEntry> actions;
+		private ITextEditingCommandController<OperationContext> commandController;
 		private readonly IDisplayContext displayContext;
 		private bool inAction;
 		private bool inTextSelect;

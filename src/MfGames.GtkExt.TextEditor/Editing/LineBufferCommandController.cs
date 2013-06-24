@@ -18,7 +18,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		public IDeleteLineCommand<OperationContext> CreateDeleteLineCommand(
 			Position line)
 		{
-			var operation = new DeleteLinesOperation(line, 1);
+			var operation = new DeleteLinesOperation((int) line, 1);
 			return operation;
 		}
 
@@ -26,14 +26,14 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			SingleLineTextRange range)
 		{
 			var operation = new DeleteTextOperation(
-				range.Line, range.CharacterBegin, range.CharacterEnd);
+				(int) range.Line, (int) range.CharacterBegin, (int) range.CharacterEnd);
 			return operation;
 		}
 
 		public IInsertLineCommand<OperationContext> CreateInsertLineCommand(
 			Position line)
 		{
-			var operation = new InsertLinesOperation(line, 1);
+			var operation = new InsertLinesOperation((int) line, 1);
 			return operation;
 		}
 

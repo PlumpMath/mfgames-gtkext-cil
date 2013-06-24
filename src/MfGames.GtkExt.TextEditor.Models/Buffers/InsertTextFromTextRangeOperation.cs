@@ -3,6 +3,7 @@
 // http://mfgames.com/mfgames-gtkext-cil/license
 
 using System.Text;
+using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 
 namespace MfGames.GtkExt.TextEditor.Models.Buffers
@@ -69,7 +70,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText(DestinationPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if (UpdateTextPosition)
+			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(
