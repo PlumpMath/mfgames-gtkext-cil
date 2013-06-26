@@ -8,6 +8,7 @@ using MfGames.GtkExt.Extensions.Cairo;
 using MfGames.GtkExt.TextEditor.Interfaces;
 using MfGames.GtkExt.TextEditor.Models;
 using MfGames.GtkExt.TextEditor.Models.Buffers;
+using MfGames.GtkExt.TextEditor.Models.Styles;
 using MfGames.GtkExt.TextEditor.Renderers;
 
 namespace MfGames.GtkExt.TextEditor.Editing
@@ -94,10 +95,10 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			y -= displayContext.BufferOffsetY;
 
 			// Shift the contents to compenstate for the margins.
+			LineBlockStyle style = displayContext.Renderer.GetLineStyle(Position.LineIndex,LineContexts.None);
+
 			x += displayContext.TextX;
-			x +=
-				displayContext.Renderer.GetLineStyle(Position.LineIndex, LineContexts.None)
-				              .Left;
+			x += style.Left;
 
 			// Return the resulting rectangle.
 			return new Rectangle(x, y, 1, lineHeight);

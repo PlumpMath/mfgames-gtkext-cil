@@ -428,10 +428,9 @@ namespace MfGames.GtkExt.TextEditor.Renderers
 			// indicate insert point.
 			bool trailing = false;
 			int character = bufferPosition.CharacterIndex;
+			int lineLength = buffer.LineBuffer.GetLineLength(bufferLineIndex, LineContexts.Unformatted);
 
-			if (character
-				== buffer.LineBuffer.GetLineLength(
-					bufferLineIndex, LineContexts.Unformatted))
+			if (character == lineLength)
 			{
 				// Shift back one character to calculate the position and put
 				// the cursor at the end of the character.
