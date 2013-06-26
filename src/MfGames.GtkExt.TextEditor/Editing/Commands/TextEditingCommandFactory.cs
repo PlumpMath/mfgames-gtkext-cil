@@ -2,8 +2,6 @@
 // Released under the MIT license
 // http://mfgames.com/mfgames-gtkext-cil/license
 
-using System;
-using System.Diagnostics.Contracts;
 using MfGames.Commands;
 using MfGames.Commands.TextEditing;
 using MfGames.GtkExt.TextEditor.Interfaces;
@@ -38,8 +36,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 				displayContext.Caret.Position.LineIndex,
 				displayContext.Caret.Position.CharacterIndex);
 			var operationContext = new OperationContext(
-				displayContext.LineBuffer,
-				textPosition);
+				displayContext.LineBuffer, textPosition);
 
 			// Create the commands and execute them.
 			Do(

@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using C5;
 using Cairo;
@@ -43,7 +42,10 @@ namespace MfGames.GtkExt.TextEditor.Editing
 			get { return commandController; }
 			set
 			{
-				Contract.Requires<ArgumentNullException>(value != null);
+				if (value == null)
+				{
+					throw new ArgumentNullException("value");
+				}
 				commandController = value;
 			}
 		}

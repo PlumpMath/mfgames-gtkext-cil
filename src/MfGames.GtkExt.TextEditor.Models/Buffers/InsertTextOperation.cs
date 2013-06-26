@@ -66,7 +66,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText((int) BufferPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if(UpdateTextPosition.HasFlag(DoTypes.Do))
+			if (UpdateTextPosition.HasFlag(DoTypes.Do))
 			{
 				state.Results =
 					new LineBufferOperationResults(
@@ -94,7 +94,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText((int) BufferPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
+			if (UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(

@@ -37,7 +37,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 				state.LineBuffer.GetLineText(
 					DestinationPosition.Line, LineContexts.Unformatted);
 			var buffer = new StringBuilder(destinationLine);
-			int characterIndex = DestinationPosition.Character.NormalizeIndex(destinationLine);
+			int characterIndex =
+				DestinationPosition.Character.NormalizeIndex(destinationLine);
 
 			buffer.Insert(characterIndex, sourceText);
 
@@ -70,7 +71,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 			state.LineBuffer.SetText(DestinationPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
-			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
+			if (UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(

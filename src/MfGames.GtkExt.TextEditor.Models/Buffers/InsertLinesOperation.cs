@@ -69,7 +69,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			// If we were updating the position, we need to restore it.
 			// If we are updating the position, then set it.
-			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
+			if (UpdateTextPosition.HasFlag(DoTypes.Undo))
 			{
 				state.Results =
 					new LineBufferOperationResults(
