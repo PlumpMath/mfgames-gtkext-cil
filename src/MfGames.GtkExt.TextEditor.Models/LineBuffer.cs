@@ -211,7 +211,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 			LineContexts lineContexts);
 
 		public string GetLineText(
-			Position line,
+			LinePosition line,
 			LineContexts lineContexts)
 		{
 			string results = GetLineText((int) line, lineContexts);
@@ -277,7 +277,7 @@ namespace MfGames.GtkExt.TextEditor.Models
 		}
 
 		public void SetText(
-			Position line,
+			LinePosition line,
 			string text)
 		{
 			SetText((int) line, text);

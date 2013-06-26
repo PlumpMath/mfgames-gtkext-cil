@@ -50,11 +50,11 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		{
 			// Grab the line from the line buffer.
 			string lineText = state.LineBuffer.GetLineText(
-				BufferPosition.Line, LineContexts.Unformatted);
+				(int) BufferPosition.Line, LineContexts.Unformatted);
 			var buffer = new StringBuilder(lineText);
 
 			// Normalize the character ranges.
-			int characterIndex = BufferPosition.Character.Normalize(lineText);
+			int characterIndex = BufferPosition.Character.NormalizeIndex(lineText);
 
 			buffer.Insert(characterIndex, Text);
 
@@ -63,7 +63,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			// Set the line in the buffer.
 			lineText = buffer.ToString();
-			state.LineBuffer.SetText(BufferPosition.Line, lineText);
+			state.LineBuffer.SetText((int) BufferPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
 			if(UpdateTextPosition.HasFlag(DoTypes.Do))
@@ -83,7 +83,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		{
 			// Grab the line from the line buffer.
 			string lineText = state.LineBuffer.GetLineText(
-				BufferPosition.Line, LineContexts.Unformatted);
+				(int) BufferPosition.Line, LineContexts.Unformatted);
 			var buffer = new StringBuilder(lineText);
 
 			// Normalize the character ranges.
@@ -91,7 +91,7 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 
 			// Set the line in the buffer.
 			lineText = buffer.ToString();
-			state.LineBuffer.SetText(BufferPosition.Line, lineText);
+			state.LineBuffer.SetText((int) BufferPosition.Line, lineText);
 
 			// If we are updating the position, we need to do it here.
 			if(UpdateTextPosition.HasFlag(DoTypes.Undo))
@@ -113,8 +113,8 @@ namespace MfGames.GtkExt.TextEditor.Models.Buffers
 		/// <param name="characterIndex">Index of the character.</param>
 		/// <param name="text">The text.</param>
 		public InsertTextOperation(
-			Position lineIndex,
-			Position characterIndex,
+			LinePosition lineIndex,
+			CharacterPosition characterIndex,
 			string text)
 			: this(new TextPosition(lineIndex, characterIndex), text)
 		{

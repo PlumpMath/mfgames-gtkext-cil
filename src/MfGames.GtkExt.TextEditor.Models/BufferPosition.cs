@@ -226,15 +226,15 @@ namespace MfGames.GtkExt.TextEditor.Models
 		}
 
 		public BufferPosition(
-			Position line,
+			LinePosition line,
 			int characterIndex)
 			: this((int) line, characterIndex)
 		{
 		}
 
 		public BufferPosition(
-			Position line,
-			Position character)
+			LinePosition line,
+			CharacterPosition character)
 			: this((int) line, (int) character)
 		{
 		}

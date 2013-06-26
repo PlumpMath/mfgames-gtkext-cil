@@ -28,22 +28,18 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 			CommandFactoryReference commandFactoryReference,
 			CommandFactoryManager<OperationContext> controller)
 		{
-			// Ensure the code contracts for this state.
-			Contract.Requires<ArgumentNullException>(context != null);
-			Contract.Requires<InvalidCastException>(context is EditorViewController);
-			Contract.Requires<ArgumentNullException>(commandFactoryReference != null);
-
 			// Pull out some useful variables for processing.
 			var editViewController = (EditorViewController) context;
 			IDisplayContext displayContext = editViewController.DisplayContext;
 			BufferPosition position = displayContext.Caret.Position;
 
 			// Set up the operation context for this request.
+			var textPosition = new TextPosition(
+				displayContext.Caret.Position.LineIndex,
+				displayContext.Caret.Position.CharacterIndex);
 			var operationContext = new OperationContext(
 				displayContext.LineBuffer,
-				new TextPosition(
-					displayContext.Caret.Position.LineIndex,
-					displayContext.Caret.Position.CharacterIndex));
+				textPosition);
 
 			// Create the commands and execute them.
 			Do(

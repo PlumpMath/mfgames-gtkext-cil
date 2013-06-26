@@ -66,7 +66,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 						new SingleLineTextRange(
 							selection.StartPosition.LineIndex,
 							selection.StartPosition.CharacterIndex,
-							Position.End));
+							CharacterPosition.End));
 				firstLineCommand.UpdateTextPosition = DoTypes.All;
 
 				compositeCommand.Commands.Add(firstLineCommand);
@@ -79,7 +79,7 @@ namespace MfGames.GtkExt.TextEditor.Editing.Commands
 						new SingleLineTextRange(
 							selection.EndPosition.LineIndex,
 							selection.EndPosition.CharacterIndex,
-							Position.End));
+							CharacterPosition.End));
 
 				compositeCommand.Commands.Add(secondLineCommand);
 

@@ -16,7 +16,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		#region Methods
 
 		public IDeleteLineCommand<OperationContext> CreateDeleteLineCommand(
-			Position line)
+			LinePosition line)
 		{
 			var operation = new DeleteLinesOperation((int) line, 1);
 			return operation;
@@ -31,7 +31,7 @@ namespace MfGames.GtkExt.TextEditor.Editing
 		}
 
 		public IInsertLineCommand<OperationContext> CreateInsertLineCommand(
-			Position line)
+			LinePosition line)
 		{
 			var operation = new InsertLinesOperation((int) line, 1);
 			return operation;
