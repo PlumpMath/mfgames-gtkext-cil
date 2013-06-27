@@ -30,6 +30,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,14 +61,6 @@
     <Compile Include="DemoWindow.cs" />
     <Compile Include="DemoComponents.cs" />
     <Compile Include="DemoTab.cs" />
-    <Compile Include="DemoTextEditor.cs" />
-    <Compile Include="TextEditor\ChangeEditorBufferAction.cs" />
-    <Compile Include="TextEditor\DemoEditableLineBuffer.cs" />
-    <Compile Include="TextEditor\DemoReadOnlyLineBuffer.cs" />
-    <Compile Include="TextEditor\KeywordLineBuffer.cs" />
-    <Compile Include="TextEditor\KeywordMarkupEntry.cs" />
-    <Compile Include="TextEditor\KeywordMarkupType.cs" />
-    <Compile Include="TextEditor\DemoLineStyleType.cs" />
     <Compile Include="ExampleEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -147,4 +141,5 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
