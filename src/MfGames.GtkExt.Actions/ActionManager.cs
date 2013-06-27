@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Reflection;
 using GLib;
 using Gtk;
+using MfGames.Enumerations;
 using MfGames.HierarchicalPaths;
 using MfGames.Reporting;
 using Action = Gtk.Action;

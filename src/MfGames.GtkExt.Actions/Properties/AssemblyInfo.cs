@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("MfGames.GtkExt.Actions")]
+[assembly: AssemblyTitle("MfGames Gtk# Generic Action Framework")]
 [assembly: AssemblyDescription("An abstraction for user actions in Gtk#.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Moonfire Games")]
-[assembly: AssemblyProduct("MfGames.GtkExt.Actions")]
-[assembly: AssemblyCopyright("Copyright © 2005-2013, Moonfire Games")]
+[assembly: AssemblyProduct("Moonfire Games' Gtk# Extensions")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2011-2013, Moonfire Games")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

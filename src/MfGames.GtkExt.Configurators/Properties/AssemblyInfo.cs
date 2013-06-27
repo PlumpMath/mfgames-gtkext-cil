@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("MfGames.GtkExt.Configurators")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("MfGames Gtk# Configurators")]
+[assembly: AssemblyDescription("A Gtk# library for creating, displaying, and managing configuration screens. Inspired by Visual Studio's Options screen.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("MfGames.GtkExt.Configurators")]
+[assembly: AssemblyCompany("Moonfire Games")]
+[assembly: AssemblyProduct("Moonfire Games' Gtk# Extensions")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2011-2013, Moonfire Games")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

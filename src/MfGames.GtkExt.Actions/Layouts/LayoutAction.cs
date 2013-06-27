@@ -4,6 +4,7 @@
 
 using System.Xml;
 using Gtk;
+using MfGames.Enumerations;
 using MfGames.GtkExt.Actions.Widgets;
 using MfGames.Reporting;
 

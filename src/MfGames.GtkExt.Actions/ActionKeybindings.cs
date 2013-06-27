@@ -9,6 +9,7 @@ using System.Text;
 using System.Xml;
 using Gdk;
 using Gtk;
+using MfGames.Enumerations;
 using MfGames.GtkExt.Actions.Keybindings;
 using MfGames.HierarchicalPaths;
 using MfGames.Reporting;
