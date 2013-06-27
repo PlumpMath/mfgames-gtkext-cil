@@ -102,16 +102,6 @@
     <Compile Include="TextActionTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj">
-      <Project>{1F3AD3B8-7459-41EA-A730-334DF89EB6F0}</Project>
-      <Name>MfGames.GtkExt.TextEditor.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MfGames.GtkExt.TextEditor\MfGames.GtkExt.TextEditor.csproj">
-      <Project>{C4AADFA8-6268-4D61-B44B-78F1A69D3EAF}</Project>
-      <Name>MfGames.GtkExt.TextEditor</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>

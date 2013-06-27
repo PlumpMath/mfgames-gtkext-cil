@@ -141,14 +141,6 @@
       <Project>{bbb2bb6a-1fa3-449d-b390-9206d2cbc126}</Project>
       <Name>MfGames.GtkExt.Configurators</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MfGames.GtkExt.TextEditor.Models\MfGames.GtkExt.TextEditor.Models.csproj">
-      <Project>{1f3ad3b8-7459-41ea-a730-334df89eb6f0}</Project>
-      <Name>MfGames.GtkExt.TextEditor.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MfGames.GtkExt.TextEditor\MfGames.GtkExt.TextEditor.csproj">
-      <Project>{c4aadfa8-6268-4d61-b44b-78f1a69d3eaf}</Project>
-      <Name>MfGames.GtkExt.TextEditor</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MfGames.GtkExt\MfGames.GtkExt.csproj">
       <Project>{dc4be5fb-0a89-4210-bc19-b4d01e5d901f}</Project>
       <Name>MfGames.GtkExt</Name>
