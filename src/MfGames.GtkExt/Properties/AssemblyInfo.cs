@@ -6,14 +6,12 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("MfGames.GtkExt")]
-[assembly:
-	AssemblyDescription("Various widgets, extensions, and helper classes for Gtk#."
-		)]
+[assembly: AssemblyTitle("MfGames Gtk# Extensions")]
+[assembly: AssemblyDescription("General utility classes and widgets for Gtk#. This includes a number of useful things working with Gtk, Gdk, and Pango.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Moonfire Games")]
-[assembly: AssemblyProduct("MfGames")]
-[assembly: AssemblyCopyright("Copyright © 2005-2011")]
+[assembly: AssemblyProduct("Moonfire Games' Gtk# Extensions")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2011-2013, Moonfire Games")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -28,5 +26,5 @@ using System.Runtime.InteropServices;
 
 // File and assembly versions.
 
-[assembly: AssemblyVersion("0.0.1.0")]
-[assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

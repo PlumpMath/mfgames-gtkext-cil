@@ -115,36 +115,6 @@ namespace GtkExtDemo
 		}
 
 		/// <summary>
-		/// Triggers the quit menu.
-		/// </summary>
-		private static void OnQuitAction(
-			object sender,
-			EventArgs args)
-		{
-			Application.Quit();
-		}
-
-		/// <summary>
-		/// Called to switch to the components layer.
-		/// <summary>
-		private void OnSwitchComponents(
-			object obj,
-			EventArgs args)
-		{
-			notebook.Page = 0;
-		}
-
-		/// <summary>
-		/// Called to switch to the editor.
-		/// </summary>
-		private void OnSwitchTextEditor(
-			object obj,
-			EventArgs args)
-		{
-			notebook.Page = 1;
-		}
-
-		/// <summary>
 		/// Fired when the window is closed.
 		/// </summary>
 		private static void OnWindowDelete(
@@ -174,10 +144,8 @@ namespace GtkExtDemo
 			var actionManager = new ActionManager(this);
 			actionManager.Add(GetType().Assembly);
 
-			demoTextEditor = new DemoTextEditor();
 			demoConfiguratorsTab = new DemoConfiguratorsTab(this);
 
-			actionManager.Add(demoTextEditor);
 			actionManager.Add(demoConfiguratorsTab);
 
 			demoActions = new DemoActions(actionManager);
@@ -206,7 +174,6 @@ namespace GtkExtDemo
 			notebook.BorderWidth = 5;
 
 			notebook.AppendPage(demoComponents, new Label("Components"));
-			notebook.AppendPage(demoTextEditor, new Label("Line Text Editor"));
 			notebook.AppendPage(demoActions, new Label("Actions"));
 			notebook.AppendPage(demoConfiguratorsTab, new Label("Configurators"));
 
@@ -231,7 +198,6 @@ namespace GtkExtDemo
 		private readonly DemoActions demoActions;
 		private readonly DemoComponents demoComponents;
 		private readonly DemoConfiguratorsTab demoConfiguratorsTab;
-		private readonly DemoTextEditor demoTextEditor;
 		private readonly ActionKeybindings keybindings;
 		private readonly ActionLayout layout;
 		private readonly MenuBar menubar;

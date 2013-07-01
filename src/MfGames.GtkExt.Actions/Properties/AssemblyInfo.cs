@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("MfGames.GtkExt.Actions")]
+[assembly: AssemblyTitle("MfGames Gtk# Generic Action Framework")]
 [assembly: AssemblyDescription("An abstraction for user actions in Gtk#.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Moonfire Games")]
-[assembly: AssemblyProduct("MfGames.GtkExt.Actions")]
-[assembly: AssemblyCopyright("Copyright © 2005-2011")]
+[assembly: AssemblyProduct("Moonfire Games' Gtk# Extensions")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2011-2013, Moonfire Games")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
+// [assembly: AssemblyVersion("0.1.0.0")]
 
-[assembly: AssemblyVersion("0.0.1.0")]
-[assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
