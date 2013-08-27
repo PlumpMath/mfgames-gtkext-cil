@@ -79,6 +79,28 @@ namespace MfGames.GtkExt.Extensions.Pango
 		}
 
 		/// <summary>
+		/// Gets the X ranges from the given string indexes.
+		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
+		/// <param name="startStringIndex">Start index of the string.</param>
+		/// <param name="endStringIndex">End index of the string.</param>
+		/// <param name="ranges">The ranges.</param>
+		public static void GetTranslatedXRanges(
+			this LayoutLine layoutLine,
+			int startStringIndex,
+			int endStringIndex,
+			out int[][] ranges)
+		{
+			int startPangoIndex =
+				PangoUtility.TranslateStringToPangoIndex(
+					layoutLine.Layout.Text, startStringIndex);
+			int endPangoIndex =
+				PangoUtility.TranslateStringToPangoIndex(
+					layoutLine.Layout.Text, endStringIndex);
+			layoutLine.GetXRanges(startPangoIndex, endPangoIndex, out ranges);
+		}
+
+		/// <summary>
 		/// Determines whether this layout line is the last line in the layout.
 		/// </summary>
 		/// <param name="layoutLine">The layout line.</param>
@@ -89,6 +111,45 @@ namespace MfGames.GtkExt.Extensions.Pango
 		{
 			Layout layout = layoutLine.Layout;
 			return layout.Lines[layout.LineCount - 1].StartIndex == layoutLine.StartIndex;
+		}
+
+		/// <summary>
+		/// Gets the string index for an X coordinate.
+		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
+		/// <param name="stringIndex">Index of the string.</param>
+		/// <param name="trailing">if set to <c>true</c> [trailing].</param>
+		/// <returns></returns>
+		public static int TranslatedIndexToX(
+			this LayoutLine layoutLine,
+			int stringIndex,
+			bool trailing)
+		{
+			int pangoIndex =
+				PangoUtility.TranslateStringToPangoIndex(
+					layoutLine.Layout.Text, stringIndex);
+			return layoutLine.IndexToX(pangoIndex, trailing);
+		}
+
+		/// <summary>
+		/// Gets the string index for a given X coordinate (in Pango units).
+		/// </summary>
+		/// <param name="layoutLine">The layout line.</param>
+		/// <param name="x">The x.</param>
+		/// <param name="stringIndex">Index of the string.</param>
+		/// <param name="trailing">The trailing.</param>
+		/// <returns></returns>
+		public static bool XToTranslatedIndex(
+			this LayoutLine layoutLine,
+			int x,
+			out int stringIndex,
+			out int trailing)
+		{
+			int pangoIndex;
+			bool results = layoutLine.XToIndex(x, out pangoIndex, out trailing);
+			stringIndex = PangoUtility.TranslatePangoToStringIndex(
+				layoutLine.Layout.Text, pangoIndex);
+			return results;
 		}
 
 		#endregion
